@@ -807,3 +807,10 @@ body:has(#game.theme-nineties:not([hidden])) {
   background:repeating-linear-gradient(90deg,#ffe36d 0 7px,transparent 7px 11px);
   transform:rotate(-10deg);pointer-events:none;
 }
+
+/* World 8 difficulty only: avoid an unnecessary nested scrollbar.
+   Let the document scroll naturally on genuinely small viewports instead.
+   The other screens and room themes retain their existing overflow rules. */
+#game.theme-nineties:has(> .difficulty-panel) {
+  overflow: visible !important;
+}
