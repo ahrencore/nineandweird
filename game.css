@@ -581,37 +581,55 @@ html:has(#game.theme-olympus:not([hidden])),body:has(#game.theme-olympus:not([hi
 #game.theme-olympus .ev-sudoku-cell.bad{background:#d52c3d!important;color:white!important}
 
 
-/* Palette alignment update — World Selection and gameplay, CSS only. */
-#game.theme-hub .world-grid .world-tile{position:relative;text-align:center;align-items:center;justify-content:center;}
-#game.theme-hub .world-grid .world-tile strong{display:block;width:100%;max-width:100%;margin:0;text-align:center;line-height:1.2;white-space:normal;overflow-wrap:normal;text-wrap:balance;}
-#game.theme-hub .world-grid .world-classic{background:#fff!important;color:#181818!important;border:2px solid #9a9a9a!important;box-shadow:0 0 9px #a0a0a055!important;}
-#game.theme-hub .world-grid .world-classic strong{color:#181818!important;text-shadow:none!important;}
-#game.theme-hub .world-grid .world-dark{background:#101010!important;color:#f5f5f5!important;border:2px solid #a0a0a0!important;box-shadow:0 0 9px #d5d5d544!important;}
-#game.theme-hub .world-grid .world-dark strong{color:#f5f5f5!important;text-shadow:0 0 5px #ffffff55!important;}
-#game.theme-hub .world-grid .world-halloween{border:2px solid #b768f5!important;box-shadow:0 0 12px #a638f577!important;}
-#game.theme-hub .world-grid .world-patissserie{border:2px solid #a87542!important;box-shadow:0 0 11px #d5ad7277!important;}
-#game.theme-hub .world-grid .world-christmas{border:2px solid #79c9ed!important;box-shadow:0 0 11px #8bd8f488!important;}
-#game.theme-hub .world-grid .world-fairy{border:2px solid #b88bea!important;box-shadow:0 0 12px #c18dff88!important;}
-#game.theme-hub .world-grid .world-olympus{border:2px solid #d6aa55!important;box-shadow:0 0 11px #d6aa5588!important;}
-/* Each world defines its own light and glow, rather than inheriting generic neon pink. */
-#game.theme-classic{--glow:#777777;}
-#game.theme-dark{--glow:#cccccc;}
-#game.theme-halloween{--glow:#a638f5;--accent:#b768f5;--line:#965399;}
-#game.theme-patissserie{--glow:#d5ad72;}
-#game.theme-christmas{--glow:#8bd8f4;}
-#game.theme-fairy{--glow:#c18dff;}
-#game.theme-olympus{--glow:#d6aa55;--surface:#f7f2e8;--panel:#e8d8bc;--ink:#203b60;--accent:#347daa;--line:#7ca6bf;background:radial-gradient(ellipse at 50% 0%,#fffdf7 0%,#f7f2e8 48%,#e8d8bc 100%)!important;color:#203b60!important;}
-html:has(#game.theme-olympus:not([hidden])),body:has(#game.theme-olympus:not([hidden])){background:#f7f2e8!important;color:#203b60!important;}
-#game.theme-olympus .ev-head{background:#203b60!important;border:1px solid #d6aa55!important;box-shadow:0 0 12px #d6aa5538!important;}
-#game.theme-olympus .ev-head strong{color:#fff7e7!important;text-shadow:0 0 7px #d6aa5570!important;}
-#game.theme-olympus .ev-sudo-shell,#game.theme-olympus .difficulty-panel,#game.theme-olympus .result-panel{background:#f7f2e8!important;color:#203b60!important;border-color:#d6aa55!important;box-shadow:0 0 14px #d6aa554a!important;}
-#game.theme-olympus .ev-sudoku-grid{border-color:#347daa!important;box-shadow:0 0 0 4px #d6aa55,0 0 13px #d6aa5566!important;}
-#game.theme-olympus .ev-sudoku-cell{color:#203b60;}
-#game.theme-olympus .ev-sudo-tool.active,#game.theme-olympus .ev-sudoku-tray button.selected{background:#cde3ee!important;border-color:#347daa!important;}
-#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-christmas,.theme-fairy,.theme-olympus) .ev-sudoku-cell.selected:not(.bad){background:var(--selected)!important;box-shadow:inset 0 0 8px color-mix(in srgb,var(--glow) 42%,transparent),0 0 8px color-mix(in srgb,var(--glow) 35%,transparent)!important;outline:2px solid var(--accent)!important;}
-#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-christmas,.theme-fairy,.theme-olympus) .ev-sudoku-cell.same:not(.bad):not(.selected){background:var(--same)!important;box-shadow:inset 0 0 8px color-mix(in srgb,var(--glow) 38%,transparent)!important;}
-#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-christmas,.theme-fairy,.theme-olympus) .ev-sudoku-tray button.selected,#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-christmas,.theme-fairy,.theme-olympus) .ev-sudo-tool.active{border-color:var(--accent)!important;box-shadow:0 0 10px color-mix(in srgb,var(--glow) 48%,transparent)!important;}
-#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-christmas,.theme-fairy,.theme-olympus) .ev-sudoku-grid{box-shadow:0 0 12px color-mix(in srgb,var(--glow) 38%,transparent)!important;}
-#game.theme-olympus .ev-sudoku-grid{box-shadow:0 0 0 4px #d6aa55,0 0 13px #d6aa5566!important;}
-#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-christmas,.theme-fairy,.theme-olympus) .ev-sudo-shell{box-shadow:0 0 14px color-mix(in srgb,var(--glow) 25%,transparent)!important;}
-#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-christmas,.theme-fairy,.theme-olympus) .ev-head .ev-btn{box-shadow:0 0 8px color-mix(in srgb,var(--glow) 28%,transparent)!important;}
+
+/* Targeted theme repair: preserve each world's own background, no shared default. */
+#game.theme-hub{background:#160B0E!important;color:#FFD6D5!important}
+#game.theme-classic{background:#fff!important;color:#111!important}
+#game.theme-dark{background:#050505!important;color:#fff!important}
+#game.theme-halloween{background:radial-gradient(ellipse at top,#451044,#19071e 60%,#0b0412)!important;color:#ffe9f8!important}
+#game.theme-patissserie{background:#FFF8EC!important;color:#493021!important}
+#game.theme-christmas{background:#EAF7FF!important;color:#245D83!important}
+#game.theme-fairy{background:radial-gradient(ellipse at top,#5b3b89,#2c194a 85%)!important;color:#f6e9ff!important}
+#game.theme-olympus{background:radial-gradient(ellipse at 50% 0%,#fffdf7 0%,#f7f2e8 48%,#e8d8bc 100%)!important;color:#203b60!important}
+html:has(#game.theme-classic:not([hidden])),body:has(#game.theme-classic:not([hidden])){background:#fff!important}
+html:has(#game.theme-dark:not([hidden])),body:has(#game.theme-dark:not([hidden])){background:#050505!important}
+html:has(#game.theme-halloween:not([hidden])),body:has(#game.theme-halloween:not([hidden])){background:#16091f!important}
+html:has(#game.theme-hub:not([hidden])),body:has(#game.theme-hub:not([hidden])){background:#160B0E!important}
+html:has(#game.theme-patissserie:not([hidden])),body:has(#game.theme-patissserie:not([hidden])){background:#FFF8EC!important}
+html:has(#game.theme-christmas:not([hidden])),body:has(#game.theme-christmas:not([hidden])){background:#EAF7FF!important}
+html:has(#game.theme-fairy:not([hidden])),body:has(#game.theme-fairy:not([hidden])){background:#2c194a!important}
+html:has(#game.theme-olympus:not([hidden])),body:has(#game.theme-olympus:not([hidden])){background:#f7f2e8!important}
+/* Existing theme-specific panels stay intact; Olympus alone needs stronger surface isolation. */
+#game.theme-olympus .ev-sudo-landing,#game.theme-olympus .ev-sudo-end,#game.theme-olympus .ev-sudo-compact,#game.theme-olympus .ev-sudo-result{background:#f7f2e8!important;color:#203b60!important;border-color:#d6aa55!important;box-shadow:0 0 14px #d6aa5540!important}
+#game.theme-olympus .ev-sudo-difficulty,#game.theme-olympus .ev-sudo-level,#game.theme-olympus .ev-sudo-result-actions button{background:linear-gradient(120deg,#fffaf0,#e8d8bc)!important;color:#203b60!important;border-color:#d6aa55!important}
+#game.theme-olympus .ev-head{background:#203b60!important;color:#fff7e7!important;border-color:#d6aa55!important}
+#game.theme-olympus .ev-head strong{color:#fff7e7!important;text-shadow:0 0 7px #d6aa5570!important}
+#game.theme-olympus .ev-head .ev-btn{background:#347daa!important;color:#fff!important;border-color:#d6aa55!important}
+/* World tiles: only their outlines and centered labels, no changes to tile backgrounds. */
+#game.theme-hub .world-grid .world-tile{align-items:center;justify-content:center;text-align:center}
+#game.theme-hub .world-grid .world-tile strong{display:block;width:100%;margin:0;text-align:center;line-height:1.2;white-space:normal;overflow-wrap:normal;text-wrap:balance}
+#game.theme-classic{--cell-strong:#a9d1ff;--cell-match:#c4ddff;--room-glow:#3779cb;--room-border:#3779cb;}
+#game.theme-hub .world-grid .world-classic{border:2px solid #3779cb!important;box-shadow:0 0 10px color-mix(in srgb,#3779cb 50%,transparent)!important}
+#game.theme-dark{--cell-strong:#267f94;--cell-match:#174653;--room-glow:#31d6ef;--room-border:#31d6ef;}
+#game.theme-hub .world-grid .world-dark{border:2px solid #31d6ef!important;box-shadow:0 0 10px color-mix(in srgb,#31d6ef 50%,transparent)!important}
+#game.theme-halloween{--cell-strong:#7941a2;--cell-match:#50246f;--room-glow:#b768f5;--room-border:#b768f5;}
+#game.theme-hub .world-grid .world-halloween{border:2px solid #b768f5!important;box-shadow:0 0 10px color-mix(in srgb,#b768f5 50%,transparent)!important}
+#game.theme-patissserie{--cell-strong:#d8a66a;--cell-match:#efd1a3;--room-glow:#a87542;--room-border:#a87542;}
+#game.theme-hub .world-grid .world-patissserie{border:2px solid #a87542!important;box-shadow:0 0 10px color-mix(in srgb,#a87542 50%,transparent)!important}
+#game.theme-christmas{--cell-strong:#7ed1f5;--cell-match:#c6ecff;--room-glow:#42bde9;--room-border:#347daA;}
+#game.theme-hub .world-grid .world-christmas{border:2px solid #42bde9!important;box-shadow:0 0 10px color-mix(in srgb,#42bde9 50%,transparent)!important}
+#game.theme-fairy{--cell-strong:#b886f0;--cell-match:#d9b9f8;--room-glow:#c18dff;--room-border:#9e64dd;}
+#game.theme-hub .world-grid .world-fairy{border:2px solid #c18dff!important;box-shadow:0 0 10px color-mix(in srgb,#c18dff 50%,transparent)!important}
+#game.theme-olympus{--cell-strong:#79badb;--cell-match:#a6d4e8;--room-glow:#d6aa55;--room-border:#347daa;}
+#game.theme-hub .world-grid .world-olympus{border:2px solid #d6aa55!important;box-shadow:0 0 10px color-mix(in srgb,#d6aa55 50%,transparent)!important}
+
+/* Strong visible fills + inset outlines: match highlights never cover symbols. */
+#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-christmas,.theme-fairy,.theme-olympus) .ev-sudoku-grid>.ev-sudoku-cell.selected:not(.bad){background:var(--cell-strong)!important;outline:2px solid var(--room-border)!important;outline-offset:-2px;box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--room-border) 75%,white),inset 0 0 12px color-mix(in srgb,var(--room-glow) 55%,transparent)!important;z-index:2}
+#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-christmas,.theme-fairy,.theme-olympus) .ev-sudoku-grid>.ev-sudoku-cell.same:not(.selected):not(.bad){background:var(--cell-match)!important;box-shadow:inset 0 0 0 2px var(--room-border),inset 0 0 10px color-mix(in srgb,var(--room-glow) 55%,transparent)!important;z-index:1}
+/* Remove the old hard-coded pink drop shadows from artwork on the Sudoku board. */
+#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-christmas,.theme-fairy,.theme-olympus) .ev-sudoku-cell img{filter:drop-shadow(0 0 3px var(--room-glow))!important}
+#game.theme-classic .ev-sudoku-cell img,#game.theme-dark .ev-sudoku-cell img{filter:none!important}
+#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-christmas,.theme-fairy,.theme-olympus) .ev-sudoku-tray button.selected{border:2px solid var(--room-border)!important;box-shadow:0 0 11px var(--room-glow)!important;background:var(--cell-match)!important}
+#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-christmas,.theme-fairy,.theme-olympus) .ev-sudo-tools-clean .ev-sudo-tool.active{border-color:var(--room-border)!important;box-shadow:0 0 11px var(--room-glow)!important}
+/* Wrong placement overrides every theme's selection/match, always high-contrast red. */
+#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-christmas,.theme-fairy,.theme-olympus) .ev-sudoku-grid>.ev-sudoku-cell.bad{background:#d82438!important;color:#fff!important;outline:2px solid #8b0015!important;outline-offset:-2px;box-shadow:inset 0 0 0 2px #ffb5be!important}
