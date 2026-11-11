@@ -518,3 +518,24 @@ html:has(#game.theme-patissserie:not([hidden])){background:#FFF8EC!important}
 #game .ev-sudoku-cell.match-line:not(.selected):not(.same):not(.bad){background:var(--surface)!important}
 #game .ev-sudoku-tray button.completed{opacity:1!important;pointer-events:none!important;box-shadow:none!important;background:transparent!important;border-color:transparent!important;filter:none!important}
 #game .ev-sudoku-tray button.completed img,#game .ev-sudoku-tray button.completed .number-symbol,#game .ev-sudoku-tray button.completed small{visibility:hidden!important}
+
+/* World 5: Christmas — icy blue and white, static snow only on board outer edges */
+#game.theme-hub .world-grid .world-halloween strong{color:#D58AFF!important;text-shadow:0 0 5px #A638F5,0 0 12px #A638F5,0 0 18px #7920D2!important}
+#game.theme-patissserie .ev-sudoku-cell.bad{background:#D92731!important;color:#FFFFFF!important;box-shadow:inset 0 0 0 2px #8F0716!important}
+#game.theme-hub .world-grid .world-christmas{background:linear-gradient(150deg,#F8FDFF,#CDEEFF);color:#245D83;border-color:#79C9ED;box-shadow:0 0 9px #8BD8F466}
+#game.theme-christmas{--surface:#F7FCFF;--panel:#EAF7FF;--ink:#245D83;--accent:#579CC5;--line:#9ACCE6;--peer:#DFF2FC;--same:#BCE8FC;--selected:#A9DEF7;background:#EAF7FF!important;min-height:100dvh;color:#245D83!important}
+html:has(#game.theme-christmas:not([hidden])),body:has(#game.theme-christmas:not([hidden])){background:#EAF7FF!important;color:#245D83!important}
+#game.theme-christmas .ev-head{background:#F7FCFF!important}
+#game.theme-christmas .ev-sudo-shell,#game.theme-christmas .difficulty-panel,#game.theme-christmas .result-panel{background:#EAF7FF!important;color:#245D83!important;border-color:#9ACCE6!important}
+#game.theme-christmas .ev-head strong{color:#245D83!important;text-shadow:0 0 8px #8BD8F477!important}
+#game.theme-christmas .ev-head .ev-btn{background:#F7FCFF!important;color:#245D83!important;border-color:#579CC5!important}
+#game.theme-christmas .theme-button{background:linear-gradient(#FFFFFF,#EAF7FF)!important;color:#245D83!important;border-color:#79C9ED!important}
+#game.theme-christmas .ev-sudo-tool,#game.theme-christmas .ev-sudo-tools .ev-sudo-tool{background:#F7FCFF!important;color:#245D83!important;border:1px solid #9ACCE6!important;box-shadow:0 0 7px #8BD8F455!important;text-shadow:none!important}
+#game.theme-christmas .ev-sudo-tool-icon,#game.theme-christmas .ev-sudo-tool-label{color:#245D83!important;text-shadow:none!important;filter:none!important}
+#game.theme-christmas .ev-sudo-tool.active{background:#BCE8FC!important}
+#game.theme-christmas .ev-sudo-stats>div,#game.theme-christmas .ev-sudoku-tray button{background:#F7FCFF!important;color:#245D83!important}
+#game.theme-christmas .ev-sudoku-cell.bad{background:#D92731!important;color:white!important}
+/* Small stationary snow drifts sit outside the grid cells, never on symbols. */
+#game.theme-christmas .ev-sudoku-grid{position:relative;isolation:isolate;overflow:visible}
+#game.theme-christmas .ev-sudoku-grid::before{content:'';position:absolute;pointer-events:none;z-index:5;left:-3px;right:-3px;top:-7px;height:10px;background:radial-gradient(ellipse 13px 7px at 10% 90%,#FFFFFF 96%,transparent 100%),radial-gradient(ellipse 18px 8px at 33% 90%,#FFFFFF 96%,transparent 100%),radial-gradient(ellipse 15px 7px at 58% 90%,#FFFFFF 96%,transparent 100%),radial-gradient(ellipse 19px 8px at 85% 90%,#FFFFFF 96%,transparent 100%);filter:drop-shadow(0 1px 1px #8BD8F488)}
+#game.theme-christmas .ev-sudoku-grid::after{content:'❄';position:absolute;pointer-events:none;z-index:5;right:-7px;bottom:-12px;color:#8BD8F4;font-size:15px;text-shadow:0 0 3px #FFFFFF}
