@@ -505,3 +505,16 @@ html,body{background:#160B0E}button{touch-action:manipulation}#loading,#home{bac
 #game.theme-patissserie .ev-sudoku-cell.bad{background:#f6c4bb!important;color:#76251d!important}
 #game.theme-hub .world-grid .world-patissserie{background:linear-gradient(145deg,#fff8ed,#f6d8b4);border-color:#b77b4d;color:#6d351f;box-shadow:0 0 8px #c9926955}
 #game.theme-patissserie .theme-button{background:linear-gradient(#fff8ed,#f9e1c6)}
+
+/* Pâtisserie comic-art update: world-wide palette, clean matching and finished symbol slots */
+body:has(#game.theme-patissserie:not([hidden])){background:#FFF8EC!important;color:#493021!important}
+html:has(#game.theme-patissserie:not([hidden])){background:#FFF8EC!important}
+#game.theme-patissserie{background:#FFF8EC!important;min-height:100dvh;color:#493021!important}
+#game.theme-patissserie .ev-sudo-shell,#game.theme-patissserie .difficulty-panel,#game.theme-patissserie .result-panel{background:#F5E8D3!important;color:#493021!important;border-color:#D5AD72!important}
+#game.theme-patissserie .ev-sudo-tool,#game.theme-patissserie .ev-sudo-tools .ev-sudo-tool{background:#FFF8EC!important;color:#493021!important;border:1px solid #A87542!important;box-shadow:0 0 8px #D5AD7266!important;text-shadow:none!important}
+#game.theme-patissserie .ev-sudo-tool-icon,#game.theme-patissserie .ev-sudo-tool-label{color:#493021!important;text-shadow:none!important;filter:none!important}
+#game.theme-patissserie .ev-sudo-tool.active{background:#edc99f!important}
+#game.theme-patissserie .ev-sudo-stats>div,#game.theme-patissserie .ev-sudoku-tray button{background:#FFF8EC!important;color:#493021!important}
+#game .ev-sudoku-cell.match-line:not(.selected):not(.same):not(.bad){background:var(--surface)!important}
+#game .ev-sudoku-tray button.completed{opacity:1!important;pointer-events:none!important;box-shadow:none!important;background:transparent!important;border-color:transparent!important;filter:none!important}
+#game .ev-sudoku-tray button.completed img,#game .ev-sudoku-tray button.completed .number-symbol,#game .ev-sudoku-tray button.completed small{visibility:hidden!important}
