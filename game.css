@@ -685,3 +685,125 @@ body:has(#game.theme-olympus:not([hidden])) {
   background:transparent!important;
   background-image:none!important;
 }
+
+/* World 8 only — 90s Throwback / Memphis Pop Art / Midnight Arcade.
+   Existing seven world rules and the approved Olympus seam repair are untouched. */
+#game.theme-hub .world-grid .world-nineties {
+  color:#f6f4ff!important;
+  background:linear-gradient(145deg,#24294d 0%,#161934 100%)!important;
+  border:2px solid #36e0dc!important;
+  box-shadow:0 0 11px #36e0dc80, inset 0 0 0 1px #ff5ba644!important;
+}
+#game.theme-hub .world-grid .world-nineties strong {
+  color:#f6f4ff!important;
+  text-shadow:0 0 7px #ff5ba699!important;
+}
+html:has(#game.theme-nineties:not([hidden])) {
+  background:#161934!important;
+}
+body:has(#game.theme-nineties:not([hidden])) {
+  background:#161934!important;
+  color:#f6f4ff!important;
+  min-height:100dvh;
+}
+#game.theme-nineties {
+  --surface:#20264a;--panel:#24294d;--ink:#f6f4ff;--accent:#36e0dc;
+  --line:#50a7c3;--peer:#294b6e;--same:#2b7489;--selected:#ff69ac;
+  --cell-strong:#ff68ae;--cell-match:#2e728b;
+  --room-glow:#36e0dc;--room-border:#ffe36d;
+  background:transparent!important;background-image:none!important;
+  color:#f6f4ff!important;min-height:100dvh;
+}
+#game.theme-nineties .ev-head {
+  background:#24294d!important;
+  border:1px solid #36e0dc!important;
+  border-radius:10px;
+  padding:9px 10px!important;
+  color:#f6f4ff!important;
+}
+#game.theme-nineties .ev-head>strong{color:#f6f4ff!important;text-shadow:0 0 8px #36e0dc99!important}
+#game.theme-nineties .ev-head .ev-btn{background:#343b6a!important;color:#f6f4ff!important;border:1px solid #ff5ba6!important}
+#game.theme-nineties .difficulty-panel,
+#game.theme-nineties .result-panel,
+#game.theme-nineties .ev-sudo-shell {
+  background:#24294d!important;color:#f6f4ff!important;
+  border:2px solid #36e0dc!important;
+  box-shadow:0 0 16px #36e0dc55!important;
+  position:relative;
+}
+#game.theme-nineties .difficulty-panel h2,
+#game.theme-nineties .result-panel h2,
+#game.theme-nineties .ev-note{color:#f6f4ff!important}
+#game.theme-nineties .theme-button {
+  background:#343b6a!important;color:#f6f4ff!important;
+  border:2px solid #ff5ba6!important;
+  box-shadow:0 0 9px #ff5ba655!important;
+}
+#game.theme-nineties .theme-button:focus-visible,
+#game.theme-nineties .theme-button:hover{border-color:#36e0dc!important}
+#game.theme-nineties .ev-sudo-stats>div,
+#game.theme-nineties .ev-sudoku-tray button,
+#game.theme-nineties .ev-sudo-tool{
+  background:#303759!important;color:#f6f4ff!important;
+  border:1px solid #36e0dc!important;
+}
+#game.theme-nineties .ev-sudo-stats small{color:#bdeef4!important}
+#game.theme-nineties .ev-sudo-stats strong,
+#game.theme-nineties .ev-sudo-tool-icon,
+#game.theme-nineties .ev-sudo-tool-label{color:#f6f4ff!important}
+#game.theme-nineties .ev-sudoku-grid {
+  border:3px solid #36e0dc!important;
+  background:#171c3a!important;
+  box-shadow:0 0 0 3px #ff5ba655,0 0 16px #36e0dc77!important;
+}
+#game.theme-nineties .ev-sudoku-grid>.ev-sudoku-cell {
+  background:#20274c!important;color:#f6f4ff!important;
+  border-color:#536999!important;
+}
+#game.theme-nineties .ev-sudoku-grid>.ev-sudoku-cell.given{background:#272e58!important}
+#game.theme-nineties .ev-sudoku-grid>.ev-sudoku-cell.same:not(.selected):not(.bad) {
+  background:#2e728b!important;
+  outline:2px solid #36e0dc!important;outline-offset:-2px;
+  box-shadow:inset 0 0 10px #36e0dc99!important;
+}
+#game.theme-nineties .ev-sudoku-grid>.ev-sudoku-cell.selected:not(.bad) {
+  background:#ff68ae!important;
+  outline:3px solid #ffe36d!important;outline-offset:-3px;
+  box-shadow:inset 0 0 0 2px #ffd7ee,inset 0 0 13px #ffbce5!important;
+  z-index:2;
+}
+#game.theme-nineties .ev-sudoku-grid>.ev-sudoku-cell.bad {
+  background:#d82438!important;outline:2px solid #ffe8ec!important;outline-offset:-2px;
+  box-shadow:inset 0 0 0 2px #8b0015!important;
+}
+#game.theme-nineties .ev-sudoku-cell img,
+#game.theme-nineties .ev-sudoku-tray button img{
+  filter:drop-shadow(0 0 3px #36e0dc)!important;
+}
+#game.theme-nineties .ev-sudoku-tray button.selected {
+  background:#37496d!important;border:2px solid #ffe36d!important;
+  box-shadow:0 0 11px #36e0dc!important;
+}
+#game.theme-nineties .ev-sudo-tools-clean .ev-sudo-tool.active {
+  border-color:#ffe36d!important;box-shadow:0 0 11px #36e0dc!important;
+}
+#game.theme-nineties .result-mark{color:#ff5ba6!important}
+#game.theme-nineties .result-score strong{color:#ffe36d!important;text-shadow:0 0 7px #ff5ba655!important}
+#game.theme-nineties .result-score small,
+#game.theme-nineties .result-stats{color:#f6f4ff!important}
+#game.theme-nineties .result-stats>div{border-color:#36e0dc!important}
+#game.theme-nineties .ev-sudoku-tray button.completed img,
+#game.theme-nineties .ev-sudoku-tray button.completed small{visibility:hidden!important}
+/* Decorative Memphis geometry outside—not over—the puzzle cells. */
+#game.theme-nineties .difficulty-panel::before,
+#game.theme-nineties .result-panel::before {
+  content:'';position:absolute;top:-10px;right:10px;width:0;height:0;
+  border-left:10px solid transparent;border-right:10px solid transparent;
+  border-bottom:16px solid #ff5ba6;transform:rotate(20deg);pointer-events:none;
+}
+#game.theme-nineties .difficulty-panel::after,
+#game.theme-nineties .result-panel::after {
+  content:'';position:absolute;bottom:-7px;left:13px;width:34px;height:7px;
+  background:repeating-linear-gradient(90deg,#ffe36d 0 7px,transparent 7px 11px);
+  transform:rotate(-10deg);pointer-events:none;
+}
