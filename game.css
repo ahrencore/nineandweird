@@ -539,3 +539,27 @@ html:has(#game.theme-christmas:not([hidden])),body:has(#game.theme-christmas:not
 #game.theme-christmas .ev-sudoku-grid{position:relative;isolation:isolate;overflow:visible}
 #game.theme-christmas .ev-sudoku-grid::before{content:'';position:absolute;pointer-events:none;z-index:5;left:-3px;right:-3px;top:-7px;height:10px;background:radial-gradient(ellipse 13px 7px at 10% 90%,#FFFFFF 96%,transparent 100%),radial-gradient(ellipse 18px 8px at 33% 90%,#FFFFFF 96%,transparent 100%),radial-gradient(ellipse 15px 7px at 58% 90%,#FFFFFF 96%,transparent 100%),radial-gradient(ellipse 19px 8px at 85% 90%,#FFFFFF 96%,transparent 100%);filter:drop-shadow(0 1px 1px #8BD8F488)}
 #game.theme-christmas .ev-sudoku-grid::after{content:'❄';position:absolute;pointer-events:none;z-index:5;right:-7px;bottom:-12px;color:#8BD8F4;font-size:15px;text-shadow:0 0 3px #FFFFFF}
+
+/* World 6 — Fairy World: moonlit enchanted garden, no snow */
+#game.theme-hub .world-grid .world-fairy{background:linear-gradient(145deg,#2c1a4f,#654091);color:#ffe7ff;border-color:#c58bff;box-shadow:0 0 12px #a35be066}
+#game.theme-hub .world-grid .world-fairy strong{color:#f8d5ff;text-shadow:0 0 9px #df7dff}
+#game.theme-fairy{--surface:#f3e9ff;--panel:#e9d9fa;--ink:#3c255f;--accent:#9959d9;--line:#c5a0e9;--peer:#e8d8fa;--same:#dfc4ff;--selected:#cfadf7;background:radial-gradient(ellipse at top,#5b3b89,#2c194a 85%)!important;min-height:100dvh;color:#f6e9ff!important}
+html:has(#game.theme-fairy:not([hidden])),body:has(#game.theme-fairy:not([hidden])){background:#2c194a!important}
+#game.theme-fairy .ev-head{background:#3a245e!important;border-color:#a87bd9!important}
+#game.theme-fairy .ev-head strong{color:#f6ddff!important;text-shadow:0 0 10px #d67dff!important}
+#game.theme-fairy .ev-head .ev-btn{background:#573578!important;color:#fff0ff!important;border-color:#c58bff!important}
+#game.theme-fairy .ev-sudo-shell,#game.theme-fairy .difficulty-panel,#game.theme-fairy .result-panel{background:#4b3170!important;color:#fff0ff!important;border:1px solid #b48de4!important;box-shadow:0 0 20px #bd7aff55!important}
+#game.theme-fairy .difficulty-panel h2,#game.theme-fairy .result-panel h2,#game.theme-fairy .ev-note{color:#f9e7ff!important}
+#game.theme-fairy .theme-button{background:linear-gradient(#f8e7ff,#d7b7fa)!important;color:#43245f!important;border-color:#b58bdf!important}
+#game.theme-fairy .ev-sudo-stats>div,#game.theme-fairy .ev-sudoku-tray button{background:#f1e4ff!important;color:#3c255f!important;border-color:#b58bdf!important}
+#game.theme-fairy .ev-sudo-tool{background:#f1e4ff!important;color:#3c255f!important;border-color:#b58bdf!important}
+#game.theme-fairy .ev-sudo-tool-icon,#game.theme-fairy .ev-sudo-tool-label{color:#3c255f!important}
+#game.theme-fairy .ev-sudoku-grid{border-color:#bb88ed!important;box-shadow:0 0 14px #d6a5ff99!important}
+#game.theme-fairy .ev-sudoku-cell.bad{background:#c92845!important;color:white!important}
+/* Fairy vines and flowers stay outside the board; never overlap Sudoku cells. */
+#game.theme-fairy .ev-sudoku-grid{position:relative;isolation:isolate;overflow:visible}
+#game.theme-fairy .ev-sudoku-grid::before{content:'✿  ✧  ❀';position:absolute;pointer-events:none;z-index:4;left:3px;top:-17px;color:#e4b1f8;font-size:13px;letter-spacing:12px;text-shadow:0 0 7px #e6b5ff}
+#game.theme-fairy .ev-sudoku-grid::after{content:'✧ ❀';position:absolute;pointer-events:none;z-index:4;right:0;bottom:-18px;color:#dcb5ff;font-size:12px;letter-spacing:8px}
+/* Christmas: replace artificial repeating scallops with a restrained natural snow ledge */
+#game.theme-christmas .ev-sudoku-grid::before{content:'';left:-3px;right:-3px;top:-6px;height:7px;background:linear-gradient(to bottom,#fff 0%,#f8fdff 52%,#d5eaf6 100%);border-radius:60% 45% 35% 55% / 85% 85% 25% 30%;filter:drop-shadow(0 2px 1px #9acbe466)}
+#game.theme-christmas .ev-sudoku-grid::after{content:none}
