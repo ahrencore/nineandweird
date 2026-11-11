@@ -1,0 +1,464 @@
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#080611;color:#ffe9f8;font-family:system-ui,sans-serif}button{cursor:pointer;color:inherit}button:focus-visible{outline:2px solid #ffb2ea;outline-offset:2px}[hidden]{display:none!important}#loading,#home{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,#301342,#0a0714 68%);text-align:center;padding:20px}#loading h1{font-size:clamp(32px,9vw,58px);letter-spacing:.22em;color:#f7d8ff;text-shadow:0 0 10px #ed70ff,0 0 28px #ad38ef;animation:pulse 1.2s ease-in-out infinite alternate}@keyframes pulse{to{text-shadow:0 0 20px #ffb6ff,0 0 50px #b24cff}}#home h1{font-size:clamp(42px,11vw,70px);line-height:1.12;color:#f6d8ff;text-shadow:0 0 12px #d653f2,0 0 30px #8d37dd;margin:0 0 45px}.neon-button{min-width:190px;min-height:55px;border:2px solid #e889fa;border-radius:14px;background:linear-gradient(135deg,#8e32ab,#3a1459);box-shadow:0 0 18px #bb43df88;color:#fff;font-size:19px;font-weight:900;letter-spacing:2px}#game{width:100%;max-width:560px;margin:auto;min-height:100dvh;padding:14px 12px 30px;background:radial-gradient(ellipse at top,#451044,#19071e 60%,#0b0412)}.ev-head{position:relative!important;top:auto!important}.room-card{text-align:center;border:2px solid #ce63af;border-radius:20px;margin:25px auto;padding:30px 16px;background:radial-gradient(circle at top,#642055,#160919);box-shadow:0 0 20px #f54fbb55}.room-icon{font-size:44px}.room-card h2{font-size:30px;color:#ffe0a6;text-shadow:0 0 14px #fc42bc}.room-card p{color:#e9bfdc;margin-bottom:26px}.ev-sudo-tools-clean{grid-template-columns:repeat(4,minmax(0,1fr))!important}.ev-sudo-tool{min-width:0}.ev-sudo-tool-icon,.ev-sudo-tool-label{display:block}.ev-sudo-note-marks{font-size:8px;color:#ffe5f6;overflow-wrap:anywhere}.ev-sudoku-cell{aspect-ratio:1}.ev-root{position:static!important;min-height:0!important;padding:0!important;background:transparent!important}#game .ev-sudo-shell{width:100%}@media(max-width:390px){#game{padding:10px 6px 25px}.ev-sudo-shell{padding:8px 4px}.ev-sudo-stats{gap:3px}.ev-sudo-stats>div{padding:6px 1px}.ev-sudo-tools button{font-size:10px}}
+.ev-root{position:absolute;inset:0;z-index:55;background:radial-gradient(ellipse at top,#451044,#19071e 60%,#0b0412);color:#ffe9f8;overflow-y:auto;overscroll-behavior:contain;font:13px/1.4 system-ui,-apple-system,sans-serif;padding:14px 12px 36px;scrollbar-width:thin}
+.ev-root[hidden]{display:none!important}
+.ev-head{display:flex;align-items:center;gap:8px;position:sticky;top:-14px;background:#1b0925f5;padding:12px 0;z-index:5;justify-content:space-between}
+.ev-head strong{font:700 20px Georgia,serif;color:#ffb5ed;text-shadow:0 0 11px #f35}
+.ev-btn{background:linear-gradient(130deg,#a83185,#52133f);color:#fff4fb;border:1.5px solid #fa8cd1;padding:10px 12px;border-radius:14px;box-shadow:0 0 13px #ed4bac77;font-weight:700;font-size:13px}
+.ev-btn:disabled{opacity:.4;filter:grayscale(.6)}
+.ev-btn-alt{background:#2c1433;border:1px solid #bf76a5}
+.ev-note{font-size:11px;color:#d8bad0}
+.ev-btn-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ev-btn-row>*{flex:1}
+.ev-sudoku-grid{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));border:2px solid #f28cd5;width:100%;aspect-ratio:1;background:#160b23}
+.ev-sudoku-cell{position:relative;padding:0;min-width:0;border:0;border-right:1px solid #734073;border-bottom:1px solid #734073;background:#210f2c;display:grid;place-items:center}
+.ev-sudoku-cell:nth-child(3n){border-right:2px solid #ec7cc6}
+.ev-sudoku-cell:nth-child(n+19):nth-child(-n+27),.ev-sudoku-cell:nth-child(n+46):nth-child(-n+54){border-bottom:2px solid #ec7cc6}
+.ev-sudoku-cell.given{background:#321d3d}
+.ev-sudoku-cell.selected{background:#8f438f}
+.ev-sudoku-cell.peer{background:#45234c}
+.ev-sudoku-cell.same{background:#644071}
+.ev-sudoku-cell.bad{background:#9f2450}
+.ev-sudoku-cell img{width:88%;height:88%;object-fit:contain}
+.ev-sudoku-tray{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:2px;margin:12px 0}
+.ev-sudoku-tray button{padding:2px 0;aspect-ratio:1;background:#342043;border:1px solid #a35599;border-radius:5px;min-width:0}
+.ev-sudoku-tray img{width:95%;height:95%;object-fit:contain}
+.ev-sudoku-tray button.selected{box-shadow:0 0 9px #ff74da;border:2px solid #ffe5af}
+.ev-root .ev-head button{min-width:42px}
+/* CREEPY SUDOKU — gothic neon arcade */
+.ev-sudo-landing,.ev-sudo-end{position:relative;margin:16px auto 8px;padding:24px 18px;background:radial-gradient(circle at top,#642055 0%,#250d2c 56%,#160919);border:2px solid #ce63af;border-radius:21px;text-align:center;box-shadow:inset 0 0 22px #f54fbb33,0 0 19px #f54fbb55;max-width:530px}
+.ev-sudo-landing h2,.ev-sudo-end h2{font:800 clamp(23px,6vw,34px) Georgia,serif;color:#ffe0a6;text-shadow:0 0 16px #fc42bc,0 2px 1px #4a1941;margin:10px 0}
+.ev-sudo-landing p,.ev-sudo-end p{color:#ebc6df}
+.ev-sudo-moon{font-size:35px;color:#ffcae5;text-shadow:0 0 14px #ff28a5}
+.ev-sudo-difficulties{display:grid;gap:14px;margin-top:25px}
+.ev-sudo-difficulty{position:relative;display:flex;align-items:center;justify-content:space-between;min-height:74px;padding:13px 22px;border-radius:16px;border:2px solid #fba8d6;background:linear-gradient(120deg,#8d205c,#371334);color:#fff0ec;box-shadow:0 0 16px #ef2b9388,inset 0 0 15px #fa73c133;text-align:left}
+.ev-sudo-difficulty:nth-child(2){background:linear-gradient(120deg,#6e298f,#280f41);border-color:#ca8afa}
+.ev-sudo-difficulty:nth-child(3){background:linear-gradient(120deg,#b13444,#381026);border-color:#fd8999}
+.ev-sudo-difficulty span{font:700 clamp(20px,5vw,26px) Georgia,serif;text-shadow:0 0 11px #ff75d2}
+.ev-sudo-difficulty small{font-size:10px;color:#ffde9d;font-weight:800;letter-spacing:.4px}
+.ev-sudo-difficulty b{font:700 33px Georgia}
+.ev-sudo-shell{max-width:540px;margin:10px auto 0;padding:10px 7px 16px;border:1px solid #aa5499;border-radius:17px;background:linear-gradient(#260c2e,#15091c);box-shadow:0 0 15px #d826a344}
+.ev-sudo-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin:0 0 10px}
+.ev-sudo-stats>div{padding:8px 2px;text-align:center;background:#351439;border:1px solid #ab4b95;border-radius:9px}
+.ev-sudo-stats small{display:block;font-size:8px;color:#d5acd1;font-weight:700;letter-spacing:.6px}
+.ev-sudo-stats strong{font:700 clamp(11px,3vw,15px) Georgia,serif;color:#ffddad}
+.ev-sudo-danger{color:#ff6c8c!important;text-shadow:0 0 8px red}
+.ev-sudoku-grid{border:2px solid #fe84d7!important;border-radius:8px;overflow:hidden;box-shadow:0 0 18px #f338b177;margin:0 auto}
+.ev-sudoku-cell{background:#170d20!important;transition:background .1s,box-shadow .1s}
+.ev-sudoku-cell.given{background:#24172d!important}
+.ev-sudoku-cell.peer{background:#502042!important}
+.ev-sudoku-cell.same{background:#a33078!important;box-shadow:inset 0 0 12px #ff58c6,0 0 9px #f56ab6;z-index:1}
+.ev-sudoku-cell.selected{background:#df419b!important;box-shadow:inset 0 0 15px #ffd1ec,0 0 12px #f856cc;z-index:2}
+.ev-sudoku-cell.bad{background:#9c172e!important;box-shadow:inset 0 0 10px #fc233f}
+.ev-sudoku-cell img{width:88%;height:88%;object-fit:contain;filter:drop-shadow(0 0 3px #ff8ee9)}
+.ev-sudoku-tray{gap:3px;margin:13px 0 10px}
+.ev-sudoku-tray button{position:relative;border-radius:9px;background:#321338;border:1px solid #9c4388;overflow:visible}
+.ev-sudoku-tray button img{width:92%;height:92%;object-fit:contain;filter:drop-shadow(0 0 4px #ee76f9)}
+.ev-sudoku-tray button.selected{background:#8a246c;border:2px solid #ffb6e8;box-shadow:0 0 11px #f847ae}
+.ev-sudoku-tray button.completed{opacity:.12;pointer-events:none;filter:grayscale(1)}
+.ev-sudo-remain{position:absolute;right:0;bottom:-5px;font-size:9px;line-height:1;background:#5d2456;color:#fff2db;border-radius:10px;padding:1px 3px}
+.ev-sudo-tools{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.ev-sudo-tools button{min-height:44px;border:1px solid #f18bc6;border-radius:12px;color:#ffe8f1;font:800 12px Georgia,serif;background:linear-gradient(125deg,#762c73,#321537);box-shadow:0 0 9px #e83a9a55}
+.ev-sudo-end-icon{font-size:70px;color:#ff72d4;text-shadow:0 0 24px #f15}
+.ev-sudo-end-stats{display:flex;justify-content:space-around;padding:12px;background:#2b1235;border-radius:12px;margin:14px 0 20px;color:#e5bcd4}
+.ev-sudo-end-stats b{display:block;color:#ffe0ac;font-size:19px}
+.ev-sudo-end>button{display:block;width:100%;margin-top:10px;font:800 17px Georgia,serif;min-height:50px}
+.ev-sudo-shell .ev-note{text-align:center;padding-top:5px}
+.ev-sudoku-tray button.completed img,.ev-sudoku-tray button.completed small{visibility:hidden}
+/* Layered neon carnival Sudoku: separate PNGs on actual interactive buttons. */
+.ev-root .ev-neon-imgbtn{appearance:none;display:block;position:relative;border:0!important;background:transparent!important;padding:0!important;box-shadow:none!important;cursor:pointer;line-height:0;min-width:0;touch-action:manipulation;overflow:visible;transition:transform .13s,filter .13s}
+.ev-root .ev-neon-imgbtn img{display:block;width:100%;height:auto;object-fit:contain;pointer-events:none}
+.ev-root .ev-neon-imgbtn:active{transform:scale(.95);filter:brightness(1.25)}
+.ev-root .ev-neon-imgbtn:focus-visible{outline:2px solid #ffb2ea;outline-offset:2px;border-radius:10px}
+.ev-neon-landing .ev-sudo-difficulties{display:grid;gap:7px;margin-top:16px}
+.ev-neon-landing .ev-sudo-difficulty{display:block;min-height:0;border:0;border-radius:0;width:100%;padding:0;box-shadow:none;text-align:center}
+.ev-neon-landing .ev-sudo-difficulty img{width:100%;height:auto}
+.ev-sudo-diff-points{display:block;color:#ffdc91;font:800 11px Georgia,serif;letter-spacing:.8px;line-height:1.1;text-shadow:0 0 9px #ffab5c;margin:-6px 0 3px;position:relative}
+.ev-sudoku-cell img{width:94%!important;height:94%!important;object-fit:contain;filter:drop-shadow(0 0 3px #e653c5)!important}
+.ev-sudoku-tray button img{width:95%;height:95%;object-fit:contain;filter:drop-shadow(0 0 4px #ee76f9)}
+.ev-sudo-tools{grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;align-items:center}
+.ev-sudo-tools .ev-neon-imgbtn{min-height:0;border:0;border-radius:0;box-shadow:none}
+.ev-sudo-tools .ev-neon-imgbtn.active{filter:drop-shadow(0 0 9px #ff8ddc) brightness(1.23)}
+.ev-sudo-end .ev-neon-imgbtn{width:min(100%,340px);min-height:0;margin:8px auto;border:0;box-shadow:none;font-size:0}
+.ev-sudo-note-marks{font-size:clamp(7px,1.8vw,11px);color:#ffb4e5;line-height:1.1;overflow-wrap:anywhere}
+.ev-sudo-shell{padding:7px 4px 12px}
+.ev-sudo-stats{gap:3px}
+.ev-sudo-stats>div{padding:6px 1px}
+.ev-sudoku-tray{gap:2px}
+.ev-sudo-tools{gap:0}
+.ev-root .ev-arcade-control{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:57px;padding:6px 2px;background:radial-gradient(ellipse at 50% 0%,#92386c,#421047 65%,#180720);color:#ffe4f7;border:2px ridge #ffd190;border-radius:14px;box-shadow:0 3px 0 #4a143f,0 0 13px #fa4aaf88,inset 0 2px 8px #ffacd45e;text-shadow:0 0 8px #ff70cd;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;outline:none;cursor:pointer;appearance:none}
+.ev-root .ev-arcade-control:active{transform:translateY(2px);box-shadow:0 1px 0 #4a143f,0 0 18px #fa4aaf}
+.ev-root .ev-arcade-control:focus-visible{outline:2px solid #fff0ac;outline-offset:3px}
+.ev-root .ev-drop-control{position:absolute;top:56%;right:0;width:100%;min-height:68px;border-color:#ffe2a3;background:radial-gradient(ellipse at top,#b73a80,#6d1550 60%,#2c0938);box-shadow:0 3px 0 #53123d,0 0 17px #ffa65c99}
+.ev-root .ev-drop-control span{font-size:31px}
+.ev-root button[data-tact],.ev-root button[data-tact] *{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.ev-sudo-tools #evSudoHint.used{opacity:.34;filter:grayscale(1);pointer-events:none}
+.ev-root .ev-arcade-control{min-height:51px}
+.ev-root .ev-drop-control{min-height:65px}
+/* Approved Option A Event promos: full artwork on responsive, functional cards. */
+.ev-root .ev-card .ev-promo.ev-promo-art{height:auto;aspect-ratio:2/1;display:block;overflow:hidden;background:#170d25;filter:none;line-height:0}
+.ev-root .ev-card .ev-promo-art img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;pointer-events:none;user-select:none;-webkit-user-select:none;-webkit-user-drag:none}
+.ev-root .ev-card:focus-visible{outline:2px solid #ff8bdd;outline-offset:3px}
+.ev-root .ev-card:active{transform:scale(.985)}
+/* Approved Option B art; no original artwork replaced */
+.ev-root #evWeeklyCard{background-image:linear-gradient(180deg,transparent 57%,#17091bd9 96%),url("promo-weekly-option-b.png");background-size:cover;background-position:center;min-height:170px}
+.ev-root #evWeeklyCard .ev-kicker{position:relative;align-self:flex-start;padding:3px 6px;background:#13051cd9;border-radius:7px}
+.ev-root #evWeeklyCard h2{font-size:0;margin:0;line-height:1}
+.ev-root #evWeeklyCard h2 .ev-countdown{font-size:12px;display:inline-block;background:#17081eea;padding:7px 13px;border:1px solid #ff75df;border-radius:12px;box-shadow:0 0 8px #ed4bac;white-space:nowrap}
+.ev-root .ev-clash-art-sudoku{background-image:url("promo-sudoku-option-b.png")!important}
+.ev-root .ev-clash-art-tetris{background-image:url("promo-tetris-option-b.png")!important}
+/* Consistent 2:1 art ratio with Event tab promo cards; use approved Option B imagery. */
+.ev-root .ev-clash-card .ev-clash-art{height:auto!important;aspect-ratio:2/1;background-position:center!important;background-size:contain!important;background-repeat:no-repeat;background-color:#170d25;box-shadow:none}
+.ev-root .ev-clash-card .ev-clash-art::after{display:none}
+.ev-root .ev-clash-card{min-width:0}
+/* Compact mini-game promos: same two-column, 2:1 art-only proportions as Event cards. */
+.ev-root .ev-clash-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start;}
+.ev-root .ev-clash-cards .ev-clash-compact{padding:0;min-width:0;display:block;border:1.5px solid #9e4c8f;border-radius:16px;overflow:hidden;background:#170d25;line-height:0;box-shadow:0 0 12px #d3238755;cursor:pointer;}
+.ev-root .ev-clash-cards .ev-clash-compact .ev-clash-art{display:block;width:100%;height:auto!important;aspect-ratio:2/1;background-size:contain!important;background-position:center!important;background-repeat:no-repeat;box-shadow:none;}
+.ev-root .ev-clash-cards .ev-clash-compact .ev-clash-art::after{display:none;}
+.ev-root .ev-clash-cards .ev-clash-compact:focus-visible{outline:2px solid #ff8bdd;outline-offset:3px;}
+.ev-root .ev-clash-cards .ev-clash-compact:active{transform:scale(.985);}
+/* 2026-10-28: Edge-to-edge event promo fitting; no inset bands. */
+.ev-root .ev-card .ev-promo-art img{object-fit:cover!important;}
+.ev-root .ev-clash-cards .ev-clash-compact .ev-clash-art{background-size:cover!important;background-color:transparent!important;}
+.ev-root .ev-clash-card .ev-clash-art{background-size:cover!important;}
+/* Three user-approved matching marquee promos: fill the same 2:1 artwork box as Daily Quests. */
+.ev-root .ev-promo.ev-promo-art,
+.ev-root .ev-clash-cards .ev-clash-compact .ev-clash-art{aspect-ratio:2/1!important; overflow:hidden!important;}
+.ev-root .ev-card .ev-promo-art img{display:block;width:100%;height:100%;object-fit:fill!important;}
+.ev-root .ev-clash-cards .ev-clash-compact .ev-clash-art{background-size:100% 100%!important;background-position:center!important;}
+.ev-root .ev-clash-art-sudoku{background-image:url('promo-sudoku-option-b.png')!important;}
+.ev-root .ev-clash-art-tetris{background-image:url('promo-tetris-option-b.png')!important;}
+/* Weekly Nightmare: approved carnival marquee; visible indicators remain live UI */
+.ev-root #evWeeklyCard{background-image:linear-gradient(180deg,transparent 57%,#17091bd9 96%),url("promo-weekly-nightmare.webp")!important;background-position:center;background-size:cover;min-height:170px}
+/* Events listing: attach dot to the dark caption/title, not the colorful image. */
+.ev-root .ev-card.ev-has-reward::after{content:none!important;display:none!important}
+.ev-root .ev-card.ev-has-reward>b{
+  position:relative;display:table;max-width:calc(100% - 31px);
+}
+.ev-root .ev-card.ev-has-reward>b::after{
+  content:"";position:absolute;top:1px;right:-17px;
+  width:10px;height:10px;border-radius:50%;background:#ff1738;
+  box-shadow:0 0 7px 2px #ff244f,0 0 10px #fc315b88;
+  pointer-events:none;
+}
+.ev-root .ev-clash-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:stretch}
+.ev-root .ev-clash-cards .ev-clash-compact{padding:0;display:block;border:1.8px solid #ff76d8;border-radius:18px;overflow:hidden;background:radial-gradient(circle at top,#4d1848,#1a0b22 72%);box-shadow:0 0 14px #ff4cc08a,0 0 26px #7c54ff36,inset 0 0 18px #ffffff08;cursor:pointer}
+.ev-root .ev-clash-cards .ev-clash-compact .ev-clash-art{display:block;width:100%;height:auto!important;aspect-ratio:2/1;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat;border:0;box-shadow:none;background-color:#14081b!important}
+.ev-root .ev-clash-cards .ev-clash-compact .ev-clash-art::after{display:none}
+.ev-clash-actions .ev-btn{flex:1;min-height:42px}
+/* Sudoku visual polish — scoped to Sudoku only. No gameplay or score changes. */
+.ev-root .ev-sudo-compact{max-width:490px;margin:12px auto 0;padding:18px 16px 20px;border:1.5px solid #ea83d8;border-radius:18px;background:linear-gradient(150deg,#37153f,#190b25 75%);box-shadow:0 0 17px #ef5dc366,inset 0 0 15px #f67add18;text-align:center}
+.ev-root .ev-sudo-compact-eyebrow{font:700 10px Georgia,serif;letter-spacing:1.4px;color:#ffe0a5}
+.ev-root .ev-sudo-compact h2{font:700 clamp(18px,4.8vw,24px) Georgia,serif;line-height:1.15;margin:10px 0 6px;color:#ffe1b1;text-shadow:0 0 10px #f76aca}
+.ev-root .ev-sudo-compact p{font:12px/1.4 system-ui,sans-serif;color:#eac6e3;margin:0}
+.ev-root .ev-sudo-compact .ev-sudo-difficulties{display:grid;gap:9px;margin:15px 0 0}
+.ev-root .ev-sudo-compact .ev-sudo-level{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:53px;width:100%;margin:0;padding:11px 15px;border:1.5px solid #ee85d4;border-radius:12px;background:linear-gradient(115deg,#6c246b,#34153c);box-shadow:inset 0 0 10px #f274c222,0 0 9px #ed55b655;text-align:left;line-height:1.2;cursor:pointer}
+.ev-root .ev-sudo-compact .ev-sudo-level:nth-child(2){border-color:#ca8df1;background:linear-gradient(115deg,#61277a,#2c183f)}
+.ev-root .ev-sudo-compact .ev-sudo-level:nth-child(3){border-color:#ef869f;background:linear-gradient(115deg,#853650,#341629)}
+.ev-root .ev-sudo-compact .ev-sudo-level-name{color:#fff0fb;font:700 16px Georgia,serif;letter-spacing:.7px;text-shadow:0 0 8px #f85bb9}
+.ev-root .ev-sudo-compact .ev-sudo-level-points{flex-shrink:0;color:#ffe0ab;font:700 11px Georgia,serif;letter-spacing:.3px}
+.ev-root .ev-sudo-compact .ev-sudo-level:active{transform:scale(.985)}
+.ev-root .ev-sudo-tools-clean{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:9px 0 2px;align-items:stretch}
+.ev-root .ev-sudo-tools-clean .ev-sudo-tool{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;min-width:0;min-height:49px;padding:5px 1px!important;border:1.5px solid #e987d6!important;border-radius:12px!important;background:linear-gradient(155deg,#712c74,#321437)!important;box-shadow:inset 0 0 10px #ff7ccb25,0 0 9px #ee53ae77!important;color:#ffe3f5!important;line-height:1.1!important;cursor:pointer;touch-action:manipulation}
+.ev-root .ev-sudo-tools-clean .ev-sudo-tool-icon{font:700 20px Georgia,serif;color:#ffe1aa;text-shadow:0 0 8px #ffb4e8}
+.ev-root .ev-sudo-tools-clean .ev-sudo-tool-label{font:700 9px Georgia,serif;letter-spacing:.5px;color:#fff0fb}
+.ev-root .ev-sudo-tools-clean .ev-sudo-tool.active{border-color:#ffe6a7!important;background:linear-gradient(155deg,#ab3a91,#5d215d)!important;box-shadow:0 0 14px #f46ed4!important}
+.ev-root .ev-sudo-tools-clean .ev-sudo-tool:disabled{opacity:.42;filter:grayscale(.5)}
+.ev-root .ev-sudo-compact{padding:14px 12px 16px;margin-top:7px}
+.ev-root .ev-sudo-compact h2{font-size:19px}
+.ev-root .ev-sudo-compact .ev-sudo-level{min-height:48px;padding:8px 12px}
+.ev-root .ev-sudo-tools-clean{gap:4px}
+.ev-root .ev-sudo-tools-clean .ev-sudo-tool{min-height:43px}
+.ev-root .ev-sudo-tools-clean .ev-sudo-tool-icon{font-size:18px}
+/* Sudoku completion / retry — compact neon carnival result, no baked-in button images */
+.ev-root .ev-sudo-result{box-sizing:border-box;width:min(100%,480px);margin:10px auto 14px;padding:20px 15px 18px;overflow:hidden;border:2px solid #ed87d9;border-radius:22px;background:radial-gradient(ellipse at 50% 0%,#5b225d 0%,#270f36 45%,#16091f 100%);box-shadow:0 0 19px #ef60d477,inset 0 0 24px #ff80df20;text-align:center}
+.ev-root .ev-sudo-result-kicker{font:700 10px Georgia,serif;letter-spacing:1.5px;color:#ffcbec}
+.ev-root .ev-sudo-result-symbol{font-size:36px;line-height:1.2;color:#ffe4a8;text-shadow:0 0 15px #ff65d5,0 0 26px #ff32bd;margin:7px 0 3px}
+.ev-root .ev-sudo-result h2{font:800 clamp(20px,5vw,26px) Georgia,serif;letter-spacing:.5px;color:#ffe6b0;text-shadow:0 0 11px #f759d0;margin:5px 0 12px}
+.ev-root .ev-sudo-result-detail{display:grid;gap:5px;justify-items:center;color:#f6d6ef;font-size:12px}
+.ev-root .ev-sudo-result-detail strong{font:800 16px Georgia,serif;color:#ffe0a2;text-shadow:0 0 10px #ef53c2}
+.ev-root .ev-sudo-result-detail small{font-size:11px;color:#f3b5e7}
+.ev-root .ev-sudo-result .ev-sudo-end-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:16px 0 15px;padding:0;background:none}
+.ev-root .ev-sudo-result .ev-sudo-end-stats span{display:block;padding:9px 3px;background:#32133e;border:1px solid #965399;border-radius:10px;color:#e9b5df;font-size:9px;font-weight:700;letter-spacing:.35px}
+.ev-root .ev-sudo-result .ev-sudo-end-stats b{display:block;margin-top:4px;color:#ffe0ae;font:800 15px Georgia,serif}
+.ev-root .ev-sudo-result-actions{display:grid;gap:9px}
+.ev-root .ev-sudo-result-actions button{appearance:none;display:block;width:100%;min-height:46px;margin:0;padding:9px 12px;border-radius:999px;font:800 14px Georgia,serif;letter-spacing:.5px;color:#fff0f8;cursor:pointer;touch-action:manipulation}
+.ev-root .ev-sudo-result-actions .ev-sudo-result-primary{border:2px solid #ffb9ea;background:linear-gradient(180deg,#ae4a9a 0%,#722568 48%,#411546 100%);box-shadow:0 0 14px #f451c999,inset 0 1px 8px #ffc3ef66;text-shadow:0 0 7px #ffe0f6}
+.ev-root .ev-sudo-result-actions .ev-sudo-result-secondary{border:1px solid #b66cbd;background:linear-gradient(180deg,#4a235e,#240f34);box-shadow:0 0 9px #b353a555}
+.ev-root .ev-sudo-result-actions button:active{transform:scale(.98)}
+.ev-root .ev-sudo-result{padding:15px 12px}
+.ev-root .ev-sudo-result h2{font-size:21px}
+.ev-root .ev-sudo-result-symbol{font-size:29px}
+.ev-root .ev-sudo-result-actions button{min-height:43px}
+/* Fix Weekly Nightmare: generic row span flex/ellipsis must never deform avatar. */
+.ev-root .ev-nightmare-rank-row .gbpf-rank-avatar{position:relative!important;display:block!important;flex:0 0 42px!important;width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;max-width:42px!important;max-height:42px!important;overflow:visible!important;white-space:normal!important;line-height:normal!important}
+.ev-root .ev-nightmare-rank-row .gbpf-rank-avatar>img:not(.gbpf-rank-overlay){position:absolute!important;left:14%!important;top:14%!important;width:72%!important;height:72%!important;object-fit:cover!important;aspect-ratio:1!important;border-radius:50%!important;border:0!important}
+.ev-root .ev-nightmare-rank-row .gbpf-rank-avatar>.gbpf-rank-overlay{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:contain!important;aspect-ratio:1!important;border:0!important;border-radius:0!important}
+.ev-root .ev-nightmare-rank-row>span:not(.gbpf-rank-avatar){flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Consistent avatar geometry in all three event leaderboards. */
+.ev-root .ev-ghost-row .gbpf-rank-avatar,.ev-root .ev-clash-row .gbpf-rank-avatar{display:block;position:relative;flex:0 0 42px!important;width:42px!important;height:42px!important;min-width:42px!important;overflow:visible!important}
+.ev-root .gbpf-rank-avatar img{display:block;max-width:none}
+.ev-root .ev-ghost-row .gbpf-rank-avatar,.ev-root .ev-clash-row .gbpf-rank-avatar{flex-basis:38px!important;width:38px!important;height:38px!important;min-width:38px!important}
+/* Leaderboard-only frame glow suppression: preserve card/panel neon. */
+.gbpf-rank-avatar > img.gbpf-rank-overlay,
+.ev-root .gbpf-rank-avatar > img.gbpf-rank-overlay,
+.ev-root .ev-nightmare-rank-row .gbpf-rank-avatar > img.gbpf-rank-overlay,
+.ev-root .ev-clash-row .gbpf-rank-avatar > img.gbpf-rank-overlay,
+.ev-root .ev-ghost-row .gbpf-rank-avatar > img.gbpf-rank-overlay{
+  filter:none!important;animation:none!important;box-shadow:none!important;opacity:1!important;
+}
+/* Equipped profile-frame overlays in every leaderboard: no extra glow. */
+.ev-root .gbpf-rank-avatar > img.gbpf-rank-overlay,
+.ev-root .ev-nightmare-rank-row .gbpf-rank-avatar > img.gbpf-rank-overlay,
+.ev-root .ev-clash-row .gbpf-rank-avatar > img.gbpf-rank-overlay,
+.ev-root .ev-ghost-row .gbpf-rank-avatar > img.gbpf-rank-overlay,
+.gbpf-rank-avatar > img.gbpf-rank-overlay{
+  filter: none !important;
+  -webkit-filter: none !important;
+  animation: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+/* 2026-11-03: explicit arcade tile height for Safari without reliable aspect-ratio.
+   Keeps the same 2:1 mini-game artwork on narrow iPhones. */
+.ev-root .ev-clash-cards{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;}
+.ev-root .ev-clash-cards .ev-clash-compact{display:block!important;position:relative!important;min-width:0!important;min-height:0!important;padding:0!important;overflow:hidden!important;}
+.ev-root .ev-clash-cards .ev-clash-compact .ev-clash-art{
+  display:block!important;position:relative!important;width:100%!important;
+  height:21vw!important;min-height:65px!important;max-height:118px!important;
+  aspect-ratio:auto!important;background-size:100% 100%!important;
+  background-position:center center!important;background-repeat:no-repeat!important;
+  background-color:#190b24!important;
+}
+.ev-root .ev-clash-cards .ev-clash-compact .ev-clash-art-sudoku{background-image:url('promo-sudoku-option-b.png')!important;}
+.ev-root .ev-clash-cards .ev-clash-compact .ev-clash-art-tetris{background-image:url('promo-tetris-option-b.png')!important;}
+/* 2026-11-03 - Carnival Clash neon text tiles. Explicit sizes for older iPhone Safari.
+   No external promo images or aspect-ratio dependence; final override wins previous art declarations. */
+.ev-root .ev-clash-cards .ev-clash-compact.ev-clash-text-card{
+  -webkit-appearance:none!important;appearance:none!important;
+  display:-webkit-flex!important;display:flex!important;
+  -webkit-flex-direction:column!important;flex-direction:column!important;
+  -webkit-align-items:center!important;align-items:center!important;
+  -webkit-justify-content:center!important;justify-content:center!important;
+  width:100%!important;height:120px!important;min-height:120px!important;
+  padding:12px 4px!important;box-sizing:border-box!important;
+  line-height:1.15!important;text-align:center!important;
+  background:radial-gradient(ellipse at 50% 30%,#632757 0%,#32163f 48%,#160b2b 95%)!important;
+  border:2px solid #ff77de!important;border-radius:15px!important;
+  box-shadow:0 0 13px #ff49bd90,0 0 23px #895bfa5a,inset 0 0 20px #d85be73b!important;
+  overflow:hidden!important;position:relative!important;cursor:pointer!important;
+}
+.ev-root .ev-clash-cards .ev-clash-compact.ev-clash-text-tetris{
+  background:radial-gradient(ellipse at 50% 30%,#174c6d 0%,#222051 50%,#150c2a 95%)!important;
+  border-color:#64defd!important;
+  box-shadow:0 0 13px #30caff8f,0 0 23px #855bfd56,inset 0 0 20px #3cb1ef35!important;
+}
+.ev-root .ev-clash-text-card .ev-arcade-neon-label{
+  display:block!important;max-width:100%;font-family:Georgia,'Times New Roman',serif!important;
+  font-size:clamp(21px,6vw,34px)!important;font-weight:900!important;letter-spacing:1.4px!important;
+  line-height:1.12!important;color:#fff3fa!important;
+  text-shadow:0 0 3px #fff,0 0 9px #ff62d6,0 0 19px #fa28cc,0 0 30px #a145ff!important;
+  white-space:nowrap!important;-webkit-text-stroke:0.3px #ffd9f7;
+}
+.ev-root .ev-clash-text-tetris .ev-arcade-neon-label{
+  color:#ebfbff!important;text-shadow:0 0 3px white,0 0 9px #39dcff,0 0 19px #1994ff,0 0 30px #9355ff!important;
+  -webkit-text-stroke:0.3px #e7f8ff;
+}
+.ev-root .ev-clash-text-card .ev-arcade-neon-caption{
+  display:block!important;margin-top:10px!important;color:#ffceeb!important;
+  font:700 8px/1.3 -apple-system,BlinkMacSystemFont,Arial,sans-serif!important;
+  letter-spacing:1px!important;text-shadow:0 0 8px #fa55cb!important;white-space:nowrap!important;
+}
+.ev-root .ev-clash-text-tetris .ev-arcade-neon-caption{color:#a9f5ff!important;text-shadow:0 0 8px #23d3ff!important;}
+.ev-root .ev-clash-cards .ev-clash-compact.ev-clash-text-card{height:104px!important;min-height:104px!important;padding:9px 3px!important;}
+.ev-root .ev-clash-text-card .ev-arcade-neon-label{font-size:21px!important;letter-spacing:.7px!important;}
+.ev-root .ev-clash-text-card .ev-arcade-neon-caption{font-size:7px!important;letter-spacing:.4px!important;}
+/* 2026-11-03: fixed 9x9 square Sudoku board, including blank rows on iOS Safari.
+   JS sets the height from the measured width; the CSS grid never sizes rows by content. */
+.ev-root .ev-sudoku-grid{
+  display:grid;
+  width:100%;
+  box-sizing:border-box;
+  grid-template-columns:repeat(9,minmax(0,1fr));
+  grid-template-rows:repeat(9,minmax(0,1fr));
+  grid-auto-rows:minmax(0,1fr);
+  align-content:stretch;
+  min-height:0;
+}
+.ev-root .ev-sudoku-grid>.ev-sudoku-cell{
+  display:grid;
+  place-items:center;
+  box-sizing:border-box;
+  width:100%;
+  height:100%;
+  min-height:0;
+  min-width:0;
+  overflow:hidden;
+}
+.ev-root .ev-sudoku-grid>.ev-sudoku-cell img{
+  display:block;
+  max-width:100%;
+  max-height:100%;
+}
+/* 2026-11-06: Use the player's ORIGINAL Daily Quests and Wheel of Misfortune
+   art, unaltered. Respect the intrinsic aspect ratio so the small cards
+   never crop off characters or stretch the signs. */
+.ev-root .ev-card[data-ev="daily"] .ev-promo-art,
+.ev-root .ev-card[data-ev="wheel"] .ev-promo-art{
+  background:radial-gradient(ellipse at center,#3f1647 0%,#1b0b29 75%,#13071d 100%)!important;
+  box-shadow:inset 0 0 16px #ff61c025;
+}
+.ev-root .ev-card[data-ev="daily"] .ev-promo-art img,
+.ev-root .ev-card[data-ev="wheel"] .ev-promo-art img{
+  object-fit:contain!important;
+  object-position:center center!important;
+  filter:drop-shadow(0 0 6px #ff5dc066);
+}
+/* Game-wide scrollbar styling: match the Albums' plum/purple scrollbar.
+   Applies to every scrollable panel, popup, list, and screen without
+   changing scroll behavior or hiding the scrollbar. */
+:root, html, body, body *, .ev-root, .ev-root *{
+  scrollbar-width:thin!important;
+  scrollbar-color:#a748bb #190c26!important;
+}
+/* Gore Burst — Mr. Walker's Weekly Nightmare: approved animated marquee.
+   Display animation in both featured Events card and Weekly Nightmare lobby.
+   Keep live countdown/status and existing interactions untouched. */
+.ev-root #evWeeklyCard{
+  background-color: #180a20 !important;
+  background-image: url("promo-weekly-nightmare-animated.webp") !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  min-height: clamp(190px, 48vw, 290px);
+  isolation: isolate;
+}
+.ev-root #evWeeklyCard .ev-kicker{
+  position: absolute; top: 7px; left: 8px; z-index: 2;
+  background: #17091de8; border: 1px solid #bb6495a8;
+  border-radius: 7px; padding: 4px 6px;
+}
+.ev-root #evWeeklyCard h2{ font-size: 0 !important; margin: 0 !important; }
+.ev-root #evWeeklyCard h2 .ev-countdown{
+  position: absolute; right: 8px; top: 7px; z-index: 2;
+  font-size: 11px; margin: 0;
+}
+.ev-root #evWeeklyCard > span:last-child{
+  position: absolute; bottom: 7px; right: 8px; z-index: 2;
+  background: #17091dec; padding: 5px 9px; border-radius: 8px;
+  border: 1px solid #d57d9d8a;
+}
+.ev-root .ev-nightmare-art{
+  background-color: #180a20 !important;
+  background-image: url("promo-weekly-nightmare-animated.webp") !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  height: clamp(145px, 43vw, 245px);
+}
+.ev-root #evWeeklyCard, .ev-root .ev-nightmare-art{
+    background-image: url("promo-weekly-nightmare-static.webp") !important;
+  }
+/* 2026-11-06 — Four small Events cards: compact uniform titles + subtle gold artwork glow.
+   Weekly Nightmare featured card, event mechanics and existing marquee art are untouched. */
+.ev-root .ev-cards .ev-card > b{
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-size: clamp(9px, 2.6vw, 11px) !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  letter-spacing: -0.24px !important;
+  white-space: nowrap !important;
+  min-height: 14px;
+  margin: 8px 7px 3px !important;
+}
+/* Red notification dot remains adjacent to the single-line card label. */
+.ev-root .ev-cards .ev-card.ev-has-reward > b{
+  max-width: calc(100% - 25px) !important;
+}
+/* The shadow follows the original transparent art silhouette, not the square card. */
+.ev-root .ev-cards .ev-card .ev-promo-art img{
+  filter: drop-shadow(0 0 3px rgba(255, 202, 95, .82))
+          drop-shadow(0 0 7px rgba(255, 170, 55, .65)) !important;
+}
+/* Match the art's soft golden light without repainting or changing the PNG itself. */
+.ev-root .ev-cards .ev-card .ev-promo-art{
+  background: #170d25 !important;
+}
+/* Six elite bot photo/frame pairs. Each PFP uses its own measured circular frame
+   opening rather than the generic 70% photo area; never affects human avatars. */
+.ev-root .gbpf-rank-avatar.gbpf-elite-avatar > img.gbpf-elite-photo,
+.ev-root .ev-nightmare-rank-row .gbpf-rank-avatar.gbpf-elite-avatar > img.gbpf-elite-photo,
+.ev-root .ev-clash-row .gbpf-rank-avatar.gbpf-elite-avatar > img.gbpf-elite-photo{
+  left:var(--gb-elite-left)!important;
+  top:var(--gb-elite-top)!important;
+  width:var(--gb-elite-d)!important;
+  height:var(--gb-elite-d)!important;
+  border-radius:50%!important;
+  object-fit:cover!important;
+  filter:none!important;
+  box-shadow:none!important;
+}
+/* NEXT PATCH — Four small Events tiles: no outer glow and no promo-art drop shadow.
+   Do not affect featured Weekly Nightmare or notification red dots. */
+.ev-root .ev-cards > .ev-card{
+  box-shadow: none !important;
+  filter: none !important;
+}
+.ev-root .ev-cards > .ev-card .ev-promo-art,
+.ev-root .ev-cards > .ev-card .ev-promo-art img{
+  filter: none !important;
+  -webkit-filter: none !important;
+  box-shadow: none !important;
+}
+/* NEXT PATCH — Six custom PFPs: single pre-fitted composite image per bot.
+   No black background ring from mismatched two-layer positioning. */
+.ev-root .gbpf-rank-avatar.gbpf-elite-avatar{
+  flex: 0 0 54px !important;
+  width: 54px !important;
+  height: 54px !important;
+  min-width: 54px !important;
+  min-height: 54px !important;
+  max-width: 54px !important;
+  max-height: 54px !important;
+  overflow: visible !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.ev-root .gbpf-rank-avatar.gbpf-elite-avatar > img.gbpf-elite-combined,
+.ev-root .ev-nightmare-rank-row .gbpf-rank-avatar.gbpf-elite-avatar > img.gbpf-elite-combined,
+.ev-root .ev-clash-row .gbpf-rank-avatar.gbpf-elite-avatar > img.gbpf-elite-combined{
+  display:block !important;
+  position:absolute !important;
+  left:0 !important;
+  top:0 !important;
+  width:100% !important;
+  height:100% !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  object-fit:contain !important;
+  border-radius:0 !important;
+  border:0 !important;
+  padding:0 !important;
+  margin:0 !important;
+  background:transparent !important;
+  filter:none !important;
+  box-shadow:none !important;
+  animation:none !important;
+}
+.ev-root .gbpf-rank-avatar.gbpf-elite-avatar{
+    flex-basis:50px !important;
+    width:50px !important;
+    height:50px !important;
+    min-width:50px !important;
+    min-height:50px !important;
+    max-width:50px !important;
+    max-height:50px !important;
+  }
+.ev-root .ev-simulated-note{font-size:10px;line-height:1.35;opacity:.72;margin:3px 0 9px;text-align:center;}
+/* Weekly Nightmare lobby rules — display only, scoped to this panel. */
+.ev-root .ev-nightmare-rules{box-sizing:border-box;width:100%;margin:10px 0 10px;padding:9px 12px;border:1px solid rgba(253,125,201,.35);border-radius:11px;background:rgba(59,15,49,.52);color:#ffe2f0;text-align:center;font:600 clamp(11px,2.9vw,13px)/1.55 system-ui,-apple-system,sans-serif;}
+.ev-root .ev-nightmare-rules-title{margin:0 0 5px;color:#ffb9dc;font-weight:800;letter-spacing:.12em;text-align:center;}
+.ev-root .ev-nightmare-rules ul{list-style:none;margin:0;padding:0;}
+.ev-root .ev-nightmare-rules li{margin:2px 0;text-align:center;}
+.ev-root .ev-nightmare-rules li::before{content:"• ";color:#ff9dd1;font-weight:900;}
