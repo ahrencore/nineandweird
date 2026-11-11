@@ -6,7 +6,28 @@ const worlds={classic:{name:'CLASSIC',label:'Classic',theme:'classic'},dark:{nam
 let currentWorld='halloween',roomPage=0;
 const difficulties={easy:{fill:.60,points:350,hints:1},medium:{fill:.50,points:650,hints:1},hard:{fill:.40,points:1000,hints:1},expert:{fill:.35,points:1350,hints:2},extreme:{fill:.30,points:1750,hints:3}};
 function applyTheme(world){evRoot.className='ev-root theme-'+(world||'hub');}
-function showRooms(page=0){page=Number.isFinite(page)?page:0;clearInterval(sudokuTimer);sudoku=null;applyTheme('hub');roomPage=Math.max(0,Math.min(page,Math.ceil(24/18)-1));let tiles='';for(let i=roomPage*18;i<Math.min((roomPage+1)*18,24);i++){const id=['classic','dark','halloween','patissserie','christmas','fairy','olympus','nineties'][i];if(id){const w=worlds[id];const samples=id==='halloween'?sudokuImgs.slice(0,4).map(x=>`<img src="assets/events/${x}" alt="">`).join(''):id==='patissserie'?patissserieImgs.slice(0,4).map(x=>`<img src="assets/patissserie/${x}" alt="">`).join(''):id==='christmas'?christmasImgs.slice(0,4).map(x=>`<img src="assets/christmas/${x}" alt="">`).join(''):id==='fairy'?fairyImgs.slice(0,4).map(x=>`<img src="assets/fairy/${x}" alt="">`).join(''):id==='olympus'?olympusImgs.slice(0,4).map(x=>`<img src="assets/olympus/${x}" alt="">`).join(''):id==='nineties'?ninetiesImgs.slice(0,4).map(x=>`<img src="assets/90s/${x}" alt="">`).join(''):'<span>1 2 3 4</span>';tiles+=`<button class="world-tile world-${id}" data-world="${id}"><strong>${w.name}</strong><div class="world-samples">${samples}</div></button>`}else tiles+='<div class="world-tile world-locked" aria-label="Locked world"><span aria-hidden="true">♙</span><small>LOCKED</small></div>'}evDisplay(`<header class="ev-head"><button class="ev-btn ev-btn-alt" id="toHome">‹ BACK</button><strong>CHOOSE A WORLD</strong><span></span></header><div class="world-grid">${tiles}</div><nav class="world-pagination"><button id="prevWorldPage" ${roomPage===0?'disabled':''} aria-label="Previous page">‹</button><span>PAGE ${roomPage+1} / ${Math.ceil(24/18)}</span><button id="nextWorldPage" ${roomPage===Math.ceil(24/18)-1?'disabled':''} aria-label="Next page">›</button></nav>`);evRoot.querySelector('#toHome').onclick=showHome;evRoot.querySelector('#prevWorldPage').onclick=()=>showRooms(roomPage-1);evRoot.querySelector('#nextWorldPage').onclick=()=>showRooms(roomPage+1);evRoot.querySelectorAll('[data-world]').forEach(b=>b.onclick=()=>{currentWorld=b.dataset.world;evSudokuMenu()})}
+function showRooms(page=0){
+  const ids=['classic','dark','halloween','patissserie','christmas','fairy','olympus','nineties'];
+  const perPage=20,total=24,pages=Math.ceil(total/perPage);
+  page=Number.isFinite(page)?page:0;
+  clearInterval(sudokuTimer);sudoku=null;applyTheme('hub');
+  roomPage=Math.max(0,Math.min(page,pages-1));
+  const files={halloween:['assets/events/',sudokuImgs],patissserie:['assets/patissserie/',patissserieImgs],christmas:['assets/christmas/',christmasImgs],fairy:['assets/fairy/',fairyImgs],olympus:['assets/olympus/',olympusImgs],nineties:['assets/90s/',ninetiesImgs]};
+  let tiles='';
+  for(let i=roomPage*perPage;i<Math.min((roomPage+1)*perPage,total);i++){
+    const id=ids[i];
+    if(!id){tiles+='<div class="world-tile world-locked" aria-label="Locked future world"><strong>COMING SOON</strong><span class="world-locked-mark" aria-hidden="true">✧</span></div>';continue;}
+    const w=worlds[id];
+    const icons=id==='classic'||id==='dark'?Array.from({length:9},(_,n)=>`<span class="world-number">${n+1}</span>`).join(''):
+      files[id][1].map(img=>`<img src="${files[id][0]}${img}" alt="" loading="lazy" width="32" height="32">`).join('');
+    tiles+=`<button class="world-tile world-${id}" data-world="${id}" aria-label="Open ${w.label} world"><strong>${w.name}</strong><div class="world-samples" aria-hidden="true">${icons}</div></button>`;
+  }
+  evDisplay(`<header class="ev-head"><button class="ev-btn ev-btn-alt" id="toHome">‹ BACK</button><strong>SELECT A ROOM</strong><span></span></header><div class="world-grid world-list">${tiles}</div><nav class="world-pagination"><button id="prevWorldPage" ${roomPage===0?'disabled':''} aria-label="Previous page">‹</button><span>PAGE ${roomPage+1} / ${pages}</span><button id="nextWorldPage" ${roomPage===pages-1?'disabled':''} aria-label="Next page">›</button></nav>`);
+  evRoot.querySelector('#toHome').onclick=showHome;
+  evRoot.querySelector('#prevWorldPage').onclick=()=>showRooms(roomPage-1);
+  evRoot.querySelector('#nextWorldPage').onclick=()=>showRooms(roomPage+1);
+  evRoot.querySelectorAll('[data-world]').forEach(b=>b.onclick=()=>{currentWorld=b.dataset.world;evSudokuMenu()});
+}
 function showHome(){clearInterval(sudokuTimer);sudoku=null;evRoot.hidden=true;document.getElementById('home').hidden=false;}
 const sudokuImgs=['01_Pink_Neon_Bat.png','02_Blue_Neon_Moon.png','03_Orange_Neon_Pumpkin.png','04_Green_Neon_Cat.png','05_White_Pink_Ghost.png','06_Red_Neon_Heart.png','07_Purple_Neon_Candy.png','08_Yellow_Neon_Star.png','09_Cyan_Neon_Cross.png'];
 const patissserieImgs=['01_croissant.png','02_macaron.png','03_eclair.png','04_fruit_tart.png','05_cinnamon_roll.png','06_donut.png','07_madeleine.png','08_pretzel.png','09_cupcake.png'];

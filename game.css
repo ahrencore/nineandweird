@@ -814,3 +814,21 @@ body:has(#game.theme-nineties:not([hidden])) {
 #game.theme-nineties:has(> .difficulty-panel) {
   overflow: visible !important;
 }
+
+/* Compact horizontal room album — limited to World Selection. */
+#game.theme-hub .world-grid.world-list{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:9px!important;width:min(100%,560px);margin:15px auto 0}
+#game.theme-hub .world-list .world-tile{box-sizing:border-box;width:100%;min-width:0;height:auto!important;min-height:76px;padding:10px 12px 9px!important;border-radius:12px;display:flex;flex-direction:column;align-items:stretch!important;justify-content:center!important;gap:8px;text-align:center}
+#game.theme-hub .world-list .world-tile>strong{font-size:clamp(11px,3.1vw,14px);font-weight:800;line-height:1.25;text-align:center!important;width:100%;letter-spacing:.075em;white-space:normal}
+#game.theme-hub .world-list .world-samples{display:grid!important;grid-template-columns:repeat(9,minmax(0,1fr));align-items:center;justify-items:center;gap:2px!important;width:100%;min-width:0;margin:0;line-height:1}
+#game.theme-hub .world-list .world-samples img{display:block;width:min(100%,32px)!important;height:auto!important;aspect-ratio:1/1;object-fit:contain;max-width:32px;max-height:32px;filter:none}
+#game.theme-hub .world-list .world-number{display:grid;place-items:center;width:min(100%,32px);aspect-ratio:1/1;font:700 clamp(15px,4.5vw,22px)/1 system-ui,-apple-system,sans-serif;color:inherit}
+#game.theme-hub .world-list .world-locked{min-height:54px;flex-direction:row;align-items:center!important;gap:12px;opacity:.6}
+#game.theme-hub .world-list .world-locked>strong{width:auto!important;font-size:11px;color:inherit}
+#game.theme-hub .world-list .world-locked-mark{font-size:18px;line-height:1}
+#game.theme-hub .world-pagination{width:min(100%,560px);margin:14px auto 26px}
+#game.theme-hub .ev-head{display:grid;grid-template-columns:minmax(86px,1fr) auto minmax(86px,1fr);gap:8px;align-items:center}
+#game.theme-hub .ev-head>strong{text-align:center!important;justify-self:center}
+@media(max-width:360px){#game.theme-hub .world-list .world-tile{padding-inline:8px!important;gap:6px;min-height:70px}#game.theme-hub .world-list .world-samples{gap:1px!important}}
+/* Safe-area spacing on all screens. Full-bleed world backgrounds remain untouched. */
+#loading,#home{box-sizing:border-box;padding-top:calc(env(safe-area-inset-top,0px) + 12px)}
+#game{padding-top:calc(env(safe-area-inset-top,0px) + 12px)!important}
