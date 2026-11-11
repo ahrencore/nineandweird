@@ -497,17 +497,11 @@ html,body{background:#160B0E}button{touch-action:manipulation}#loading,#home{bac
 #game.theme-dark .ev-sudoku-cell.bad{background:#582126!important;color:#fff!important;}
 #game.theme-hub .world-grid .world-halloween{background:radial-gradient(circle at top,#542252,#160919);}
 
-/* Build 4: complete per-world palette isolation, including viewport and tool buttons. */
-html:has(#game.theme-classic:not([hidden])),body:has(#game.theme-classic:not([hidden])){background:#fff!important;color:#111!important}
-html:has(#game.theme-dark:not([hidden])),body:has(#game.theme-dark:not([hidden])){background:#050505!important;color:#fff!important}
-html:has(#game.theme-halloween:not([hidden])),body:has(#game.theme-halloween:not([hidden])){background:#16091f!important;color:#ffe9f8!important}
-html:has(#game.theme-hub:not([hidden])),body:has(#game.theme-hub:not([hidden])){background:#160B0E!important;color:#FFD6D5!important}
-#game.theme-classic,#game.theme-dark{min-height:100dvh!important;box-shadow:none!important}
-#game.theme-classic .ev-sudo-tool,#game.theme-dark .ev-sudo-tool{background:var(--panel)!important;background-image:none!important;color:var(--ink)!important;border:1px solid var(--accent)!important;box-shadow:0 0 8px color-mix(in srgb,var(--accent) 25%,transparent)!important;text-shadow:none!important;filter:none!important}
-#game.theme-classic .ev-sudo-tool *,#game.theme-dark .ev-sudo-tool *{color:var(--ink)!important;text-shadow:none!important;filter:none!important}
-#game.theme-classic .ev-sudo-tool.active,#game.theme-dark .ev-sudo-tool.active{background:var(--same)!important;box-shadow:0 0 10px color-mix(in srgb,var(--accent) 40%,transparent)!important}
-#game.theme-classic .ev-sudo-tool:disabled,#game.theme-dark .ev-sudo-tool:disabled{opacity:.35!important;box-shadow:none!important}
-#game.theme-classic .ev-sudo-remain,#game.theme-dark .ev-sudo-remain{background:var(--panel)!important;color:var(--ink)!important}
-/* Keep nine equal-sized positions; remove completed symbols and counters from view. */
-#game .ev-sudoku-tray button.completed{visibility:hidden!important;pointer-events:none!important;opacity:0!important}
-#game .ev-sudoku-tray button.completed *{visibility:hidden!important}
+/* World 4: Pâtisserie — Parisian Cream */
+#game.theme-patissserie{--surface:#FFF8EC;--panel:#F5E8D3;--ink:#493021;--accent:#A87542;--line:#D5AD72;--peer:#f7e0c8;--same:#edc99f;--selected:#e5ae75;background:radial-gradient(ellipse at top,#fffaf2,#f8dfc5 85%);font-family:Georgia,serif}
+#game.theme-patissserie .ev-head{background:var(--surface)!important}
+#game.theme-patissserie .ev-head strong{color:var(--ink)!important;text-shadow:none!important}
+#game.theme-patissserie .ev-head .ev-btn{background:var(--panel)!important;color:var(--ink)!important;border-color:var(--accent)!important}
+#game.theme-patissserie .ev-sudoku-cell.bad{background:#f6c4bb!important;color:#76251d!important}
+#game.theme-hub .world-grid .world-patissserie{background:linear-gradient(145deg,#fff8ed,#f6d8b4);border-color:#b77b4d;color:#6d351f;box-shadow:0 0 8px #c9926955}
+#game.theme-patissserie .theme-button{background:linear-gradient(#fff8ed,#f9e1c6)}
