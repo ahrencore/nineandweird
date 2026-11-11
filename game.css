@@ -563,3 +563,19 @@ html:has(#game.theme-fairy:not([hidden])),body:has(#game.theme-fairy:not([hidden
 /* Christmas: replace artificial repeating scallops with a restrained natural snow ledge */
 #game.theme-christmas .ev-sudoku-grid::before{content:'';left:-3px;right:-3px;top:-6px;height:7px;background:linear-gradient(to bottom,#fff 0%,#f8fdff 52%,#d5eaf6 100%);border-radius:60% 45% 35% 55% / 85% 85% 25% 30%;filter:drop-shadow(0 2px 1px #9acbe466)}
 #game.theme-christmas .ev-sudoku-grid::after{content:none}
+
+/* World 7: Olympus — antique marble, Aegean blue, multicolor carved icons */
+#game.theme-hub .world-grid .world-olympus{background:linear-gradient(145deg,#fff7e7,#d6e4ee);color:#203b60;border-color:#d6aa55;box-shadow:0 0 10px #d6aa5544}
+#game.theme-hub .world-grid .world-olympus strong{color:#203b60;text-shadow:0 1px #fff}
+#game.theme-olympus{--surface:#f7f2e8;--panel:#e8d8bc;--ink:#203b60;--accent:#347daa;--line:#7ca6bf;--peer:#e3edf1;--same:#cde3ee;--selected:#a6d4e8;background:linear-gradient(145deg,#f7f2e8,#d6e7f1)!important;min-height:100dvh;color:#203b60!important}
+html:has(#game.theme-olympus:not([hidden])),body:has(#game.theme-olympus:not([hidden])){background:#f7f2e8!important}
+#game.theme-olympus .ev-head{background:#203b60!important;border-color:#d6aa55!important;color:#fff7e7!important}
+#game.theme-olympus .ev-head strong{color:#fff7e7!important}
+#game.theme-olympus .ev-head .ev-btn{background:#347daa!important;color:white!important;border-color:#d6aa55!important}
+#game.theme-olympus .ev-sudo-shell,#game.theme-olympus .difficulty-panel,#game.theme-olympus .result-panel{background:#f7f2e8!important;color:#203b60!important;border:2px solid #d6aa55!important;box-shadow:0 5px 20px #203b6022!important}
+#game.theme-olympus .difficulty-panel h2,#game.theme-olympus .result-panel h2,#game.theme-olympus .ev-note{color:#203b60!important}
+#game.theme-olympus .theme-button{background:linear-gradient(#fffaf0,#e8d8bc)!important;color:#203b60!important;border-color:#d6aa55!important}
+#game.theme-olympus .ev-sudo-stats>div,#game.theme-olympus .ev-sudoku-tray button,#game.theme-olympus .ev-sudo-tool{background:#fffaf0!important;color:#203b60!important;border-color:#d6aa55!important}
+#game.theme-olympus .ev-sudo-tool-icon,#game.theme-olympus .ev-sudo-tool-label{color:#203b60!important}
+#game.theme-olympus .ev-sudoku-grid{border:3px solid #347daa!important;box-shadow:0 0 0 5px #d6aa55!important}
+#game.theme-olympus .ev-sudoku-cell.bad{background:#d52c3d!important;color:white!important}
