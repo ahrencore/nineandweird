@@ -670,3 +670,18 @@ body:has(#game.theme-olympus:not([hidden])){
 /* Bright completion score in Fairy's dark-purple results panel. */
 #game.theme-fairy .result-panel .result-score>strong{color:#FFF3B3!important;text-shadow:0 0 7px #E9B8FF80!important}
 #game.theme-fairy .result-panel .result-score>small{color:#F8E8FF!important}
+
+/* Olympus difficulty-screen seam repair (2026-11-12): render one continuous
+   page gradient, not a second gradient on the width-limited #game panel. */
+html:has(#game.theme-olympus:not([hidden])) {
+  background:#f7f2e8!important;
+}
+body:has(#game.theme-olympus:not([hidden])) {
+  background:linear-gradient(160deg,#fffdf7 0%,#f7f2e8 48%,#e8d8bc 100%) fixed!important;
+  background-repeat:no-repeat!important;
+  min-height:100dvh;
+}
+#game.theme-olympus {
+  background:transparent!important;
+  background-image:none!important;
+}
