@@ -956,3 +956,29 @@ body *::-webkit-scrollbar-track,#game::-webkit-scrollbar-track,#game *::-webkit-
 #game:is(.theme-classic,.theme-dark) .ev-sudo-tools-clean .ev-sudo-tool:disabled{
   opacity:.42!important;
 }
+
+
+/* Olympus only — visually separate the nine 3×3 Sudoku boxes.
+   Cell dividers are muted blue-gray; box dividers are 3px Aegean navy.
+   The last row/column use the existing outer grid border. */
+#game.theme-olympus .ev-sudoku-grid{
+  border:3px solid #203B60 !important;
+}
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell{
+  border-right:1px solid #A9B9C9 !important;
+  border-bottom:1px solid #A9B9C9 !important;
+}
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6){
+  border-right:3px solid #203B60 !important;
+}
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54){
+  border-bottom:3px solid #203B60 !important;
+}
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n){
+  border-right:0 !important;
+}
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73){
+  border-bottom:0 !important;
+}
