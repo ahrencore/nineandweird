@@ -1350,3 +1350,15 @@ body:has(#game.theme-ugly:not([hidden])){background:#24262D!important;}
 #game.theme-ugly::-webkit-scrollbar-track,#game.theme-ugly *::-webkit-scrollbar-track{background:#24262D!important;}
 #game.theme-hub .world-grid .world-ugly{background:linear-gradient(130deg,#36313A,#24262D)!important;color:#FAF3E8!important;border:2px solid #A8E64D!important;box-shadow:0 0 8px #A8E64D44!important;}
 #game.theme-hub .world-grid .world-ugly strong{color:#C3F15D!important;text-shadow:0 0 6px #A8E64D44!important;}
+
+
+/* World 9 targeted visual refinement: larger symbols + darker board for better contrast */
+#game.theme-weird .ev-sudoku-grid{background:#5B5174!important;border-color:#FF5DAF!important;box-shadow:0 0 12px #FF5DAF55!important;}
+#game.theme-weird .ev-sudoku-grid>.ev-sudoku-cell{background:#75688F!important;color:#F7F3FF!important;border-right:1px solid #A79DBC!important;border-bottom:1px solid #A79DBC!important;}
+#game.theme-weird .ev-sudoku-grid>.ev-sudoku-cell.given{background:#695D84!important;}
+#game.theme-weird .ev-sudoku-grid>.ev-sudoku-cell.same:not(.selected):not(.bad){background:#897AAC!important;box-shadow:inset 0 0 0 2px #49D7FF!important;}
+#game.theme-weird .ev-sudoku-grid>.ev-sudoku-cell.selected:not(.bad){background:#49D7FF!important;outline:2px solid #24192E!important;outline-offset:-2px;box-shadow:inset 0 0 0 1px #FFFFFF88!important;}
+#game.theme-weird .ev-sudoku-grid>.ev-sudoku-cell.bad{background:#DF2338!important;color:#fff!important;outline:2px solid #880B19!important;outline-offset:-2px;}
+#game.theme-weird .ev-sudoku-tray button{background:#C9C0DE!important;border-color:#FF5DAF!important;color:#24192E!important;}
+#game.theme-weird .ev-sudoku-tray button.selected{background:#49D7FF!important;border:2px solid #24192E!important;box-shadow:0 0 9px #49D7FF88!important;}
+#game.theme-weird .ev-sudoku-cell img,#game.theme-weird .ev-sudoku-tray img{width:95%!important;height:95%!important;object-fit:contain;filter:drop-shadow(0 0 2px #49D7FF66)!important;}
