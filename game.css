@@ -1513,3 +1513,13 @@ body:has(#game.theme-alien:not([hidden])) {background:#111827!important;}
 #game.theme-hub .world-grid .world-alien strong {
   color:#A7FFDA!important;text-shadow:0 0 8px #5BFFD855!important;
 }
+
+
+/* Album 10 targeted fix: clearly visible hot-pink 3x3 section dividers. */
+#game.theme-ugly .ev-sudoku-grid {border:4px solid #FF399F!important;}
+#game.theme-ugly .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-ugly .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n + 6) {border-right:5px solid #FF399F!important;}
+#game.theme-ugly .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-ugly .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) {border-bottom:5px solid #FF399F!important;}
+#game.theme-ugly .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n) {border-right:0!important;}
+#game.theme-ugly .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n + 73) {border-bottom:0!important;}
