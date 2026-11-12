@@ -982,3 +982,85 @@ body *::-webkit-scrollbar-track,#game::-webkit-scrollbar-track,#game *::-webkit-
 #game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73){
   border-bottom:0 !important;
 }
+
+/* All eight themes: palette-aligned 3x3 Sudoku boundaries; board borders only. */
+
+/* classic */
+#game.theme-classic .ev-sudoku-grid { border:3px solid #27313D !important; }
+#game.theme-classic .ev-sudoku-grid > .ev-sudoku-cell { border-right:1px solid #8994A0 !important; border-bottom:1px solid #8994A0 !important; }
+#game.theme-classic .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-classic .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6) { border-right:3px solid #27313D !important; }
+#game.theme-classic .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-classic .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) { border-bottom:3px solid #27313D !important; }
+#game.theme-classic .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n) { border-right:0 !important; }
+#game.theme-classic .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73) { border-bottom:0 !important; }
+
+/* dark */
+#game.theme-dark .ev-sudoku-grid { border:3px solid #E5EAF0 !important; }
+#game.theme-dark .ev-sudoku-grid > .ev-sudoku-cell { border-right:1px solid #59616B !important; border-bottom:1px solid #59616B !important; }
+#game.theme-dark .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-dark .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6) { border-right:3px solid #E5EAF0 !important; }
+#game.theme-dark .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-dark .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) { border-bottom:3px solid #E5EAF0 !important; }
+#game.theme-dark .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n) { border-right:0 !important; }
+#game.theme-dark .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73) { border-bottom:0 !important; }
+
+/* halloween */
+#game.theme-halloween .ev-sudoku-grid { border:3px solid #BB59FF !important; }
+#game.theme-halloween .ev-sudoku-grid > .ev-sudoku-cell { border-right:1px solid #75438B !important; border-bottom:1px solid #75438B !important; }
+#game.theme-halloween .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-halloween .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6) { border-right:3px solid #BB59FF !important; }
+#game.theme-halloween .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-halloween .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) { border-bottom:3px solid #BB59FF !important; }
+#game.theme-halloween .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n) { border-right:0 !important; }
+#game.theme-halloween .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73) { border-bottom:0 !important; }
+
+/* patissserie */
+#game.theme-patissserie .ev-sudoku-grid { border:3px solid #87542E !important; }
+#game.theme-patissserie .ev-sudoku-grid > .ev-sudoku-cell { border-right:1px solid #C6A681 !important; border-bottom:1px solid #C6A681 !important; }
+#game.theme-patissserie .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-patissserie .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6) { border-right:3px solid #87542E !important; }
+#game.theme-patissserie .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-patissserie .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) { border-bottom:3px solid #87542E !important; }
+#game.theme-patissserie .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n) { border-right:0 !important; }
+#game.theme-patissserie .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73) { border-bottom:0 !important; }
+
+/* christmas */
+#game.theme-christmas .ev-sudoku-grid { border:3px solid #328DBD !important; }
+#game.theme-christmas .ev-sudoku-grid > .ev-sudoku-cell { border-right:1px solid #A8D2E7 !important; border-bottom:1px solid #A8D2E7 !important; }
+#game.theme-christmas .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-christmas .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6) { border-right:3px solid #328DBD !important; }
+#game.theme-christmas .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-christmas .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) { border-bottom:3px solid #328DBD !important; }
+#game.theme-christmas .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n) { border-right:0 !important; }
+#game.theme-christmas .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73) { border-bottom:0 !important; }
+
+/* fairy */
+#game.theme-fairy .ev-sudoku-grid { border:3px solid #D5A2FF !important; }
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell { border-right:1px solid #8E6BAB !important; border-bottom:1px solid #8E6BAB !important; }
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6) { border-right:3px solid #D5A2FF !important; }
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) { border-bottom:3px solid #D5A2FF !important; }
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n) { border-right:0 !important; }
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73) { border-bottom:0 !important; }
+
+/* olympus */
+#game.theme-olympus .ev-sudoku-grid { border:3px solid #203B60 !important; }
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell { border-right:1px solid #A9B9C9 !important; border-bottom:1px solid #A9B9C9 !important; }
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6) { border-right:3px solid #203B60 !important; }
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) { border-bottom:3px solid #203B60 !important; }
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n) { border-right:0 !important; }
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73) { border-bottom:0 !important; }
+
+/* nineties */
+#game.theme-nineties .ev-sudoku-grid { border:3px solid #FF5BA6 !important; }
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell { border-right:1px solid #547B93 !important; border-bottom:1px solid #547B93 !important; }
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6) { border-right:3px solid #FF5BA6 !important; }
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) { border-bottom:3px solid #FF5BA6 !important; }
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n) { border-right:0 !important; }
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73) { border-bottom:0 !important; }
