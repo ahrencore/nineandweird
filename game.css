@@ -1394,3 +1394,122 @@ body:has(#game.theme-ugly:not([hidden])){background:#24262D!important;}
 }
 #game.theme-weird .ev-sudoku-tray button:not(.selected) {background:#292444!important;border-color:#FF5DAF!important;}
 #game.theme-weird .ev-sudoku-tray button.selected {background:#365C75!important;border-color:#49D7FF!important;}
+
+
+/* Album 9: clearly distinguish every 3x3 block on the deep-indigo board.
+   Deliberately scoped to WHAT AM I LOOKING AT? only. */
+#game.theme-weird .ev-sudoku-grid {
+  border:5px solid #FF39A9!important;
+  background:#1F1B3A!important;
+  box-shadow:0 0 13px #FF39A966!important;
+}
+#game.theme-weird .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-weird .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n + 6) {
+  border-right:5px solid #FF39A9!important;
+}
+#game.theme-weird .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-weird .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) {
+  border-bottom:5px solid #FF39A9!important;
+}
+#game.theme-weird .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n) {border-right:0!important;}
+#game.theme-weird .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n + 73) {border-bottom:0!important;}
+
+/* Album 11: ALIEN SUPERMARKET — Martian Neon Mart palette.
+   Fully isolated from all previously approved rooms. */
+html:has(#game.theme-alien:not([hidden])),
+body:has(#game.theme-alien:not([hidden])) {background:#111827!important;}
+#game.theme-alien {
+  --surface:#1A2330;--panel:#182332;--ink:#EAFBFF;
+  --accent:#5BFFD8;--line:#40576A;--peer:#294651;
+  --same:#2EE6FF;--selected:#7CFF4F;
+  background:radial-gradient(ellipse at 50% 0%,#20364A 0%,#111827 76%)!important;
+  color:#EAFBFF!important;
+}
+#game.theme-alien .ev-head {
+  background:#182332!important;border:1.5px solid #5BFFD8!important;
+  border-radius:12px;padding:9px 10px!important;
+}
+#game.theme-alien .ev-head>strong {color:#A7FFDA!important;text-shadow:0 0 9px #5BFFD877!important;}
+#game.theme-alien .ev-head .ev-btn {color:#EAFBFF!important;background:#24384B!important;border-color:#5BFFD8!important;}
+#game.theme-alien .difficulty-panel,
+#game.theme-alien .result-panel,
+#game.theme-alien .ev-sudo-shell {
+  background:#182332!important;color:#EAFBFF!important;
+  border:2px solid #5BFFD8!important;box-shadow:0 0 14px #5BFFD82C!important;
+}
+#game.theme-alien .difficulty-panel h2,
+#game.theme-alien .result-panel h2,
+#game.theme-alien .ev-note {color:#EAFBFF!important;}
+#game.theme-alien .theme-button {
+  background:#20374B!important;color:#EAFBFF!important;
+  border:2px solid #5BFFD8!important;box-shadow:0 0 7px #5BFFD83D!important;
+}
+#game.theme-alien .theme-button:focus-visible {outline:2px solid #7CFF4F!important;}
+#game.theme-alien .ev-sudo-stats>div {background:#25394B!important;border-color:#486B75!important;}
+#game.theme-alien .ev-sudo-stats small,
+#game.theme-alien .ev-sudo-stats strong {color:#EAFBFF!important;}
+#game.theme-alien .ev-sudoku-grid {
+  border:4px solid #5BFFD8!important;background:#1A2330!important;
+  box-shadow:0 0 13px #5BFFD84A!important;
+}
+#game.theme-alien .ev-sudoku-grid>.ev-sudoku-cell {
+  background:#1A2330!important;color:#EAFBFF!important;
+  border-right:1px solid #40576A!important;
+  border-bottom:1px solid #40576A!important;
+}
+#game.theme-alien .ev-sudoku-grid>.ev-sudoku-cell.given {background:#202E3E!important;}
+#game.theme-alien .ev-sudoku-grid>.ev-sudoku-cell.same:not(.selected):not(.bad) {
+  background:#245267!important;box-shadow:inset 0 0 0 2px #2EE6FF!important;
+}
+#game.theme-alien .ev-sudoku-grid>.ev-sudoku-cell.selected:not(.bad) {
+  background:#7CFF4F!important;outline:2px solid #152536!important;
+  outline-offset:-2px;box-shadow:inset 0 0 0 1px #FFFFFF99!important;
+}
+#game.theme-alien .ev-sudoku-grid>.ev-sudoku-cell.bad {
+  background:#FF3A4E!important;color:#fff!important;
+  outline:2px solid #6D122B!important;outline-offset:-2px;
+}
+#game.theme-alien .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-alien .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n + 6) {border-right:4px solid #5BFFD8!important;}
+#game.theme-alien .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-alien .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) {border-bottom:4px solid #5BFFD8!important;}
+#game.theme-alien .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n) {border-right:0!important;}
+#game.theme-alien .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n + 73) {border-bottom:0!important;}
+#game.theme-alien .ev-sudoku-tray button {
+  background:#233A4B!important;border-color:#5BFFD8!important;color:#EAFBFF!important;
+}
+#game.theme-alien .ev-sudoku-tray button.selected {
+  background:#335F55!important;border:2px solid #7CFF4F!important;
+  box-shadow:0 0 8px #7CFF4F88!important;
+}
+#game.theme-alien .ev-sudo-tools-clean .ev-sudo-tool {
+  background:#223A4A!important;color:#EAFBFF!important;
+  border:1.5px solid #5BFFD8!important;box-shadow:none!important;
+}
+#game.theme-alien .ev-sudo-tool-icon,
+#game.theme-alien .ev-sudo-tool-label {color:#EAFBFF!important;}
+#game.theme-alien .ev-sudo-tools-clean .ev-sudo-tool.active {
+  background:#315D57!important;border-color:#7CFF4F!important;
+  box-shadow:0 0 7px #7CFF4F70!important;
+}
+#game.theme-alien .result-score strong {color:#7CFF4F!important;text-shadow:0 0 8px #7CFF4F77!important;}
+#game.theme-alien .result-stats>div {border-color:#5BFFD8!important;}
+#game.theme-alien .ev-sudoku-grid>.ev-sudoku-cell img,
+#game.theme-alien .ev-sudoku-tray button img {
+  width:100%!important;height:100%!important;
+  max-width:100%!important;max-height:100%!important;
+  object-fit:contain!important;filter:none!important;
+}
+#game.theme-alien,#game.theme-alien * {scrollbar-color:#5BFFD8 #111827!important;}
+#game.theme-alien::-webkit-scrollbar-thumb,
+#game.theme-alien *::-webkit-scrollbar-thumb {background:#5BFFD8!important;}
+#game.theme-alien::-webkit-scrollbar-track,
+#game.theme-alien *::-webkit-scrollbar-track {background:#111827!important;}
+#game.theme-hub .world-grid .world-alien {
+  background:linear-gradient(130deg,#1D3442,#111827)!important;
+  color:#EAFBFF!important;border:2px solid #5BFFD8!important;
+  box-shadow:0 0 12px #5BFFD83D!important;
+}
+#game.theme-hub .world-grid .world-alien strong {
+  color:#A7FFDA!important;text-shadow:0 0 8px #5BFFD855!important;
+}
