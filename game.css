@@ -1790,3 +1790,95 @@ body:has(#game.theme-alien:not([hidden])) {background:#111827!important;}
 #game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) {
   border-bottom:3px solid #66378A!important;
 }
+
+
+/* Album 12: DO NOT EAT THAT — retro American diner, scoped to this album only. */
+html:has(#game.theme-diner:not([hidden])),
+body:has(#game.theme-diner:not([hidden])) {background:#163F47!important;}
+#game.theme-diner {
+ --surface:#FFF0D5;--panel:#163F47;--ink:#FFF0D5;
+ --accent:#D9363D;--line:#BFAE9C;--peer:#F6D8C0;
+ --same:#F7A3AA;--selected:#A5D7BA;
+ background:radial-gradient(ellipse at 50% 0%,#255960 0%,#163F47 82%)!important;
+ color:#FFF0D5!important;
+}
+#game.theme-diner .ev-head {
+ background:#59352E!important;border:2px solid #F47798!important;
+ border-radius:14px;padding:9px 10px!important;
+}
+#game.theme-diner .ev-head>strong {color:#FFF0D5!important;text-shadow:0 0 6px #F4779844!important;}
+#game.theme-diner .ev-head .ev-btn {background:#B82C36!important;border-color:#FFF0D5!important;color:#FFF0D5!important;}
+#game.theme-diner .difficulty-panel,
+#game.theme-diner .result-panel,
+#game.theme-diner .ev-sudo-shell {
+ background:#244A50!important;color:#FFF0D5!important;
+ border:2px solid #D9363D!important;box-shadow:0 0 13px #D9363D33!important;
+}
+#game.theme-diner .difficulty-panel h2,
+#game.theme-diner .result-panel h2,
+#game.theme-diner .ev-note {color:#FFF0D5!important;}
+#game.theme-diner .theme-button {
+ background:#FFF0D5!important;color:#59352E!important;
+ border:2px solid #D9363D!important;box-shadow:0 0 5px #D9363D3D!important;
+}
+#game.theme-diner .theme-button:focus-visible {outline:2px solid #A5D7BA!important;}
+#game.theme-diner .ev-sudo-stats>div {background:#FFF0D5!important;border-color:#D9363D!important;}
+#game.theme-diner .ev-sudo-stats small,
+#game.theme-diner .ev-sudo-stats strong {color:#59352E!important;}
+#game.theme-diner .ev-sudoku-grid {
+ --box-divider:#D9363D;--box-stroke:4px;--box-half-stroke:2px;
+ border:4px solid #D9363D!important;
+ position:relative!important;isolation:isolate;overflow:hidden;
+ background:#FFF0D5!important;box-shadow:0 0 10px #D9363D55!important;
+}
+#game.theme-diner .ev-sudoku-grid>.ev-sudoku-cell {
+ background:#FFF0D5!important;color:#59352E!important;
+ border-right:1px solid #BFAE9C!important;
+ border-bottom:1px solid #BFAE9C!important;
+ box-sizing:border-box!important;
+}
+#game.theme-diner .ev-sudoku-grid>.ev-sudoku-cell.given {background:#F6E5C8!important;}
+#game.theme-diner .ev-sudoku-grid>.ev-sudoku-cell.same:not(.selected):not(.bad) {background:#F6BAC2!important;box-shadow:inset 0 0 0 2px #D9363D!important;}
+#game.theme-diner .ev-sudoku-grid>.ev-sudoku-cell.selected:not(.bad) {background:#A5D7BA!important;outline:2px solid #163F47!important;outline-offset:-2px;}
+#game.theme-diner .ev-sudoku-grid>.ev-sudoku-cell.bad {background:#E94141!important;outline:2px solid #781421!important;outline-offset:-2px;}
+#game.theme-diner .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n) {border-right:0!important;}
+#game.theme-diner .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n + 73) {border-bottom:0!important;}
+/* Draw all 3×3 separators as one topmost layer so thin cell lines never cut across them. */
+#game.theme-diner .ev-sudoku-grid::after {
+ content:""!important;display:block!important;
+ position:absolute!important;inset:0!important;
+ pointer-events:none!important;z-index:100!important;
+ background-image:
+ linear-gradient(to right,
+  transparent calc(33.333333% - 2px),#D9363D calc(33.333333% - 2px),#D9363D calc(33.333333% + 2px),
+  transparent calc(33.333333% + 2px),transparent calc(66.666667% - 2px),
+  #D9363D calc(66.666667% - 2px),#D9363D calc(66.666667% + 2px),transparent calc(66.666667% + 2px)),
+ linear-gradient(to bottom,
+  transparent calc(33.333333% - 2px),#D9363D calc(33.333333% - 2px),#D9363D calc(33.333333% + 2px),
+  transparent calc(33.333333% + 2px),transparent calc(66.666667% - 2px),
+  #D9363D calc(66.666667% - 2px),#D9363D calc(66.666667% + 2px),transparent calc(66.666667% + 2px))!important;
+ background-repeat:no-repeat!important;box-shadow:none!important;filter:none!important;
+}
+#game.theme-diner .ev-sudoku-tray button {background:#FFF0D5!important;border-color:#D9363D!important;color:#59352E!important;}
+#game.theme-diner .ev-sudoku-tray button.selected {background:#A5D7BA!important;border:2px solid #163F47!important;box-shadow:0 0 7px #A5D7BA88!important;}
+#game.theme-diner .ev-sudo-tools-clean .ev-sudo-tool {background:#FFF0D5!important;color:#59352E!important;border:1.5px solid #D9363D!important;box-shadow:none!important;}
+#game.theme-diner .ev-sudo-tool-icon,#game.theme-diner .ev-sudo-tool-label {color:#59352E!important;}
+#game.theme-diner .ev-sudo-tools-clean .ev-sudo-tool.active {background:#A5D7BA!important;border-color:#D9363D!important;box-shadow:0 0 6px #A5D7BA77!important;}
+#game.theme-diner .result-score strong {color:#FFF0D5!important;}
+#game.theme-diner .result-stats>div {border-color:#D9363D!important;}
+#game.theme-diner .ev-sudoku-grid>.ev-sudoku-cell img,
+#game.theme-diner .ev-sudoku-tray button img {
+ width:100%!important;height:100%!important;
+ max-width:100%!important;max-height:100%!important;object-fit:contain!important;filter:none!important;
+}
+#game.theme-diner,#game.theme-diner * {scrollbar-color:#D9363D #163F47!important;}
+#game.theme-diner::-webkit-scrollbar-thumb,
+#game.theme-diner *::-webkit-scrollbar-thumb {background:#D9363D!important;}
+#game.theme-diner::-webkit-scrollbar-track,
+#game.theme-diner *::-webkit-scrollbar-track {background:#163F47!important;}
+#game.theme-hub .world-grid .world-diner {
+ background:linear-gradient(120deg,#59352E,#163F47)!important;
+ color:#FFF0D5!important;border:2px solid #D9363D!important;
+ box-shadow:0 0 10px #D9363D42!important;
+}
+#game.theme-hub .world-grid .world-diner strong {color:#FFF0D5!important;text-shadow:0 0 6px #F4779855!important;}
