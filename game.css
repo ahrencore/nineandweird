@@ -1139,3 +1139,91 @@ body *::-webkit-scrollbar-track,#game::-webkit-scrollbar-track,#game *::-webkit-
 #game.theme-nineties .ev-sudoku-tray button img {
   filter:drop-shadow(0 1px 1px #15284B33) !important;
 }
+
+
+/* APPROVED 2026-11-12 CHANGE: Fairy + 90s only. All other rooms untouched. */
+/* Fairy: deep-violet 3x3 section boundaries and outer board frame. */
+#game.theme-fairy .ev-sudoku-grid { border-color:#66378A !important; }
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6) { border-right-color:#66378A !important; }
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) { border-bottom-color:#66378A !important; }
+
+/* 90s Throwback: bubblegum-pink playing surface (Midnight Arcade outer theme unchanged). */
+#game.theme-nineties .ev-sudoku-grid { background:#FFE0F0 !important; }
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell {
+  background:#FFE0F0 !important;
+  border-right-color:#C896B7 !important;
+  border-bottom-color:#C896B7 !important;
+}
+/* Alternating 3x3 regions: five soft-pink sections, the remaining four main pink. */
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(1),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(2),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(3),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(10),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(11),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(12),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(19),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(20),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(21) { background:#FFD3E9 !important; }
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(7),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(8),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(16),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(17),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(18),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(25),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(26),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(27) { background:#FFD3E9 !important; }
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(31),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(32),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(33),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(40),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(41),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(42),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(49),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(50),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(51) { background:#FFD3E9 !important; }
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(55),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(56),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(57),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(64),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(65),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(66),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(73),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(74),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(75) { background:#FFD3E9 !important; }
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(61),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(62),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(63),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(70),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(71),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(72),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(79),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(80),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(81) { background:#FFD3E9 !important; }
+
+/* Clearly differentiated selected, matching and wrong cells retain their prior priorities. */
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell.same:not(.selected):not(.bad) {
+  background:#B8F3F0 !important;
+}
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell.selected:not(.bad) {
+  background:#36E0DC !important;
+}
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell.bad {
+  background:#D82438 !important;
+}
+/* Preserve hot-pink 3x3 boundaries over new mauve 1px cell lines. */
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6) { border-right-color:#FF5BA6 !important; }
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) { border-bottom-color:#FF5BA6 !important; }
+/* Matching pink tile surfaces in the 90s symbol selector. */
+#game.theme-nineties .ev-sudoku-tray button {
+  background:#FFE0F0 !important;
+  border-color:#C896B7 !important;
+}
+#game.theme-nineties .ev-sudoku-tray button.selected {
+  background:#B8F3F0 !important;
+  border-color:#008D9A !important;
+}
