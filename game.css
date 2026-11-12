@@ -1525,21 +1525,86 @@ body:has(#game.theme-alien:not([hidden])) {background:#111827!important;}
 #game.theme-weird .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n + 73){border-bottom:0!important;}
 
 
-/* Album 10 UGLY LITTLE THINGS — hot-pink 3x3 boundaries. Scoped visual fix. */
+/* Album 10 UGLY LITTLE THINGS — palette lime 3x3 section borders. */
 #game.theme-ugly .ev-sudoku-grid {
-  border: 4px solid #FF399F !important;
+  position: relative !important;
+  isolation: isolate;
+  border: 5px solid #A8E64D !important;
+  overflow: hidden;
 }
 #game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
 #game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6) {
-  border-right: 5px solid #FF399F !important;
+  border-right: 5px solid #A8E64D !important;
 }
 #game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
 #game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) {
-  border-bottom: 5px solid #FF399F !important;
+  border-bottom: 5px solid #A8E64D !important;
 }
-#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n) {
-  border-right: 0 !important;
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n) {border-right: 0 !important;}
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73) {border-bottom: 0 !important;}
+
+/* ALBUM 9 — WHAT AM I LOOKING AT? — guaranteed visible hot-pink 3x3 guides.
+   Draw the guides above cells instead of relying on their border cascade.
+   Only this room is affected. */
+#game.theme-weird .ev-sudoku-grid {
+  position: relative !important;
+  isolation: isolate;
+  border: 5px solid #FF399F !important;
+  overflow: hidden;
 }
-#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73) {
-  border-bottom: 0 !important;
+#game.theme-weird .ev-sudoku-grid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+  border-radius: 0;
+  background-image:
+    linear-gradient(to right,
+      transparent calc(33.333333% - 2.5px),
+      #FF399F calc(33.333333% - 2.5px),
+      #FF399F calc(33.333333% + 2.5px),
+      transparent calc(33.333333% + 2.5px),
+      transparent calc(66.666667% - 2.5px),
+      #FF399F calc(66.666667% - 2.5px),
+      #FF399F calc(66.666667% + 2.5px),
+      transparent calc(66.666667% + 2.5px)),
+    linear-gradient(to bottom,
+      transparent calc(33.333333% - 2.5px),
+      #FF399F calc(33.333333% - 2.5px),
+      #FF399F calc(33.333333% + 2.5px),
+      transparent calc(33.333333% + 2.5px),
+      transparent calc(66.666667% - 2.5px),
+      #FF399F calc(66.666667% - 2.5px),
+      #FF399F calc(66.666667% + 2.5px),
+      transparent calc(66.666667% + 2.5px));
+}
+
+/* Album 10: lime-green 5px 3x3 section lines over the board. */
+#game.theme-ugly .ev-sudoku-grid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+  border-radius: 0;
+  background-image:
+    linear-gradient(to right,
+      transparent calc(33.333333% - 2.5px),
+      #A8E64D calc(33.333333% - 2.5px),
+      #A8E64D calc(33.333333% + 2.5px),
+      transparent calc(33.333333% + 2.5px),
+      transparent calc(66.666667% - 2.5px),
+      #A8E64D calc(66.666667% - 2.5px),
+      #A8E64D calc(66.666667% + 2.5px),
+      transparent calc(66.666667% + 2.5px)),
+    linear-gradient(to bottom,
+      transparent calc(33.333333% - 2.5px),
+      #A8E64D calc(33.333333% - 2.5px),
+      #A8E64D calc(33.333333% + 2.5px),
+      transparent calc(33.333333% + 2.5px),
+      transparent calc(66.666667% - 2.5px),
+      #A8E64D calc(66.666667% - 2.5px),
+      #A8E64D calc(66.666667% + 2.5px),
+      transparent calc(66.666667% + 2.5px));
 }
