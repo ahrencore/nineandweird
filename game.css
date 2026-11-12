@@ -1064,3 +1064,78 @@ body *::-webkit-scrollbar-track,#game::-webkit-scrollbar-track,#game *::-webkit-
 #game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) { border-bottom:3px solid #FF5BA6 !important; }
 #game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n) { border-right:0 !important; }
 #game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73) { border-bottom:0 !important; }
+
+
+/* 2026-11-12: Targeted Fairy + 90s Sudoku contrast adjustments only.
+   Retain all other worlds, layout, scoring and cell behavior. */
+
+/* FAIRY: increase 3x3 separation using brighter enchanted pink-lilac. */
+#game.theme-fairy .ev-sudoku-grid {
+  border-color:#F0B8FF !important;
+}
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6) {
+  border-right-color:#F0B8FF !important;
+}
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) {
+  border-bottom-color:#F0B8FF !important;
+}
+
+/* 90S: light lavender playing surface against unchanged Midnight Arcade room. */
+#game.theme-nineties .ev-sudoku-grid {
+  background:#F4F0FF !important;
+}
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell {
+  background:#F4F0FF !important;
+  color:#202747 !important;
+  border-right-color:#AAB7D3 !important;
+  border-bottom-color:#AAB7D3 !important;
+}
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell.given {
+  background:#EAE5F8 !important;
+}
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell.same:not(.selected):not(.bad) {
+  background:#B8F3F0 !important;
+  color:#15354A !important;
+  outline-color:#008D9A !important;
+  box-shadow:inset 0 0 7px #36E0DC75 !important;
+}
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell.selected:not(.bad) {
+  background:#36E0DC !important;
+  color:#142D4D !important;
+  outline:3px solid #172B50 !important;
+  outline-offset:-3px;
+  box-shadow:inset 0 0 0 1px #F7FFFF !important;
+}
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell.bad {
+  background:#D82438 !important;
+  color:white !important;
+}
+#game.theme-nineties .ev-sudoku-grid .ev-sudo-note-marks {
+  color:#304C78 !important;
+}
+/* Retain the approved 3px hot-pink boundaries over the lighter cell fill. */
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6) {
+  border-right-color:#FF5BA6 !important;
+}
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) {
+  border-bottom-color:#FF5BA6 !important;
+}
+#game.theme-nineties .ev-sudoku-tray button {
+  background:#F4F0FF !important;
+  color:#202747 !important;
+  border-color:#AAB7D3 !important;
+}
+#game.theme-nineties .ev-sudoku-tray button.selected {
+  background:#E1FFFE !important;
+  border:2px solid #008D9A !important;
+  box-shadow:0 0 0 1px #36E0DC88, 0 0 8px #36E0DC70 !important;
+}
+/* Minimize cyan halos that muddy the dark-bordered Memphis icons on pale tiles. */
+#game.theme-nineties .ev-sudoku-grid .ev-sudoku-cell img,
+#game.theme-nineties .ev-sudoku-tray button img {
+  filter:drop-shadow(0 1px 1px #15284B33) !important;
+}
