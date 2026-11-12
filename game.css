@@ -1523,3 +1523,23 @@ body:has(#game.theme-alien:not([hidden])) {background:#111827!important;}
 #game.theme-weird .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54){border-bottom:5px solid #FF39A9!important;}
 #game.theme-weird .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n){border-right:0!important;}
 #game.theme-weird .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n + 73){border-bottom:0!important;}
+
+
+/* Album 10 UGLY LITTLE THINGS — hot-pink 3x3 boundaries. Scoped visual fix. */
+#game.theme-ugly .ev-sudoku-grid {
+  border: 4px solid #FF399F !important;
+}
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6) {
+  border-right: 5px solid #FF399F !important;
+}
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) {
+  border-bottom: 5px solid #FF399F !important;
+}
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n) {
+  border-right: 0 !important;
+}
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73) {
+  border-bottom: 0 !important;
+}
