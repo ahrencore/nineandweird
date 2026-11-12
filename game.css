@@ -1608,3 +1608,79 @@ body:has(#game.theme-alien:not([hidden])) {background:#111827!important;}
       #A8E64D calc(66.666667% + 2.5px),
       transparent calc(66.666667% + 2.5px));
 }
+
+
+/* FIXED: Albums 9 and 10 — divider strokes anchored to REAL 3x3 cell edges.
+   Disable the previous grid-wide 33.333% overlay (which drifted off the cells).
+   Every cell uses equal-size grid tracks and thin normal borders; pseudo-elements
+   draw the thicker block edges independently, without changing cell geometry. */
+#game.theme-weird .ev-sudoku-grid,
+#game.theme-ugly .ev-sudoku-grid {
+  display: grid !important;
+  grid-template-columns: repeat(9, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(9, minmax(0, 1fr)) !important;
+  position: relative !important;
+  isolation: isolate;
+  overflow: hidden !important;
+  border-width: 5px !important;
+}
+#game.theme-weird .ev-sudoku-grid { border-color: #FF399F !important; --section-divider: #FF399F; }
+#game.theme-ugly .ev-sudoku-grid { border-color: #A8E64D !important; --section-divider: #A8E64D; }
+#game.theme-weird .ev-sudoku-grid::after,
+#game.theme-ugly .ev-sudoku-grid::after {
+  content: none !important;
+  display: none !important;
+  background-image: none !important;
+}
+/* Reset old thick cell borders that altered the internal grid geometry. */
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell,
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell,
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6),
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6) {
+  border-right-width: 1px !important;
+  border-bottom-width: 1px !important;
+  min-height: 0 !important;
+  box-sizing: border-box !important;
+}
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54),
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54) {
+  border-bottom-width: 1px !important;
+}
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n),
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n) { border-right: 0 !important; }
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73),
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73) { border-bottom: 0 !important; }
+/* Draw vertical block separators on the exact right edges of cols 3 and 6. */
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3)::before,
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6)::before,
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3)::before,
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -2.5px;
+  height: 100%;
+  width: 5px;
+  background: var(--section-divider);
+  z-index: 10;
+  pointer-events: none;
+}
+/* Draw horizontal block separators on the exact bottom edges of rows 3 and 6. */
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27)::after,
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54)::after,
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27)::after,
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54)::after {
+  content: "";
+  position: absolute;
+  bottom: -2.5px;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: var(--section-divider);
+  z-index: 10;
+  pointer-events: none;
+}
