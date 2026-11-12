@@ -832,3 +832,127 @@ body:has(#game.theme-nineties:not([hidden])) {
 /* Safe-area spacing on all screens. Full-bleed world backgrounds remain untouched. */
 #loading,#home{box-sizing:border-box;padding-top:calc(env(safe-area-inset-top,0px) + 12px)}
 #game{padding-top:calc(env(safe-area-inset-top,0px) + 12px)!important}
+
+
+/* Nine & Weird / room navigation and palette repair (Nov 2026).
+   Scoped to existing screens; no asset, board, or gameplay changes. */
+
+/* One coherent header layout on the World Selection screen only.
+   The previous generic absolute title style must not collide with this grid. */
+#game.theme-hub .ev-head:has(+ .world-grid.world-list){
+  display:grid!important;
+  grid-template-columns:minmax(68px,1fr) minmax(0,auto) minmax(68px,1fr)!important;
+  align-items:center!important;
+  gap:8px!important;
+  width:100%;box-sizing:border-box;
+  min-height:58px;
+  padding:7px 4px!important;
+  position:relative!important;
+}
+#game.theme-hub .ev-head:has(+ .world-grid.world-list) > #toHome{
+  grid-column:1!important;grid-row:1!important;
+  width:max-content!important;max-width:100%!important;
+  min-width:0!important;height:auto!important;
+  padding:9px 11px!important;
+  margin:0!important;
+  justify-self:start!important;
+  flex:0 0 auto!important;
+  white-space:nowrap!important;
+  font-size:12px!important;
+}
+#game.theme-hub .ev-head:has(+ .world-grid.world-list) > strong{
+  grid-column:2!important;grid-row:1!important;
+  position:static!important;inset:auto!important;
+  left:auto!important;right:auto!important;
+  transform:none!important;
+  margin:0!important;width:auto!important;
+  max-width:100%!important;
+  justify-self:center!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  font-size:clamp(12px,3.6vw,20px)!important;
+  line-height:1.2!important;
+  letter-spacing:.025em!important;
+}
+#game.theme-hub .ev-head:has(+ .world-grid.world-list) > span{
+  grid-column:3!important;grid-row:1!important;
+  justify-self:stretch;
+}
+
+/* All outside-room scrollbars use Ruby After Dark (including World Selection).
+   Individual rooms below override these colors. Does not force scrolling. */
+:root,html,body,body *,#game,#game *{
+  scrollbar-width:thin!important;
+  scrollbar-color:#F36B78 #160B0E!important;
+}
+:root::-webkit-scrollbar,html::-webkit-scrollbar,body::-webkit-scrollbar,
+body *::-webkit-scrollbar,#game::-webkit-scrollbar,#game *::-webkit-scrollbar{width:7px;height:7px}
+:root::-webkit-scrollbar-thumb,html::-webkit-scrollbar-thumb,body::-webkit-scrollbar-thumb,
+body *::-webkit-scrollbar-thumb,#game::-webkit-scrollbar-thumb,#game *::-webkit-scrollbar-thumb{
+  background:#F36B78;border-radius:99px;
+}
+:root::-webkit-scrollbar-track,html::-webkit-scrollbar-track,body::-webkit-scrollbar-track,
+body *::-webkit-scrollbar-track,#game::-webkit-scrollbar-track,#game *::-webkit-scrollbar-track{
+  background:#160B0E;
+}
+/* Theme colors only when a player is inside a specific room. */
+#game.theme-classic,#game.theme-classic *{scrollbar-color:#64748b #f4f6f8!important}
+#game.theme-dark,#game.theme-dark *{scrollbar-color:#c6cbd2 #151515!important}
+#game.theme-halloween,#game.theme-halloween *{scrollbar-color:#b75cff #1c0827!important}
+#game.theme-patissserie,#game.theme-patissserie *{scrollbar-color:#a87542 #fff8ec!important}
+#game.theme-christmas,#game.theme-christmas *{scrollbar-color:#43aeda #eaf7ff!important}
+#game.theme-fairy,#game.theme-fairy *{scrollbar-color:#c78aff #322145!important}
+#game.theme-olympus,#game.theme-olympus *{scrollbar-color:#347daa #f7f2e8!important}
+#game.theme-nineties,#game.theme-nineties *{scrollbar-color:#36e0dc #161934!important}
+#game.theme-classic::-webkit-scrollbar-thumb,#game.theme-classic *::-webkit-scrollbar-thumb{background:#64748b}
+#game.theme-classic::-webkit-scrollbar-track,#game.theme-classic *::-webkit-scrollbar-track{background:#f4f6f8}
+#game.theme-dark::-webkit-scrollbar-thumb,#game.theme-dark *::-webkit-scrollbar-thumb{background:#c6cbd2}
+#game.theme-dark::-webkit-scrollbar-track,#game.theme-dark *::-webkit-scrollbar-track{background:#151515}
+#game.theme-halloween::-webkit-scrollbar-thumb,#game.theme-halloween *::-webkit-scrollbar-thumb{background:#b75cff}
+#game.theme-halloween::-webkit-scrollbar-track,#game.theme-halloween *::-webkit-scrollbar-track{background:#1c0827}
+#game.theme-patissserie::-webkit-scrollbar-thumb,#game.theme-patissserie *::-webkit-scrollbar-thumb{background:#a87542}
+#game.theme-patissserie::-webkit-scrollbar-track,#game.theme-patissserie *::-webkit-scrollbar-track{background:#fff8ec}
+#game.theme-christmas::-webkit-scrollbar-thumb,#game.theme-christmas *::-webkit-scrollbar-thumb{background:#43aeda}
+#game.theme-christmas::-webkit-scrollbar-track,#game.theme-christmas *::-webkit-scrollbar-track{background:#eaf7ff}
+#game.theme-fairy::-webkit-scrollbar-thumb,#game.theme-fairy *::-webkit-scrollbar-thumb{background:#c78aff}
+#game.theme-fairy::-webkit-scrollbar-track,#game.theme-fairy *::-webkit-scrollbar-track{background:#322145}
+#game.theme-olympus::-webkit-scrollbar-thumb,#game.theme-olympus *::-webkit-scrollbar-thumb{background:#347daa}
+#game.theme-olympus::-webkit-scrollbar-track,#game.theme-olympus *::-webkit-scrollbar-track{background:#f7f2e8}
+#game.theme-nineties::-webkit-scrollbar-thumb,#game.theme-nineties *::-webkit-scrollbar-thumb{background:#36e0dc}
+#game.theme-nineties::-webkit-scrollbar-track,#game.theme-nineties *::-webkit-scrollbar-track{background:#161934}
+
+/* Classic white and dark: remove the inherited carnival-purple controls.
+   Covers Hint, Notes, Erase and Undo; preserves enabled/active behavior. */
+#game.theme-classic .ev-sudo-tools-clean .ev-sudo-tool,
+#game.theme-classic .ev-sudo-tools .ev-sudo-tool{
+  background:#edf2f7!important;color:#172333!important;
+  border:1.5px solid #8296aa!important;
+  box-shadow:0 1px 4px #253b531f!important;
+  text-shadow:none!important;
+}
+#game.theme-classic .ev-sudo-tools-clean .ev-sudo-tool-icon,
+#game.theme-classic .ev-sudo-tools-clean .ev-sudo-tool-label{
+  color:#172333!important;text-shadow:none!important;
+}
+#game.theme-classic .ev-sudo-tools-clean .ev-sudo-tool.active{
+  background:#b9d9fa!important;color:#102b4b!important;
+  border-color:#3779cb!important;box-shadow:0 0 0 2px #3779cb66!important;
+}
+#game.theme-dark .ev-sudo-tools-clean .ev-sudo-tool,
+#game.theme-dark .ev-sudo-tools .ev-sudo-tool{
+  background:#20252a!important;color:#f5faff!important;
+  border:1.5px solid #7c929e!important;
+  box-shadow:0 1px 4px #0007!important;
+  text-shadow:none!important;
+}
+#game.theme-dark .ev-sudo-tools-clean .ev-sudo-tool-icon,
+#game.theme-dark .ev-sudo-tools-clean .ev-sudo-tool-label{
+  color:#f5faff!important;text-shadow:none!important;
+}
+#game.theme-dark .ev-sudo-tools-clean .ev-sudo-tool.active{
+  background:#174653!important;color:#fff!important;
+  border-color:#31d6ef!important;box-shadow:0 0 0 2px #31d6ef80!important;
+}
+#game:is(.theme-classic,.theme-dark) .ev-sudo-tools-clean .ev-sudo-tool:disabled{
+  opacity:.42!important;
+}
