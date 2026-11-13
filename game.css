@@ -1886,34 +1886,34 @@ body:has(#game.theme-diner:not([hidden])) {background:#163F47!important;}
 
 /* Album 13: Body Parts Department — Anatomy Boutique. Scoped visuals only. */
 html:has(#game.theme-bodyparts:not([hidden])),
-body:has(#game.theme-bodyparts:not([hidden])) {background:#243E43!important;}
+body:has(#game.theme-bodyparts:not([hidden])) {background:#F2EDF5!important;}
 #game.theme-bodyparts {
- --surface:#F2E7D7;--panel:#243E43;--ink:#F6EBDD;
- --accent:#A42F50;--line:#B8A9A0;--peer:#D8B3CD;
- --same:#D8B3CD;--selected:#93D7C1;
- background:radial-gradient(ellipse at 50% 0%,#355359 0%,#243E43 85%)!important;
- color:#F6EBDD!important;
+ --surface:#FCFAF7;--panel:#E1F0EC;--ink:#443B56;
+ --accent:#9471B4;--line:#B7A9C0;--peer:#D6B5E5;
+ --same:#D6B5E5;--selected:#B3F0D9;
+ background:radial-gradient(ellipse at 50% 0%,#E6FBF5 0%,#F2EDF5 85%)!important;
+ color:#443B56!important;
 }
-#game.theme-bodyparts .ev-head{background:#354D51!important;border:2px solid #A42F50!important;border-radius:14px;padding:9px 10px!important;}
-#game.theme-bodyparts .ev-head>strong{color:#F6EBDD!important;text-shadow:0 0 7px #A42F5066!important;}
-#game.theme-bodyparts .ev-head .ev-btn{background:#643349!important;color:#F6EBDD!important;border-color:#D8B3CD!important;}
+#game.theme-bodyparts .ev-head{background:#E1F0EC!important;border:2px solid #9471B4!important;border-radius:14px;padding:9px 10px!important;}
+#game.theme-bodyparts .ev-head>strong{color:#443B56!important;text-shadow:0 0 7px #9471B466!important;}
+#game.theme-bodyparts .ev-head .ev-btn{background:#D5E7E2!important;color:#443B56!important;border-color:#D6B5E5!important;}
 #game.theme-bodyparts .difficulty-panel,#game.theme-bodyparts .result-panel,#game.theme-bodyparts .ev-sudo-shell{
- background:#354D51!important;color:#F6EBDD!important;border:2px solid #A42F50!important;box-shadow:0 0 12px #A42F5044!important;
+ background:#E1F0EC!important;color:#443B56!important;border:2px solid #9471B4!important;box-shadow:0 0 12px #9471B444!important;
 }
-#game.theme-bodyparts .difficulty-panel h2,#game.theme-bodyparts .result-panel h2,#game.theme-bodyparts .ev-note{color:#F6EBDD!important;}
-#game.theme-bodyparts .theme-button{background:#F2E7D7!important;color:#422E37!important;border:2px solid #A42F50!important;box-shadow:0 0 5px #A42F5050!important;}
-#game.theme-bodyparts .theme-button:focus-visible{outline:2px solid #93D7C1!important;}
-#game.theme-bodyparts .ev-sudo-stats>div{background:#F2E7D7!important;border-color:#A42F50!important;}
-#game.theme-bodyparts .ev-sudo-stats small,#game.theme-bodyparts .ev-sudo-stats strong{color:#422E37!important;}
-#game.theme-bodyparts .ev-sudoku-grid{position:relative!important;isolation:isolate;overflow:hidden;border:4px solid #A42F50!important;background:#F2E7D7!important;box-shadow:0 0 9px #A42F5055!important;}
+#game.theme-bodyparts .difficulty-panel h2,#game.theme-bodyparts .result-panel h2,#game.theme-bodyparts .ev-note{color:#443B56!important;}
+#game.theme-bodyparts .theme-button{background:#FCFAF7!important;color:#42374F!important;border:2px solid #9471B4!important;box-shadow:0 0 5px #9471B450!important;}
+#game.theme-bodyparts .theme-button:focus-visible{outline:2px solid #B3F0D9!important;}
+#game.theme-bodyparts .ev-sudo-stats>div{background:#FCFAF7!important;border-color:#9471B4!important;}
+#game.theme-bodyparts .ev-sudo-stats small,#game.theme-bodyparts .ev-sudo-stats strong{color:#42374F!important;}
+#game.theme-bodyparts .ev-sudoku-grid{position:relative!important;isolation:isolate;overflow:hidden;border:4px solid #9471B4!important;background:#FCFAF7!important;box-shadow:0 0 9px #9471B455!important;}
 #game.theme-bodyparts .ev-sudoku-grid>.ev-sudoku-cell{
- background:#F2E7D7!important;color:#422E37!important;
- border-right:1px solid #B8A9A0!important;border-bottom:1px solid #B8A9A0!important;box-sizing:border-box!important;
+ background:#FCFAF7!important;color:#42374F!important;
+ border-right:1px solid #B7A9C0!important;border-bottom:1px solid #B7A9C0!important;box-sizing:border-box!important;
 }
-#game.theme-bodyparts .ev-sudoku-grid>.ev-sudoku-cell.given{background:#E8DAC7!important;}
-#game.theme-bodyparts .ev-sudoku-grid>.ev-sudoku-cell.same:not(.selected):not(.bad){background:#D8B3CD!important;box-shadow:inset 0 0 0 2px #A42F50!important;}
-#game.theme-bodyparts .ev-sudoku-grid>.ev-sudoku-cell.selected:not(.bad){background:#93D7C1!important;outline:2px solid #243E43!important;outline-offset:-2px;}
-#game.theme-bodyparts .ev-sudoku-grid>.ev-sudoku-cell.bad{background:#E94141!important;outline:2px solid #671E30!important;outline-offset:-2px;}
+#game.theme-bodyparts .ev-sudoku-grid>.ev-sudoku-cell.given{background:#F0EDF4!important;}
+#game.theme-bodyparts .ev-sudoku-grid>.ev-sudoku-cell.same:not(.selected):not(.bad){background:#D6B5E5!important;box-shadow:inset 0 0 0 2px #9471B4!important;}
+#game.theme-bodyparts .ev-sudoku-grid>.ev-sudoku-cell.selected:not(.bad){background:#B3F0D9!important;outline:2px solid #9471B4!important;outline-offset:-2px;}
+#game.theme-bodyparts .ev-sudoku-grid>.ev-sudoku-cell.bad{background:#E94141!important;outline:2px solid #8C213B!important;outline-offset:-2px;}
 #game.theme-bodyparts .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n){border-right:0!important;}
 #game.theme-bodyparts .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n + 73){border-bottom:0!important;}
 /* Top-layer 3×3 dividers override individual thin cell lines, no double borders. */
@@ -1921,25 +1921,25 @@ body:has(#game.theme-bodyparts:not([hidden])) {background:#243E43!important;}
  content:""!important;display:block!important;position:absolute!important;inset:0!important;
  pointer-events:none!important;z-index:100!important;background-image:
  linear-gradient(to right,
- transparent calc(33.333333% - 2px),#A42F50 calc(33.333333% - 2px),#A42F50 calc(33.333333% + 2px),
+ transparent calc(33.333333% - 2px),#9471B4 calc(33.333333% - 2px),#9471B4 calc(33.333333% + 2px),
  transparent calc(33.333333% + 2px),transparent calc(66.666667% - 2px),
- #A42F50 calc(66.666667% - 2px),#A42F50 calc(66.666667% + 2px),transparent calc(66.666667% + 2px)),
+ #9471B4 calc(66.666667% - 2px),#9471B4 calc(66.666667% + 2px),transparent calc(66.666667% + 2px)),
  linear-gradient(to bottom,
- transparent calc(33.333333% - 2px),#A42F50 calc(33.333333% - 2px),#A42F50 calc(33.333333% + 2px),
+ transparent calc(33.333333% - 2px),#9471B4 calc(33.333333% - 2px),#9471B4 calc(33.333333% + 2px),
  transparent calc(33.333333% + 2px),transparent calc(66.666667% - 2px),
- #A42F50 calc(66.666667% - 2px),#A42F50 calc(66.666667% + 2px),transparent calc(66.666667% + 2px))!important;
+ #9471B4 calc(66.666667% - 2px),#9471B4 calc(66.666667% + 2px),transparent calc(66.666667% + 2px))!important;
  background-repeat:no-repeat!important;box-shadow:none!important;filter:none!important;
 }
-#game.theme-bodyparts .ev-sudoku-tray button{background:#F2E7D7!important;color:#422E37!important;border-color:#A42F50!important;}
-#game.theme-bodyparts .ev-sudoku-tray button.selected{background:#93D7C1!important;border:2px solid #243E43!important;box-shadow:0 0 7px #93D7C188!important;}
-#game.theme-bodyparts .ev-sudo-tools-clean .ev-sudo-tool{background:#F2E7D7!important;color:#422E37!important;border:1.5px solid #A42F50!important;box-shadow:none!important;}
-#game.theme-bodyparts .ev-sudo-tool-icon,#game.theme-bodyparts .ev-sudo-tool-label{color:#422E37!important;}
-#game.theme-bodyparts .ev-sudo-tools-clean .ev-sudo-tool.active{background:#93D7C1!important;border-color:#A42F50!important;}
-#game.theme-bodyparts .result-score strong{color:#F6EBDD!important;}
-#game.theme-bodyparts .result-stats>div{border-color:#A42F50!important;}
+#game.theme-bodyparts .ev-sudoku-tray button{background:#FCFAF7!important;color:#42374F!important;border-color:#9471B4!important;}
+#game.theme-bodyparts .ev-sudoku-tray button.selected{background:#B3F0D9!important;border:2px solid #F2EDF5!important;box-shadow:0 0 7px #B3F0D988!important;}
+#game.theme-bodyparts .ev-sudo-tools-clean .ev-sudo-tool{background:#FCFAF7!important;color:#42374F!important;border:1.5px solid #9471B4!important;box-shadow:none!important;}
+#game.theme-bodyparts .ev-sudo-tool-icon,#game.theme-bodyparts .ev-sudo-tool-label{color:#42374F!important;}
+#game.theme-bodyparts .ev-sudo-tools-clean .ev-sudo-tool.active{background:#B3F0D9!important;border-color:#9471B4!important;}
+#game.theme-bodyparts .result-score strong{color:#443B56!important;}
+#game.theme-bodyparts .result-stats>div{border-color:#9471B4!important;}
 #game.theme-bodyparts .ev-sudoku-grid>.ev-sudoku-cell img,#game.theme-bodyparts .ev-sudoku-tray button img{width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;filter:none!important;}
-#game.theme-bodyparts,#game.theme-bodyparts *{scrollbar-color:#A42F50 #243E43!important;}
-#game.theme-bodyparts::-webkit-scrollbar-thumb,#game.theme-bodyparts *::-webkit-scrollbar-thumb{background:#A42F50!important;}
-#game.theme-bodyparts::-webkit-scrollbar-track,#game.theme-bodyparts *::-webkit-scrollbar-track{background:#243E43!important;}
-#game.theme-hub .world-grid .world-bodyparts{background:linear-gradient(120deg,#354D51,#243E43)!important;color:#F6EBDD!important;border:2px solid #A42F50!important;box-shadow:0 0 10px #A42F5050!important;}
-#game.theme-hub .world-grid .world-bodyparts strong{color:#F6EBDD!important;text-shadow:0 0 6px #A42F5055!important;}
+#game.theme-bodyparts,#game.theme-bodyparts *{scrollbar-color:#9471B4 #F2EDF5!important;}
+#game.theme-bodyparts::-webkit-scrollbar-thumb,#game.theme-bodyparts *::-webkit-scrollbar-thumb{background:#9471B4!important;}
+#game.theme-bodyparts::-webkit-scrollbar-track,#game.theme-bodyparts *::-webkit-scrollbar-track{background:#F2EDF5!important;}
+#game.theme-hub .world-grid .world-bodyparts{background:linear-gradient(120deg,#E1F0EC,#F2EDF5)!important;color:#443B56!important;border:2px solid #9471B4!important;box-shadow:0 0 10px #9471B450!important;}
+#game.theme-hub .world-grid .world-bodyparts strong{color:#443B56!important;text-shadow:0 0 6px #9471B455!important;}
