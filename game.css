@@ -1943,3 +1943,22 @@ body:has(#game.theme-bodyparts:not([hidden])) {background:#F2EDF5!important;}
 #game.theme-bodyparts::-webkit-scrollbar-track,#game.theme-bodyparts *::-webkit-scrollbar-track{background:#F2EDF5!important;}
 #game.theme-hub .world-grid .world-bodyparts{background:linear-gradient(120deg,#E1F0EC,#F2EDF5)!important;color:#443B56!important;border:2px solid #9471B4!important;box-shadow:0 0 10px #9471B450!important;}
 #game.theme-hub .world-grid .world-bodyparts strong{color:#443B56!important;text-shadow:0 0 6px #9471B455!important;}
+
+/* Favourites, extensible 2-1-1 hub, and local Battle points page */
+#game.theme-hub .world-categories .nw-category-wide{grid-column:1/-1!important;min-height:78px!important;padding:12px!important;display:flex!important;flex-direction:row!important;justify-content:center!important;align-items:center!important;flex-wrap:wrap;gap:12px!important;background:linear-gradient(120deg,#372027,#241117)!important;border:2px solid #F36B78!important;color:#FFE5E7!important;box-shadow:0 0 10px #F36B7840!important}
+#game.theme-hub .nw-category-wide .nw-category-icon{font-size:27px;color:#FF96A7;line-height:1}
+#game.theme-hub .nw-category-wide>strong{font-size:19px!important}
+#game.theme-hub .nw-category-wide>small{max-width:none!important;font-size:11px!important}
+#game.theme-hub .world-category-battle{border-color:#EAC777!important}
+#game.theme-hub .world-category-battle .nw-category-icon{color:#EAC777!important}
+#game .nw-fav-toggle{appearance:none;display:block;margin:0 auto 17px;padding:10px 15px;border:2px solid var(--accent,#F36B78)!important;border-radius:11px;background:var(--panel,#2F1B23)!important;color:var(--ink,#FFE4E8)!important;font:800 12px system-ui,sans-serif;letter-spacing:.04em}
+#game .nw-fav-toggle[aria-pressed="true"]{box-shadow:0 0 10px #F36B7877!important}
+#game .nw-empty-favs{grid-column:1/-1;max-width:420px;margin:28px auto;padding:21px;text-align:center;background:#28151D;color:#FFE4E8;border:1px solid #F36B78;border-radius:14px}
+#game.theme-hub .nw-battle{width:min(100%,440px);margin:30px auto;padding:25px 17px;text-align:center;background:#29171D;color:#FFE2E6;border:1px solid #F36B78;border-radius:19px}
+#game.theme-hub .nw-battle-star{font-size:38px;color:#EAC777}
+#game.theme-hub .nw-battle h2{font:700 16px Georgia,serif;letter-spacing:.08em;margin:12px 0}
+#game.theme-hub .nw-battle-number{display:block;font:800 clamp(36px,10vw,54px) Georgia,serif;color:#FFE0A8}
+#game.theme-hub .nw-battle p{font-size:12px}
+#game.theme-hub .nw-battle-soon{background:#382228;border:1px solid #71434C;border-radius:12px;margin:23px 0;padding:19px 13px}
+#game.theme-hub .nw-battle-soon>strong{color:#F36B78;letter-spacing:.1em}
+#game.theme-hub .nw-battle>small{color:#D7A8B2;font-size:11px}
