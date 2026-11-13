@@ -2076,7 +2076,12 @@ body:has(#game.theme-solarsick:not([hidden])){background:#07020C!important;}
 #game.theme-solarsick .ev-sudoku-grid>.ev-sudoku-cell.given{background:#1A0B26!important;}
 #game.theme-solarsick .ev-sudoku-grid>.ev-sudoku-cell.selected{background:#5A1971!important;box-shadow:inset 0 0 0 2px #FFC72A55!important;z-index:2;}
 #game.theme-solarsick .ev-sudoku-grid>.ev-sudoku-cell.peer{background:#241031!important;}
-#game.theme-solarsick .ev-sudoku-grid>.ev-sudoku-cell.same{background:#361446!important;}
+/* Album 15: strongly visible same-symbol highlights, not a pale wash. */
+#game.theme-solarsick .ev-sudoku-grid>.ev-sudoku-cell.same:not(.selected):not(.bad){
+  background:#542274!important;
+  box-shadow:inset 0 0 0 2px #CBFF39, inset 0 0 13px #A843EA75!important;
+  z-index:1;
+}
 #game.theme-solarsick .ev-sudoku-grid>.ev-sudoku-cell.bad{background:#7D143F!important;}
 #game.theme-solarsick .ev-sudoku-grid>.ev-sudoku-cell img{filter:drop-shadow(0 0 4px #000) drop-shadow(0 0 3px #FF4FD288)!important;}
 #game.theme-solarsick .ev-sudoku-tray button{background:#211032!important;border:1px solid #FF77DF!important;}
