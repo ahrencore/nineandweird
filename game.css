@@ -2042,3 +2042,51 @@ body:has(#game.theme-deepsea:not([hidden])){background:#02070B!important;}
   box-shadow:0 0 10px #3FE0D055!important;
 }
 #game.theme-hub .world-grid .world-deepsea strong{color:#EAFBFF!important;text-shadow:0 0 7px #3FE0D088!important;}
+
+
+/* Album 15: THE SOLAR SYSTEM IS SICK — near-black cosmic neon palette, distinct from other albums. */
+html:has(#game.theme-solarsick:not([hidden])),
+body:has(#game.theme-solarsick:not([hidden])){background:#07020C!important;}
+#game.theme-solarsick{
+  --surface:#12071B;--panel:#170B24;--ink:#FFE9FF;
+  --accent:#FF4FD2;--line:#473456;--peer:#271233;
+  --same:#3E1653;--selected:#55196D;
+  background:radial-gradient(ellipse at 50% -10%,#33114D 0%,#13071D 38%,#09030F 72%,#050109 100%)!important;
+  color:#FFE9FF!important;
+}
+#game.theme-solarsick .ev-head{background:#170B24!important;border:2px solid #E7FF3A!important;border-radius:14px;padding:9px 10px!important;box-shadow:0 0 16px #FF4FD233!important;}
+#game.theme-solarsick .ev-head>strong{color:#FFD26A!important;text-shadow:0 0 8px #FF4FD2AA!important;}
+#game.theme-solarsick .ev-head .ev-btn{background:#211032!important;color:#FFF4FF!important;border-color:#FF70DA!important;}
+#game.theme-solarsick .difficulty-panel,
+#game.theme-solarsick .result-panel,
+#game.theme-solarsick .ev-sudo-shell{background:#170B24!important;color:#FFE9FF!important;border:2px solid #FF6ADA!important;box-shadow:0 0 12px #FF4FD233!important;}
+#game.theme-solarsick .difficulty-panel h2,
+#game.theme-solarsick .result-panel h2,
+#game.theme-solarsick .ev-note{color:#FFD26A!important;}
+#game.theme-solarsick .theme-button{background:#211032!important;color:#FFE9FF!important;border:2px solid #C8FF2C!important;box-shadow:0 0 6px #C8FF2C22!important;}
+#game.theme-solarsick .theme-button:focus-visible{outline:2px solid #FFE9FF!important;}
+#game.theme-solarsick .ev-sudo-stats>div{background:#211032!important;border-color:#6B447C!important;}
+#game.theme-solarsick .ev-sudo-stats small{color:#FFB0EA!important;}
+#game.theme-solarsick .ev-sudo-stats strong{color:#FFF3B8!important;}
+#game.theme-solarsick .ev-sudoku-grid{position:relative!important;isolation:isolate;overflow:hidden;border:4px solid #FF4FD2!important;background:#0E0616!important;box-shadow:0 0 15px #FF4FD255!important;}
+#game.theme-solarsick .ev-sudoku-grid>.ev-sudoku-cell{background:#0E0616!important;color:#FFE9FF!important;border-right:1px solid #473456!important;border-bottom:1px solid #473456!important;}
+#game.theme-solarsick .ev-sudoku-grid>.ev-sudoku-cell:nth-child(3n){border-right:4px solid #FF4FD2!important;}
+#game.theme-solarsick .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n+19):nth-child(-n+27),
+#game.theme-solarsick .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n+46):nth-child(-n+54){border-bottom:4px solid #FF4FD2!important;}
+#game.theme-solarsick .ev-sudoku-grid>.ev-sudoku-cell.given{background:#1A0B26!important;}
+#game.theme-solarsick .ev-sudoku-grid>.ev-sudoku-cell.selected{background:#5A1971!important;box-shadow:inset 0 0 0 2px #FFC72A55!important;z-index:2;}
+#game.theme-solarsick .ev-sudoku-grid>.ev-sudoku-cell.peer{background:#241031!important;}
+#game.theme-solarsick .ev-sudoku-grid>.ev-sudoku-cell.same{background:#361446!important;}
+#game.theme-solarsick .ev-sudoku-grid>.ev-sudoku-cell.bad{background:#7D143F!important;}
+#game.theme-solarsick .ev-sudoku-grid>.ev-sudoku-cell img{filter:drop-shadow(0 0 4px #000) drop-shadow(0 0 3px #FF4FD288)!important;}
+#game.theme-solarsick .ev-sudoku-tray button{background:#211032!important;border:1px solid #FF77DF!important;}
+#game.theme-solarsick .ev-sudoku-tray button.selected{background:#4B145F!important;border:2px solid #C8FF2C!important;box-shadow:0 0 12px #C8FF2C66!important;}
+#game.theme-solarsick .ev-sudoku-tray button.completed{opacity:.14!important;}
+#game.theme-solarsick .ev-sudo-tools button{background:#211032!important;border:1px solid #FF77DF!important;color:#FFE9FF!important;}
+#game.theme-solarsick .ev-sudo-tools button:hover{box-shadow:0 0 10px #FF4FD244!important;}
+#game.theme-solarsick .ev-sudo-remain{background:#3D114E!important;color:#FFF3B8!important;}
+#game.theme-solarsick .nw-fav-toggle{background:#211032!important;color:#FFE9FF!important;border-color:#C8FF2C!important;}
+#game.theme-solarsick::-webkit-scrollbar-thumb,#game.theme-solarsick *::-webkit-scrollbar-thumb{background:#FF4FD2!important;}
+#game.theme-solarsick::-webkit-scrollbar-track,#game.theme-solarsick *::-webkit-scrollbar-track{background:#07020C!important;}
+#game.theme-hub .world-grid .world-solarsick{background:linear-gradient(125deg,#2A0D3D,#14051F)!important;color:#FFE9FF!important;border:2px solid #FF4FD2!important;box-shadow:0 0 10px #FF4FD255!important;}
+#game.theme-hub .world-grid .world-solarsick strong{color:#FFD26A!important;text-shadow:0 0 7px #FF4FD288!important;}
