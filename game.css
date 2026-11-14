@@ -2208,3 +2208,187 @@ body:has(#game.theme-dontunwrap:not([hidden])){background:#201712!important;}
   box-shadow:0 0 10px #C58A4944!important;
 }
 #game.theme-hub .world-grid .world-dontunwrap strong{color:#FFE0A7!important;text-shadow:none!important;}
+
+
+/* Album 17: UNPREPARED CHRISTMAS — exact existing Christmas icy board + static snow visuals */
+#game.theme-hub .world-grid .world-unpreparedchristmas{background:linear-gradient(150deg,#F8FDFF,#CDEEFF);color:#245D83;border-color:#79C9ED;box-shadow:0 0 9px #8BD8F466}
+#game.theme-unpreparedchristmas{--surface:#F7FCFF;--panel:#EAF7FF;--ink:#245D83;--accent:#579CC5;--line:#9ACCE6;--peer:#DFF2FC;--same:#BCE8FC;--selected:#A9DEF7;background:#EAF7FF!important;min-height:100dvh;color:#245D83!important}
+html:has(#game.theme-unpreparedchristmas:not([hidden])),body:has(#game.theme-unpreparedchristmas:not([hidden])){background:#EAF7FF!important;color:#245D83!important}
+#game.theme-unpreparedchristmas .ev-head{background:#F7FCFF!important}
+#game.theme-unpreparedchristmas .ev-sudo-shell,#game.theme-unpreparedchristmas .difficulty-panel,#game.theme-unpreparedchristmas .result-panel{background:#EAF7FF!important;color:#245D83!important;border-color:#9ACCE6!important}
+#game.theme-unpreparedchristmas .ev-head strong{color:#245D83!important;text-shadow:0 0 8px #8BD8F477!important}
+#game.theme-unpreparedchristmas .ev-head .ev-btn{background:#F7FCFF!important;color:#245D83!important;border-color:#579CC5!important}
+#game.theme-unpreparedchristmas .theme-button{background:linear-gradient(#FFFFFF,#EAF7FF)!important;color:#245D83!important;border-color:#79C9ED!important}
+#game.theme-unpreparedchristmas .ev-sudo-tool,#game.theme-unpreparedchristmas .ev-sudo-tools .ev-sudo-tool{background:#F7FCFF!important;color:#245D83!important;border:1px solid #9ACCE6!important;box-shadow:0 0 7px #8BD8F455!important;text-shadow:none!important}
+#game.theme-unpreparedchristmas .ev-sudo-tool-icon,#game.theme-unpreparedchristmas .ev-sudo-tool-label{color:#245D83!important;text-shadow:none!important;filter:none!important}
+#game.theme-unpreparedchristmas .ev-sudo-tool.active{background:#BCE8FC!important}
+#game.theme-unpreparedchristmas .ev-sudo-stats>div,#game.theme-unpreparedchristmas .ev-sudoku-tray button{background:#F7FCFF!important;color:#245D83!important}
+#game.theme-unpreparedchristmas .ev-sudoku-cell.bad{background:#D92731!important;color:white!important}
+#game.theme-unpreparedchristmas .ev-sudoku-grid{position:relative;isolation:isolate;overflow:visible}
+#game.theme-unpreparedchristmas .ev-sudoku-grid::before{content:'';position:absolute;pointer-events:none;z-index:5;left:-3px;right:-3px;top:-7px;height:10px;background:radial-gradient(ellipse 13px 7px at 10% 90%,#FFFFFF 96%,transparent 100%),radial-gradient(ellipse 18px 8px at 33% 90%,#FFFFFF 96%,transparent 100%),radial-gradient(ellipse 15px 7px at 58% 90%,#FFFFFF 96%,transparent 100%),radial-gradient(ellipse 19px 8px at 85% 90%,#FFFFFF 96%,transparent 100%);filter:drop-shadow(0 1px 1px #8BD8F488)}
+#game.theme-unpreparedchristmas .ev-sudoku-grid::after{content:'❄';position:absolute;pointer-events:none;z-index:5;right:-7px;bottom:-12px;color:#8BD8F4;font-size:15px;text-shadow:0 0 3px #FFFFFF}
+#game.theme-unpreparedchristmas .ev-sudoku-grid::before{content:'';left:-3px;right:-3px;top:-6px;height:7px;background:linear-gradient(to bottom,#fff 0%,#f8fdff 52%,#d5eaf6 100%);border-radius:60% 45% 35% 55% / 85% 85% 25% 30%;filter:drop-shadow(0 2px 1px #9acbe466)}
+#game.theme-unpreparedchristmas .ev-sudoku-grid::after{content:none}
+#game.theme-unpreparedchristmas{background:#EAF7FF!important;color:#245D83!important}
+html:has(#game.theme-unpreparedchristmas:not([hidden])),body:has(#game.theme-unpreparedchristmas:not([hidden])){background:#EAF7FF!important}
+#game.theme-unpreparedchristmas{--cell-strong:#7ed1f5;--cell-match:#c6ecff;--room-glow:#42bde9;--room-border:#347daA;}
+#game.theme-hub .world-grid .world-unpreparedchristmas{border:2px solid #42bde9!important;box-shadow:0 0 10px color-mix(in srgb,#42bde9 50%,transparent)!important}
+#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-unpreparedchristmas,.theme-fairy,.theme-olympus) .ev-sudoku-grid>.ev-sudoku-cell.selected:not(.bad){background:var(--cell-strong)!important;outline:2px solid var(--room-border)!important;outline-offset:-2px;box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--room-border) 75%,white),inset 0 0 12px color-mix(in srgb,var(--room-glow) 55%,transparent)!important;z-index:2}
+#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-unpreparedchristmas,.theme-fairy,.theme-olympus) .ev-sudoku-grid>.ev-sudoku-cell.same:not(.selected):not(.bad){background:var(--cell-match)!important;box-shadow:inset 0 0 0 2px var(--room-border),inset 0 0 10px color-mix(in srgb,var(--room-glow) 55%,transparent)!important;z-index:1}
+#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-unpreparedchristmas,.theme-fairy,.theme-olympus) .ev-sudoku-cell img{filter:drop-shadow(0 0 3px var(--room-glow))!important}
+#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-unpreparedchristmas,.theme-fairy,.theme-olympus) .ev-sudoku-tray button.selected{border:2px solid var(--room-border)!important;box-shadow:0 0 11px var(--room-glow)!important;background:var(--cell-match)!important}
+#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-unpreparedchristmas,.theme-fairy,.theme-olympus) .ev-sudo-tools-clean .ev-sudo-tool.active{border-color:var(--room-border)!important;box-shadow:0 0 11px var(--room-glow)!important}
+#game:is(.theme-classic,.theme-dark,.theme-halloween,.theme-patissserie,.theme-unpreparedchristmas,.theme-fairy,.theme-olympus) .ev-sudoku-grid>.ev-sudoku-cell.bad{background:#d82438!important;color:#fff!important;outline:2px solid #8b0015!important;outline-offset:-2px;box-shadow:inset 0 0 0 2px #ffb5be!important}
+#game.theme-unpreparedchristmas,#game.theme-unpreparedchristmas *{scrollbar-color:#43aeda #eaf7ff!important}
+#game.theme-unpreparedchristmas::-webkit-scrollbar-thumb,#game.theme-unpreparedchristmas *::-webkit-scrollbar-thumb{background:#43aeda}
+#game.theme-unpreparedchristmas::-webkit-scrollbar-track,#game.theme-unpreparedchristmas *::-webkit-scrollbar-track{background:#eaf7ff}
+#game.theme-unpreparedchristmas .ev-sudoku-grid{ border:3px solid #328DBD !important; }
+#game.theme-unpreparedchristmas .ev-sudoku-grid > .ev-sudoku-cell{ border-right:1px solid #A8D2E7 !important; border-bottom:1px solid #A8D2E7 !important; }
+#game.theme-unpreparedchristmas .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-unpreparedchristmas .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6){ border-right:3px solid #328DBD !important; }
+#game.theme-unpreparedchristmas .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-unpreparedchristmas .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54){ border-bottom:3px solid #328DBD !important; }
+#game.theme-unpreparedchristmas .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n){ border-right:0 !important; }
+#game.theme-unpreparedchristmas .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73){ border-bottom:0 !important; }
+#game.theme-classic .ev-sudoku-grid,
+#game.theme-dark .ev-sudoku-grid,
+#game.theme-halloween .ev-sudoku-grid,
+#game.theme-patissserie .ev-sudoku-grid,
+#game.theme-unpreparedchristmas .ev-sudoku-grid,
+#game.theme-fairy .ev-sudoku-grid,
+#game.theme-olympus .ev-sudoku-grid,
+#game.theme-nineties .ev-sudoku-grid,
+#game.theme-weird .ev-sudoku-grid,
+#game.theme-ugly .ev-sudoku-grid,
+#game.theme-alien .ev-sudoku-grid{
+  position:relative!important;
+  grid-template-columns:repeat(9,minmax(0,1fr))!important;
+  grid-template-rows:repeat(9,minmax(0,1fr))!important;
+  isolation:isolate;
+}
+#game.theme-classic .ev-sudoku-grid > .ev-sudoku-cell,
+#game.theme-dark .ev-sudoku-grid > .ev-sudoku-cell,
+#game.theme-halloween .ev-sudoku-grid > .ev-sudoku-cell,
+#game.theme-patissserie .ev-sudoku-grid > .ev-sudoku-cell,
+#game.theme-unpreparedchristmas .ev-sudoku-grid > .ev-sudoku-cell,
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell,
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell,
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell,
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell,
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell,
+#game.theme-alien .ev-sudoku-grid > .ev-sudoku-cell,
+#game.theme-classic .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-classic .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6),
+#game.theme-dark .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-dark .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6),
+#game.theme-halloween .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-halloween .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6),
+#game.theme-patissserie .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-patissserie .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6),
+#game.theme-unpreparedchristmas .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-unpreparedchristmas .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6),
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6),
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6),
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6),
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6),
+#game.theme-alien .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-alien .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6),
+#game.theme-classic .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-classic .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54),
+#game.theme-dark .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-dark .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54),
+#game.theme-halloween .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-halloween .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54),
+#game.theme-patissserie .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-patissserie .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54),
+#game.theme-unpreparedchristmas .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-unpreparedchristmas .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54),
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54),
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54),
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54),
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54),
+#game.theme-alien .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-alien .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54){
+  border-right-width:1px!important;
+  border-bottom-width:1px!important;
+  box-sizing:border-box!important;
+}
+#game.theme-classic .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n),
+#game.theme-dark .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n),
+#game.theme-halloween .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n),
+#game.theme-patissserie .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n),
+#game.theme-unpreparedchristmas .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n),
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n),
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n),
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n),
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n),
+#game.theme-alien .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n){border-right:0!important;}
+#game.theme-classic .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73),
+#game.theme-dark .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73),
+#game.theme-halloween .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73),
+#game.theme-patissserie .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73),
+#game.theme-unpreparedchristmas .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73),
+#game.theme-fairy .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73),
+#game.theme-olympus .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73),
+#game.theme-nineties .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73),
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73),
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73),
+#game.theme-alien .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73){border-bottom:0!important;}
+#game.theme-unpreparedchristmas .ev-sudoku-grid{--box-divider:#328DBD; --box-stroke:3px;}
+#game.theme-classic .ev-sudoku-grid::after,
+#game.theme-dark .ev-sudoku-grid::after,
+#game.theme-halloween .ev-sudoku-grid::after,
+#game.theme-patissserie .ev-sudoku-grid::after,
+#game.theme-unpreparedchristmas .ev-sudoku-grid::after,
+#game.theme-olympus .ev-sudoku-grid::after,
+#game.theme-nineties .ev-sudoku-grid::after,
+#game.theme-weird .ev-sudoku-grid::after,
+#game.theme-ugly .ev-sudoku-grid::after,
+#game.theme-alien .ev-sudoku-grid::after{
+  content:""!important;
+  display:block!important;
+  position:absolute!important;
+  inset:0!important;
+  width:auto!important;
+  height:auto!important;
+  pointer-events:none!important;
+  z-index:100!important;
+  border-radius:0!important;
+  color:transparent!important;
+  background-image:
+    linear-gradient(to right,
+       transparent calc(33.333333% - var(--box-half-stroke)),
+       var(--box-divider) calc(33.333333% - var(--box-half-stroke)),
+       var(--box-divider) calc(33.333333% + var(--box-half-stroke)),
+       transparent calc(33.333333% + var(--box-half-stroke)),
+       transparent calc(66.666667% - var(--box-half-stroke)),
+       var(--box-divider) calc(66.666667% - var(--box-half-stroke)),
+       var(--box-divider) calc(66.666667% + var(--box-half-stroke)),
+       transparent calc(66.666667% + var(--box-half-stroke))),
+    linear-gradient(to bottom,
+       transparent calc(33.333333% - var(--box-half-stroke)),
+       var(--box-divider) calc(33.333333% - var(--box-half-stroke)),
+       var(--box-divider) calc(33.333333% + var(--box-half-stroke)),
+       transparent calc(33.333333% + var(--box-half-stroke)),
+       transparent calc(66.666667% - var(--box-half-stroke)),
+       var(--box-divider) calc(66.666667% - var(--box-half-stroke)),
+       var(--box-divider) calc(66.666667% + var(--box-half-stroke)),
+       transparent calc(66.666667% + var(--box-half-stroke)))!important;
+  background-repeat:no-repeat!important;
+  box-shadow:none!important;
+  filter:none!important;
+}
+#game.theme-unpreparedchristmas .ev-sudoku-grid{--box-half-stroke:1.5px;}
