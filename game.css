@@ -2392,3 +2392,69 @@ html:has(#game.theme-unpreparedchristmas:not([hidden])),body:has(#game.theme-unp
   filter:none!important;
 }
 #game.theme-unpreparedchristmas .ev-sudoku-grid{--box-half-stroke:1.5px;}
+
+
+/* ALBUM 18 — SOMETHING UNDER THE BED: after-hours dusty bedroom palette.
+   Midnight navy backdrop, smoky plum board, soft gold box dividers, coral/powder-blue selection. */
+html:has(#game.theme-underthebed:not([hidden])),body:has(#game.theme-underthebed:not([hidden])){background:#17182A!important}
+#game.theme-underthebed{
+  --surface:#2C2439;--panel:#292237;--ink:#FFF1D9;
+  --accent:#F7D892;--line:#665467;--peer:#44384C;
+  --same:#607E95;--selected:#CB796F;
+  --room-border:#F4D18F;--room-glow:#F4D18F;
+  background:radial-gradient(ellipse at 48% -12%,#413149 0%,#252139 47%,#17182A 95%)!important;
+  color:#FFF1D9!important;
+}
+#game.theme-underthebed .ev-head{background:#33283F!important;border:2px solid #F4D18F!important;border-radius:14px;padding:9px 10px!important;box-shadow:0 0 16px #F4D18F25!important;}
+#game.theme-underthebed .ev-head>strong{color:#FFE1A8!important;text-shadow:0 0 7px #F4D18F44!important;}
+#game.theme-underthebed .ev-head .ev-btn{background:#43334A!important;color:#FFF1D9!important;border-color:#B68A9D!important;}
+#game.theme-underthebed .difficulty-panel,#game.theme-underthebed .result-panel,#game.theme-underthebed .ev-sudo-shell{
+  background:#30263D!important;color:#FFF1D9!important;border:2px solid #A77F9A!important;box-shadow:0 0 15px #F4D18F22!important;
+}
+#game.theme-underthebed .theme-button{background:#45344A!important;color:#FFF1D9!important;border:2px solid #F4D18F!important;box-shadow:0 0 8px #F4D18F22!important;}
+#game.theme-underthebed .nw-fav-toggle{background:#45344A!important;color:#FFE7B4!important;border:2px solid #F4D18F!important;}
+#game.theme-underthebed .ev-sudo-stats>div{background:#403149!important;border-color:#806781!important;}
+#game.theme-underthebed .ev-sudo-stats small{color:#C8AEC4!important;}
+#game.theme-underthebed .ev-sudo-stats strong{color:#FFE1A8!important;}
+#game.theme-underthebed .ev-note{color:#EBC6B8!important;}
+#game.theme-underthebed .ev-sudoku-grid{
+  display:grid!important;grid-template-columns:repeat(9,minmax(0,1fr))!important;grid-template-rows:repeat(9,minmax(0,1fr))!important;
+  position:relative!important;isolation:isolate;overflow:hidden;
+  border:4px solid #F4D18F!important;background:#3A3042!important;box-shadow:0 0 12px #F4D18F40!important;
+}
+#game.theme-underthebed .ev-sudoku-grid>.ev-sudoku-cell{
+  background:#3A3042!important;color:#FFF3E2!important;
+  border-right:1px solid #68586D!important;border-bottom:1px solid #68586D!important;
+  box-sizing:border-box!important;position:relative;
+}
+#game.theme-underthebed .ev-sudoku-grid>.ev-sudoku-cell.given{background:#44374C!important;}
+#game.theme-underthebed .ev-sudoku-grid>.ev-sudoku-cell.peer:not(.same):not(.selected):not(.bad){background:#4B4056!important;}
+#game.theme-underthebed .ev-sudoku-grid>.ev-sudoku-cell.same:not(.selected):not(.bad){
+  background:#7195AE!important;box-shadow:inset 0 0 0 2px #F8DC9E,inset 0 0 14px #A8D5F477!important;z-index:1!important;
+}
+#game.theme-underthebed .ev-sudoku-grid>.ev-sudoku-cell.selected:not(.bad){
+  background:#E69A87!important;box-shadow:inset 0 0 0 3px #FFE5A2,inset 0 0 15px #FFDBA466!important;z-index:2!important;
+}
+#game.theme-underthebed .ev-sudoku-grid>.ev-sudoku-cell.bad{background:#A82D48!important;box-shadow:inset 0 0 0 2px #FFD5D9!important;}
+#game.theme-underthebed .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n){border-right:0!important;}
+#game.theme-underthebed .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n+73){border-bottom:0!important;}
+#game.theme-underthebed .ev-sudoku-grid::after{
+  content:''!important;display:block!important;position:absolute!important;inset:0!important;
+  pointer-events:none!important;z-index:100!important;
+  background-image:
+    linear-gradient(to right,transparent calc(33.333333% - 2px),#F4D18F calc(33.333333% - 2px),#F4D18F calc(33.333333% + 2px),transparent calc(33.333333% + 2px),transparent calc(66.666667% - 2px),#F4D18F calc(66.666667% - 2px),#F4D18F calc(66.666667% + 2px),transparent calc(66.666667% + 2px)),
+    linear-gradient(to bottom,transparent calc(33.333333% - 2px),#F4D18F calc(33.333333% - 2px),#F4D18F calc(33.333333% + 2px),transparent calc(33.333333% + 2px),transparent calc(66.666667% - 2px),#F4D18F calc(66.666667% - 2px),#F4D18F calc(66.666667% + 2px),transparent calc(66.666667% + 2px))!important;
+  background-repeat:no-repeat!important;border:0!important;box-shadow:none!important;
+}
+#game.theme-underthebed .ev-sudoku-grid>.ev-sudoku-cell img{filter:drop-shadow(0 1px 1px #140F20BB)!important;}
+#game.theme-underthebed .ev-sudoku-tray button{background:#403149!important;color:#FFF1D9!important;border:1.5px solid #A77F9A!important;}
+#game.theme-underthebed .ev-sudoku-tray button.selected{background:#70516A!important;border:3px solid #F4D18F!important;box-shadow:0 0 12px #F4D18F66!important;}
+#game.theme-underthebed .ev-sudo-remain{background:#E6A0A3!important;color:#241627!important;}
+#game.theme-underthebed .ev-sudo-tools-clean .ev-sudo-tool{background:#403149!important;color:#FFF1D9!important;border:2px solid #A77F9A!important;}
+#game.theme-underthebed .ev-sudo-tools-clean .ev-sudo-tool.active{border-color:#F4D18F!important;box-shadow:0 0 12px #F4D18F55!important;}
+#game.theme-underthebed .result-score strong{color:#FFE1A8!important;}
+#game.theme-underthebed,#game.theme-underthebed *{scrollbar-color:#E8AD98 #211C32!important;}
+#game.theme-underthebed::-webkit-scrollbar-thumb,#game.theme-underthebed *::-webkit-scrollbar-thumb{background:#E8AD98!important;}
+#game.theme-underthebed::-webkit-scrollbar-track,#game.theme-underthebed *::-webkit-scrollbar-track{background:#211C32!important;}
+#game.theme-hub .world-grid .world-underthebed{background:linear-gradient(130deg,#2A243D,#17182A)!important;color:#FFF1D9!important;border:2px solid #F4D18F!important;box-shadow:0 0 9px #F4D18F33!important;}
+#game.theme-hub .world-grid .world-underthebed strong{color:#FFE1A8!important;}
