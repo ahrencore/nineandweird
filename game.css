@@ -2522,110 +2522,81 @@ html:has(#game.theme-balloonwrong:not([hidden])),body:has(#game.theme-balloonwro
 #game.theme-balloonwrong .ev-sudo-tool-icon,#game.theme-balloonwrong .ev-sudo-tool-label{color:#6D2C73!important;}
 #game.theme-balloonwrong .ev-win{background:#FFF7FB!important;border:2px solid #9A50B8!important;color:#5B2A63!important;}
 
-/* ALBUM 20: DO NOT TAKE WITH WATER — original approved dark pharmacy colors.
-   All styles are scoped to this room. The 3x3 overlay is contained in the board. */
-html:has(#game.theme-donttakewater:not([hidden])),
-body:has(#game.theme-donttakewater:not([hidden])){
-  background:#100818!important;
-}
+html:has(#game.theme-donttakewater:not([hidden])),body:has(#game.theme-donttakewater:not([hidden])){background:#07090E!important}
 #game.theme-donttakewater{
-  --surface:#1B0F28;--panel:#241431;--ink:#FFEDE6;
-  --accent:#F2AE9A;--line:#503B5C;--peer:#342143;
-  --same:#33685F;--selected:#A34C86;
-  --room-border:#F0AD91;--room-glow:#D98ABF;
-  background:radial-gradient(ellipse at 48% -8%,#3A1A49 0%,#210F2E 46%,#100818 88%)!important;
-  color:#FFEDE6!important;
+  --ev-bg:#0A0C12!important;
+  --ev-panel:#111725!important;
+  --ev-panel-2:#151C2C!important;
+  --ev-accent:#63FFD7!important;
+  --ev-accent-2:#8E6BFF!important;
+  --ev-gold:#EAF7FF!important;
+  --ev-text:#EAF7FF!important;
+  background:radial-gradient(circle at top,#171026 0%,#0B0D14 58%,#07090E 100%)!important;
 }
-#game.theme-donttakewater .ev-head{
-  background:#2B163A!important;border:2px solid #F0AD91!important;
-  border-radius:14px;padding:9px 10px!important;
-  box-shadow:0 0 12px #EBAAB033!important;
+#game.theme-donttakewater .ev-head{background:#121726!important;border:2px solid #63FFD7!important;border-radius:14px;padding:9px 10px!important;box-shadow:0 0 18px #63FFD744!important;}
+#game.theme-donttakewater .ev-head>strong{color:#DDFEFF!important;text-shadow:0 0 8px #8E6BFF88!important;}
+#game.theme-donttakewater .ev-head .ev-btn{background:#161E30!important;color:#DDFEFF!important;border-color:#63FFD7!important;}
+#game.theme-donttakewater .difficulty-panel,#game.theme-donttakewater .result-panel,#game.theme-donttakewater .ev-sudo-shell{
+  background:rgba(11,14,22,.92)!important;border:2px solid #63FFD7!important;box-shadow:0 0 18px #63FFD733!important;
 }
-#game.theme-donttakewater .ev-head>strong{color:#FFE0CF!important;text-shadow:0 0 7px #DB8ABB55!important;}
-#game.theme-donttakewater .ev-head .ev-btn{background:#351D46!important;color:#FFF1E6!important;border-color:#C887B7!important;}
-#game.theme-donttakewater .difficulty-panel,
-#game.theme-donttakewater .result-panel,
-#game.theme-donttakewater .ev-sudo-shell{
-  background:#261431!important;color:#FFEDE6!important;
-  border:2px solid #93648F!important;box-shadow:0 0 12px #E79BC122!important;
-}
-#game.theme-donttakewater .theme-button{
-  background:linear-gradient(#452452,#291638)!important;color:#FFEDE6!important;
-  border:2px solid #F0AD91!important;box-shadow:0 0 7px #E29AB333!important;
-}
-#game.theme-donttakewater .nw-fav-toggle{background:#452452!important;color:#FFF0E5!important;border:2px solid #F0AD91!important;}
-#game.theme-donttakewater .ev-sudo-stats>div{background:#351C42!important;border-color:#714C7B!important;}
-#game.theme-donttakewater .ev-sudo-stats small{color:#D4ADC8!important;}
-#game.theme-donttakewater .ev-sudo-stats strong{color:#FFE3A8!important;}
-#game.theme-donttakewater .ev-note{color:#E0B6D6!important;}
-/* Critical: the grid itself is the positioning and clipping context for ::after. */
+#game.theme-donttakewater .theme-button{background:linear-gradient(#1E2740,#141B2D)!important;color:#EAF7FF!important;border:2px solid #8E6BFF!important;box-shadow:0 0 10px #8E6BFF33!important;}
+#game.theme-donttakewater .nw-fav-toggle{background:#131A2B!important;color:#EAF7FF!important;border:2px solid #63FFD7!important;}
+#game.theme-donttakewater .ev-sudo-stats>div{background:#131A2A!important;border-color:#2A3957!important;}
+#game.theme-donttakewater .ev-sudo-stats small{color:#8EDCF3!important;}
+#game.theme-donttakewater .ev-sudo-stats strong{color:#F3FAFF!important;}
+#game.theme-donttakewater .ev-note{color:#98BDE2!important;}
 #game.theme-donttakewater .ev-sudoku-grid{
-  display:grid!important;
-  grid-template-columns:repeat(9,minmax(0,1fr))!important;
-  grid-template-rows:repeat(9,minmax(0,1fr))!important;
-  position:relative!important;
-  isolation:isolate!important;
-  overflow:hidden!important;
-  width:100%!important;
-  aspect-ratio:1!important;
-  border:4px solid #F0AD91!important;
-  background:#1C1028!important;
-  box-shadow:0 0 12px #DA8BB345!important;
+  background:#070A12!important;
+  border:3px solid #63FFD7!important;
+  box-shadow:inset 0 0 0 1px #152038,0 0 18px #63FFD722!important;
 }
 #game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell{
-  background:#20132D!important;color:#FFF0E8!important;
-  border-right:1px solid #53395F!important;
-  border-bottom:1px solid #53395F!important;
-  box-sizing:border-box!important;
-  position:relative!important;
+  background:#0E1220!important;
+  border-color:#273149!important;
 }
-#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.given{background:#2B1A38!important;}
-#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.peer:not(.same):not(.selected):not(.bad){background:#342344!important;}
-#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.same:not(.selected):not(.bad){
-  background:#447C71!important;
-  box-shadow:inset 0 0 0 2px #B9F3BE,inset 0 0 14px #77D9AA77!important;
-  z-index:1!important;
-}
-#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.selected:not(.bad){
-  background:#AB548A!important;
-  box-shadow:inset 0 0 0 3px #FFD77E,inset 0 0 12px #F3BAA655!important;
-  z-index:2!important;
-}
-#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.bad{
-  background:#AC284A!important;box-shadow:inset 0 0 0 2px #FFE1E6!important;
-}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.given{background:#12172A!important;}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.peer:not(.same):not(.selected):not(.bad){background:#171E32!important;}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.same:not(.selected):not(.bad){background:#25374B!important;box-shadow:inset 0 0 0 2px #63FFD755!important;}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.selected:not(.bad){background:#2D244A!important;box-shadow:inset 0 0 0 3px #8E6BFF!important;}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.bad{background:#D86A7E!important;box-shadow:inset 0 0 0 2px #FFE8EE!important;}
 #game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n){border-right:0!important;}
 #game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n+73){border-bottom:0!important;}
 #game.theme-donttakewater .ev-sudoku-grid::after{
-  content:''!important;
-  display:block!important;
-  position:absolute!important;
-  inset:0!important;
-  width:auto!important;
-  height:auto!important;
-  pointer-events:none!important;
-  z-index:100!important;
-  background-image:
-    linear-gradient(to right,
-      transparent calc(33.333333% - 2px),#F0AD91 calc(33.333333% - 2px),#F0AD91 calc(33.333333% + 2px),
-      transparent calc(33.333333% + 2px),transparent calc(66.666667% - 2px),
-      #F0AD91 calc(66.666667% - 2px),#F0AD91 calc(66.666667% + 2px),transparent calc(66.666667% + 2px)),
-    linear-gradient(to bottom,
-      transparent calc(33.333333% - 2px),#F0AD91 calc(33.333333% - 2px),#F0AD91 calc(33.333333% + 2px),
-      transparent calc(33.333333% + 2px),transparent calc(66.666667% - 2px),
-      #F0AD91 calc(66.666667% - 2px),#F0AD91 calc(66.666667% + 2px),transparent calc(66.666667% + 2px))!important;
-  background-repeat:no-repeat!important;
-  border:0!important;
-  box-shadow:none!important;
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(to right, transparent calc(33.333% - 2px), #63FFD7 calc(33.333% - 2px), #63FFD7 calc(33.333% + 2px), transparent calc(33.333% + 2px), transparent calc(66.666% - 2px), #63FFD7 calc(66.666% - 2px), #63FFD7 calc(66.666% + 2px), transparent calc(66.666% + 2px)),
+    linear-gradient(to bottom, transparent calc(33.333% - 2px), #63FFD7 calc(33.333% - 2px), #63FFD7 calc(33.333% + 2px), transparent calc(33.333% + 2px), transparent calc(66.666% - 2px), #63FFD7 calc(66.666% - 2px), #63FFD7 calc(66.666% + 2px), transparent calc(66.666% + 2px));
+  z-index:5;
 }
-#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell img{
-  width:88%!important;height:88%!important;object-fit:contain!important;
-  filter:drop-shadow(0 1px 2px #110818BB)!important;
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell img{filter:drop-shadow(0 1px 2px #63FFD733)!important;}
+#game.theme-donttakewater .ev-sudoku-tray button{background:#131A2B!important;color:#EAF7FF!important;border:1.5px solid #2E4060!important;}
+#game.theme-donttakewater .ev-sudoku-tray button.selected{background:#1D2540!important;border:3px solid #63FFD7!important;box-shadow:0 0 12px #63FFD755!important;}
+#game.theme-donttakewater .ev-sudo-remain{background:#A6FF66!important;color:#17310F!important;}
+#game.theme-donttakewater .ev-sudo-tools-clean .ev-sudo-tool{background:#131A2B!important;color:#EAF7FF!important;border:2px solid #31415F!important;}
+#game.theme-donttakewater .ev-sudo-tools-clean .ev-sudo-tool.active{border-color:#63FFD7!important;box-shadow:0 0 12px #63FFD755!important;}
+#game.theme-donttakewater .ev-sudo-tool-icon,#game.theme-donttakewater .ev-sudo-tool-label{color:#EAF7FF!important;}
+#game.theme-donttakewater .ev-win{background:#12192A!important;border:2px solid #63FFD7!important;color:#EAF7FF!important;}
+
+
+/* Album 19 + 20 world-list palette cards on THE WEIRD screen */
+#game.theme-hub .world-grid .world-balloonwrong{
+  background:
+    radial-gradient(circle at 12% 18%, rgba(255,245,184,.45) 0 6px, transparent 7px),
+    radial-gradient(circle at 85% 20%, rgba(255,214,238,.38) 0 7px, transparent 8px),
+    linear-gradient(180deg,#FFF4FB 0%,#FFEAF6 100%)!important;
+  color:#5B2A63!important;
+  border:2px solid #E84AA8!important;
+  box-shadow:0 0 10px rgba(232,74,168,.24)!important;
 }
-#game.theme-donttakewater .ev-sudoku-tray button{background:#351C42!important;color:#FFEDE6!important;border:1.5px solid #A06D9C!important;}
-#game.theme-donttakewater .ev-sudoku-tray button.selected{background:#734176!important;border:3px solid #F0AD91!important;box-shadow:0 0 10px #F0AD9177!important;}
-#game.theme-donttakewater .ev-sudo-remain{background:#D3E970!important;color:#26162B!important;}
-#game.theme-donttakewater .ev-sudo-tools-clean .ev-sudo-tool{background:#351C42!important;color:#FFEDE6!important;border:2px solid #A06D9C!important;}
-#game.theme-donttakewater .ev-sudo-tools-clean .ev-sudo-tool.active{border-color:#F0AD91!important;box-shadow:0 0 10px #F0AD9177!important;}
-#game.theme-donttakewater .ev-sudo-tool-icon,#game.theme-donttakewater .ev-sudo-tool-label{color:#FFEDE6!important;}
-#game.theme-donttakewater .ev-win{background:#261431!important;border:2px solid #F0AD91!important;color:#FFEDE6!important;}
+#game.theme-hub .world-grid .world-balloonwrong strong{color:#7C2A73!important;}
+
+#game.theme-hub .world-grid .world-donttakewater{
+  background:radial-gradient(circle at top,#1A1430 0%,#0D111B 55%,#080B12 100%)!important;
+  color:#EAF7FF!important;
+  border:2px solid #63FFD7!important;
+  box-shadow:0 0 12px rgba(99,255,215,.2)!important;
+}
+#game.theme-hub .world-grid .world-donttakewater strong{
+  color:#EAF7FF!important;
+  text-shadow:0 0 8px rgba(142,107,255,.35)!important;
+}
