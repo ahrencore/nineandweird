@@ -2652,3 +2652,136 @@ body:has(#game.theme-donttakewater:not([hidden])){
   color:#FFE0CF!important;
   text-shadow:0 0 7px #DB8ABB55!important;
 }
+
+
+/* ALBUM 21 — BAGGAGE CLAIM FROM HELL | Sunny Tuscan luggage hall
+   Light cream/sandstone scenery, terracotta grid, leather-brown details.
+   Scoped to Album 21 only; does not overwrite Album 20's corrected board. */
+html:has(#game.theme-baggagehell:not([hidden])),
+body:has(#game.theme-baggagehell:not([hidden])) {
+  background:#F3D7B1!important;
+}
+#game.theme-baggagehell{
+  --surface:#FFF2DD;--panel:#F8DFC1;--ink:#4C281A;
+  --accent:#C46434;--line:#D59B70;--peer:#F1CCA6;
+  --same:#B5DEB5;--selected:#F8C86B;
+  --room-border:#A54C25;--room-glow:#F4BE78;
+  background:radial-gradient(ellipse at 48% 0%,#FFF6E5 0%,#F8E2C4 49%,#EFC79D 100%)!important;
+  color:#4C281A!important;
+}
+#game.theme-baggagehell .ev-head{
+  background:#FFF0D8!important;border:2px solid #B36136!important;
+  border-radius:14px;padding:9px 10px!important;
+  box-shadow:0 2px 8px #7C391F22!important;
+}
+#game.theme-baggagehell .ev-head>strong{
+  color:#76381F!important;text-shadow:none!important;
+}
+#game.theme-baggagehell .ev-head .ev-btn{
+  color:#71371F!important;background:#FFE5BE!important;border:1.5px solid #B36136!important;
+}
+#game.theme-baggagehell .difficulty-panel,
+#game.theme-baggagehell .result-panel,
+#game.theme-baggagehell .ev-sudo-shell{
+  color:#4C281A!important;background:#FBE5C8!important;
+  border:2px solid #B8623A!important;box-shadow:0 2px 12px #8D4A2926!important;
+}
+#game.theme-baggagehell .theme-button{
+  background:linear-gradient(#FFE9C9,#F6C88C)!important;
+  color:#70371D!important;border:2px solid #A34F2B!important;
+  box-shadow:0 1px 5px #A34F2B2E!important;
+}
+#game.theme-baggagehell .nw-fav-toggle{
+  background:#FFF0D6!important;color:#8F4425!important;
+  border:2px solid #B75A35!important;
+}
+#game.theme-baggagehell .ev-sudo-stats>div{
+  color:#613721!important;background:#FFE8C9!important;border-color:#D0996B!important;
+}
+#game.theme-baggagehell .ev-sudo-stats small{color:#98512E!important;}
+#game.theme-baggagehell .ev-sudo-stats strong{color:#62351C!important;}
+#game.theme-baggagehell .ev-note{color:#805033!important;}
+
+/* Board positioning prevents the 3x3 overlay escaping across the page. */
+#game.theme-baggagehell .ev-sudoku-grid{
+  display:grid!important;
+  grid-template-columns:repeat(9,minmax(0,1fr))!important;
+  grid-template-rows:repeat(9,minmax(0,1fr))!important;
+  position:relative!important;isolation:isolate!important;overflow:hidden!important;
+  width:100%!important;aspect-ratio:1!important;
+  background:#F4C99E!important;
+  border:4px solid #A54C25!important;
+  box-shadow:0 0 0 1px #E1A46C,0 3px 10px #7F3B212B!important;
+}
+#game.theme-baggagehell .ev-sudoku-grid>.ev-sudoku-cell{
+  color:#593019!important;background:#F9D8B0!important;
+  border-right:1px solid #D4A276!important;
+  border-bottom:1px solid #D4A276!important;
+  box-sizing:border-box!important;position:relative!important;
+}
+#game.theme-baggagehell .ev-sudoku-grid>.ev-sudoku-cell.given{background:#F3CDA1!important;}
+#game.theme-baggagehell .ev-sudoku-grid>.ev-sudoku-cell.peer:not(.same):not(.selected):not(.bad){background:#EAC092!important;}
+#game.theme-baggagehell .ev-sudoku-grid>.ev-sudoku-cell.same:not(.selected):not(.bad){
+  background:#A5D6A7!important;
+  box-shadow:inset 0 0 0 2px #297A54,inset 0 0 12px #4AA56B55!important;
+  z-index:1!important;
+}
+#game.theme-baggagehell .ev-sudoku-grid>.ev-sudoku-cell.selected:not(.bad){
+  background:#FFCD6F!important;
+  box-shadow:inset 0 0 0 3px #A34F2B,inset 0 0 12px #FFE2A8!important;
+  z-index:2!important;
+}
+#game.theme-baggagehell .ev-sudoku-grid>.ev-sudoku-cell.bad{
+  background:#DC6871!important;box-shadow:inset 0 0 0 2px #FFDEE0!important;
+}
+#game.theme-baggagehell .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n){border-right:0!important;}
+#game.theme-baggagehell .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n+73){border-bottom:0!important;}
+#game.theme-baggagehell .ev-sudoku-grid::after{
+  content:''!important;display:block!important;
+  position:absolute!important;inset:0!important;
+  width:auto!important;height:auto!important;
+  z-index:100!important;pointer-events:none!important;
+  background-image:
+    linear-gradient(to right,
+      transparent calc(33.333333% - 2px),#AD532B calc(33.333333% - 2px),#AD532B calc(33.333333% + 2px),
+      transparent calc(33.333333% + 2px),transparent calc(66.666667% - 2px),
+      #AD532B calc(66.666667% - 2px),#AD532B calc(66.666667% + 2px),transparent calc(66.666667% + 2px)),
+    linear-gradient(to bottom,
+      transparent calc(33.333333% - 2px),#AD532B calc(33.333333% - 2px),#AD532B calc(33.333333% + 2px),
+      transparent calc(33.333333% + 2px),transparent calc(66.666667% - 2px),
+      #AD532B calc(66.666667% - 2px),#AD532B calc(66.666667% + 2px),transparent calc(66.666667% + 2px))!important;
+  background-repeat:no-repeat!important;border:0!important;box-shadow:none!important;
+}
+#game.theme-baggagehell .ev-sudoku-grid>.ev-sudoku-cell img{
+  width:86%!important;height:86%!important;object-fit:contain!important;
+  filter:drop-shadow(0 1px 1px #784B3433)!important;
+}
+#game.theme-baggagehell .ev-sudoku-tray button{
+  background:#FFE7C7!important;color:#58311B!important;
+  border:1.5px solid #C58557!important;
+}
+#game.theme-baggagehell .ev-sudoku-tray button.selected{
+  background:#F8CD78!important;border:3px solid #A54C25!important;
+  box-shadow:0 0 8px #A54C2555!important;
+}
+#game.theme-baggagehell .ev-sudo-remain{color:#FFFFFF!important;background:#8F4934!important;}
+#game.theme-baggagehell .ev-sudo-tools-clean .ev-sudo-tool{
+  background:#FFE6C5!important;color:#66341F!important;border:2px solid #C58557!important;
+}
+#game.theme-baggagehell .ev-sudo-tools-clean .ev-sudo-tool.active{
+  border-color:#A54C25!important;box-shadow:0 0 10px #A54C2560!important;
+}
+#game.theme-baggagehell .ev-sudo-tool-icon,
+#game.theme-baggagehell .ev-sudo-tool-label{color:#71371F!important;}
+#game.theme-baggagehell .ev-win{
+  background:#FBE5C8!important;border:2px solid #B8623A!important;color:#4C281A!important;
+}
+/* Matching tile in THE WEIRD selector, instead of generic dark-room tile. */
+#game.theme-hub .world-grid .world-baggagehell{
+  background:linear-gradient(135deg,#FFF0D5 0%,#F4D0A2 53%,#EAB27C 100%)!important;
+  border:2px solid #B05C32!important;color:#6C321A!important;
+  box-shadow:0 2px 8px #8A431B22!important;
+}
+#game.theme-hub .world-grid .world-baggagehell strong{
+  color:#71351D!important;text-shadow:none!important;
+}
