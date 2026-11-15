@@ -2521,3 +2521,58 @@ html:has(#game.theme-balloonwrong:not([hidden])),body:has(#game.theme-balloonwro
 #game.theme-balloonwrong .ev-sudo-tools-clean .ev-sudo-tool.active{border-color:#9A50B8!important;box-shadow:0 0 12px #FF9BCD66!important;}
 #game.theme-balloonwrong .ev-sudo-tool-icon,#game.theme-balloonwrong .ev-sudo-tool-label{color:#6D2C73!important;}
 #game.theme-balloonwrong .ev-win{background:#FFF7FB!important;border:2px solid #9A50B8!important;color:#5B2A63!important;}
+
+html:has(#game.theme-donttakewater:not([hidden])),body:has(#game.theme-donttakewater:not([hidden])){background:#07090E!important}
+#game.theme-donttakewater{
+  --ev-bg:#0A0C12!important;
+  --ev-panel:#111725!important;
+  --ev-panel-2:#151C2C!important;
+  --ev-accent:#63FFD7!important;
+  --ev-accent-2:#8E6BFF!important;
+  --ev-gold:#EAF7FF!important;
+  --ev-text:#EAF7FF!important;
+  background:radial-gradient(circle at top,#171026 0%,#0B0D14 58%,#07090E 100%)!important;
+}
+#game.theme-donttakewater .ev-head{background:#121726!important;border:2px solid #63FFD7!important;border-radius:14px;padding:9px 10px!important;box-shadow:0 0 18px #63FFD744!important;}
+#game.theme-donttakewater .ev-head>strong{color:#DDFEFF!important;text-shadow:0 0 8px #8E6BFF88!important;}
+#game.theme-donttakewater .ev-head .ev-btn{background:#161E30!important;color:#DDFEFF!important;border-color:#63FFD7!important;}
+#game.theme-donttakewater .difficulty-panel,#game.theme-donttakewater .result-panel,#game.theme-donttakewater .ev-sudo-shell{
+  background:rgba(11,14,22,.92)!important;border:2px solid #63FFD7!important;box-shadow:0 0 18px #63FFD733!important;
+}
+#game.theme-donttakewater .theme-button{background:linear-gradient(#1E2740,#141B2D)!important;color:#EAF7FF!important;border:2px solid #8E6BFF!important;box-shadow:0 0 10px #8E6BFF33!important;}
+#game.theme-donttakewater .nw-fav-toggle{background:#131A2B!important;color:#EAF7FF!important;border:2px solid #63FFD7!important;}
+#game.theme-donttakewater .ev-sudo-stats>div{background:#131A2A!important;border-color:#2A3957!important;}
+#game.theme-donttakewater .ev-sudo-stats small{color:#8EDCF3!important;}
+#game.theme-donttakewater .ev-sudo-stats strong{color:#F3FAFF!important;}
+#game.theme-donttakewater .ev-note{color:#98BDE2!important;}
+#game.theme-donttakewater .ev-sudoku-grid{
+  background:#070A12!important;
+  border:3px solid #63FFD7!important;
+  box-shadow:inset 0 0 0 1px #152038,0 0 18px #63FFD722!important;
+}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell{
+  background:#0E1220!important;
+  border-color:#273149!important;
+}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.given{background:#12172A!important;}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.peer:not(.same):not(.selected):not(.bad){background:#171E32!important;}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.same:not(.selected):not(.bad){background:#25374B!important;box-shadow:inset 0 0 0 2px #63FFD755!important;}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.selected:not(.bad){background:#2D244A!important;box-shadow:inset 0 0 0 3px #8E6BFF!important;}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.bad{background:#D86A7E!important;box-shadow:inset 0 0 0 2px #FFE8EE!important;}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n){border-right:0!important;}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n+73){border-bottom:0!important;}
+#game.theme-donttakewater .ev-sudoku-grid::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(to right, transparent calc(33.333% - 2px), #63FFD7 calc(33.333% - 2px), #63FFD7 calc(33.333% + 2px), transparent calc(33.333% + 2px), transparent calc(66.666% - 2px), #63FFD7 calc(66.666% - 2px), #63FFD7 calc(66.666% + 2px), transparent calc(66.666% + 2px)),
+    linear-gradient(to bottom, transparent calc(33.333% - 2px), #63FFD7 calc(33.333% - 2px), #63FFD7 calc(33.333% + 2px), transparent calc(33.333% + 2px), transparent calc(66.666% - 2px), #63FFD7 calc(66.666% - 2px), #63FFD7 calc(66.666% + 2px), transparent calc(66.666% + 2px));
+  z-index:5;
+}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell img{filter:drop-shadow(0 1px 2px #63FFD733)!important;}
+#game.theme-donttakewater .ev-sudoku-tray button{background:#131A2B!important;color:#EAF7FF!important;border:1.5px solid #2E4060!important;}
+#game.theme-donttakewater .ev-sudoku-tray button.selected{background:#1D2540!important;border:3px solid #63FFD7!important;box-shadow:0 0 12px #63FFD755!important;}
+#game.theme-donttakewater .ev-sudo-remain{background:#A6FF66!important;color:#17310F!important;}
+#game.theme-donttakewater .ev-sudo-tools-clean .ev-sudo-tool{background:#131A2B!important;color:#EAF7FF!important;border:2px solid #31415F!important;}
+#game.theme-donttakewater .ev-sudo-tools-clean .ev-sudo-tool.active{border-color:#63FFD7!important;box-shadow:0 0 12px #63FFD755!important;}
+#game.theme-donttakewater .ev-sudo-tool-icon,#game.theme-donttakewater .ev-sudo-tool-label{color:#EAF7FF!important;}
+#game.theme-donttakewater .ev-win{background:#12192A!important;border:2px solid #63FFD7!important;color:#EAF7FF!important;}
