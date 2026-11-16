@@ -19,6 +19,7 @@
   async function get(){return await ready;}
   async function invoke(method,params){const c=await get();const res=await c.auth[method](params);if(res.error)throw new Error(res.error.message);return res.data;}
   window.nwCloud={ready,get,user:()=>user,isRecovering:()=>recovering,finishRecovery:async(password)=>{const c=await get();const {error}=await c.auth.updateUser({password});if(error)throw new Error(error.message);recovering=false;emit();},onChange:(fn)=>{listeners.push(fn);return ()=>listeners=listeners.filter(x=>x!==fn)},
+    signInAnonymously:()=>invoke('signInAnonymously',{}),
     signUp:(email,password)=>invoke('signUp',{email,password,options:{emailRedirectTo:location.origin+location.pathname}}),
     signIn:(email,password)=>invoke('signInWithPassword',{email,password}),
     signOut:()=>invoke('signOut'),
