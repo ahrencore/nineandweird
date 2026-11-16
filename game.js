@@ -47,11 +47,66 @@ function nwWeeklyReport(offset){
 function nwReportDelta(a,b,suffix=''){if(a==null||b==null)return '—';const n=Math.round((a-b)*10)/10;return (n>0?'+':'')+n+suffix}
 function nwFormatTime(sec){if(sec==null)return '—';const n=Math.round(sec);return `${Math.floor(n/60)}:${String(n%60).padStart(2,'0')}`}
 function nwShowProfile(){
-  evSudokuLeave();applyTheme('hub');const p=nwProfile();
-  evDisplay(`${evHeader('PLAYER PROFILE',showCategories)}<section class="nw-new-panel"><div class="nw-profile-avatar">${p.avatar}</div><h2>${nwEscape(p.name)}</h2><p class="nw-muted">Guest profile · Saved on this device</p><label class="nw-new-label" for="nwName">DISPLAY NAME</label><input id="nwName" maxlength="24" value="${nwEscape(p.name)}" autocomplete="nickname"><label class="nw-new-label">CHOOSE AN AVATAR</label><div class="nw-avatar-grid">${nwAvatarChoices.map(a=>`<button class="nw-avatar-choice ${a===p.avatar?'chosen':''}" data-avatar="${a}" aria-label="Choose ${a} avatar">${a}</button>`).join('')}</div><button class="nw-action" id="nwSaveProfile">SAVE PROFILE</button><div class="nw-auth-message"><strong>SUPABASE SIGN-IN</strong><p>Online sign-in isn't connected yet. Your profile and brain reports are currently stored only in this browser. Do not treat this as a cloud account.</p></div></section>`);
-  let avatar=p.avatar;evRoot.querySelectorAll('[data-avatar]').forEach(b=>b.onclick=()=>{avatar=b.dataset.avatar;evRoot.querySelectorAll('[data-avatar]').forEach(x=>x.classList.toggle('chosen',x===b))});
-  evRoot.querySelector('#nwSaveProfile').onclick=()=>{const name=evRoot.querySelector('#nwName').value.trim().slice(0,24)||'Guest Player';nwWrite(nwProfileKey,{name,avatar});nwShowProfile()};
+  evSudokuLeave();applyTheme('hub');
+  const u=window.nwCloud?.user();const p=nwProfile();const recovery=!!window.nwCloud?.isRecovering?.();
+  evDisplay(`${evHeader('PLAYER PROFILE',showCategories)}<section class="nw-new-panel"><div class="nw-profile-avatar">${p.avatar}</div><h2>${nwEscape(p.name)}</h2><p class="nw-muted" id="nwAccountStatus">${u?'Signed in: '+nwEscape(u.email||'account'):'Guest profile · Saved on this device'}</p><label class="nw-new-label" for="nwName">DISPLAY NAME</label><input id="nwName" maxlength="24" value="${nwEscape(p.name)}" autocomplete="nickname"><label class="nw-new-label">CHOOSE AN AVATAR</label><div class="nw-avatar-grid">${nwAvatarChoices.map(a=>`<button class="nw-avatar-choice ${a===p.avatar?'chosen':''}" data-avatar="${a}" aria-label="Choose ${a} avatar">${a}</button>`).join('')}</div><button class="nw-action" id="nwSaveProfile">SAVE PROFILE</button><div class="nw-auth-message"><strong>${u?'YOUR ACCOUNT':'SIGN IN OR REGISTER'}</strong><p id="nwAuthNotice">${u?'Profile changes save to your account. Puzzle results and favorites still remain local during this first authentication stage.':'Email sign-in enables your online account. Existing guest puzzle progress stays on this device for now.'}</p>${u?`${recovery?`<label class="nw-new-label" for="nwNewPassword">NEW PASSWORD</label><input id="nwNewPassword" type="password" minlength="6" placeholder="New password (6+ characters)"><button class="nw-action" id="nwSetPassword">SET NEW PASSWORD</button>`:''}<button class="nw-action" id="nwSignOut">SIGN OUT</button>`:`<label class="nw-new-label" for="nwEmail">EMAIL</label><input id="nwEmail" type="email" autocomplete="email" placeholder="you@example.com"><label class="nw-new-label" for="nwPassword">PASSWORD</label><input id="nwPassword" type="password" autocomplete="current-password" minlength="6" placeholder="Password (6+ characters)"><div class="nw-auth-actions"><button class="nw-action" id="nwSignIn">SIGN IN</button><button class="nw-action" id="nwRegister">REGISTER</button><button class="nw-action" id="nwReset">RESET PASSWORD</button></div>`}</div></section>`);
+  let avatar=p.avatar;
+  evRoot.querySelectorAll('[data-avatar]').forEach(b=>b.onclick=()=>{avatar=b.dataset.avatar;evRoot.querySelectorAll('[data-avatar]').forEach(x=>x.classList.toggle('chosen',x===b))});
+  const notice=(s)=>{const el=evRoot.querySelector('#nwAuthNotice');if(el)el.textContent=s};
+  const save=evRoot.querySelector('#nwSaveProfile');
+  save.onclick=async()=>{
+    const name=evRoot.querySelector('#nwName').value.trim().slice(0,24)||'Guest Player';
+    save.disabled=true;
+    try{
+      if(window.nwCloud?.user())await nwCloud.saveProfile(name,avatar);
+      nwWrite(nwProfileKey,{name,avatar});nwShowProfile();
+    }catch(e){notice('Could not save profile: '+e.message);save.disabled=false;}
+  };
+  if(u){
+    if(recovery){evRoot.querySelector('#nwSetPassword').onclick=async()=>{try{const password=evRoot.querySelector('#nwNewPassword').value;if(password.length<6)throw new Error('Use at least 6 characters.');await nwCloud.finishRecovery(password);nwShowProfile()}catch(e){notice(e.message)}}}
+    evRoot.querySelector('#nwSignOut').onclick=async()=>{
+      try{await nwCloud.signOut();nwShowProfile()}catch(e){notice(e.message)}
+    };
+  }else{
+    const credentials=()=>{
+      const email=evRoot.querySelector('#nwEmail').value.trim(),password=evRoot.querySelector('#nwPassword').value;
+      if(!email||!email.includes('@'))throw new Error('Enter a valid email address.');
+      return {email,password};
+    };
+    const action=async(fn)=>{
+      const buttons=Array.from(evRoot.querySelectorAll('.nw-auth-actions button'));
+      buttons.forEach(b=>b.disabled=true);
+      try{await fn();}catch(e){notice(e.message)}finally{buttons.forEach(b=>b.disabled=false)}
+    };
+    evRoot.querySelector('#nwSignIn').onclick=()=>action(async()=>{
+      const {email,password}=credentials();if(!password)throw new Error('Enter your password.');
+      await nwCloud.signIn(email,password);await nwLoadCloudProfile();nwShowProfile();
+    });
+    evRoot.querySelector('#nwRegister').onclick=()=>action(async()=>{
+      const {email,password}=credentials();if(password.length<6)throw new Error('Use at least 6 characters for your password.');
+      const result=await nwCloud.signUp(email,password);
+      if(result?.session){await nwLoadCloudProfile();nwShowProfile()}
+      else notice('Registration requested. Check your email for a confirmation link, then return here and sign in.');
+    });
+    evRoot.querySelector('#nwReset').onclick=()=>action(async()=>{
+      const {email}=credentials();await nwCloud.resetPassword(email);
+      notice('If this email is registered, a password recovery message will be sent.');
+    });
+  }
 }
+async function nwLoadCloudProfile(){
+  if(!window.nwCloud?.user())return;
+  try{const data=await nwCloud.readProfile();if(data){
+    const avatar=nwAvatarChoices.includes(data.avatar)?data.avatar:'🦇';
+    nwWrite(nwProfileKey,{name:data.display_name||'Guest Player',avatar});
+  }}catch(e){console.warn('Could not load Nine & Weird profile',e.message)}
+}
+if(window.nwCloud){nwCloud.onChange(()=>{
+  if(nwCloud.user())nwLoadCloudProfile().then(()=>{
+    if(document.getElementById('nwAccountStatus'))nwShowProfile();
+  });
+});}
+
 function nwShowTrophy(tab='brain',offset=0){
   evSudokuLeave();applyTheme('hub');const r=nwWeeklyReport(offset),prior=nwWeeklyReport(offset-1),p=nwProfile();
   const weekTitle=new Date(r.start).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});

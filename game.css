@@ -2864,3 +2864,5 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-difficulty-track{grid-column:1/-1;height:7px;background:#5b3944;border-radius:10px;overflow:hidden}
 #game .nw-difficulty-track i{display:block;height:100%;background:#f36b78;border-radius:10px}
 @media(max-width:380px){#game .nw-avatar-grid{grid-template-columns:repeat(4,minmax(0,1fr))}#game .nw-report-grid article{padding:9px}#game .nw-report-grid strong{font-size:20px}}
+
+.nw-auth-message input{display:block;width:100%;box-sizing:border-box;margin:8px 0 12px;padding:12px;border:1px solid #9e737d;border-radius:9px;background:#2b1921;color:#fff;font:inherit}.nw-auth-actions{display:flex;flex-wrap:wrap;gap:8px}.nw-auth-actions .nw-action{flex:1 1 110px;font-size:.82rem}.nw-action:disabled{opacity:.55;cursor:wait}
