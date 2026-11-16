@@ -1,7 +1,6 @@
 const evRoot=document.getElementById('game');
-function shuffled(a){return [...a].sort(()=>Math.random()-.5)}
 function evDisplay(html){document.getElementById("home").hidden=true;evRoot.hidden=false;evRoot.innerHTML=html;}
-function evHeader(title,back){queueMicrotask(()=>{const b=evRoot.querySelector('[data-back]');if(b)b.onclick=back;});return `<header class="ev-head"><button class="ev-btn ev-btn-alt" data-back aria-label="Back">‹ BACK</button><strong>${title}</strong><span></span></header>`;}
+function evHeader(title,back){queueMicrotask(()=>{const b=evRoot.querySelector('[data-back]');if(b)b.onclick=()=>back();});return `<header class="ev-head"><button class="ev-btn ev-btn-alt" data-back aria-label="Back">‹ BACK</button><strong>${title}</strong><span></span></header>`;}
 const worlds={classic:{name:'CLASSIC',label:'Classic',theme:'classic'},dark:{name:'CLASSIC DARK',label:'Classic Dark',theme:'dark'},halloween:{name:'HALLOWEEN',label:'Halloween',theme:'halloween'},patissserie:{name:'PÂTISSERIE',label:'Pâtisserie',theme:'patissserie'},christmas:{name:'CHRISTMAS',label:'Christmas',theme:'christmas'},fairy:{name:'FAIRY WORLD',label:'Fairy World',theme:'fairy'},olympus:{name:'OLYMPUS',label:'Olympus',theme:'olympus'},nineties:{name:'90s THROWBACK',label:'90s Throwback',theme:'nineties'},weird:{name:'WHAT AM I LOOKING AT?',label:'What Am I Looking At?',theme:'weird'},ugly:{name:'UGLY LITTLE THINGS',label:'Ugly Little Things',theme:'ugly'},alien:{name:'ALIEN SUPERMARKET',label:'Alien Supermarket',theme:'alien'},diner:{name:'DO NOT EAT THAT',label:'Do Not Eat That',theme:'diner'},bodyparts:{name:'BODY PARTS DEPARTMENT',label:'Body Parts Department',theme:'bodyparts'},deepsea:{name:'DEEP SEA MISFITS',label:'Deep Sea Misfits',theme:'deepsea'},solarsick:{name:'THE SOLAR SYSTEM IS SICK',label:'The Solar System Is Sick',theme:'solarsick'},dontunwrap:{name:"PLEASE DON'T UNWRAP THAT",label:"Please Don't Unwrap That",theme:'dontunwrap'},unpreparedchristmas:{name:'UNPREPARED CHRISTMAS',label:'Unprepared Christmas',theme:'unpreparedchristmas'},underthebed:{name:'SOMETHING UNDER THE BED',label:'Something Under the Bed',theme:'underthebed'},balloonwrong:{name:'BALLOON ANIMALS GONE WRONG',label:'Balloon Animals Gone Wrong',theme:'balloonwrong'},donttakewater:{name:'DO NOT TAKE WITH WATER',label:'Do Not Take With Water',theme:'donttakewater'},baggagehell:{name:'BAGGAGE CLAIM FROM HELL',label:'Baggage Claim from Hell',theme:'baggagehell'},cakefail:{name:'CAKE DECORATING WAS A MISTAKE',label:'Cake Decorating Was a Mistake',theme:'cakefail'}};
 let currentWorld='halloween',roomPage=0,roomCollection='usual';
 const difficulties={easy:{fill:.60,points:350,hints:1},medium:{fill:.50,points:650,hints:1},hard:{fill:.40,points:1000,hints:1},expert:{fill:.35,points:1350,hints:2},extreme:{fill:.30,points:1750,hints:3}};
@@ -29,7 +28,7 @@ function nwScrollTarget(){
 function nwSaveScroll(){
   if(!evRoot.querySelector('.world-grid.world-list'))return;
   const target=nwScrollTarget();
-  nwScroll[roomCollection]={top:target.scrollTop||0,room:roomPage};
+  nwScroll[roomCollection]={top:target.scrollTop||0};
   nwRoomPages[roomCollection]=roomPage;
 }
 function nwResetViewToTop(){
@@ -46,10 +45,10 @@ function nwRestoreScroll(){
     target.scrollTop=Math.max(0,Math.min(y,target.scrollHeight-target.clientHeight));
   }));
 }
-function showBattle(){clearInterval(sudokuTimer);sudoku=null;applyTheme('hub');evDisplay(`<header class="ev-head"><button class="ev-btn ev-btn-alt" id="toHome">‹ BACK</button><strong>BATTLE</strong><span></span></header><section class="nw-battle"><div class="nw-battle-star">★</div><h2>YOUR TOTAL POINTS</h2><strong class="nw-battle-number">${nwPoints().toLocaleString()}</strong><p>Complete Sudoku puzzles to earn points in any room.</p><div class="nw-battle-soon"><strong>BATTLE MODE</strong><p>Competitive features and leaderboard coming later.</p></div><small>Local points only. Past scores cannot be recovered. Points begin accumulating after this update.</small></section>`);evRoot.querySelector('#toHome').onclick=showCategories}
+function showBattle(){evSudokuLeave();applyTheme('hub');evDisplay(`<header class="ev-head"><button class="ev-btn ev-btn-alt" id="toHome">‹ BACK</button><strong>BATTLE</strong><span></span></header><section class="nw-battle"><div class="nw-battle-star">★</div><h2>YOUR TOTAL POINTS</h2><strong class="nw-battle-number">${nwPoints().toLocaleString()}</strong><p>Complete Sudoku puzzles to earn points in any room.</p><div class="nw-battle-soon"><strong>BATTLE MODE</strong><p>Competitive features and leaderboard coming later.</p></div><small>Local points only. Past scores cannot be recovered. Points begin accumulating after this update.</small></section>`);evRoot.querySelector('#toHome').onclick=showCategories}
 
 function showCategories(){
-  clearInterval(sudokuTimer);sudoku=null;applyTheme('hub');
+  evSudokuLeave();applyTheme('hub');
   evDisplay(`<header class="ev-head"><button class="ev-btn ev-btn-alt" id="toHome">‹ BACK</button><strong>CHOOSE YOUR SIDE</strong><span></span></header><section class="world-categories" aria-label="Room collections"><button class="world-category world-category-usual" data-collection="usual"><span class="world-category-art" aria-hidden="true">✦</span><strong>THE USUAL</strong><small>The worlds you know and love.</small><span class="world-category-action">EXPLORE</span></button><button class="world-category world-category-weird" data-collection="weird"><span class="world-category-art" aria-hidden="true">◉</span><strong>THE WEIRD</strong><small>Don't ask. Just play.</small><span class="world-category-action">ENTER</span></button><button class="world-category world-category-fav nw-category-wide" data-collection="fav"><span class="nw-category-icon" aria-hidden="true">♥</span><strong>FAV</strong><small>Your saved rooms</small></button><button class="world-category world-category-battle nw-category-wide" id="nwBattle"><span class="nw-category-icon" aria-hidden="true">★</span><strong>BATTLE</strong><small>View your points</small></button></section>`);
   evRoot.querySelector('#toHome').onclick=showHome;
   evRoot.querySelectorAll('[data-collection]').forEach(b=>b.onclick=()=>{roomCollection=b.dataset.collection;nwScroll[roomCollection]=0;nwRoomPages[roomCollection]=0;showRooms(0)});
@@ -59,7 +58,7 @@ function showRooms(page=nwRoomPages[roomCollection]||0){
   const ids=roomCollection==='fav'?nwFavs():nwGroups[roomCollection]||nwGroups.usual;
   const perPage=20,total=roomCollection==='fav'?ids.length:Math.max(20,ids.length),pages=Math.max(1,Math.ceil(total/perPage));
   page=Number.isFinite(page)?page:0;
-  clearInterval(sudokuTimer);sudoku=null;applyTheme('hub');
+  evSudokuLeave();applyTheme('hub');
   roomPage=Math.max(0,Math.min(page,pages-1));
   nwRoomPages[roomCollection]=roomPage;
   const files={halloween:['assets/events/',sudokuImgs],patissserie:['assets/patissserie/',patissserieImgs],christmas:['assets/christmas/',christmasImgs],fairy:['assets/fairy/',fairyImgs],olympus:['assets/olympus/',olympusImgs],nineties:['assets/90s/',ninetiesImgs],weird:['assets/weird/',weirdImgs],ugly:['assets/ugly/',uglyImgs],alien:['assets/alien/',alienImgs],diner:['assets/diner/',dinerImgs],bodyparts:['assets/bodyparts/',bodypartsImgs],deepsea:['assets/deepsea/',deepseaImgs],solarsick:['assets/solarsick/',solarsickImgs],dontunwrap:['assets/dontunwrap/',dontunwrapImgs],unpreparedchristmas:['assets/unpreparedchristmas/',unpreparedchristmasImgs],underthebed:['assets/underthebed/',underthebedImgs],balloonwrong:['assets/balloonwrong/',balloonwrongImgs],donttakewater:['assets/donttakewater/',donttakewaterImgs],baggagehell:['assets/baggagehell/',baggagehellImgs],cakefail:['assets/cakefail/',cakefailImgs]};
@@ -80,7 +79,7 @@ function showRooms(page=nwRoomPages[roomCollection]||0){
   evRoot.querySelectorAll('[data-world]').forEach(b=>b.onclick=()=>{nwSaveScroll();currentWorld=b.dataset.world;evSudokuMenu();nwResetViewToTop()});
   nwRestoreScroll();
 }
-function showHome(){clearInterval(sudokuTimer);sudoku=null;evRoot.hidden=true;document.getElementById('home').hidden=false;}
+function showHome(){evSudokuLeave();evRoot.hidden=true;document.getElementById('home').hidden=false;}
 const sudokuImgs=['01_Pink_Neon_Bat.png','02_Blue_Neon_Moon.png','03_Orange_Neon_Pumpkin.png','04_Green_Neon_Cat.png','05_White_Pink_Ghost.png','06_Red_Neon_Heart.png','07_Purple_Neon_Candy.png','08_Yellow_Neon_Star.png','09_Cyan_Neon_Cross.png'];
 const patissserieImgs=['01_croissant.png','02_macaron.png','03_eclair.png','04_fruit_tart.png','05_cinnamon_roll.png','06_donut.png','07_madeleine.png','08_pretzel.png','09_cupcake.png'];
 const christmasImgs=['01_santa_hat.png','02_christmas_tree.png','03_gold_star.png','04_snowflake.png','05_gingerbread.png','06_snowman.png','07_purple_gift.png','08_pink_candy_cane.png','09_orange_candle.png'];
@@ -101,39 +100,98 @@ const alienImgs=['01_canned_moonlight.png','02_radioactive_milk.png','03_eyeball
 const uglyImgs=['01_gloop.png','02_chomps.png','03_noodle.png','04_blink.png','05_grumble.png','06_pinky.png','07_wobbles.png','08_stinky.png','09_crumbs.png'];
 const weirdImgs=['01_eyeball.png','02_telephone.png','03_melting_clock.png','04_cloud_legs.png','05_door.png','06_eye_hand.png','07_fish_bulb.png','08_winged_key.png','09_moon_face.png'];
 const sudokuSrc=n=>currentWorld==='cakefail'?'assets/cakefail/'+cakefailImgs[n-1]:currentWorld==='baggagehell'?'assets/baggagehell/'+baggagehellImgs[n-1]:currentWorld==='donttakewater'?'assets/donttakewater/'+donttakewaterImgs[n-1]:currentWorld==='balloonwrong'?'assets/balloonwrong/'+balloonwrongImgs[n-1]:currentWorld==='underthebed'?'assets/underthebed/'+underthebedImgs[n-1]:currentWorld==='unpreparedchristmas'?'assets/unpreparedchristmas/'+unpreparedchristmasImgs[n-1]:currentWorld==='dontunwrap'?'assets/dontunwrap/'+dontunwrapImgs[n-1]:currentWorld==='solarsick'?'assets/solarsick/'+solarsickImgs[n-1]:currentWorld==='deepsea'?'assets/deepsea/'+deepseaImgs[n-1]:currentWorld==='bodyparts'?'assets/bodyparts/'+bodypartsImgs[n-1]:currentWorld==='diner'?'assets/diner/'+dinerImgs[n-1]:currentWorld==='alien'?'assets/alien/'+alienImgs[n-1]:currentWorld==='ugly'?'assets/ugly/'+uglyImgs[n-1]:currentWorld==='weird'?'assets/weird/'+weirdImgs[n-1]:currentWorld==='nineties'?'assets/90s/'+ninetiesImgs[n-1]:currentWorld==='olympus'?'assets/olympus/'+olympusImgs[n-1]:currentWorld==='fairy'?'assets/fairy/'+fairyImgs[n-1]:currentWorld==='christmas'?'assets/christmas/'+christmasImgs[n-1]:currentWorld==='patissserie'?'assets/patissserie/'+patissserieImgs[n-1]:'assets/events/'+sudokuImgs[n-1];
-let sudoku=null, sudokuTimer=null;
-function evSudokuMenu(){clearInterval(sudokuTimer);applyTheme(worlds[currentWorld].theme);evDisplay(`${evHeader(worlds[currentWorld].name,showRooms)}<section class="difficulty-panel"><button type="button" class="nw-fav-toggle" id="nwFavToggle" aria-pressed="${nwIsFav(currentWorld)}">${nwIsFav(currentWorld)?'♥ FAVOURITED':'♡ ADD TO FAV'}</button><h2>CHOOSE DIFFICULTY</h2><div class="difficulty-list">${Object.keys(difficulties).map(d=>`<button class="theme-button" data-difficulty="${d}">${d.toUpperCase()}</button>`).join('')}</div></section>`);evRoot.querySelectorAll('[data-difficulty]').forEach(b=>b.onclick=()=>evSudokuStart(b.dataset.difficulty));evRoot.querySelector('#nwFavToggle').onclick=()=>{const v=nwToggleFav(currentWorld),b=evRoot.querySelector('#nwFavToggle');b.textContent=v?'♥ FAVOURITED':'♡ ADD TO FAV';b.setAttribute('aria-pressed',String(v));};}
+let sudoku=null, sudokuTimer=null, sudokuLossTimer=null;
+function evSudokuCancelLoss(){if(sudokuLossTimer!==null){clearTimeout(sudokuLossTimer);sudokuLossTimer=null;}}
+function evSudokuLeave(){evSudokuCancelLoss();clearInterval(sudokuTimer);sudoku=null;}
+function evSudokuMenu(){evSudokuLeave();applyTheme(worlds[currentWorld].theme);evDisplay(`${evHeader(worlds[currentWorld].name,showRooms)}<section class="difficulty-panel"><button type="button" class="nw-fav-toggle" id="nwFavToggle" aria-pressed="${nwIsFav(currentWorld)}">${nwIsFav(currentWorld)?'♥ FAVOURITED':'♡ ADD TO FAV'}</button><h2>CHOOSE DIFFICULTY</h2><div class="difficulty-list">${Object.keys(difficulties).map(d=>`<button class="theme-button" data-difficulty="${d}">${d.toUpperCase()}</button>`).join('')}</div></section>`);evRoot.querySelectorAll('[data-difficulty]').forEach(b=>b.onclick=()=>evSudokuStart(b.dataset.difficulty));evRoot.querySelector('#nwFavToggle').onclick=()=>{const v=nwToggleFav(currentWorld),b=evRoot.querySelector('#nwFavToggle');b.textContent=v?'♥ FAVOURITED':'♡ ADD TO FAV';b.setAttribute('aria-pressed',String(v));};}
 function shuffled(v){const x=[...v];for(let i=x.length-1;i>0;i--){const k=Math.floor(Math.random()*(i+1));[x[k],x[i]]=[x[i],x[k]]}return x}
 function makeSudokuSolution(){const nums=shuffled([1,2,3,4,5,6,7,8,9]);const rOrder=shuffled([0,1,2]).flatMap(b=>shuffled([0,1,2]).map(n=>b*3+n));const cOrder=shuffled([0,1,2]).flatMap(b=>shuffled([0,1,2]).map(n=>b*3+n));return Array.from({length:81},(_,i)=>nums[(rOrder[Math.floor(i/9)]*3+Math.floor(rOrder[Math.floor(i/9)]/3)+cOrder[i%9])%9])}
-// Solve the server-issued puzzle locally for existing correct-placement and hint UI.
-// The server never sends its completed solution to the client.
-function gbSolveSudokuPuzzle(puzzle){
-  const a=[...puzzle].map(Number);if(a.length!==81)return null;
-  const candidates=(i)=>{const row=Math.floor(i/9),col=i%9,used=new Set();
-    for(let k=0;k<9;k++){used.add(a[row*9+k]);used.add(a[k*9+col]);}
-    const r0=Math.floor(row/3)*3,c0=Math.floor(col/3)*3;
-    for(let r=r0;r<r0+3;r++)for(let c=c0;c<c0+3;c++)used.add(a[r*9+c]);
-    return [1,2,3,4,5,6,7,8,9].filter(n=>!used.has(n));};
-  function recurse(){let best=-1,opts=null;
-    for(let i=0;i<81;i++)if(!a[i]){const cur=candidates(i);if(!cur.length)return false;
-      if(!opts||cur.length<opts.length){best=i;opts=cur;if(cur.length===1)break;}}
-    if(best<0)return true;
-    for(const n of opts){a[best]=n;if(recurse())return true;}a[best]=0;return false;
+// Count solutions with row/column/box bitmasks and most-constrained-cell search.
+// Stop at two; we only need to distinguish UNIQUE from AMBIGUOUS.
+function nwSudokuCountSolutions(input,limit=2){
+  const cells=Array.from(input,Number),row=new Int32Array(9),col=new Int32Array(9),box=new Int32Array(9);
+  if(cells.length!==81)return 0;
+  const unit=i=>((Math.floor(i/27)*3)+Math.floor((i%9)/3));
+  for(let i=0;i<81;i++){
+    const v=cells[i];if(!v)continue;
+    if(!Number.isInteger(v)||v<1||v>9)return 0;
+    const r=Math.floor(i/9),c=i%9,b=unit(i),bit=1<<v;
+    if((row[r]|col[c]|box[b])&bit)return 0;
+    row[r]|=bit;col[c]|=bit;box[b]|=bit;
   }
-  return recurse()?a:null;
+  const popcount=m=>{let n=0;while(m){m&=m-1;n++;}return n;};
+  let found=0;
+  function visit(){
+    let best=-1,mask=0,least=10;
+    for(let i=0;i<81;i++)if(!cells[i]){
+      const r=Math.floor(i/9),c=i%9,b=unit(i);
+      const opts=0x3FE&~(row[r]|col[c]|box[b]);
+      if(!opts)return;
+      const n=popcount(opts);if(n<least){best=i;mask=opts;least=n;if(n===1)break;}
+    }
+    if(best===-1){found++;return;}
+    const r=Math.floor(best/9),c=best%9,b=unit(best);
+    while(mask&&found<limit){
+      const bit=mask&-mask;mask-=bit;
+      const n=31-Math.clz32(bit);
+      cells[best]=n;row[r]|=bit;col[c]|=bit;box[b]|=bit;
+      visit();
+      cells[best]=0;row[r]^=bit;col[c]^=bit;box[b]^=bit;
+    }
+  }
+  visit();return found;
+}
+// Kept for compatibility: this helper now confirms uniqueness before returning a solution.
+function gbSolveSudokuPuzzle(puzzle){
+  if(nwSudokuCountSolutions(puzzle,2)!==1)return null;
+  const a=Array.from(puzzle,Number);
+  function solve(){
+    let best=-1,opts=[];
+    for(let i=0;i<81;i++)if(!a[i]){
+      const r=Math.floor(i/9),c=i%9,b0=Math.floor(r/3)*3,c0=Math.floor(c/3)*3;
+      const used=new Set();for(let k=0;k<9;k++){used.add(a[r*9+k]);used.add(a[k*9+c]);}
+      for(let dr=0;dr<3;dr++)for(let dc=0;dc<3;dc++)used.add(a[(b0+dr)*9+c0+dc]);
+      const avail=[1,2,3,4,5,6,7,8,9].filter(x=>!used.has(x));
+      if(!avail.length)return false;
+      if(best<0||avail.length<opts.length){best=i;opts=avail;if(opts.length===1)break;}
+    }
+    if(best<0)return true;
+    for(const n of opts){a[best]=n;if(solve())return true;}a[best]=0;return false;
+  }
+  return solve()?a:null;
+}
+// Carve clues only while the puzzle retains exactly one possible completion.
+// More clues on the hard modes are intentional: random 30%-filled grids are usually ambiguous.
+const nwSudokuTargetGivens={easy:49,medium:41,hard:35,expert:32,extreme:29};
+function nwMakeUniquePuzzle(difficulty){
+  const desired=nwSudokuTargetGivens[difficulty]||41;
+  let best=null;
+  for(let attempt=0;attempt<5;attempt++){
+    const answer=makeSudokuSolution(),puzzle=[...answer];
+    for(const i of shuffled(Array.from({length:81},(_,i)=>i))){
+      if(puzzle.filter(Boolean).length<=desired)break;
+      const held=puzzle[i];puzzle[i]=0;
+      if(nwSudokuCountSolutions(puzzle,2)!==1)puzzle[i]=held;
+    }
+    const count=puzzle.filter(Boolean).length;
+    if(!best||count<best.count)best={answer,puzzle,count};
+    if(count<=desired)break;
+  }
+  // Never sacrifice uniqueness just to hit a nominal difficulty clue count.
+  return best;
 }
 async function evSudokuStart(difficulty){
+  evSudokuLeave();
   applyTheme(worlds[currentWorld].theme);
-  const answer=makeSudokuSolution();
-  const percent=difficulties[difficulty].fill;
-  const count=Math.round(81*percent);
-  const givensLocal=new Set(shuffled(Array.from({length:81},(_,i)=>i)).slice(0,count));
-  const puzzle=answer.map((n,i)=>givensLocal.has(i)?n:0);
-  const sessionId=null;
+  const {answer,puzzle}=nwMakeUniquePuzzle(difficulty);
   const givens=new Set(puzzle.map((n,i)=>n?i:-1).filter(i=>i>=0));
-  sudoku={answer,values:[...puzzle],verifiedSessionId:sessionId,givens,selected:-1,choice:0,highlight:0,mistakes:0,wrong:new Set(),notes:false,noteMarks:{},history:[],hintsLeft:difficulties[difficulty].hints,start:Date.now(),difficulty,done:false};
+  sudoku={answer,values:[...puzzle],givens,selected:-1,choice:0,highlight:0,mistakes:0,wrong:new Set(),notes:false,noteMarks:{},history:[],hintsLeft:difficulties[difficulty].hints,start:Date.now(),difficulty,done:false};
   evSudokuRender();clearInterval(sudokuTimer);
   sudokuTimer=setInterval(()=>{if(!sudoku||sudoku.done)return;const el=evRoot.querySelector('#evSudoTime');if(el){const time=Math.floor((Date.now()-sudoku.start)/1000);el.textContent=`${String(Math.floor(time/60)).padStart(2,'0')}:${String(time%60).padStart(2,'0')}`}},1000);
+}
+// Preserve previous cell value AND pencil notes for undo, including hinted cells.
+function nwRecordSudokuHistory(s,i){
+  s.history.push({i,value:s.values[i],wrong:s.wrong.has(i),notes:[...(s.noteMarks[i]||[])],hintsLeft:s.hintsLeft});
 }
 function evSudokuRender(){
   const s=sudoku;if(!s)return;
@@ -145,9 +203,26 @@ function evSudokuRender(){
   evRoot.querySelectorAll('[data-cell]').forEach(b=>b.onclick=()=>{const i=+b.dataset.cell;s.selected=i;if(s.values[i])s.highlight=s.values[i];evSudokuPaint()});
   evRoot.querySelectorAll('[data-symbol]').forEach(b=>b.onclick=()=>{const n=+b.dataset.symbol;if(evSudokuRemaining(n)===0)return;s.choice=n;s.highlight=n;if(s.selected>=0&&!s.givens.has(s.selected)&&s.values[s.selected]!==s.answer[s.selected]&&!s.done){if(s.notes){const i=s.selected;if(!s.values[i]){const marks=s.noteMarks[i]||[];s.noteMarks[i]=marks.includes(n)?marks.filter(x=>x!==n):[...marks,n];}evSudokuPaint()}else evSudokuPlace(n)}else evSudokuPaint()});
   evRoot.querySelector('#evSudoNotes').onclick=()=>{s.notes=!s.notes;evRoot.querySelector('#evSudoNotes').classList.toggle('active',s.notes);evRoot.querySelector('#evSudoNotes').setAttribute('aria-pressed',String(s.notes));};
-  evRoot.querySelector('#evSudoErase').onclick=()=>{if(s.selected<0||s.givens.has(s.selected)||s.values[s.selected]===s.answer[s.selected]||s.done)return;s.history.push([s.selected,s.values[s.selected],s.wrong.has(s.selected)]);s.values[s.selected]=0;s.wrong.delete(s.selected);evSudokuPaint()};
-  evRoot.querySelector('#evSudoUndo').onclick=()=>{if(s.done)return;let prev;while(s.history.length){const candidate=s.history.pop();if(s.values[candidate[0]]!==s.answer[candidate[0]]){prev=candidate;break}}if(prev){s.values[prev[0]]=prev[1];if(prev[2])s.wrong.add(prev[0]);else s.wrong.delete(prev[0]);s.selected=prev[0];evSudokuPaint()}};
-  evRoot.querySelector('#evSudoHint').onclick=()=>{if(s.done||s.hintsLeft<=0)return;const i=s.selected>=0&&!s.givens.has(s.selected)&&s.values[s.selected]!==s.answer[s.selected]?s.selected:s.values.findIndex((n,i)=>n!==s.answer[i]&&!s.givens.has(i));if(i>=0){s.hintsLeft--;s.values[i]=s.answer[i];s.wrong.delete(i);s.selected=i;evSudokuPaint();evSudokuCheck()}};
+  evRoot.querySelector('#evSudoErase').onclick=()=>{
+    if(s.selected<0||s.givens.has(s.selected)||s.values[s.selected]===s.answer[s.selected]||s.done)return;
+    const i=s.selected;
+    if(s.values[i]===0&&!(s.noteMarks[i]||[]).length)return;
+    nwRecordSudokuHistory(s,i);s.values[i]=0;delete s.noteMarks[i];s.wrong.delete(i);evSudokuPaint();
+  };
+  evRoot.querySelector('#evSudoUndo').onclick=()=>{
+    if(s.done)return;
+    const prev=s.history.pop();if(!prev)return;
+    s.values[prev.i]=prev.value;s.noteMarks[prev.i]=[...prev.notes];
+    if(prev.wrong)s.wrong.add(prev.i);else s.wrong.delete(prev.i);
+    s.hintsLeft=prev.hintsLeft;s.selected=prev.i;evSudokuPaint();
+  };
+  evRoot.querySelector('#evSudoHint').onclick=()=>{
+    if(s.done||s.hintsLeft<=0)return;
+    const i=s.selected>=0&&!s.givens.has(s.selected)&&s.values[s.selected]!==s.answer[s.selected]?s.selected:s.values.findIndex((n,i)=>n!==s.answer[i]&&!s.givens.has(i));
+    if(i<0)return;
+    nwRecordSudokuHistory(s,i);s.hintsLeft--;s.values[i]=s.answer[i];
+    delete s.noteMarks[i];s.wrong.delete(i);s.selected=i;evSudokuPaint();evSudokuCheck();
+  };
   evSudokuPaint();
 }
 // Desktop Sudoku input: delegate to the existing button handlers so notes,
@@ -191,10 +266,10 @@ function evSudokuPaint(){
 function evSudokuPlace(n){
   const s=sudoku,i=s.selected;if(i<0||s.givens.has(i)||s.values[i]===s.answer[i]||s.done)return;
   if(s.values[i]===n){evSudokuPaint();return}
-  s.history.push([i,s.values[i],s.wrong.has(i)]);s.values[i]=n;
+  nwRecordSudokuHistory(s,i);s.values[i]=n;delete s.noteMarks[i];
   if(n!==s.answer[i]){
     s.mistakes++;s.wrong.add(i);evSudokuPaint();
-    if(s.mistakes>=3){s.done=true;clearInterval(sudokuTimer);setTimeout(()=>evSudokuEnd(false),420)}
+    if(s.mistakes>=3){s.done=true;clearInterval(sudokuTimer);evSudokuCancelLoss();sudokuLossTimer=setTimeout(()=>{sudokuLossTimer=null;if(sudoku===s&&evRoot.querySelector('#evSudoBoard'))evSudokuEnd(false)},420)}
     return;
   }
   s.wrong.delete(i);evSudokuPaint();evSudokuCheck();
