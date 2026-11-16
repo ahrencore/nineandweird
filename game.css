@@ -2822,3 +2822,45 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game.theme-cakefail .ev-win{background:#F9E3E5!important;border:2px solid #A95570!important;color:#633B46!important}
 #game.theme-hub .world-grid .world-cakefail{background:linear-gradient(135deg,#F7DCE2 0%,#D98FA0 100%)!important;border:2px solid #A95570!important;color:#633B46!important;box-shadow:0 2px 8px #9B4A6825!important}
 #game.theme-hub .world-grid .world-cakefail strong{color:#633B46!important;text-shadow:none!important}
+
+/* Nine & Weird: player profile & trophy report (local-first preview) */
+#game .nw-profile-entry{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0 17px;color:#fbd8df;text-align:center}
+#game .nw-profile-button{width:76px;height:76px;border:2px solid #f36b78;border-radius:50%;background:radial-gradient(circle at 35% 25%,#704153,#24141b);box-shadow:0 0 15px #f36b7866;display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:5px}
+#game .nw-profile-entry>div{font-size:15px;font-weight:700;overflow-wrap:anywhere;max-width:100%}
+#game .nw-profile-entry small{font-size:10px;letter-spacing:.09em;color:#d3a1b1}
+#game .nw-new-panel{max-width:510px;margin:16px auto;background:#25151d;border:1px solid #72424e;border-radius:18px;padding:18px;color:#ffebef}
+#game .nw-new-panel h2{text-align:center;margin:4px 0 8px}
+#game .nw-muted{color:#dbb0bb;font-size:12px;line-height:1.65}
+#game .nw-profile-avatar{font-size:58px;text-align:center}
+#game .nw-new-label{display:block;font-size:11px;color:#ffb7c2;font-weight:800;letter-spacing:.08em;margin:20px 0 8px}
+#game #nwName{width:100%;border:1px solid #bd7485;border-radius:10px;padding:13px;background:#180e13;color:#fff4f6;font:inherit}
+#game .nw-avatar-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+#game .nw-avatar-choice{aspect-ratio:1;min-width:0;font-size:25px;border:1px solid #72505b;border-radius:10px;background:#36232c}
+#game .nw-avatar-choice.chosen{border:2px solid #ff929f;background:#683745}
+#game .nw-action{border:0;background:#f36b78;color:#250b12;font-weight:900;padding:14px;width:100%;border-radius:10px;margin:20px 0 8px}
+#game .nw-auth-message{border:1px solid #79515e;background:#34232c;padding:15px;border-radius:12px;margin-top:15px}
+#game .nw-auth-message p{font-size:12px;color:#e8bdc8;margin-bottom:0}
+#game .nw-trophy-intro{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:800;margin-bottom:16px;overflow-wrap:anywhere}
+#game .nw-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#game .nw-tabs button{padding:12px 4px;background:#3c2631;color:#e8bdc6;border:1px solid #764956;border-radius:10px;font-weight:800;font-size:11px}
+#game .nw-tabs button.active{background:#f36b78;color:#270c13}
+#game .nw-week-nav{display:flex;align-items:center;justify-content:space-between;margin:18px 0;gap:8px;text-align:center}
+#game .nw-week-nav button{border:1px solid #8d5968;border-radius:9px;background:#422935;color:#fff;padding:8px 13px}
+#game .nw-week-nav button:disabled{opacity:.35}
+#game .nw-week-nav strong{font-size:12px}
+#game .nw-report-head{background:#3c2630;border-radius:14px;padding:20px;text-align:center;margin:15px 0;display:flex;flex-direction:column;gap:5px}
+#game .nw-report-head strong{font-size:28px;color:#ffd8a3}
+#game .nw-report-head span{font-size:12px;color:#e7c2c9}
+#game .nw-report-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#game .nw-report-grid article{min-width:0;display:flex;flex-direction:column;gap:5px;background:#38242d;border-radius:12px;padding:13px}
+#game .nw-report-grid small{font-size:10px;color:#efb8c4;font-weight:800;letter-spacing:.07em}
+#game .nw-report-grid strong{font-size:24px;color:#ffead7}
+#game .nw-report-grid em{font-size:11px;font-style:normal;color:#e6bdc7}
+#game .nw-report-grid span{font-size:10px;color:#b9d9c1}
+#game .nw-report-difficulty{background:#38242d;border-radius:12px;padding:14px;margin:14px 0}
+#game .nw-report-difficulty h3{font-size:13px;color:#ffe3e9;margin:0 0 14px}
+#game .nw-difficulty-line{display:grid;grid-template-columns:1fr auto;gap:5px;margin:12px 0}
+#game .nw-difficulty-line span,#game .nw-difficulty-line strong{font-size:11px}
+#game .nw-difficulty-track{grid-column:1/-1;height:7px;background:#5b3944;border-radius:10px;overflow:hidden}
+#game .nw-difficulty-track i{display:block;height:100%;background:#f36b78;border-radius:10px}
+@media(max-width:380px){#game .nw-avatar-grid{grid-template-columns:repeat(4,minmax(0,1fr))}#game .nw-report-grid article{padding:9px}#game .nw-report-grid strong{font-size:20px}}
