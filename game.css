@@ -2788,35 +2788,37 @@ body:has(#game.theme-baggagehell:not([hidden])) {
 
 
 /* ALBUM 22 — CAKE DECORATING WAS A MISTAKE, retro gouache bakery trial */
-html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([hidden])){background:#FFF5E6!important}
-#game.theme-cakefail{--surface:#FFF5E6;--panel:#F4DEC9;--ink:#69453B;--accent:#BC6A51;--line:#B9BFA0;--peer:#D6D9BB;--same:#ACDDCE;--selected:#FFD67B;--room-border:#BC6A51;--room-glow:#F4DEC9;background:linear-gradient(180deg,#FFF7EC,#FAEED9)!important;color:#69453B!important}
-#game.theme-cakefail .ev-head{background:#FFF5E6!important;border:2px solid #BC6A51!important;box-shadow:0 1px 8px #C68C6B30!important;border-radius:14px;padding:9px 10px!important}
-#game.theme-cakefail .ev-head>strong{color:#69453B!important;text-shadow:none!important}
-#game.theme-cakefail .ev-head .ev-btn{color:#69453B!important;background:#F4DEC9!important;border-color:#BC6A51!important}
-#game.theme-cakefail .difficulty-panel,#game.theme-cakefail .result-panel,#game.theme-cakefail .ev-sudo-shell{background:#FFF5E6!important;color:#69453B!important;border:2px solid #BC6A51!important;box-shadow:0 2px 10px #9B5E3D25!important}
-#game.theme-cakefail .theme-button{background:#F4DEC9!important;color:#69453B!important;border:2px solid #BC6A51!important}
-#game.theme-cakefail .nw-fav-toggle{background:#FFF5E6!important;color:#69453B!important;border:2px solid #BC6A51!important}
-#game.theme-cakefail .ev-sudo-stats>div{background:#F4DEC9!important;border-color:#D4AA96!important}
-#game.theme-cakefail .ev-sudo-stats small{color:#8D5443!important}
-#game.theme-cakefail .ev-sudo-stats strong{color:#69453B!important}
-#game.theme-cakefail .ev-note{color:#69453B!important}
-#game.theme-cakefail .ev-sudoku-grid{display:grid!important;grid-template-columns:repeat(9,minmax(0,1fr))!important;grid-template-rows:repeat(9,minmax(0,1fr))!important;position:relative!important;isolation:isolate!important;overflow:hidden!important;width:100%!important;aspect-ratio:1!important;background:#E6E9C5!important;border:4px solid #BC6A51!important;box-shadow:0 1px 10px #A46C4830!important}
-#game.theme-cakefail .ev-sudoku-grid>.ev-sudoku-cell{background:#E6E9C5!important;color:#69453B!important;border-right:1px solid #B9BFA0!important;border-bottom:1px solid #B9BFA0!important;box-sizing:border-box!important;position:relative!important}
-#game.theme-cakefail .ev-sudoku-grid>.ev-sudoku-cell.given{background:#E3E6C2!important}
-#game.theme-cakefail .ev-sudoku-grid>.ev-sudoku-cell.peer:not(.same):not(.selected):not(.bad){background:#D8DDB7!important}
-#game.theme-cakefail .ev-sudoku-grid>.ev-sudoku-cell.same:not(.selected):not(.bad){background:#ACDDCE!important;box-shadow:inset 0 0 0 2px #388C80!important;z-index:1!important}
-#game.theme-cakefail .ev-sudoku-grid>.ev-sudoku-cell.selected:not(.bad){background:#FFD67B!important;box-shadow:inset 0 0 0 3px #B46A3D!important;z-index:2!important}
+
+/* Album 22 — Dusty Rose Bakery. Only theme-cakefail and its hub card. */
+html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([hidden])){background:#D98FA0!important}
+#game.theme-cakefail{--surface:#D98FA0;--panel:#F4D5DC;--ink:#633B46;--accent:#A95570;--line:#D8ACB8;--peer:#F1D5DC;--same:#D6A0B5;--selected:#F7CF91;--room-border:#A95570;--room-glow:#F4D5DC;background:linear-gradient(180deg,#E7ADB9 0%,#D98FA0 100%)!important;color:#633B46!important}
+#game.theme-cakefail .ev-head{background:#F4D5DC!important;border:2px solid #A95570!important;box-shadow:0 1px 8px #9B4A682D!important;border-radius:14px;padding:9px 10px!important}
+#game.theme-cakefail .ev-head>strong{color:#633B46!important;text-shadow:none!important}
+#game.theme-cakefail .ev-head .ev-btn{color:#633B46!important;background:#F9E3E5!important;border-color:#A95570!important}
+#game.theme-cakefail .difficulty-panel,#game.theme-cakefail .result-panel,#game.theme-cakefail .ev-sudo-shell{background:#F4D5DC!important;color:#633B46!important;border:2px solid #A95570!important;box-shadow:0 2px 10px #9B4A6825!important}
+#game.theme-cakefail .theme-button{background:#F9E3E5!important;color:#633B46!important;border:2px solid #A95570!important}
+#game.theme-cakefail .nw-fav-toggle{background:#F9E3E5!important;color:#633B46!important;border:2px solid #A95570!important}
+#game.theme-cakefail .ev-sudo-stats>div{background:#F9E3E5!important;border-color:#D8ACB8!important}
+#game.theme-cakefail .ev-sudo-stats small{color:#92506A!important}
+#game.theme-cakefail .ev-sudo-stats strong{color:#633B46!important}
+#game.theme-cakefail .ev-note{color:#633B46!important}
+#game.theme-cakefail .ev-sudoku-grid{display:grid!important;grid-template-columns:repeat(9,minmax(0,1fr))!important;grid-template-rows:repeat(9,minmax(0,1fr))!important;position:relative!important;isolation:isolate!important;overflow:hidden!important;width:100%!important;aspect-ratio:1!important;background:#F9E3E5!important;border:4px solid #A95570!important;box-shadow:0 1px 10px #8B4C6928!important}
+#game.theme-cakefail .ev-sudoku-grid>.ev-sudoku-cell{background:#F9E3E5!important;color:#633B46!important;border-right:1px solid #D8ACB8!important;border-bottom:1px solid #D8ACB8!important;box-sizing:border-box!important;position:relative!important}
+#game.theme-cakefail .ev-sudoku-grid>.ev-sudoku-cell.given{background:#F7DFE3!important}
+#game.theme-cakefail .ev-sudoku-grid>.ev-sudoku-cell.peer:not(.same):not(.selected):not(.bad){background:#F1D5DC!important}
+#game.theme-cakefail .ev-sudoku-grid>.ev-sudoku-cell.same:not(.selected):not(.bad){background:#D6A0B5!important;box-shadow:inset 0 0 0 2px #8A3D5E!important;z-index:1!important}
+#game.theme-cakefail .ev-sudoku-grid>.ev-sudoku-cell.selected:not(.bad){background:#F7CF91!important;box-shadow:inset 0 0 0 3px #A95570!important;z-index:2!important}
 #game.theme-cakefail .ev-sudoku-grid>.ev-sudoku-cell.bad{background:#EF7477!important;box-shadow:inset 0 0 0 2px #FFDBDB!important}
 #game.theme-cakefail .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n){border-right:0!important}
 #game.theme-cakefail .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n+73){border-bottom:0!important}
-#game.theme-cakefail .ev-sudoku-grid::after{content:''!important;display:block!important;position:absolute!important;inset:0!important;width:auto!important;height:auto!important;z-index:100!important;pointer-events:none!important;background-image:linear-gradient(to right,transparent calc(33.333333% - 2px),#BC6A51 calc(33.333333% - 2px),#BC6A51 calc(33.333333% + 2px),transparent calc(33.333333% + 2px),transparent calc(66.666667% - 2px),#BC6A51 calc(66.666667% - 2px),#BC6A51 calc(66.666667% + 2px),transparent calc(66.666667% + 2px)),linear-gradient(to bottom,transparent calc(33.333333% - 2px),#BC6A51 calc(33.333333% - 2px),#BC6A51 calc(33.333333% + 2px),transparent calc(33.333333% + 2px),transparent calc(66.666667% - 2px),#BC6A51 calc(66.666667% - 2px),#BC6A51 calc(66.666667% + 2px),transparent calc(66.666667% + 2px))!important;background-repeat:no-repeat!important;border:0!important;box-shadow:none!important}
-#game.theme-cakefail .ev-sudoku-grid>.ev-sudoku-cell img{width:88%!important;height:88%!important;object-fit:contain!important;filter:drop-shadow(0 1px 1px #64453530)!important}
-#game.theme-cakefail .ev-sudoku-tray button{background:#F7E8D8!important;color:#69453B!important;border:1.5px solid #BC6A51!important}
-#game.theme-cakefail .ev-sudoku-tray button.selected{background:#FFD67B!important;border:3px solid #BC6A51!important;box-shadow:0 0 7px #BC6A5180!important}
-#game.theme-cakefail .ev-sudo-remain{background:#A95E4A!important;color:#FFFFFF!important}
-#game.theme-cakefail .ev-sudo-tools-clean .ev-sudo-tool{background:#F4DEC9!important;color:#69453B!important;border:2px solid #BC6A51!important}
-#game.theme-cakefail .ev-sudo-tools-clean .ev-sudo-tool.active{border-color:#9A4F38!important;box-shadow:0 0 8px #BC6A5170!important}
-#game.theme-cakefail .ev-sudo-tool-icon,#game.theme-cakefail .ev-sudo-tool-label{color:#69453B!important}
-#game.theme-cakefail .ev-win{background:#F4DEC9!important;border:2px solid #BC6A51!important;color:#69453B!important}
-#game.theme-hub .world-grid .world-cakefail{background:linear-gradient(135deg,#FFF5E6 0%,#E6E9C5 100%)!important;border:2px solid #BC6A51!important;color:#69453B!important;box-shadow:0 2px 8px #A46C4825!important}
-#game.theme-hub .world-grid .world-cakefail strong{color:#69453B!important;text-shadow:none!important}
+#game.theme-cakefail .ev-sudoku-grid::after{content:''!important;display:block!important;position:absolute!important;inset:0!important;width:auto!important;height:auto!important;z-index:100!important;pointer-events:none!important;background-image:linear-gradient(to right,transparent calc(33.333333% - 2px),#A95570 calc(33.333333% - 2px),#A95570 calc(33.333333% + 2px),transparent calc(33.333333% + 2px),transparent calc(66.666667% - 2px),#A95570 calc(66.666667% - 2px),#A95570 calc(66.666667% + 2px),transparent calc(66.666667% + 2px)),linear-gradient(to bottom,transparent calc(33.333333% - 2px),#A95570 calc(33.333333% - 2px),#A95570 calc(33.333333% + 2px),transparent calc(33.333333% + 2px),transparent calc(66.666667% - 2px),#A95570 calc(66.666667% - 2px),#A95570 calc(66.666667% + 2px),transparent calc(66.666667% + 2px))!important;background-repeat:no-repeat!important;border:0!important;box-shadow:none!important}
+#game.theme-cakefail .ev-sudoku-grid>.ev-sudoku-cell img{width:88%!important;height:88%!important;object-fit:contain!important;filter:drop-shadow(0 1px 1px #64453520)!important}
+#game.theme-cakefail .ev-sudoku-tray button{background:#F9E3E5!important;color:#633B46!important;border:1.5px solid #A95570!important}
+#game.theme-cakefail .ev-sudoku-tray button.selected{background:#F7CF91!important;border:3px solid #A95570!important;box-shadow:0 0 7px #A9557080!important}
+#game.theme-cakefail .ev-sudo-remain{background:#A95570!important;color:#FFFFFF!important}
+#game.theme-cakefail .ev-sudo-tools-clean .ev-sudo-tool{background:#F9E3E5!important;color:#633B46!important;border:2px solid #A95570!important}
+#game.theme-cakefail .ev-sudo-tools-clean .ev-sudo-tool.active{border-color:#8A3D5E!important;box-shadow:0 0 8px #A9557070!important}
+#game.theme-cakefail .ev-sudo-tool-icon,#game.theme-cakefail .ev-sudo-tool-label{color:#633B46!important}
+#game.theme-cakefail .ev-win{background:#F9E3E5!important;border:2px solid #A95570!important;color:#633B46!important}
+#game.theme-hub .world-grid .world-cakefail{background:linear-gradient(135deg,#F7DCE2 0%,#D98FA0 100%)!important;border:2px solid #A95570!important;color:#633B46!important;box-shadow:0 2px 8px #9B4A6825!important}
+#game.theme-hub .world-grid .world-cakefail strong{color:#633B46!important;text-shadow:none!important}
