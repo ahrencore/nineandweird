@@ -3013,3 +3013,10 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-events-detail h2{font-size:23px;text-align:center;margin:7px 0 22px;color:#ffe8ee}
 #game .nw-events-detail p{color:#e9c4cd;font-size:14px;line-height:1.65}
 #game .nw-events-detail .nw-event-coming{text-align:center;color:#f36b78;font-weight:800;letter-spacing:.10em;padding:12px;margin-top:23px;border:1px solid #764452;border-radius:11px}
+
+/* Private-by-URL local gameplay recorder controls, shown only on puzzle results. */
+#game .nw-record-tools{margin-top:20px;padding:14px;border:1px dashed #f36b78;border-radius:13px;background:#25151d;display:flex;flex-direction:column;gap:8px;text-align:center}
+#game .nw-record-tools strong{color:#ffb3bf;letter-spacing:.08em;font-size:13px}
+#game .nw-record-tools small{color:#f5d3dc;font-size:11px}
+#game .nw-record-tools button{border:1px solid #b36779;border-radius:9px;background:#4a2d39;color:#ffecf0;padding:11px;font-weight:700}
+#game .nw-record-tools button:first-of-type{background:#f36b78;color:#250b12}

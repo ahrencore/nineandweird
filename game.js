@@ -32,6 +32,50 @@ function nwIsFav(id){return nwFavs().includes(id)}
 function nwToggleFav(id){const a=nwFavs(),b=a.includes(id)?a.filter(x=>x!==id):[...a,id];nwWrite(nwFavKey,b);return b.includes(id)}
 function nwPoints(){const n=Number(nwRead(nwPointsKey,0));return Number.isFinite(n)&&n>0?Math.floor(n):0}
 function nwAwardPoints(n){nwWrite(nwPointsKey,nwPoints()+n)}
+
+// Local opt-in test recorder: no user IDs, names, avatars, or authentication data.
+// The recordings only exist in this tab's sessionStorage until exported or cleared.
+const nwRecordMode = new URLSearchParams(location.search).get('nw_record')==='1';
+const nwRecordingKey = 'nineweird-recording-drafts-v1';
+function nwRecordedRuns(){
+  try {const rows=JSON.parse(sessionStorage.getItem(nwRecordingKey)||'[]');return Array.isArray(rows)?rows:[];}
+  catch{return [];}
+}
+function nwCaptureRun(s, points){
+  if(!nwRecordMode || !s || !s.done || s.recordCaptured)return;
+  s.recordCaptured=true;
+  const rows=nwRecordedRuns();
+  rows.push({
+    recording_id:(typeof crypto!=='undefined'&&crypto.randomUUID)?crypto.randomUUID():`${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    room:currentWorld, difficulty:s.difficulty,
+    started_at:new Date(s.start).toISOString(),completed_at:new Date().toISOString(),
+    elapsed_seconds:Math.max(1,Math.round((Date.now()-s.start)/1000)),
+    points, mistakes:s.mistakes, hints_used:s.reportHints||0,
+    placement_attempts:s.reportAttempts||0, correct_placements:s.reportCorrect||0,
+    puzzle_clues:s.initialPuzzle? s.initialPuzzle.join('') : null,
+    solved_grid:s.answer.join('')
+  });
+  try{sessionStorage.setItem(nwRecordingKey,JSON.stringify(rows.slice(-500)));}catch{}
+}
+function nwExportRuns(){
+  const rows=nwRecordedRuns();
+  if(!rows.length){window.alert('No completed Sudoku recordings yet.');return;}
+  const payload={format:'nine-weird-puzzle-recordings',version:1,exported_at:new Date().toISOString(),runs:rows};
+  const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));
+  const a=document.createElement('a');a.href=url;a.download=`nine-weird-recordings-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function nwRecordingControls(){
+  if(!nwRecordMode)return '';
+  return `<div class="nw-record-tools"><strong>RECORDING MODE</strong><small>Completed puzzles: ${nwRecordedRuns().length} · No profiles attached</small><button id="nwExportRecordings" type="button">EXPORT RECORDINGS</button><button id="nwClearRecordings" type="button">CLEAR RECORDINGS</button></div>`;
+}
+function nwBindRecordingControls(){
+  if(!nwRecordMode)return;
+  const exp=evRoot.querySelector('#nwExportRecordings'),clear=evRoot.querySelector('#nwClearRecordings');
+  if(exp)exp.onclick=nwExportRuns;
+  if(clear)clear.onclick=()=>{if(window.confirm('Clear all unexported recordings from this tab?')){sessionStorage.removeItem(nwRecordingKey);const el=evRoot.querySelector('.nw-record-tools small');if(el)el.textContent='Completed puzzles: 0 · No profiles attached';}};
+}
+
 // Local-first player profile & weekly puzzle performance. Cloud sync is NOT enabled yet.
 const nwProfileKey='nineweird-profile-v1', nwResultsKey='nineweird-results-v1';
 const nwAvatarChoices=["avatars/avatar-01.png", "avatars/avatar-02.png", "avatars/avatar-03.png", "avatars/avatar-04.png", "avatars/avatar-05.png", "avatars/avatar-06.png", "avatars/avatar-07.png", "avatars/avatar-08.png", "avatars/avatar-09.png", "avatars/avatar-10.png", "avatars/avatar-11.png", "avatars/avatar-12.png"];
@@ -421,7 +465,7 @@ async function evSudokuStart(difficulty){
   applyTheme(worlds[currentWorld].theme);
   const {answer,puzzle}=nwMakeUniquePuzzle(difficulty);
   const givens=new Set(puzzle.map((n,i)=>n?i:-1).filter(i=>i>=0));
-  sudoku={answer,values:[...puzzle],givens,selected:-1,choice:0,highlight:0,mistakes:0,wrong:new Set(),notes:false,noteMarks:{},history:[],hintsLeft:difficulties[difficulty].hints,start:Date.now(),difficulty,done:false,reportAttempts:0,reportCorrect:0,reportHints:0,reportSaved:false};
+  sudoku={answer,values:[...puzzle],givens,selected:-1,choice:0,highlight:0,mistakes:0,wrong:new Set(),notes:false,noteMarks:{},history:[],hintsLeft:difficulties[difficulty].hints,start:Date.now(),difficulty,done:false,initialPuzzle:[...puzzle],reportAttempts:0,reportCorrect:0,reportHints:0,reportSaved:false};
   evSudokuRender();clearInterval(sudokuTimer);
   sudokuTimer=setInterval(()=>{if(!sudoku||sudoku.done)return;const el=evRoot.querySelector('#evSudoTime');if(el){const time=Math.floor((Date.now()-sudoku.start)/1000);el.textContent=`${String(Math.floor(time/60)).padStart(2,'0')}:${String(time%60).padStart(2,'0')}`}},1000);
 }
@@ -511,7 +555,7 @@ function evSudokuPlace(n){
   s.wrong.delete(i);evSudokuPaint();evSudokuCheck();
 }
 function sudokuSymbol(n){return (currentWorld==='halloween'||currentWorld==='patissserie'||currentWorld==='christmas'||currentWorld==='fairy'||currentWorld==='olympus'||currentWorld==='nineties'||currentWorld==='weird'||currentWorld==='ugly'||currentWorld==='alien'||currentWorld==='diner'||currentWorld==='bodyparts'||currentWorld==='deepsea'||currentWorld==='solarsick'||currentWorld==='dontunwrap'||currentWorld==='unpreparedchristmas'||currentWorld==='underthebed'||currentWorld==='balloonwrong'||currentWorld==='donttakewater'||currentWorld==='baggagehell'||currentWorld==='cakefail')?`<img src="${sudokuSrc(n)}" alt="${n}">`:`<span class="number-symbol">${n}</span>`;}
-function evSudokuEnd(won){const s=sudoku;if(!s)return;nwSaveResult(s,won);applyTheme(worlds[currentWorld].theme);const elapsed=Math.floor((Date.now()-s.start)/1000);const duration=`${Math.floor(elapsed/60)}:${String(elapsed%60).padStart(2,'0')}`;const pts=won?difficulties[s.difficulty].points+([100,70,30][s.mistakes]||0):0;if(won&&!s.pointsCredited){nwAwardPoints(pts);s.pointsCredited=true;}evDisplay(`${evHeader(worlds[currentWorld].name,showRooms)}<section class="result-panel"><div class="result-mark">${won?'✦':'×'}</div><h2>${won?'Puzzle Completed!':'Puzzle Not Completed'}</h2>${won?`<div class="result-score"><small>TOTAL POINTS</small><strong>${pts.toLocaleString()}</strong></div>`:'<p>Three mistakes. Try again!</p>'}<div class="result-stats"><div>DIFFICULTY<strong>${s.difficulty.toUpperCase()}</strong></div><div>TIME<strong>${duration}</strong></div><div>MISTAKES<strong>${s.mistakes} / 3</strong></div></div><div class="result-actions"><button class="theme-button" id="evSudoAgain">${won?'PLAY AGAIN':'RETRY'}</button><button class="theme-button" id="evSudoBack">BACK TO ROOMS</button></div></section>`);evRoot.querySelector('#evSudoAgain').onclick=()=>evSudokuStart(s.difficulty);evRoot.querySelector('#evSudoBack').onclick=()=>showRooms();}
+function evSudokuEnd(won){const s=sudoku;if(!s)return;nwSaveResult(s,won);applyTheme(worlds[currentWorld].theme);const elapsed=Math.floor((Date.now()-s.start)/1000);const duration=`${Math.floor(elapsed/60)}:${String(elapsed%60).padStart(2,'0')}`;const pts=won?difficulties[s.difficulty].points+([100,70,30][s.mistakes]||0):0;if(won&&!s.pointsCredited){nwAwardPoints(pts);s.pointsCredited=true;}if(won)nwCaptureRun(s,pts);evDisplay(`${evHeader(worlds[currentWorld].name,showRooms)}<section class="result-panel"><div class="result-mark">${won?'✦':'×'}</div><h2>${won?'Puzzle Completed!':'Puzzle Not Completed'}</h2>${won?`<div class="result-score"><small>TOTAL POINTS</small><strong>${pts.toLocaleString()}</strong></div>`:'<p>Three mistakes. Try again!</p>'}<div class="result-stats"><div>DIFFICULTY<strong>${s.difficulty.toUpperCase()}</strong></div><div>TIME<strong>${duration}</strong></div><div>MISTAKES<strong>${s.mistakes} / 3</strong></div></div><div class="result-actions"><button class="theme-button" id="evSudoAgain">${won?'PLAY AGAIN':'RETRY'}</button><button class="theme-button" id="evSudoBack">BACK TO ROOMS</button></div>${nwRecordingControls()}</section>`);nwBindRecordingControls();evRoot.querySelector('#evSudoAgain').onclick=()=>evSudokuStart(s.difficulty);evRoot.querySelector('#evSudoBack').onclick=()=>showRooms();}
 
 function evSudokuCheck(){
   const s=sudoku;if(!s||s.done||!s.values.every((v,i)=>v===s.answer[i]))return;
