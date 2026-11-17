@@ -49,11 +49,26 @@ function nwFormatTime(sec){if(sec==null)return '—';const n=Math.round(sec);ret
 function nwShowProfile(){
   evSudokuLeave();applyTheme('hub');
   const u=window.nwCloud?.user();const anon=!!u?.is_anonymous;const p=nwProfile();const recovery=!!window.nwCloud?.isRecovering?.();
-  evDisplay(`${evHeader('PLAYER PROFILE',showCategories)}<section class="nw-new-panel"><div class="nw-profile-avatar">${p.avatar}</div><h2>${nwEscape(p.name)}</h2><p class="nw-muted" id="nwAccountStatus">${anon?'Guest':u?'Signed in: '+nwEscape(u.email||'Account'):'Guest'}</p><label class="nw-new-label" for="nwName">DISPLAY NAME</label><input id="nwName" maxlength="24" value="${nwEscape(p.name)}" autocomplete="nickname"><label class="nw-new-label">CHOOSE AN AVATAR</label><div class="nw-avatar-grid">${nwAvatarChoices.map(a=>`<button class="nw-avatar-choice ${a===p.avatar?'chosen':''}" data-avatar="${a}" aria-label="Choose ${a} avatar">${a}</button>`).join('')}</div><button class="nw-action" id="nwSaveProfile">SAVE PROFILE</button><div class="nw-auth-message"><strong>${u?'ACCOUNT':'SIGN IN'}</strong><p id="nwAuthNotice" hidden></p>${u?`${recovery?`<label class="nw-new-label" for="nwNewPassword">NEW PASSWORD</label><input id="nwNewPassword" type="password" minlength="6" placeholder="New password (6+ characters)"><button class="nw-action" id="nwSetPassword">SET NEW PASSWORD</button>`:''}<button class="nw-action" id="nwSignOut">SIGN OUT</button>`:`<button class="nw-action" id="nwMakeCloudGuest">CONTINUE AS GUEST</button><label class="nw-new-label" for="nwEmail">EMAIL</label><input id="nwEmail" type="email" autocomplete="email" placeholder="you@example.com"><label class="nw-new-label" for="nwPassword">PASSWORD</label><input id="nwPassword" type="password" autocomplete="current-password" minlength="6" placeholder="Password (6+ characters)"><div class="nw-auth-actions"><button class="nw-action" id="nwSignIn">SIGN IN</button><button class="nw-action" id="nwRegister">REGISTER</button><button class="nw-action" id="nwReset">RESET PASSWORD</button></div>`}</div>${!u?`<div class="nw-captcha"><div class="nw-captcha-widget"></div><p class="nw-muted nw-captcha-status" hidden></p></div>`:''}</section>`);
+  const providerButtons=`<div class="nw-auth-actions"><button class="nw-action" id="nwGoogle">CONTINUE WITH GOOGLE</button><button class="nw-action" id="nwDiscord">CONTINUE WITH DISCORD</button></div>`;
+  const emailFields=`<label class="nw-new-label" for="nwEmail">EMAIL</label><input id="nwEmail" type="email" autocomplete="email" placeholder="you@example.com"><label class="nw-new-label" for="nwPassword">PASSWORD</label><input id="nwPassword" type="password" autocomplete="current-password" minlength="6" placeholder="Password (6+ characters)"><div class="nw-auth-actions"><button class="nw-action" id="nwSignIn">SIGN IN</button><button class="nw-action" id="nwRegister">REGISTER</button><button class="nw-action" id="nwReset">RESET PASSWORD</button></div>`;
+  const authContent=!u?`${providerButtons}<button class="nw-action" id="nwMakeCloudGuest">CONTINUE AS GUEST</button>${emailFields}`:anon?`${providerButtons}<button class="nw-action" id="nwSignOut">SIGN OUT</button>`:`${recovery?`<label class="nw-new-label" for="nwNewPassword">NEW PASSWORD</label><input id="nwNewPassword" type="password" minlength="6" placeholder="New password (6+ characters)"><button class="nw-action" id="nwSetPassword">SET NEW PASSWORD</button>`:''}<button class="nw-action" id="nwSignOut">SIGN OUT</button>`;
+  evDisplay(`${evHeader('PLAYER PROFILE',showCategories)}<section class="nw-new-panel"><div class="nw-profile-avatar">${p.avatar}</div><h2>${nwEscape(p.name)}</h2><p class="nw-muted" id="nwAccountStatus">${anon?'Guest':u?'Signed in: '+nwEscape(u.email||'Account'):'Guest'}</p><label class="nw-new-label" for="nwName">DISPLAY NAME</label><input id="nwName" maxlength="24" value="${nwEscape(p.name)}" autocomplete="nickname"><label class="nw-new-label">CHOOSE AN AVATAR</label><div class="nw-avatar-grid">${nwAvatarChoices.map(a=>`<button class="nw-avatar-choice ${a===p.avatar?'chosen':''}" data-avatar="${a}" aria-label="Choose ${a} avatar">${a}</button>`).join('')}</div><button class="nw-action" id="nwSaveProfile">SAVE PROFILE</button><div class="nw-auth-message"><strong>${u?'ACCOUNT':'SIGN IN'}</strong><p id="nwAuthNotice" hidden></p>${authContent}</div>${!u?`<div class="nw-captcha"><div class="nw-captcha-widget"></div><p class="nw-muted nw-captcha-status" hidden></p></div>`:''}</section>`);
+
   if(!u && window.nwCloud){const captcha=evRoot.querySelector('.nw-captcha');if(captcha)nwCloud.mountCaptcha(captcha)}
   let avatar=p.avatar;
   evRoot.querySelectorAll('[data-avatar]').forEach(b=>b.onclick=()=>{avatar=b.dataset.avatar;evRoot.querySelectorAll('[data-avatar]').forEach(x=>x.classList.toggle('chosen',x===b))});
   const notice=(s)=>{const el=evRoot.querySelector('#nwAuthNotice');if(el){el.textContent=s;el.hidden=!s}};
+  for(const [id,provider] of [['nwGoogle','google'],['nwDiscord','discord']]){
+    const button=evRoot.querySelector('#'+id);
+    if(button)button.onclick=async()=>{
+      button.disabled=true;
+      try{
+        // A guest must be linked, never silently switched to another account.
+        if(anon)await nwCloud.linkProvider(provider);
+        else await nwCloud.signInProvider(provider);
+      }catch(e){notice(e.message);button.disabled=false;}
+    };
+  }
   const save=evRoot.querySelector('#nwSaveProfile');
   save.onclick=async()=>{
     const name=evRoot.querySelector('#nwName').value.trim().slice(0,24)||'Guest Player';

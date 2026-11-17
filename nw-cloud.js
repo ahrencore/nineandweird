@@ -58,6 +58,21 @@
   async function get(){return await ready;}
   async function invoke(method,params){const c=await get();const res=await c.auth[method](params);if(res.error)throw new Error(res.error.message);return res.data;}
   window.nwCloud={ready,get,mountCaptcha,clearCaptcha,captchaToken,resetCaptcha,user:()=>user,isRecovering:()=>recovering,finishRecovery:async(password)=>{const c=await get();const {error}=await c.auth.updateUser({password});if(error)throw new Error(error.message);recovering=false;emit();},onChange:(fn)=>{listeners.push(fn);return ()=>listeners=listeners.filter(x=>x!==fn)},
+    async signInProvider(provider){
+      if(!['google','discord'].includes(provider))throw new Error('Sign-in option unavailable.');
+      const c=await get();
+      const {data,error}=await c.auth.signInWithOAuth({provider,options:{redirectTo:location.origin+location.pathname}});
+      if(error)throw new Error(error.message);
+      return data;
+    },
+    async linkProvider(provider){
+      if(!['google','discord'].includes(provider))throw new Error('Sign-in option unavailable.');
+      if(!user?.is_anonymous)throw new Error('Continue as Guest first.');
+      const c=await get();
+      const {data,error}=await c.auth.linkIdentity({provider,options:{redirectTo:location.origin+location.pathname}});
+      if(error)throw new Error(error.message);
+      return data;
+    },
     signInAnonymously:()=>invoke('signInAnonymously',{options:{captchaToken:captchaToken()}}),
     signUp:(email,password)=>invoke('signUp',{email,password,options:{emailRedirectTo:location.origin+location.pathname,captchaToken:captchaToken()}}),
     signIn:(email,password)=>invoke('signInWithPassword',{email,password,options:{captchaToken:captchaToken()}}),
