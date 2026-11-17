@@ -64,11 +64,20 @@ function nwFormatTime(sec){if(sec==null)return '—';const n=Math.round(sec);ret
 function nwShowProfile(){
   evSudokuLeave();applyTheme('hub');
   const u=window.nwCloud?.user();const anon=!!u?.is_anonymous;const p=nwProfile();const recovery=!!window.nwCloud?.isRecovering?.();const profileLocked=!u;
-  const providerButtons=`<div class="nw-auth-actions"><button class="nw-action" id="nwGoogle">CONTINUE WITH GOOGLE</button><button class="nw-action" id="nwDiscord">CONTINUE WITH DISCORD</button></div>`;
-  const emailFields=`<label class="nw-new-label" for="nwEmail">EMAIL</label><input id="nwEmail" type="email" autocomplete="email" placeholder="you@example.com"><label class="nw-new-label" for="nwPassword">PASSWORD</label><input id="nwPassword" type="password" autocomplete="current-password" minlength="6" placeholder="Password (6+ characters)"><div class="nw-auth-actions"><button class="nw-action" id="nwSignIn">SIGN IN</button><button class="nw-action" id="nwRegister">REGISTER</button><button class="nw-action" id="nwReset">RESET PASSWORD</button></div>`;
   if(recovery&&u&&!anon){nwShowRecovery();return;}
-  const authContent=!u?`${providerButtons}<button class="nw-action" id="nwMakeCloudGuest">CONTINUE AS GUEST</button>${emailFields}`:anon?`${providerButtons}<button class="nw-action" id="nwSignOut">SIGN OUT</button>`:`<button class="nw-action" id="nwSignOut">SIGN OUT</button>`;
-  evDisplay(`${evHeader('PLAYER PROFILE',showCategories)}<section class="nw-new-panel"><div class="nw-profile-avatar">${p.avatar}</div><h2>${nwEscape(p.name)}</h2><p class="nw-muted" id="nwAccountStatus">${anon?'Guest':u?'Signed in: '+nwEscape(u.email||'Account'):'Guest'}</p><div class="nw-profile-editor ${profileLocked?'nw-profile-locked':''}"><label class="nw-new-label" for="nwName">DISPLAY NAME</label><input id="nwName" maxlength="24" value="${nwEscape(p.name)}" autocomplete="nickname" ${profileLocked?'disabled':''}><label class="nw-new-label">CHOOSE AN AVATAR</label><div class="nw-avatar-grid">${nwAvatarChoices.map(a=>`<button class="nw-avatar-choice ${a===p.avatar?'chosen':''}" data-avatar="${a}" aria-label="Choose ${a} avatar" ${profileLocked?'disabled':''}>${a}</button>`).join('')}</div><button class="nw-action" id="nwSaveProfile" ${profileLocked?'disabled':''}>SAVE PROFILE</button></div><div class="nw-auth-message"><strong>${u?'ACCOUNT':'SIGN IN'}</strong><p id="nwAuthNotice" hidden></p>${authContent}</div>${!u?`<div class="nw-captcha"><div class="nw-captcha-widget"></div><p class="nw-muted nw-captcha-status" hidden></p></div>`:''}</section>`);
+
+  const lockedEditor=`<div class="nw-profile-editor ${profileLocked?'nw-profile-locked':''}"><label class="nw-new-label" for="nwName">DISPLAY NAME</label><input id="nwName" maxlength="24" value="${nwEscape(p.name)}" autocomplete="nickname" ${profileLocked?'disabled':''}><label class="nw-new-label">CHOOSE AN AVATAR</label><div class="nw-avatar-grid">${nwAvatarChoices.map(a=>`<button class="nw-avatar-choice ${a===p.avatar?'chosen':''}" data-avatar="${a}" aria-label="Choose ${a} avatar" ${profileLocked?'disabled':''}>${a}</button>`).join('')}</div><button class="nw-action" id="nwSaveProfile" ${profileLocked?'disabled':''}>SAVE PROFILE</button></div>`;
+
+  let authBlock='';
+  if(!u){
+    authBlock=`<div class="nw-auth-card"><h3>WELCOME BACK.</h3><label class="nw-new-label" for="nwEmail">EMAIL</label><input id="nwEmail" type="email" autocomplete="email" placeholder="you@example.com"><label class="nw-new-label" for="nwPassword">PASSWORD</label><input id="nwPassword" type="password" autocomplete="current-password" minlength="6" placeholder="Password"><button class="nw-text-link" id="nwReset" type="button">Forgot password?</button><button class="nw-action nw-auth-primary" id="nwSignIn" data-auth-busy>SIGN IN</button><div class="nw-auth-divider"><span>OR</span></div><div class="nw-auth-stack"><button class="nw-action nw-auth-secondary" id="nwGoogle" data-auth-busy>CONTINUE WITH GOOGLE</button><button class="nw-action nw-auth-secondary" id="nwDiscord" data-auth-busy>CONTINUE WITH DISCORD</button><button class="nw-action nw-auth-secondary" id="nwMakeCloudGuest" data-auth-busy>CONTINUE AS GUEST</button></div><p class="nw-auth-switch">New here? <button class="nw-inline-link" id="nwGoRegister" type="button">Create an account</button></p><p id="nwAuthNotice" hidden></p><div class="nw-captcha"><div class="nw-captcha-widget"></div><p class="nw-muted nw-captcha-status" hidden></p></div></div>`;
+  }else if(anon){
+    authBlock=`<div class="nw-auth-card"><h3>ACCOUNT</h3><div class="nw-auth-stack"><button class="nw-action nw-auth-secondary" id="nwGoogle">CONTINUE WITH GOOGLE</button><button class="nw-action nw-auth-secondary" id="nwDiscord">CONTINUE WITH DISCORD</button></div><button class="nw-action nw-auth-secondary" id="nwSignOut">SIGN OUT</button><p id="nwAuthNotice" hidden></p></div>`;
+  }else{
+    authBlock=`<div class="nw-auth-card"><h3>ACCOUNT</h3><button class="nw-action nw-auth-secondary" id="nwSignOut">SIGN OUT</button><p id="nwAuthNotice" hidden></p></div>`;
+  }
+
+  evDisplay(`${evHeader('PLAYER PROFILE',showCategories)}<section class="nw-new-panel"><div class="nw-profile-avatar">${p.avatar}</div><h2>${nwEscape(p.name)}</h2><p class="nw-muted" id="nwAccountStatus">${anon?'Guest':u?'Signed in: '+nwEscape(u.email||'Account'):'Guest'}</p>${lockedEditor}${authBlock}</section>`);
 
   if(!u && window.nwCloud){const captcha=evRoot.querySelector('.nw-captcha');if(captcha)nwCloud.mountCaptcha(captcha)}
   let avatar=p.avatar;
@@ -79,7 +88,6 @@ function nwShowProfile(){
     if(button)button.onclick=async()=>{
       button.disabled=true;
       try{
-        // A guest must be linked, never silently switched to another account.
         if(anon)await nwCloud.linkProvider(provider);
         else await nwCloud.signInProvider(provider);
       }catch(e){notice(e.message);button.disabled=false;}
@@ -106,10 +114,11 @@ function nwShowProfile(){
       return {email,password};
     };
     const action=async(fn)=>{
-      const buttons=Array.from(evRoot.querySelectorAll('.nw-auth-actions button'));
+      const buttons=Array.from(evRoot.querySelectorAll('[data-auth-busy]'));
       buttons.forEach(b=>b.disabled=true);
       try{await fn();}catch(e){notice(e.message)}finally{window.nwCloud?.resetCaptcha?.();buttons.forEach(b=>b.disabled=false)}
     };
+    evRoot.querySelector('#nwGoRegister').onclick=()=>nwShowRegister(evRoot.querySelector('#nwEmail')?.value?.trim()||'');
     evRoot.querySelector('#nwMakeCloudGuest').onclick=()=>action(async()=>{
       const guestButton=evRoot.querySelector('#nwMakeCloudGuest');if(guestButton)guestButton.disabled=true;
       try{
@@ -122,15 +131,35 @@ function nwShowProfile(){
       const {email,password}=credentials();if(!password)throw new Error('Enter your password.');
       await nwCloud.signIn(email,password);await nwLoadCloudProfile();nwShowProfile();
     });
-    evRoot.querySelector('#nwRegister').onclick=()=>action(async()=>{
-      const {email,password}=credentials();if(password.length<6)throw new Error('Use at least 6 characters for your password.');
-      const result=await nwCloud.signUp(email,password);
-      if(result?.session){await nwLoadCloudProfile();nwShowProfile()}
-      else notice('Check your email. If this address can be registered, you’ll receive a confirmation link. Already have an account? Sign in instead.');
-    });
     evRoot.querySelector('#nwReset').onclick=()=>nwShowForgotPassword(evRoot.querySelector('#nwEmail')?.value?.trim()||'');
   }
 }
+
+function nwShowRegister(initialEmail=''){
+  evSudokuLeave();applyTheme('hub');
+  evDisplay(`${evHeader('CREATE ACCOUNT',nwShowProfile)}<section class="nw-new-panel"><div class="nw-auth-card nw-auth-card-standalone"><h3>NEW AROUND HERE?</h3><label class="nw-new-label" for="nwRegEmail">EMAIL</label><input id="nwRegEmail" type="email" autocomplete="email" placeholder="you@example.com" value="${nwEscape(initialEmail)}"><label class="nw-new-label" for="nwRegPassword">PASSWORD</label><input id="nwRegPassword" type="password" autocomplete="new-password" minlength="6" placeholder="At least 6 characters"><label class="nw-new-label" for="nwRegPassword2">CONFIRM PASSWORD</label><input id="nwRegPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="Enter it again"><button class="nw-action nw-auth-primary" id="nwCreateAccount" data-auth-busy>CREATE ACCOUNT</button><p id="nwRegisterNotice" hidden></p><div class="nw-captcha"><div class="nw-captcha-widget"></div><p class="nw-muted nw-captcha-status" hidden></p></div><p class="nw-auth-switch">Already have an account? <button class="nw-inline-link" id="nwBackToSignIn" type="button">Sign in</button></p></div></section>`);
+  const captcha=evRoot.querySelector('.nw-captcha');if(captcha&&window.nwCloud)nwCloud.mountCaptcha(captcha);
+  const notice=evRoot.querySelector('#nwRegisterNotice');
+  const say=(m)=>{notice.textContent=m;notice.hidden=!m};
+  const action=async(fn)=>{
+    const buttons=Array.from(evRoot.querySelectorAll('[data-auth-busy]'));
+    buttons.forEach(b=>b.disabled=true);
+    try{await fn();}catch(e){say(e.message)}finally{window.nwCloud?.resetCaptcha?.();buttons.forEach(b=>b.disabled=false)}
+  };
+  evRoot.querySelector('#nwBackToSignIn').onclick=()=>nwShowProfile();
+  evRoot.querySelector('#nwCreateAccount').onclick=()=>action(async()=>{
+    const email=evRoot.querySelector('#nwRegEmail').value.trim();
+    const password=evRoot.querySelector('#nwRegPassword').value;
+    const confirm=evRoot.querySelector('#nwRegPassword2').value;
+    if(!email||!email.includes('@'))throw new Error('Enter a valid email address.');
+    if(password.length<6)throw new Error('Use at least 6 characters for your password.');
+    if(password!==confirm)throw new Error('The passwords do not match.');
+    const result=await nwCloud.signUp(email,password);
+    if(result?.session){await nwLoadCloudProfile();nwShowProfile()}
+    else say('Check your email. If this address can be registered, you’ll receive a confirmation link. Already have an account? Sign in instead.');
+  });
+}
+
 // Password recovery is a separate screen; it is never mixed with profile editing.
 function nwShowForgotPassword(initialEmail=''){
   evSudokuLeave();applyTheme('hub');

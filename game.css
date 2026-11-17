@@ -2920,3 +2920,27 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
   #game .ev-head {grid-template-columns:68px minmax(0,1fr) 68px!important;column-gap:5px!important;}
   #game .ev-head > button.ev-btn {padding:8px 9px!important;font-size:11px!important;}
 }
+
+
+/* Nov 17 late: cleaner account flow with Sign In as the main screen.
+   Register and Forgot Password live on their own screens. */
+#game .nw-auth-card{border:1px solid #79515e;background:#34232c;padding:18px;border-radius:14px;margin-top:15px}
+#game .nw-auth-card h3{margin:0 0 8px;text-align:center;font-size:24px;letter-spacing:.02em;color:#ffe7ed}
+#game .nw-auth-card input,#game .nw-auth-card button{font:inherit}
+#game .nw-auth-card input{display:block;width:100%;box-sizing:border-box;margin:8px 0 0;padding:12px;border:1px solid #9e737d;border-radius:9px;background:#2b1921;color:#fff}
+#game .nw-auth-primary{margin-top:16px}
+#game .nw-auth-secondary{margin:0;background:#4a313b;color:#fff0f4;border:1px solid #9c6d7a}
+#game .nw-auth-stack{display:flex;flex-direction:column;gap:10px}
+#game .nw-auth-divider{display:flex;align-items:center;gap:12px;margin:14px 0;color:#d4a8b4;font-size:11px;font-weight:800;letter-spacing:.12em}
+#game .nw-auth-divider::before,#game .nw-auth-divider::after{content:"";height:1px;background:#7e5662;flex:1}
+#game .nw-auth-divider span{white-space:nowrap}
+#game .nw-text-link,#game .nw-inline-link{appearance:none;border:0;background:none;padding:0;color:#ffd0d9;font-weight:700;text-decoration:underline;cursor:pointer}
+#game .nw-text-link{display:inline-block;margin:10px 0 2px;font-size:12px}
+#game .nw-auth-switch{margin:12px 0 2px;text-align:center;color:#e8bdc8;font-size:12px}
+#game #nwAuthNotice,#game #nwRegisterNotice{margin:12px 0 0;color:#ffe1e8;font-size:12px;line-height:1.5}
+#game .nw-auth-card .nw-captcha{margin-top:14px}
+#game .nw-auth-card .nw-captcha-status{margin-top:8px}
+#game .nw-auth-card-standalone{margin-top:0}
+#game .nw-auth-card .nw-action{margin:0}
+#game .nw-auth-card .nw-new-label{margin-top:16px}
+#game .nw-auth-card .nw-new-label:first-of-type{margin-top:12px}
