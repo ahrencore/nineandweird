@@ -10,8 +10,23 @@ const nwGroups={usual:['classic','dark','halloween','patissserie','christmas','f
 const nwFavKey='nineweird-favourites-v1',nwPointsKey='nineweird-points-v1';
 const nwScroll={usual:0,weird:0,fav:0};
 const nwRoomPages={usual:0,weird:0,fav:0};
-function nwRead(key,fallback){try{const raw=localStorage.getItem(key);return raw===null?fallback:JSON.parse(raw)}catch{return fallback}}
-function nwWrite(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch{}}
+// All player data is tied to the active Supabase user ID, never shared across accounts.
+// No account = no saved player data. Legacy unscoped keys are deliberately ignored
+// rather than assigned to another player. A browser's local data is not cloud sync.
+function nwPlayerStorageKey(key){
+  const id=window.nwCloud?.user()?.id;
+  return id ? `nineweird-player:${id}:${key}` : null;
+}
+function nwRead(key,fallback){
+  const scoped=nwPlayerStorageKey(key);
+  if(!scoped)return fallback;
+  try{const raw=localStorage.getItem(scoped);return raw===null?fallback:JSON.parse(raw)}catch{return fallback}
+}
+function nwWrite(key,value){
+  const scoped=nwPlayerStorageKey(key);
+  if(!scoped)return;
+  try{localStorage.setItem(scoped,JSON.stringify(value))}catch{}
+}
 function nwFavs(){const a=nwRead(nwFavKey,[]);return Array.isArray(a)?a.filter((id,i)=>worlds[id]&&a.indexOf(id)===i):[]}
 function nwIsFav(id){return nwFavs().includes(id)}
 function nwToggleFav(id){const a=nwFavs(),b=a.includes(id)?a.filter(x=>x!==id):[...a,id];nwWrite(nwFavKey,b);return b.includes(id)}
@@ -152,17 +167,29 @@ function nwShowRecovery(){
   };
 }
 async function nwLoadCloudProfile(){
-  if(!window.nwCloud?.user())return;
-  try{const data=await nwCloud.readProfile();if(data){
+  const accountId=window.nwCloud?.user()?.id;
+  if(!accountId)return;
+  try{const data=await nwCloud.readProfile();if(data && nwCloud.user()?.id===accountId){
     const avatar=nwAvatarChoices.includes(data.avatar)?data.avatar:'🦇';
     nwWrite(nwProfileKey,{name:data.display_name||'Guest Player',avatar});
   }}catch(e){console.warn('Could not load Nine & Weird profile',e.message)}
 }
 if(window.nwCloud){
+  // A different account must never inherit the old account's in-memory game screen.
+  let nwVisibleAccountId=undefined;
   nwCloud.onChange(()=>{
+    const activeId=nwCloud.user()?.id||null;
+    const changed=nwVisibleAccountId!==undefined && nwVisibleAccountId!==activeId;
+    nwVisibleAccountId=activeId;
+    if(changed){
+      evSudokuLeave();
+      nwScroll.usual=nwScroll.weird=nwScroll.fav=0;
+      nwRoomPages.usual=nwRoomPages.weird=nwRoomPages.fav=0;
+      if(!nwCloud.isRecovering())nwShowProfile();
+    }
     if(nwCloud.isRecovering()&&nwCloud.user()){nwShowRecovery();return;}
     if(nwCloud.user())nwLoadCloudProfile().then(()=>{
-      if(document.getElementById('nwAccountStatus'))nwShowProfile();
+      if(document.getElementById('nwAccountStatus') && nwCloud.user()?.id===activeId)nwShowProfile();
     });
     else if(document.getElementById('nwAccountStatus')||document.getElementById('nwRecoveryForm'))nwShowProfile();
   });
