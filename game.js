@@ -111,7 +111,7 @@ function nwShowProfile(){
       const {email,password}=credentials();if(password.length<6)throw new Error('Use at least 6 characters for your password.');
       const result=await nwCloud.signUp(email,password);
       if(result?.session){await nwLoadCloudProfile();nwShowProfile()}
-      else notice('Registration requested. Check your email for a confirmation link, then return here and sign in.');
+      else notice('Check your email. If this address can be registered, you’ll receive a confirmation link. Already have an account? Sign in instead.');
     });
     evRoot.querySelector('#nwReset').onclick=()=>action(async()=>{
       const {email}=credentials();await nwCloud.resetPassword(email);
