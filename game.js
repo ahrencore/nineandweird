@@ -48,11 +48,11 @@ function nwReportDelta(a,b,suffix=''){if(a==null||b==null)return '—';const n=M
 function nwFormatTime(sec){if(sec==null)return '—';const n=Math.round(sec);return `${Math.floor(n/60)}:${String(n%60).padStart(2,'0')}`}
 function nwShowProfile(){
   evSudokuLeave();applyTheme('hub');
-  const u=window.nwCloud?.user();const anon=!!u?.is_anonymous;const p=nwProfile();const recovery=!!window.nwCloud?.isRecovering?.();
+  const u=window.nwCloud?.user();const anon=!!u?.is_anonymous;const p=nwProfile();const recovery=!!window.nwCloud?.isRecovering?.();const profileLocked=!u;
   const providerButtons=`<div class="nw-auth-actions"><button class="nw-action" id="nwGoogle">CONTINUE WITH GOOGLE</button><button class="nw-action" id="nwDiscord">CONTINUE WITH DISCORD</button></div>`;
   const emailFields=`<label class="nw-new-label" for="nwEmail">EMAIL</label><input id="nwEmail" type="email" autocomplete="email" placeholder="you@example.com"><label class="nw-new-label" for="nwPassword">PASSWORD</label><input id="nwPassword" type="password" autocomplete="current-password" minlength="6" placeholder="Password (6+ characters)"><div class="nw-auth-actions"><button class="nw-action" id="nwSignIn">SIGN IN</button><button class="nw-action" id="nwRegister">REGISTER</button><button class="nw-action" id="nwReset">RESET PASSWORD</button></div>`;
   const authContent=!u?`${providerButtons}<button class="nw-action" id="nwMakeCloudGuest">CONTINUE AS GUEST</button>${emailFields}`:anon?`${providerButtons}<button class="nw-action" id="nwSignOut">SIGN OUT</button>`:`${recovery?`<label class="nw-new-label" for="nwNewPassword">NEW PASSWORD</label><input id="nwNewPassword" type="password" minlength="6" placeholder="New password (6+ characters)"><button class="nw-action" id="nwSetPassword">SET NEW PASSWORD</button>`:''}<button class="nw-action" id="nwSignOut">SIGN OUT</button>`;
-  evDisplay(`${evHeader('PLAYER PROFILE',showCategories)}<section class="nw-new-panel"><div class="nw-profile-avatar">${p.avatar}</div><h2>${nwEscape(p.name)}</h2><p class="nw-muted" id="nwAccountStatus">${anon?'Guest':u?'Signed in: '+nwEscape(u.email||'Account'):'Guest'}</p><label class="nw-new-label" for="nwName">DISPLAY NAME</label><input id="nwName" maxlength="24" value="${nwEscape(p.name)}" autocomplete="nickname"><label class="nw-new-label">CHOOSE AN AVATAR</label><div class="nw-avatar-grid">${nwAvatarChoices.map(a=>`<button class="nw-avatar-choice ${a===p.avatar?'chosen':''}" data-avatar="${a}" aria-label="Choose ${a} avatar">${a}</button>`).join('')}</div><button class="nw-action" id="nwSaveProfile">SAVE PROFILE</button><div class="nw-auth-message"><strong>${u?'ACCOUNT':'SIGN IN'}</strong><p id="nwAuthNotice" hidden></p>${authContent}</div>${!u?`<div class="nw-captcha"><div class="nw-captcha-widget"></div><p class="nw-muted nw-captcha-status" hidden></p></div>`:''}</section>`);
+  evDisplay(`${evHeader('PLAYER PROFILE',showCategories)}<section class="nw-new-panel"><div class="nw-profile-avatar">${p.avatar}</div><h2>${nwEscape(p.name)}</h2><p class="nw-muted" id="nwAccountStatus">${anon?'Guest':u?'Signed in: '+nwEscape(u.email||'Account'):'Guest'}</p><div class="nw-profile-editor ${profileLocked?'nw-profile-locked':''}"><label class="nw-new-label" for="nwName">DISPLAY NAME</label><input id="nwName" maxlength="24" value="${nwEscape(p.name)}" autocomplete="nickname" ${profileLocked?'disabled':''}><label class="nw-new-label">CHOOSE AN AVATAR</label><div class="nw-avatar-grid">${nwAvatarChoices.map(a=>`<button class="nw-avatar-choice ${a===p.avatar?'chosen':''}" data-avatar="${a}" aria-label="Choose ${a} avatar" ${profileLocked?'disabled':''}>${a}</button>`).join('')}</div><button class="nw-action" id="nwSaveProfile" ${profileLocked?'disabled':''}>SAVE PROFILE</button></div><div class="nw-auth-message"><strong>${u?'ACCOUNT':'SIGN IN'}</strong><p id="nwAuthNotice" hidden></p>${authContent}</div>${!u?`<div class="nw-captcha"><div class="nw-captcha-widget"></div><p class="nw-muted nw-captcha-status" hidden></p></div>`:''}</section>`);
 
   if(!u && window.nwCloud){const captcha=evRoot.querySelector('.nw-captcha');if(captcha)nwCloud.mountCaptcha(captcha)}
   let avatar=p.avatar;
@@ -71,6 +71,7 @@ function nwShowProfile(){
   }
   const save=evRoot.querySelector('#nwSaveProfile');
   save.onclick=async()=>{
+    if(!window.nwCloud?.user())return;
     const name=evRoot.querySelector('#nwName').value.trim().slice(0,24)||'Guest Player';
     save.disabled=true;
     try{
@@ -129,6 +130,7 @@ if(window.nwCloud){nwCloud.onChange(()=>{
   if(nwCloud.user())nwLoadCloudProfile().then(()=>{
     if(document.getElementById('nwAccountStatus'))nwShowProfile();
   });
+  else if(document.getElementById('nwAccountStatus'))nwShowProfile();
 });}
 
 function nwShowTrophy(tab='brain',offset=0){
