@@ -2872,3 +2872,51 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-profile-locked input,#game .nw-profile-locked button{cursor:not-allowed}
 #game .nw-profile-locked input:disabled{color:#c9b0b8;opacity:1}
 #game .nw-profile-locked button:disabled{opacity:.65}
+
+/* Nov 17: unified compact Back button + centered independent page title.
+   Applies to game screen headers only; room-specific colors stay intact. */
+#game .ev-head {
+  display:grid!important;
+  grid-template-columns:minmax(72px,1fr) minmax(0,auto) minmax(72px,1fr)!important;
+  align-items:center!important;
+  column-gap:8px!important;
+}
+#game .ev-head > button.ev-btn {
+  grid-column:1!important;
+  grid-row:1!important;
+  justify-self:start!important;
+  align-self:center!important;
+  width:max-content!important;
+  max-width:100%!important;
+  min-width:0!important;
+  flex:none!important;
+  white-space:nowrap!important;
+  padding:9px 11px!important;
+  font-size:12px!important;
+  line-height:1.2!important;
+}
+#game .ev-head > strong {
+  grid-column:2!important;
+  grid-row:1!important;
+  position:static!important;
+  left:auto!important;
+  transform:none!important;
+  width:auto!important;
+  max-width:100%!important;
+  min-width:0!important;
+  justify-self:center!important;
+  text-align:center!important;
+  white-space:normal!important;
+  overflow-wrap:break-word!important;
+  font-size:clamp(12px,3.4vw,19px)!important;
+  line-height:1.2!important;
+}
+#game .ev-head > span {
+  grid-column:3!important;
+  grid-row:1!important;
+  min-width:0!important;
+}
+@media(max-width:380px){
+  #game .ev-head {grid-template-columns:68px minmax(0,1fr) 68px!important;column-gap:5px!important;}
+  #game .ev-head > button.ev-btn {padding:8px 9px!important;font-size:11px!important;}
+}

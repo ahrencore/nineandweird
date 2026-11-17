@@ -83,7 +83,18 @@
     signUp:(email,password)=>invoke('signUp',{email,password,options:{emailRedirectTo:location.origin+location.pathname,captchaToken:captchaToken()}}),
     signIn:(email,password)=>invoke('signInWithPassword',{email,password,options:{captchaToken:captchaToken()}}),
     signOut:()=>invoke('signOut'),
-    resetPassword:(email)=>invoke('resetPasswordForEmail',{email,redirectTo:location.origin+location.pathname,captchaToken:captchaToken()}),
+    async resetPassword(email){
+      // Supabase resetPasswordForEmail takes TWO arguments: email and options.
+      // Sending one object dropped the CAPTCHA token, causing 400 captcha_token errors.
+      const c=await get();
+      const token=captchaToken();
+      const {data,error}=await c.auth.resetPasswordForEmail(email,{
+        redirectTo:location.origin+location.pathname,
+        captchaToken:token
+      });
+      if(error)throw new Error(error.message);
+      return data;
+    },
     async readProfile(){const c=await get();if(!user)return null;const {data,error}=await c.from('nw_profiles').select('display_name,avatar').eq('user_id',user.id).maybeSingle();if(error)throw new Error(error.message);return data;},
     async saveProfile(name,avatar){const c=await get();if(!user)throw new Error('Please sign in first.');const {error}=await c.from('nw_profiles').update({display_name:name,avatar,updated_at:new Date().toISOString()}).eq('user_id',user.id);if(error)throw new Error(error.message);}
   };
