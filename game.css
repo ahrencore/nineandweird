@@ -2999,3 +2999,17 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
   #game .nw-avatar-choice:not(:disabled):hover{transform:none!important}
   #game .nw-avatar-choice:not(:disabled):hover .nw-avatar-choice-img{transform:none!important}
 }
+
+/* EVENTS hub: keeps the existing ruby menu and compact shared BACK button. */
+#game .nw-events-panel{max-width:510px;margin:16px auto;padding:15px;background:#25151d;border:1px solid #72424e;border-radius:18px;color:#ffebef}
+#game .nw-events-intro{color:#dfb8c3;text-align:center;font-size:13px;margin:4px 0 17px}
+#game .nw-event-tile{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:15px 12px;margin:0 0 12px;background:#3d2631;color:#ffe8ee;border:1px solid #815362;border-radius:14px}
+#game .nw-event-tile>span:nth-child(2){flex:1;min-width:0}
+#game .nw-event-tile strong{display:block;font-size:14px;letter-spacing:.02em}
+#game .nw-event-tile small{display:block;color:#dcb5c0;font-size:12px;line-height:1.5;margin-top:4px}
+#game .nw-event-symbol{font-size:25px;flex:0 0 33px;text-align:center}
+#game .nw-event-arrow{font-size:24px;color:#f36b78}
+#game .nw-event-tile:focus-visible{outline:2px solid #f36b78;outline-offset:2px}
+#game .nw-events-detail h2{font-size:23px;text-align:center;margin:7px 0 22px;color:#ffe8ee}
+#game .nw-events-detail p{color:#e9c4cd;font-size:14px;line-height:1.65}
+#game .nw-events-detail .nw-event-coming{text-align:center;color:#f36b78;font-weight:800;letter-spacing:.10em;padding:12px;margin-top:23px;border:1px solid #764452;border-radius:11px}
