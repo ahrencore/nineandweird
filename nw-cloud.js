@@ -21,16 +21,16 @@
         try{
           turnstileWidget=window.turnstile.render(container.querySelector('.nw-captcha-widget'),{
             sitekey:turnstileSiteKey,theme:'dark',appearance:'always',
-            callback:(token)=>{turnstileToken=token;if(hint)hint.textContent='Security check complete.'},
-            'expired-callback':()=>{turnstileToken='';if(hint)hint.textContent='Security check expired. Complete it again.'},
-            'error-callback':()=>{turnstileToken='';if(hint)hint.textContent='Security check failed. Please retry.'}
+            callback:(token)=>{turnstileToken=token;if(hint){hint.textContent='';hint.hidden=true}},
+            'expired-callback':()=>{turnstileToken='';if(hint){hint.hidden=false;hint.textContent='Security check expired. Try again.'}},
+            'error-callback':()=>{turnstileToken='';if(hint){hint.hidden=false;hint.textContent='Security check failed. Try again.'}}
           });
-          if(hint)hint.textContent='Complete the security check before signing in or creating a guest account.';
-        }catch(e){if(hint)hint.textContent='Security check unavailable. Please refresh.';console.warn('Turnstile render',e)}
+          if(hint){hint.textContent='';hint.hidden=true}
+        }catch(e){if(hint){hint.hidden=false;hint.textContent='Security check unavailable. Refresh the page.'};console.warn('Turnstile render',e)}
         return;
       }
       if(++tries<60)mountTimer=setTimeout(attempt,250);
-      else if(hint)hint.textContent='Security check failed to load. Check connection and refresh.';
+      else if(hint){hint.hidden=false;hint.textContent='Security check unavailable. Refresh the page.'};
     }
     attempt();
   }
@@ -41,7 +41,7 @@
   }
   function resetCaptcha(){
     turnstileToken='';if(turnstileWidget!==null&&window.turnstile){try{window.turnstile.reset(turnstileWidget)}catch(e){console.warn('Turnstile reset',e)}}
-    const hint=turnstileContainer?.querySelector('.nw-captcha-status');if(hint)hint.textContent='Complete the security check again for another attempt.';
+    const hint=turnstileContainer?.querySelector('.nw-captcha-status');if(hint){hint.textContent='';hint.hidden=true};
   }
   let client=null, user=null, recovering=false;
   let listeners=[];
