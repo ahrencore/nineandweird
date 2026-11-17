@@ -51,7 +51,8 @@ function nwShowProfile(){
   const u=window.nwCloud?.user();const anon=!!u?.is_anonymous;const p=nwProfile();const recovery=!!window.nwCloud?.isRecovering?.();const profileLocked=!u;
   const providerButtons=`<div class="nw-auth-actions"><button class="nw-action" id="nwGoogle">CONTINUE WITH GOOGLE</button><button class="nw-action" id="nwDiscord">CONTINUE WITH DISCORD</button></div>`;
   const emailFields=`<label class="nw-new-label" for="nwEmail">EMAIL</label><input id="nwEmail" type="email" autocomplete="email" placeholder="you@example.com"><label class="nw-new-label" for="nwPassword">PASSWORD</label><input id="nwPassword" type="password" autocomplete="current-password" minlength="6" placeholder="Password (6+ characters)"><div class="nw-auth-actions"><button class="nw-action" id="nwSignIn">SIGN IN</button><button class="nw-action" id="nwRegister">REGISTER</button><button class="nw-action" id="nwReset">RESET PASSWORD</button></div>`;
-  const authContent=!u?`${providerButtons}<button class="nw-action" id="nwMakeCloudGuest">CONTINUE AS GUEST</button>${emailFields}`:anon?`${providerButtons}<button class="nw-action" id="nwSignOut">SIGN OUT</button>`:`${recovery?`<label class="nw-new-label" for="nwNewPassword">NEW PASSWORD</label><input id="nwNewPassword" type="password" minlength="6" placeholder="New password (6+ characters)"><button class="nw-action" id="nwSetPassword">SET NEW PASSWORD</button>`:''}<button class="nw-action" id="nwSignOut">SIGN OUT</button>`;
+  if(recovery&&u&&!anon){nwShowRecovery();return;}
+  const authContent=!u?`${providerButtons}<button class="nw-action" id="nwMakeCloudGuest">CONTINUE AS GUEST</button>${emailFields}`:anon?`${providerButtons}<button class="nw-action" id="nwSignOut">SIGN OUT</button>`:`<button class="nw-action" id="nwSignOut">SIGN OUT</button>`;
   evDisplay(`${evHeader('PLAYER PROFILE',showCategories)}<section class="nw-new-panel"><div class="nw-profile-avatar">${p.avatar}</div><h2>${nwEscape(p.name)}</h2><p class="nw-muted" id="nwAccountStatus">${anon?'Guest':u?'Signed in: '+nwEscape(u.email||'Account'):'Guest'}</p><div class="nw-profile-editor ${profileLocked?'nw-profile-locked':''}"><label class="nw-new-label" for="nwName">DISPLAY NAME</label><input id="nwName" maxlength="24" value="${nwEscape(p.name)}" autocomplete="nickname" ${profileLocked?'disabled':''}><label class="nw-new-label">CHOOSE AN AVATAR</label><div class="nw-avatar-grid">${nwAvatarChoices.map(a=>`<button class="nw-avatar-choice ${a===p.avatar?'chosen':''}" data-avatar="${a}" aria-label="Choose ${a} avatar" ${profileLocked?'disabled':''}>${a}</button>`).join('')}</div><button class="nw-action" id="nwSaveProfile" ${profileLocked?'disabled':''}>SAVE PROFILE</button></div><div class="nw-auth-message"><strong>${u?'ACCOUNT':'SIGN IN'}</strong><p id="nwAuthNotice" hidden></p>${authContent}</div>${!u?`<div class="nw-captcha"><div class="nw-captcha-widget"></div><p class="nw-muted nw-captcha-status" hidden></p></div>`:''}</section>`);
 
   if(!u && window.nwCloud){const captcha=evRoot.querySelector('.nw-captcha');if(captcha)nwCloud.mountCaptcha(captcha)}
@@ -80,7 +81,6 @@ function nwShowProfile(){
     }catch(e){notice('Could not save profile: '+e.message);save.disabled=false;}
   };
   if(u){
-    if(recovery){evRoot.querySelector('#nwSetPassword').onclick=async()=>{try{const password=evRoot.querySelector('#nwNewPassword').value;if(password.length<6)throw new Error('Use at least 6 characters.');await nwCloud.finishRecovery(password);nwShowProfile()}catch(e){notice(e.message)}}}
     evRoot.querySelector('#nwSignOut').onclick=async()=>{
       try{if(anon&&!window.confirm('Signing out may permanently lose this guest account. Sign out anyway?'))return;await nwCloud.signOut();nwShowProfile()}catch(e){notice(e.message)}
     };
@@ -113,11 +113,43 @@ function nwShowProfile(){
       if(result?.session){await nwLoadCloudProfile();nwShowProfile()}
       else notice('Check your email. If this address can be registered, you’ll receive a confirmation link. Already have an account? Sign in instead.');
     });
-    evRoot.querySelector('#nwReset').onclick=()=>action(async()=>{
-      const {email}=credentials();await nwCloud.resetPassword(email);
-      notice('If this email is registered, a password recovery message will be sent.');
-    });
+    evRoot.querySelector('#nwReset').onclick=()=>nwShowForgotPassword(evRoot.querySelector('#nwEmail')?.value?.trim()||'');
   }
+}
+// Password recovery is a separate screen; it is never mixed with profile editing.
+function nwShowForgotPassword(initialEmail=''){
+  evSudokuLeave();applyTheme('hub');
+  evDisplay(`${evHeader('FORGOT PASSWORD',nwShowProfile)}<section class="nw-new-panel"><h2>Forgot your password?</h2><p class="nw-muted">Enter your email and we'll send you a link to set a new one.</p><label class="nw-new-label" for="nwForgotEmail">EMAIL</label><input id="nwForgotEmail" type="email" autocomplete="email" placeholder="you@example.com" value="${nwEscape(initialEmail)}"><button class="nw-action" id="nwSendRecovery">SEND RESET LINK</button><p id="nwRecoveryRequestNotice" class="nw-muted" role="status" aria-live="polite" hidden></p><div class="nw-captcha"><div class="nw-captcha-widget"></div><p class="nw-muted nw-captcha-status" hidden></p></div></section>`);
+  const captcha=evRoot.querySelector('.nw-captcha');if(captcha&&window.nwCloud)nwCloud.mountCaptcha(captcha);
+  const button=evRoot.querySelector('#nwSendRecovery'),msg=evRoot.querySelector('#nwRecoveryRequestNotice');
+  button.onclick=async()=>{
+    const email=evRoot.querySelector('#nwForgotEmail').value.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){msg.hidden=false;msg.textContent='Enter a valid email address.';return;}
+    button.disabled=true;msg.hidden=true;
+    try{
+      await nwCloud.resetPassword(email);
+      msg.textContent='If that email has an account, a reset link is on its way. Check your inbox and spam folder.';
+      msg.hidden=false;
+    }catch(e){msg.textContent=e.message||'Could not send the link. Please try again.';msg.hidden=false;}
+    finally{button.disabled=false;window.nwCloud?.resetCaptcha?.();}
+  };
+}
+function nwShowRecovery(){
+  if(!window.nwCloud?.user()||!window.nwCloud?.isRecovering?.())return;
+  evSudokuLeave();applyTheme('hub');
+  evDisplay(`<header class="ev-head"><span></span><strong>RESET PASSWORD</strong><span></span></header><section class="nw-new-panel"><h2>Set a new password</h2><p class="nw-muted">Enter a new password for your Nine & Weird account.</p><form id="nwRecoveryForm"><label class="nw-new-label" for="nwNewPassword">NEW PASSWORD</label><input id="nwNewPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters"><label class="nw-new-label" for="nwConfirmPassword">CONFIRM NEW PASSWORD</label><input id="nwConfirmPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="Enter it again"><button class="nw-action" id="nwSetPassword" type="submit">SAVE NEW PASSWORD</button></form><p id="nwRecoveryNotice" class="nw-muted" role="status" aria-live="polite" hidden></p><button class="nw-action" id="nwCancelRecovery">CANCEL</button></section>`);
+  const msg=evRoot.querySelector('#nwRecoveryNotice'),submit=evRoot.querySelector('#nwSetPassword');
+  evRoot.querySelector('#nwRecoveryForm').onsubmit=async(e)=>{
+    e.preventDefault();const p=evRoot.querySelector('#nwNewPassword').value,confirm=evRoot.querySelector('#nwConfirmPassword').value;
+    if(p.length<8){msg.textContent='Use at least 8 characters.';msg.hidden=false;return;}
+    if(p!==confirm){msg.textContent='The passwords do not match.';msg.hidden=false;return;}
+    submit.disabled=true;msg.hidden=true;
+    try{await nwCloud.finishRecovery(p);nwShowProfile();const n=evRoot.querySelector('#nwAuthNotice');if(n){n.textContent='Password updated. You can use your new password next time you sign in.';n.hidden=false;}}
+    catch(err){msg.textContent=err.message||'Could not update your password.';msg.hidden=false;submit.disabled=false;}
+  };
+  evRoot.querySelector('#nwCancelRecovery').onclick=async()=>{
+    try{await nwCloud.signOut();nwShowProfile();}catch(err){msg.textContent=err.message;msg.hidden=false;}
+  };
 }
 async function nwLoadCloudProfile(){
   if(!window.nwCloud?.user())return;
@@ -126,12 +158,16 @@ async function nwLoadCloudProfile(){
     nwWrite(nwProfileKey,{name:data.display_name||'Guest Player',avatar});
   }}catch(e){console.warn('Could not load Nine & Weird profile',e.message)}
 }
-if(window.nwCloud){nwCloud.onChange(()=>{
-  if(nwCloud.user())nwLoadCloudProfile().then(()=>{
-    if(document.getElementById('nwAccountStatus'))nwShowProfile();
+if(window.nwCloud){
+  nwCloud.onChange(()=>{
+    if(nwCloud.isRecovering()&&nwCloud.user()){nwShowRecovery();return;}
+    if(nwCloud.user())nwLoadCloudProfile().then(()=>{
+      if(document.getElementById('nwAccountStatus'))nwShowProfile();
+    });
+    else if(document.getElementById('nwAccountStatus')||document.getElementById('nwRecoveryForm'))nwShowProfile();
   });
-  else if(document.getElementById('nwAccountStatus'))nwShowProfile();
-});}
+  nwCloud.ready.then(()=>{if(nwCloud.isRecovering()&&nwCloud.user())nwShowRecovery()}).catch(e=>console.warn('NW cloud start',e.message));
+}
 
 function nwShowTrophy(tab='brain',offset=0){
   evSudokuLeave();applyTheme('hub');const r=nwWeeklyReport(offset),prior=nwWeeklyReport(offset-1),p=nwProfile();

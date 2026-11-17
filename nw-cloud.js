@@ -49,15 +49,21 @@
   const ready=(async()=>{
     if(!window.supabase || !window.supabase.createClient){throw new Error('Supabase library could not load. Check your network connection.')}
     client=window.supabase.createClient(endpoint,publishable,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    // Subscribe before session initialization completes so the recovery redirect isn't missed.
+    client.auth.onAuthStateChange((event,session)=>{
+      user=session?.user||null;
+      if(event==='PASSWORD_RECOVERY')recovering=true;
+      if(event==='SIGNED_OUT')recovering=false;
+      emit();
+    });
     const {data,error}=await client.auth.getUser();
     if(error && !/session missing/i.test(error.message||''))console.warn('NW auth start',error.message);
     user=data?.user||null;emit();
-    client.auth.onAuthStateChange((event,session)=>{user=session?.user||null;if(event==='PASSWORD_RECOVERY')recovering=true;emit();});
     return client;
   })();
   async function get(){return await ready;}
   async function invoke(method,params){const c=await get();const res=await c.auth[method](params);if(res.error)throw new Error(res.error.message);return res.data;}
-  window.nwCloud={ready,get,mountCaptcha,clearCaptcha,captchaToken,resetCaptcha,user:()=>user,isRecovering:()=>recovering,finishRecovery:async(password)=>{const c=await get();const {error}=await c.auth.updateUser({password});if(error)throw new Error(error.message);recovering=false;emit();},onChange:(fn)=>{listeners.push(fn);return ()=>listeners=listeners.filter(x=>x!==fn)},
+  window.nwCloud={ready,get,mountCaptcha,clearCaptcha,captchaToken,resetCaptcha,user:()=>user,isRecovering:()=>recovering,finishRecovery:async(password)=>{if(!recovering||!user)throw new Error('Your reset link is no longer active. Request another one.');const c=await get();const {error}=await c.auth.updateUser({password});if(error)throw new Error(error.message);recovering=false;emit();},onChange:(fn)=>{listeners.push(fn);return ()=>listeners=listeners.filter(x=>x!==fn)},
     async signInProvider(provider){
       if(!['google','discord'].includes(provider))throw new Error('Sign-in option unavailable.');
       const c=await get();
