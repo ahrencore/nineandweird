@@ -43,7 +43,13 @@
     turnstileToken='';if(turnstileWidget!==null&&window.turnstile){try{window.turnstile.reset(turnstileWidget)}catch(e){console.warn('Turnstile reset',e)}}
     const hint=turnstileContainer?.querySelector('.nw-captcha-status');if(hint){hint.textContent='';hint.hidden=true};
   }
+  // Capture reset-link context before Supabase clears its auth callback parameters.
+  // Explicit marker is placed in new recovery emails; the hash handles previously sent links.
+  const initialSearch=new URLSearchParams(window.location.search);
+  const initialHash=new URLSearchParams(window.location.hash.replace(/^#/,''));
+  let recoveryLink=initialSearch.get('nw_recovery')==='1' || initialHash.get('type')==='recovery';
   let client=null, user=null, recovering=false;
+
   let listeners=[];
   const emit=()=>listeners.forEach(fn=>{try{fn(user)}catch(e){console.warn('NW auth listener',e)}});
   const ready=(async()=>{
@@ -53,7 +59,10 @@
     client.auth.onAuthStateChange((event,session)=>{
       user=session?.user||null;
       if(event==='PASSWORD_RECOVERY')recovering=true;
-      if(event==='SIGNED_OUT')recovering=false;
+      // Some OAuth/callback variants produce SIGNED_IN rather than PASSWORD_RECOVERY.
+      // Only trust this fallback when we started from an explicitly marked reset link.
+      if(event==='SIGNED_IN' && recoveryLink && session?.user)recovering=true;
+      if(event==='SIGNED_OUT'){recovering=false;recoveryLink=false;}
       emit();
     });
     const {data,error}=await client.auth.getUser();
@@ -63,7 +72,12 @@
   })();
   async function get(){return await ready;}
   async function invoke(method,params){const c=await get();const res=await c.auth[method](params);if(res.error)throw new Error(res.error.message);return res.data;}
-  window.nwCloud={ready,get,mountCaptcha,clearCaptcha,captchaToken,resetCaptcha,user:()=>user,isRecovering:()=>recovering,finishRecovery:async(password)=>{if(!recovering||!user)throw new Error('Your reset link is no longer active. Request another one.');const c=await get();const {error}=await c.auth.updateUser({password});if(error)throw new Error(error.message);recovering=false;emit();},onChange:(fn)=>{listeners.push(fn);return ()=>listeners=listeners.filter(x=>x!==fn)},
+  window.nwCloud={ready,get,mountCaptcha,clearCaptcha,captchaToken,resetCaptcha,user:()=>user,isRecovering:()=>recovering,finishRecovery:async(password)=>{if(!recovering||!user)throw new Error('Your reset link is no longer active. Request another one.');const c=await get();const {error}=await c.auth.updateUser({password});if(error)throw new Error(error.message);recovering=false;recoveryLink=false;
+      if(new URLSearchParams(location.search).get('nw_recovery')==='1'){
+        const clean=new URL(location.href);clean.searchParams.delete('nw_recovery');
+        history.replaceState(history.state,'',clean.pathname+clean.search+clean.hash);
+      }
+      emit();},onChange:(fn)=>{listeners.push(fn);return ()=>listeners=listeners.filter(x=>x!==fn)},
     async signInProvider(provider){
       if(!['google','discord'].includes(provider))throw new Error('Sign-in option unavailable.');
       const c=await get();
@@ -89,7 +103,7 @@
       const c=await get();
       const token=captchaToken();
       const {data,error}=await c.auth.resetPasswordForEmail(email,{
-        redirectTo:location.origin+location.pathname,
+        redirectTo:location.origin+location.pathname+'?nw_recovery=1',
         captchaToken:token
       });
       if(error)throw new Error(error.message);
