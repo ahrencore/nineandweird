@@ -2944,3 +2944,16 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-auth-card .nw-action{margin:0}
 #game .nw-auth-card .nw-new-label{margin-top:16px}
 #game .nw-auth-card .nw-new-label:first-of-type{margin-top:12px}
+
+
+/* Avatar pieces update: use real Nine & Weird PNGs instead of emoji. */
+#game .nw-profile-button{overflow:hidden}
+#game .nw-profile-button-art{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+#game .nw-profile-button-img{width:58px;height:58px;object-fit:contain;display:block;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25))}
+#game .nw-profile-avatar{display:flex;justify-content:center;align-items:center;margin-bottom:8px}
+#game .nw-profile-avatar-img{width:112px;height:112px;object-fit:contain;display:block;filter:drop-shadow(0 4px 8px rgba(0,0,0,.28))}
+#game .nw-avatar-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+#game .nw-avatar-choice{aspect-ratio:1;min-width:0;border:1px solid #72505b;border-radius:12px;background:#36232c;display:flex;align-items:center;justify-content:center;padding:6px}
+#game .nw-avatar-choice-img{width:100%;height:100%;object-fit:contain;display:block;max-width:64px;max-height:64px}
+#game .nw-avatar-choice.chosen{border:2px solid #ff929f;background:#683745;box-shadow:0 0 0 2px rgba(255,146,159,.12)}
+@media(max-width:380px){#game .nw-avatar-grid{grid-template-columns:repeat(3,minmax(0,1fr))}#game .nw-profile-button-img{width:52px;height:52px}#game .nw-profile-avatar-img{width:98px;height:98px}}

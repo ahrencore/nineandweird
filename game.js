@@ -34,9 +34,12 @@ function nwPoints(){const n=Number(nwRead(nwPointsKey,0));return Number.isFinite
 function nwAwardPoints(n){nwWrite(nwPointsKey,nwPoints()+n)}
 // Local-first player profile & weekly puzzle performance. Cloud sync is NOT enabled yet.
 const nwProfileKey='nineweird-profile-v1', nwResultsKey='nineweird-results-v1';
-const nwAvatarChoices=['🦇','🍰','🪐','👁️','🧁','🐙','👾','🎀','🎃','⭐','🍄','🧠'];
+const nwAvatarChoices=["avatars/avatar-01.png", "avatars/avatar-02.png", "avatars/avatar-03.png", "avatars/avatar-04.png", "avatars/avatar-05.png", "avatars/avatar-06.png", "avatars/avatar-07.png", "avatars/avatar-08.png", "avatars/avatar-09.png", "avatars/avatar-10.png", "avatars/avatar-11.png", "avatars/avatar-12.png"];
+const nwDefaultAvatar=nwAvatarChoices[0];
+function nwAvatarValue(v){return nwAvatarChoices.includes(v)?v:nwDefaultAvatar}
+function nwAvatarImg(v,cls=''){const src=nwEscape(nwAvatarValue(v));return `<img src="${src}" alt="" class="${cls}">`}
 function nwEscape(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function nwProfile(){const p=nwRead(nwProfileKey,{});return {name:typeof p.name==='string'?p.name:'Guest Player',avatar:nwAvatarChoices.includes(p.avatar)?p.avatar:'🦇'}}
+function nwProfile(){const p=nwRead(nwProfileKey,{});return {name:typeof p.name==='string'?p.name:'Guest Player',avatar:nwAvatarValue(p.avatar)}}
 function nwResults(){const v=nwRead(nwResultsKey,[]);return Array.isArray(v)?v.filter(x=>x&&Number.isFinite(x.started)&&typeof x.difficulty==='string').slice(-2500):[]}
 function nwSaveResult(s,won){
   if(!s||s.reportSaved)return;s.reportSaved=true;
@@ -66,7 +69,7 @@ function nwShowProfile(){
   const u=window.nwCloud?.user();const anon=!!u?.is_anonymous;const p=nwProfile();const recovery=!!window.nwCloud?.isRecovering?.();const profileLocked=!u;
   if(recovery&&u&&!anon){nwShowRecovery();return;}
 
-  const lockedEditor=`<div class="nw-profile-editor ${profileLocked?'nw-profile-locked':''}"><label class="nw-new-label" for="nwName">DISPLAY NAME</label><input id="nwName" maxlength="24" value="${nwEscape(p.name)}" autocomplete="nickname" ${profileLocked?'disabled':''}><label class="nw-new-label">CHOOSE AN AVATAR</label><div class="nw-avatar-grid">${nwAvatarChoices.map(a=>`<button class="nw-avatar-choice ${a===p.avatar?'chosen':''}" data-avatar="${a}" aria-label="Choose ${a} avatar" ${profileLocked?'disabled':''}>${a}</button>`).join('')}</div><button class="nw-action" id="nwSaveProfile" ${profileLocked?'disabled':''}>SAVE PROFILE</button></div>`;
+  const lockedEditor=`<div class="nw-profile-editor ${profileLocked?'nw-profile-locked':''}"><label class="nw-new-label" for="nwName">DISPLAY NAME</label><input id="nwName" maxlength="24" value="${nwEscape(p.name)}" autocomplete="nickname" ${profileLocked?'disabled':''}><label class="nw-new-label">CHOOSE AN AVATAR</label><div class="nw-avatar-grid">${nwAvatarChoices.map((a,i)=>`<button class="nw-avatar-choice ${a===p.avatar?'chosen':''}" data-avatar="${a}" aria-label="Choose avatar ${i+1}" ${profileLocked?'disabled':''}>${nwAvatarImg(a,'nw-avatar-choice-img')}</button>`).join('')}</div><button class="nw-action" id="nwSaveProfile" ${profileLocked?'disabled':''}>SAVE PROFILE</button></div>`;
 
   let authBlock='';
   if(!u){
@@ -77,7 +80,7 @@ function nwShowProfile(){
     authBlock=`<div class="nw-auth-card"><h3>ACCOUNT</h3><button class="nw-action nw-auth-secondary" id="nwSignOut">SIGN OUT</button><p id="nwAuthNotice" hidden></p></div>`;
   }
 
-  evDisplay(`${evHeader('PLAYER PROFILE',showCategories)}<section class="nw-new-panel"><div class="nw-profile-avatar">${p.avatar}</div><h2>${nwEscape(p.name)}</h2><p class="nw-muted" id="nwAccountStatus">${anon?'Guest':u?'Signed in: '+nwEscape(u.email||'Account'):'Guest'}</p>${lockedEditor}${authBlock}</section>`);
+  evDisplay(`${evHeader('PLAYER PROFILE',showCategories)}<section class="nw-new-panel"><div class="nw-profile-avatar">${nwAvatarImg(p.avatar,'nw-profile-avatar-img')}</div><h2>${nwEscape(p.name)}</h2><p class="nw-muted" id="nwAccountStatus">${anon?'Guest':u?'Signed in: '+nwEscape(u.email||'Account'):'Guest'}</p>${lockedEditor}${authBlock}</section>`);
 
   if(!u && window.nwCloud){const captcha=evRoot.querySelector('.nw-captcha');if(captcha)nwCloud.mountCaptcha(captcha)}
   let avatar=p.avatar;
@@ -199,7 +202,7 @@ async function nwLoadCloudProfile(){
   const accountId=window.nwCloud?.user()?.id;
   if(!accountId)return;
   try{const data=await nwCloud.readProfile();if(data && nwCloud.user()?.id===accountId){
-    const avatar=nwAvatarChoices.includes(data.avatar)?data.avatar:'🦇';
+    const avatar=nwAvatarValue(data.avatar);
     nwWrite(nwProfileKey,{name:data.display_name||'Guest Player',avatar});
   }}catch(e){console.warn('Could not load Nine & Weird profile',e.message)}
 }
@@ -267,7 +270,7 @@ function showBattle(){evSudokuLeave();applyTheme('hub');evDisplay(`<header class
 
 function showCategories(){
   evSudokuLeave();applyTheme('hub');
-  evDisplay(`<header class="ev-head"><button class="ev-btn ev-btn-alt" id="toHome">‹ BACK</button><strong>CHOOSE YOUR SIDE</strong><span></span></header><section class="world-categories" aria-label="Room collections"><div class="nw-profile-entry"><button id="nwProfileButton" class="nw-profile-button" aria-label="Open player profile"><span>${nwProfile().avatar}</span></button><div>${nwEscape(nwProfile().name)}</div><small>PROFILE / SIGN IN</small></div><button class="world-category world-category-usual" data-collection="usual"><span class="world-category-art" aria-hidden="true">✦</span><strong>THE USUAL</strong><small>The worlds you know and love.</small><span class="world-category-action">EXPLORE</span></button><button class="world-category world-category-weird" data-collection="weird"><span class="world-category-art" aria-hidden="true">◉</span><strong>THE WEIRD</strong><small>Don't ask. Just play.</small><span class="world-category-action">ENTER</span></button><button class="world-category world-category-fav nw-category-wide" data-collection="fav"><span class="nw-category-icon" aria-hidden="true">♥</span><strong>FAV</strong><small>Your saved rooms</small></button><button class="world-category world-category-battle nw-category-wide" id="nwBattle"><span class="nw-category-icon" aria-hidden="true">★</span><strong>BATTLE</strong><small>Play challenges</small></button><button class="world-category nw-category-wide nw-trophy-tile" id="nwTrophy"><span class="nw-category-icon" aria-hidden="true">🏆</span><strong>TROPHY CASE</strong><small>Titles and weekly brain reports</small></button></section>`);
+  evDisplay(`<header class="ev-head"><button class="ev-btn ev-btn-alt" id="toHome">‹ BACK</button><strong>CHOOSE YOUR SIDE</strong><span></span></header><section class="world-categories" aria-label="Room collections"><div class="nw-profile-entry"><button id="nwProfileButton" class="nw-profile-button" aria-label="Open player profile"><span class="nw-profile-button-art">${nwAvatarImg(nwProfile().avatar,'nw-profile-button-img')}</span></button><div>${nwEscape(nwProfile().name)}</div><small>PROFILE / SIGN IN</small></div><button class="world-category world-category-usual" data-collection="usual"><span class="world-category-art" aria-hidden="true">✦</span><strong>THE USUAL</strong><small>The worlds you know and love.</small><span class="world-category-action">EXPLORE</span></button><button class="world-category world-category-weird" data-collection="weird"><span class="world-category-art" aria-hidden="true">◉</span><strong>THE WEIRD</strong><small>Don't ask. Just play.</small><span class="world-category-action">ENTER</span></button><button class="world-category world-category-fav nw-category-wide" data-collection="fav"><span class="nw-category-icon" aria-hidden="true">♥</span><strong>FAV</strong><small>Your saved rooms</small></button><button class="world-category world-category-battle nw-category-wide" id="nwBattle"><span class="nw-category-icon" aria-hidden="true">★</span><strong>BATTLE</strong><small>Play challenges</small></button><button class="world-category nw-category-wide nw-trophy-tile" id="nwTrophy"><span class="nw-category-icon" aria-hidden="true">🏆</span><strong>TROPHY CASE</strong><small>Titles and weekly brain reports</small></button></section>`);
   evRoot.querySelector('#toHome').onclick=showHome;
   evRoot.querySelectorAll('[data-collection]').forEach(b=>b.onclick=()=>{roomCollection=b.dataset.collection;nwScroll[roomCollection]=0;nwRoomPages[roomCollection]=0;showRooms(0)});
   evRoot.querySelector('#nwBattle').onclick=showBattle;evRoot.querySelector('#nwTrophy').onclick=()=>nwShowTrophy();evRoot.querySelector('#nwProfileButton').onclick=nwShowProfile;
