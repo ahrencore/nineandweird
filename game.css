@@ -3056,3 +3056,46 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-events-detail .nw-difficulty-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:11px 0}
 #game .nw-events-detail .nw-difficulty-choices button{min-height:44px;background:#623947;border:1px solid #b97889;border-radius:9px;color:#ffebef;font-size:11px;font-weight:800}
 #game .nw-events-detail>.theme-button{margin:12px auto;display:block;max-width:100%}
+
+/* Battle reveal / head-to-head HUD — original ruby Nine & Weird style. */
+#game .nw-battle-start-button,#game .nw-match-main{display:block;width:100%;min-height:54px;border:1px solid #ffd5df;border-radius:15px;background:linear-gradient(155deg,#ffadbc 0%,#f36b78 56%,#cd425f 100%);box-shadow:0 6px 0 #752b41,0 11px 22px #0a030799;color:#310c19;font-weight:900;letter-spacing:.09em;font-size:13px;cursor:pointer;transition:transform .12s,box-shadow .12s}
+#game .nw-battle-start-button:active,#game .nw-match-main:active{transform:translateY(4px);box-shadow:0 2px 0 #752b41,0 5px 12px #0a030799}
+#game .nw-battle-start-button:focus-visible,#game .nw-match-main:focus-visible,#game .nw-match-cancel:focus-visible,#game .nw-battle-modal button:focus-visible{outline:3px solid #ffe0a2;outline-offset:3px}
+#game .nw-matchmaking{margin:17px auto;max-width:490px;text-align:center;min-height:420px;border:1px solid #a96578;border-radius:22px;background:radial-gradient(ellipse at 50% 20%,#603344 0%,#301b27 43%,#1b1019 100%);padding:33px 20px;color:#ffe4ea;box-shadow:inset 0 0 0 3px #371d2a,0 18px 36px #0e060b66}
+#game .nw-match-kicker{color:#f8aabb;font-size:10px;font-weight:900;letter-spacing:.15em}
+#game .nw-matchmaking h2{font:bold clamp(16px,5vw,22px) Georgia,serif;letter-spacing:.045em;line-height:1.3;margin:15px 0 29px}
+#game .nw-match-avatar-ring{width:148px;height:148px;margin:0 auto 18px;padding:7px;border-radius:50%;background:conic-gradient(from 30deg,#ffe3b0,#f36b78,#704158,#f36b78,#ffe3b0);box-shadow:0 0 0 7px #522a3e,0 0 35px #dd769255}
+#game .nw-match-avatar{width:100%;height:100%;overflow:hidden;border-radius:50%;background:#432638;display:grid;place-items:center}
+#game .nw-match-avatar-image{display:block;width:100%;height:100%;object-fit:cover}
+#game .nw-matchmaking>strong{display:block;min-height:25px;color:#fff0f3;font-size:18px;overflow-wrap:anywhere}
+#game .nw-match-dots{height:30px;display:flex;align-items:center;justify-content:center;gap:7px}
+#game .nw-match-dots i{width:7px;height:7px;background:#fdb0bf;border-radius:50%;animation:nwMatchDots .9s infinite alternate}
+#game .nw-match-dots i:nth-child(2){animation-delay:.2s}#game .nw-match-dots i:nth-child(3){animation-delay:.4s}
+@keyframes nwMatchDots{from{opacity:.25;transform:translateY(3px)}to{opacity:1;transform:translateY(-3px)}}
+#game .nw-matchmaking p{color:#d7acbb;font-size:12px;min-height:22px;margin:9px 0 21px}
+#game .nw-match-cancel{display:block;margin:15px auto 0;padding:10px 20px;border:1px solid #8c596c;border-radius:12px;background:#3e2835;color:#ffe1e8;font-size:11px;font-weight:900;letter-spacing:.08em;cursor:pointer}
+#game .nw-match-main[hidden],#game .nw-match-dots[hidden]{display:none!important}
+#game .nw-opponent-panel{display:flex;align-items:center;gap:11px;width:min(100% - 18px,510px);margin:12px auto 9px;padding:10px 13px;border-radius:15px;color:#ffe2eb;background:linear-gradient(130deg,#37212d,#4b2d3b);border:1px solid #a56a80;box-shadow:0 4px 14px #13071044}
+#game .nw-opponent-small-avatar{flex:0 0 47px;width:47px;height:47px;border:2px solid #f3b8c7;border-radius:50%;overflow:hidden;background:#5d3646}
+#game .nw-opponent-small-img{display:block;width:100%;height:100%;object-fit:cover}
+#game .nw-opponent-details{flex:1;min-width:0}
+#game .nw-opponent-top{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:12px}
+#game .nw-opponent-top strong{white-space:nowrap;text-overflow:ellipsis;overflow:hidden;max-width:75%;font-weight:900}
+#game .nw-opponent-top span{color:#ffd7aa;font-size:11px;font-weight:800;font-variant-numeric:tabular-nums}
+#game .nw-opponent-track{height:10px;margin:7px 0 5px;background:#1e111b;border:1px solid #795365;border-radius:99px;overflow:hidden}
+#game .nw-opponent-track>div{width:0;height:100%;border-radius:99px;background:linear-gradient(90deg,#f4aabc,#f36b78,#ffe1a2);transition:width .24s linear}
+#game .nw-opponent-errors{font-size:10px;font-weight:800;color:#d7b1bd;letter-spacing:.04em;text-align:left}
+#game .nw-opponent-errors span{color:#ffd3dc}
+#game .nw-battle-overlay{position:fixed;z-index:100000;inset:0;display:flex;align-items:center;justify-content:center;background:#090308d9;padding:17px;backdrop-filter:blur(5px)}
+#game .nw-battle-modal{width:min(100%,360px);padding:26px 18px 22px;text-align:center;color:#ffe3eb;border:2px solid #ee94aa;border-radius:23px;background:radial-gradient(ellipse at top,#633748,#311d2a 70%,#23121c);box-shadow:0 0 0 5px #2b142299,0 16px 50px #090207dd}
+#game .nw-modal-glow{font-size:38px;color:#f2a8b6}
+#game .nw-battle-modal h2{font:900 23px Georgia,serif;margin:17px 0 8px;color:#ffe6b1}
+#game .nw-battle-modal p{font-size:13px;line-height:1.6;color:#f4cad6;margin:8px 0 19px}
+#game .nw-battle-result-opponent{display:flex;flex-direction:column;align-items:center;gap:6px;margin:10px 0;color:#ffe0e9;font-size:13px;overflow-wrap:anywhere}
+#game .nw-battle-result-avatar{width:60px;height:60px;object-fit:cover;background:#5d3646;border:3px solid #efadc0;border-radius:50%}
+#game .nw-battle-modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+#game .nw-battle-modal-actions button{min-height:50px;border-radius:12px;font-size:11px;font-weight:900;letter-spacing:.055em;cursor:pointer}
+#game .nw-modal-secondary{border:1px solid #c0889a;background:#523141;color:#ffe3ea}
+#game .nw-modal-primary{border:1px solid #ffe3e5;background:linear-gradient(#ffacb8,#f36b78);color:#36111d;box-shadow:0 4px 0 #7b3049}
+#game .nw-battle-finish .nw-battle-result-opponent{margin:17px auto}
+@media(prefers-reduced-motion:reduce){#game .nw-match-dots i{animation:none}#game .nw-opponent-track>div{transition:none}}
