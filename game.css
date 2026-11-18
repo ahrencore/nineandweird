@@ -3020,3 +3020,25 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-record-tools small{color:#f5d3dc;font-size:11px}
 #game .nw-record-tools button{border:1px solid #b36779;border-radius:9px;background:#4a2d39;color:#ffecf0;padding:11px;font-weight:700}
 #game .nw-record-tools button:first-of-type{background:#f36b78;color:#250b12}
+
+/* Stage-one Battle and Events preview; no active gameplay or matchmaking. */
+#game .nw-battle-ready{margin-top:16px;max-width:510px}
+#game .nw-battle-ready .nw-battle-star{font-size:33px}
+#game .nw-battle-ready h2{font-size:20px;margin:7px 0}
+#game .nw-feature-subtitle{color:#ebc6d0;font-size:13px}
+#game .nw-season-pill{display:inline-block;margin:9px auto 15px;padding:8px 12px;border-radius:100px;background:#53313f;border:1px solid #915467;color:#ffdbe3;font-weight:800;font-size:10px;letter-spacing:.055em}
+#game .nw-feature-block{text-align:left;padding:15px 14px;margin:10px 0;border-radius:13px;background:#3a2530;border:1px solid #684554}
+#game .nw-feature-block>strong{display:block;font-size:12px;color:#ffe4eb;letter-spacing:.06em}
+#game .nw-feature-block p{font-size:13px;color:#f2d5dc;margin:8px 0}
+#game .nw-feature-block small{display:block;color:#cda8b6;font-size:11px;line-height:1.6;margin-top:9px}
+#game .nw-difficulty-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:12px 0 8px}
+#game .nw-difficulty-choices span{display:block;text-align:center;background:#593743;border:1px solid #96606f;color:#ffe5ec;border-radius:9px;padding:12px 2px;font-size:11px;font-weight:800}
+#game .nw-feature-banner{padding:13px;background:#553340;border:1px solid #b27182;border-radius:10px;color:#ffcad7;font-size:12px;font-weight:800;letter-spacing:.07em;margin-top:16px}
+#game .nw-feature-disclaimer{color:#c69fac;font-size:11px!important;line-height:1.6;text-align:center;margin:17px 2px 5px}
+#game .nw-event-schedule{display:grid;grid-template-columns:1fr 0.7fr 1fr;gap:5px;margin:0 0 17px}
+#game .nw-event-schedule span{border-radius:9px;background:#38232d;padding:9px 3px;min-width:0;text-align:center;font-size:9px;color:#ffc6d3;font-weight:800;line-height:1.5}
+#game .nw-event-schedule b{display:block;color:#ffe1e9;font-size:10px}
+#game .nw-event-tile em{display:inline-block;font-style:normal;margin-top:8px;color:#ffc5d3;font-size:10px;font-weight:800;letter-spacing:.055em}
+#game .nw-detail-icon{text-align:center;font-size:36px;margin:5px 0}
+#game .nw-events-detail .nw-season-pill{display:block;width:max-content;max-width:100%;text-align:center}
+@media(max-width:360px){#game .nw-event-schedule span{font-size:8px}#game .nw-event-schedule b{font-size:9px}#game .nw-battle-ready{padding:16px 11px}}
