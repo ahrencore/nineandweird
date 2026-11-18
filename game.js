@@ -313,16 +313,23 @@ function nwRestoreScroll(){
 
 // Battle practice is an offline head-to-head test against human-completed recorded runs.
 // It is NOT online matchmaking, not a live opponent, and awards no event rewards.
-const nwBattlePracticeRuns = [{"recording_id":"f433b170-370e-4fe5-8831-4425e24ac5d5","difficulty":"easy","elapsed_seconds":55,"points":450,"mistakes":0,"puzzle_clues":"407015300605000240908027000703502680542800903861093452209154000150300720086209014","solved_grid":"427615398615938247938427165793542681542861973861793452279154836154386729386279514","display_name":"RECORDED CHALLENGER"},{"recording_id":"ca614677-e737-4dc0-b826-c5c322ca83b8","difficulty":"medium","elapsed_seconds":112,"points":750,"mistakes":0,"puzzle_clues":"028300005379500801564108970000006239930057010000030054000000002605290340201740080","solved_grid":"128379465379564821564128973457816239932457618816932754743685192685291347291743586","display_name":"RECORDED CHALLENGER"},{"recording_id":"44d7dc1e-6b01-499a-bb65-2a0df366f20f","difficulty":"hard","elapsed_seconds":123,"points":1100,"mistakes":0,"puzzle_clues":"064320718090000000000500932003900400740600800000750200009805046006091500000463100","solved_grid":"564329718392187654178546932623918475745632891981754263219875346436291587857463129","display_name":"RECORDED CHALLENGER"}];
+const nwBattlePracticeRuns = [{"recording_id":"f433b170-370e-4fe5-8831-4425e24ac5d5","difficulty":"easy","elapsed_seconds":55,"points":450,"mistakes":0,"puzzle_clues":"407015300605000240908027000703502680542800903861093452209154000150300720086209014","solved_grid":"427615398615938247938427165793542681542861973861793452279154836154386729386279514","display_name":"RECORDED CHALLENGER"},{"recording_id":"ca614677-e737-4dc0-b826-c5c322ca83b8","difficulty":"medium","elapsed_seconds":112,"points":750,"mistakes":0,"puzzle_clues":"028300005379500801564108970000006239930057010000030054000000002605290340201740080","solved_grid":"128379465379564821564128973457816239932457618816932754743685192685291347291743586","display_name":"RECORDED CHALLENGER"},{"recording_id":"44d7dc1e-6b01-499a-bb65-2a0df366f20f","difficulty":"hard","elapsed_seconds":123,"points":1100,"mistakes":0,"puzzle_clues":"064320718090000000000500932003900400740600800000750200009805046006091500000463100","solved_grid":"564329718392187654178546932623918475745632891981754263219875346436291587857463129","display_name":"RECORDED CHALLENGER"},{"recording_id":"4fb3fee9-3988-4a21-a696-057f0607aaed","difficulty":"expert","elapsed_seconds":122,"points":1420,"mistakes":1,"puzzle_clues":"300490000094700801000100020800009405910006003640300090008900200030604500006000310","solved_grid":"381492657294765831567183924873219465912546783645378192758931246139624578426857319","display_name":"RECORDED CHALLENGER"},{"recording_id":"a1578189-767d-4f88-94fd-2fbaee196a26","difficulty":"extreme","elapsed_seconds":173,"points":1780,"mistakes":2,"puzzle_clues":"600400900010907030009503002080090025007002080000140700000000243000000001340800050","solved_grid":"635421978214987536879563412481796325967352184523148769198675243756234891342819657","display_name":"RECORDED CHALLENGER"}];
 const nwBattlePracticeKey='nineweird-battle-practice-v1';
 let nwBattleActive=null;
 function nwBattlePracticeHistory(){const h=nwRead(nwBattlePracticeKey,[]);return Array.isArray(h)?h:[];}
-function nwBattleStart(difficulty){
-  const opponent=nwBattlePracticeRuns.find(r=>r.difficulty===difficulty);
+// Use a fresh illustrated room for each practice puzzle; the Sudoku grid and score
+// still come from the authentic recorded run. Exclude the number-only Classic rooms.
+function nwRandomBattleRoom(){
+  const choices=[...nwGroups.usual,...nwGroups.weird].filter(id=>id!=='classic'&&id!=='dark'&&worlds[id]);
+  return choices[Math.floor(Math.random()*choices.length)]||'halloween';
+}
+function nwBattleStart(){
+  // Every practice match draws a fresh difficulty from Easy through Extreme.
+  const opponent=nwBattlePracticeRuns[Math.floor(Math.random()*nwBattlePracticeRuns.length)];
+  const difficulty=opponent?.difficulty;
   if(!opponent)return;
   nwBattleActive={opponent,worldBefore:currentWorld};
-  // Classic symbols keep the match visually neutral and avoid changing room content.
-  currentWorld='classic';
+  currentWorld=nwRandomBattleRoom();
   evSudokuStart(difficulty,opponent);
 }
 function nwBattleReturn(){
@@ -340,7 +347,7 @@ function nwBattleFinish(s,won,points,elapsed){
   nwWrite(nwBattlePracticeKey,history.slice(-100));
   clearInterval(sudokuTimer);
   evDisplay(`${evHeader('BATTLE PRACTICE',nwBattleReturn)}<section class="nw-battle nw-battle-ready"><div class="nw-battle-star">⚔</div><h2>${outcome==='WIN'?'PRACTICE WIN!':outcome==='DRAW'?'DRAW!':'PRACTICE LOSS'}</h2><p class="nw-feature-subtitle">${s.difficulty.toUpperCase()} · Same puzzle, recorded challenger</p><div class="nw-practice-scores"><div><small>YOU</small><strong>${playerScore.toLocaleString()}</strong><em>${won?elapsed+' seconds':'Puzzle not completed'}</em></div><div><small>RECORDED CHALLENGER</small><strong>${opponent.points.toLocaleString()}</strong><em>${opponent.elapsed_seconds} seconds · Human-played recording</em></div></div><p class="nw-feature-disclaimer">Practice-only result saved locally. No rewards, Battle season results, or Brain Reports changes.</p><div class="result-actions"><button class="theme-button" id="nwPracticeAgain">PLAY ANOTHER</button><button class="theme-button" id="nwPracticeBack">BATTLE MENU</button></div></section>`);
-  evRoot.querySelector('#nwPracticeAgain').onclick=()=>nwBattleStart(s.difficulty);
+  evRoot.querySelector('#nwPracticeAgain').onclick=()=>nwBattleStart();
   evRoot.querySelector('#nwPracticeBack').onclick=nwBattleReturn;
 }
 function showBattle(){
@@ -351,12 +358,12 @@ function showBattle(){
     <div class="nw-battle-star">⚔</div><h2>MONTHLY BATTLE</h2>
     <p class="nw-feature-subtitle">One-on-one Sudoku competition</p>
     <div class="nw-season-pill">${month.toUpperCase()} · ONLINE SEASON NOT LIVE</div>
-    <div class="nw-feature-block"><strong>PLAY BATTLE PRACTICE</strong><p>Test yourself against a real, prerecorded human Sudoku performance. Both competitors use the identical puzzle. Higher score wins.</p><div class="nw-difficulty-choices">${['easy','medium','hard'].map(d=>`<button type="button" data-battle-difficulty="${d}">${d.toUpperCase()}</button>`).join('')}</div><small>Easy, Medium or Hard · Original recorded opponent scores · No matchmaking required.</small></div>
+    <div class="nw-feature-block"><strong>PLAY BATTLE PRACTICE</strong><p>Test yourself against a real, prerecorded human Sudoku performance. Both competitors use the identical puzzle. Higher score wins.</p><button type="button" class="theme-button" id="nwStartRandomBattle">START RANDOM BATTLE</button><small>Difficulty is randomly selected from Easy, Medium, Hard, Expert and Extreme. The illustrated room is random too. Original recorded opponent scores · No matchmaking required.</small></div>
     <div class="nw-feature-block"><strong>YOUR LOCAL PRACTICE RECORD</strong><p>${wins} wins · ${all.length-wins-draws} losses · ${draws} draws · ${all.length?Math.round(wins/all.length*100):0}% win rate</p><small>Only for testing on this device and account. Does not affect Brain Reports or the monthly Battle season.</small></div>
     <div class="nw-feature-banner">ONLINE MONTHLY BATTLE · COMING LATER</div>
     <p class="nw-feature-disclaimer">Practice opponents are prerecorded, human-completed Sudoku runs. Live ranking, tickets, and prizes are not active.</p>
   </section>`);
-  evRoot.querySelectorAll('[data-battle-difficulty]').forEach(b=>b.onclick=()=>nwBattleStart(b.dataset.battleDifficulty));
+  evRoot.querySelector('#nwStartRandomBattle').onclick=()=>nwBattleStart();
 }
 // Universal event boundaries use UTC, not the player's local calendar.
 function nwEventPhase(){return ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'][new Date().getUTCDay()]}
@@ -404,11 +411,11 @@ function nwDoublePracticeScreen(){
     <p class="nw-muted">Offline scoring rehearsal. You are partnered with a human-played recording and matched against two other recorded performances. Each prerecorded participant is an individual, not a fixed pair.</p>
     <div class="nw-practice-scores"><div><small>YOUR TEAM</small><strong>${ourScore.toLocaleString()}</strong><em>You: ${record.teamPoints.toLocaleString()} · Recorded partner: ${teammate.points}</em></div><div><small>OTHER TEAM</small><strong>${otherScore.toLocaleString()}</strong><em>Recorded opponent 1: ${op1.points} · Opponent 2: ${op2.points}</em></div></div>
     <p>${record.userPuzzles} Sudoku puzzles completed by you during this test. Wins add points to your team.</p>
-    <div class="nw-feature-block"><strong>PLAY ANOTHER NORMAL SUDOKU PUZZLE</strong><div class="nw-difficulty-choices">${['easy','medium','hard'].map(d=>`<button type="button" data-double-difficulty="${d}">${d.toUpperCase()}</button>`).join('')}</div><small>This test session is available any day, regardless of the real Thursday–Sunday schedule.</small></div>
+    <div class="nw-feature-block"><strong>PLAY ANOTHER NORMAL SUDOKU PUZZLE</strong><div class="nw-difficulty-choices">${['easy','medium','hard','expert','extreme'].map(d=>`<button type="button" data-double-difficulty="${d}">${d.toUpperCase()}</button>`).join('')}</div><small>Choose any of the five difficulties. A random illustrated room is selected for each puzzle. This test is available any day.</small></div>
     <button class="theme-button" id="nwDoubleReset">RESET LOCAL TEST SCORES</button>
     <p class="nw-feature-disclaimer">No online pairing, leaderboard submission or official event prizes. The recorded team scores are fixed test fixtures. Your Sudoku attempts count normally in Brain Reports.</p>
   </section>`);
-  evRoot.querySelectorAll('[data-double-difficulty]').forEach(b=>b.onclick=()=>{nwDoublePracticeActive=true;currentWorld='classic';evSudokuStart(b.dataset.doubleDifficulty);});
+  evRoot.querySelectorAll('[data-double-difficulty]').forEach(b=>b.onclick=()=>{nwDoublePracticeActive=true;currentWorld=nwRandomBattleRoom();evSudokuStart(b.dataset.doubleDifficulty);});
   evRoot.querySelector('#nwDoubleReset').onclick=()=>{if(confirm('Reset Double Trouble test scores for this account?'))nwDoublePracticeStart(true)};
 }
 function nwDoublePracticeAfterSudoku(s,won,pts){
