@@ -310,18 +310,53 @@ function nwRestoreScroll(){
     target.scrollTop=Math.max(0,Math.min(y,target.scrollHeight-target.clientHeight));
   }));
 }
+
+// Battle practice is an offline head-to-head test against human-completed recorded runs.
+// It is NOT online matchmaking, not a live opponent, and awards no event rewards.
+const nwBattlePracticeRuns = [{"recording_id":"f433b170-370e-4fe5-8831-4425e24ac5d5","difficulty":"easy","elapsed_seconds":55,"points":450,"mistakes":0,"puzzle_clues":"407015300605000240908027000703502680542800903861093452209154000150300720086209014","solved_grid":"427615398615938247938427165793542681542861973861793452279154836154386729386279514","display_name":"RECORDED CHALLENGER"},{"recording_id":"ca614677-e737-4dc0-b826-c5c322ca83b8","difficulty":"medium","elapsed_seconds":112,"points":750,"mistakes":0,"puzzle_clues":"028300005379500801564108970000006239930057010000030054000000002605290340201740080","solved_grid":"128379465379564821564128973457816239932457618816932754743685192685291347291743586","display_name":"RECORDED CHALLENGER"},{"recording_id":"44d7dc1e-6b01-499a-bb65-2a0df366f20f","difficulty":"hard","elapsed_seconds":123,"points":1100,"mistakes":0,"puzzle_clues":"064320718090000000000500932003900400740600800000750200009805046006091500000463100","solved_grid":"564329718392187654178546932623918475745632891981754263219875346436291587857463129","display_name":"RECORDED CHALLENGER"}];
+const nwBattlePracticeKey='nineweird-battle-practice-v1';
+let nwBattleActive=null;
+function nwBattlePracticeHistory(){const h=nwRead(nwBattlePracticeKey,[]);return Array.isArray(h)?h:[];}
+function nwBattleStart(difficulty){
+  const opponent=nwBattlePracticeRuns.find(r=>r.difficulty===difficulty);
+  if(!opponent)return;
+  nwBattleActive={opponent,worldBefore:currentWorld};
+  // Classic symbols keep the match visually neutral and avoid changing room content.
+  currentWorld='classic';
+  evSudokuStart(difficulty,opponent);
+}
+function nwBattleReturn(){
+  const previous=nwBattleActive?.worldBefore;
+  nwBattleActive=null;
+  if(previous&&worlds[previous])currentWorld=previous;
+  showBattle();
+}
+function nwBattleFinish(s,won,points,elapsed){
+  const opponent=s.practiceOpponent;
+  const playerScore=won?points:0;
+  const outcome=won?(playerScore>opponent.points?'WIN':playerScore<opponent.points?'LOSS':'DRAW'):'LOSS';
+  const history=nwBattlePracticeHistory();
+  history.push({at:Date.now(),difficulty:s.difficulty,outcome,playerScore,opponentScore:opponent.points,seconds:elapsed});
+  nwWrite(nwBattlePracticeKey,history.slice(-100));
+  clearInterval(sudokuTimer);
+  evDisplay(`${evHeader('BATTLE PRACTICE',nwBattleReturn)}<section class="nw-battle nw-battle-ready"><div class="nw-battle-star">⚔</div><h2>${outcome==='WIN'?'PRACTICE WIN!':outcome==='DRAW'?'DRAW!':'PRACTICE LOSS'}</h2><p class="nw-feature-subtitle">${s.difficulty.toUpperCase()} · Same puzzle, recorded challenger</p><div class="nw-practice-scores"><div><small>YOU</small><strong>${playerScore.toLocaleString()}</strong><em>${won?elapsed+' seconds':'Puzzle not completed'}</em></div><div><small>RECORDED CHALLENGER</small><strong>${opponent.points.toLocaleString()}</strong><em>${opponent.elapsed_seconds} seconds · Human-played recording</em></div></div><p class="nw-feature-disclaimer">Practice-only result saved locally. No rewards, Battle season results, or Brain Reports changes.</p><div class="result-actions"><button class="theme-button" id="nwPracticeAgain">PLAY ANOTHER</button><button class="theme-button" id="nwPracticeBack">BATTLE MENU</button></div></section>`);
+  evRoot.querySelector('#nwPracticeAgain').onclick=()=>nwBattleStart(s.difficulty);
+  evRoot.querySelector('#nwPracticeBack').onclick=nwBattleReturn;
+}
 function showBattle(){
   evSudokuLeave();applyTheme('hub');
   const d=new Date(),month=d.toLocaleString('en-US',{month:'long',year:'numeric',timeZone:'UTC'});
+  const all=nwBattlePracticeHistory(),wins=all.filter(x=>x.outcome==='WIN').length,draws=all.filter(x=>x.outcome==='DRAW').length;
   evDisplay(`${evHeader('BATTLE',showCategories)}<section class="nw-battle nw-battle-ready">
     <div class="nw-battle-star">⚔</div><h2>MONTHLY BATTLE</h2>
     <p class="nw-feature-subtitle">One-on-one Sudoku competition</p>
-    <div class="nw-season-pill">${month.toUpperCase()} · SEASON PREVIEW</div>
-    <div class="nw-feature-block"><strong>CHOOSE YOUR DIFFICULTY</strong><div class="nw-difficulty-choices"><span>EASY</span><span>MEDIUM</span><span>HARD</span></div><small>Expert and Extreme may appear in special battles.</small></div>
-    <div class="nw-feature-block"><strong>YOUR BATTLE RECORD</strong><p>No Battle matches recorded yet.</p><small>Monthly wins, losses, win rate, and titles will be tracked separately from Brain Reports.</small></div>
-    <div class="nw-feature-banner">MATCHMAKING COMING SOON</div>
-    <p class="nw-feature-disclaimer">This is a preview of Battle Mode. No matches, scores, or rewards are active yet.</p>
+    <div class="nw-season-pill">${month.toUpperCase()} · ONLINE SEASON NOT LIVE</div>
+    <div class="nw-feature-block"><strong>PLAY BATTLE PRACTICE</strong><p>Test yourself against a real, prerecorded human Sudoku performance. Both competitors use the identical puzzle. Higher score wins.</p><div class="nw-difficulty-choices">${['easy','medium','hard'].map(d=>`<button type="button" data-battle-difficulty="${d}">${d.toUpperCase()}</button>`).join('')}</div><small>Easy, Medium or Hard · Original recorded opponent scores · No matchmaking required.</small></div>
+    <div class="nw-feature-block"><strong>YOUR LOCAL PRACTICE RECORD</strong><p>${wins} wins · ${all.length-wins-draws} losses · ${draws} draws · ${all.length?Math.round(wins/all.length*100):0}% win rate</p><small>Only for testing on this device and account. Does not affect Brain Reports or the monthly Battle season.</small></div>
+    <div class="nw-feature-banner">ONLINE MONTHLY BATTLE · COMING LATER</div>
+    <p class="nw-feature-disclaimer">Practice opponents are prerecorded, human-completed Sudoku runs. Live ranking, tickets, and prizes are not active.</p>
   </section>`);
+  evRoot.querySelectorAll('[data-battle-difficulty]').forEach(b=>b.onclick=()=>nwBattleStart(b.dataset.battleDifficulty));
 }
 // Universal event boundaries use UTC, not the player's local calendar.
 function nwEventPhase(){return ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'][new Date().getUTCDay()]}
@@ -345,6 +380,44 @@ function nwShowEvents(){
   evRoot.querySelector('#nwEventWeekly').onclick=()=>nwShowEventDetail('weekly');
   evRoot.querySelector('#nwEventDouble').onclick=()=>nwShowEventDetail('double');
 }
+
+// Double Trouble offline sandbox. This is NOT a public event or online match.
+// The three recorded participants each contribute ONE authentic uploaded run.
+// The user's own normal Sudoku wins contribute to their side and Brain Reports.
+const nwDoublePracticeKey='nineweird-double-practice-v1';
+let nwDoublePracticeActive=false,nwDoubleWorldBefore=null;
+function nwDoublePracticeData(){const obj=nwRead(nwDoublePracticeKey,null);return obj&&typeof obj==='object'?obj:null;}
+function nwDoublePracticeStart(reset=false){
+  if(nwDoubleWorldBefore===null)nwDoubleWorldBefore=currentWorld;
+  if(reset||!nwDoublePracticeData())nwWrite(nwDoublePracticeKey,{teamPoints:0,userPuzzles:0,started:Date.now()});
+  nwDoublePracticeActive=true;
+  nwDoublePracticeScreen();
+}
+function nwDoublePracticeExit(){nwDoublePracticeActive=false;if(nwDoubleWorldBefore&&worlds[nwDoubleWorldBefore])currentWorld=nwDoubleWorldBefore;nwDoubleWorldBefore=null;nwShowEventDetail('double');}
+function nwDoublePracticeScreen(){
+  evSudokuLeave();nwDoublePracticeActive=false;applyTheme('hub');
+  const record=nwDoublePracticeData()||{teamPoints:0,userPuzzles:0};
+  const teammate=nwBattlePracticeRuns[0],op1=nwBattlePracticeRuns[1],op2=nwBattlePracticeRuns[2];
+  const ourScore=record.teamPoints+teammate.points,otherScore=op1.points+op2.points;
+  evDisplay(`${evHeader('DOUBLE TROUBLE TEST',nwDoublePracticeExit)}<section class="nw-events-panel nw-events-detail">
+    <div class="nw-detail-icon">⚔️</div><h2>DOUBLE TROUBLE · TEST</h2>
+    <p class="nw-muted">Offline scoring rehearsal. You are partnered with a human-played recording and matched against two other recorded performances. Each prerecorded participant is an individual, not a fixed pair.</p>
+    <div class="nw-practice-scores"><div><small>YOUR TEAM</small><strong>${ourScore.toLocaleString()}</strong><em>You: ${record.teamPoints.toLocaleString()} · Recorded partner: ${teammate.points}</em></div><div><small>OTHER TEAM</small><strong>${otherScore.toLocaleString()}</strong><em>Recorded opponent 1: ${op1.points} · Opponent 2: ${op2.points}</em></div></div>
+    <p>${record.userPuzzles} Sudoku puzzles completed by you during this test. Wins add points to your team.</p>
+    <div class="nw-feature-block"><strong>PLAY ANOTHER NORMAL SUDOKU PUZZLE</strong><div class="nw-difficulty-choices">${['easy','medium','hard'].map(d=>`<button type="button" data-double-difficulty="${d}">${d.toUpperCase()}</button>`).join('')}</div><small>This test session is available any day, regardless of the real Thursday–Sunday schedule.</small></div>
+    <button class="theme-button" id="nwDoubleReset">RESET LOCAL TEST SCORES</button>
+    <p class="nw-feature-disclaimer">No online pairing, leaderboard submission or official event prizes. The recorded team scores are fixed test fixtures. Your Sudoku attempts count normally in Brain Reports.</p>
+  </section>`);
+  evRoot.querySelectorAll('[data-double-difficulty]').forEach(b=>b.onclick=()=>{nwDoublePracticeActive=true;currentWorld='classic';evSudokuStart(b.dataset.doubleDifficulty);});
+  evRoot.querySelector('#nwDoubleReset').onclick=()=>{if(confirm('Reset Double Trouble test scores for this account?'))nwDoublePracticeStart(true)};
+}
+function nwDoublePracticeAfterSudoku(s,won,pts){
+  const obj=nwDoublePracticeData()||{teamPoints:0,userPuzzles:0};
+  if(won){obj.teamPoints+=pts;obj.userPuzzles++;nwWrite(nwDoublePracticeKey,obj);}
+  nwDoublePracticeActive=false;
+  evDisplay(`${evHeader('DOUBLE TROUBLE TEST',nwDoublePracticeScreen)}<section class="nw-events-panel nw-events-detail"><div class="nw-detail-icon">${won?'✦':'×'}</div><h2>${won?'POINTS ADDED!':'PUZZLE LOST'}</h2><p>${won?`${pts.toLocaleString()} points added to your test team.`:'No team points awarded, but the attempt counts in Brain Reports.'}</p><div class="result-actions"><button class="theme-button" id="nwDoubleContinue">VIEW TEAM SCORES</button></div><p class="nw-feature-disclaimer">This is a local event rehearsal, not a live match.</p></section>`);
+  evRoot.querySelector('#nwDoubleContinue').onclick=nwDoublePracticeScreen;
+}
 function nwShowEventDetail(type){
   evSudokuLeave();applyTheme('hub');
   const content={
@@ -353,7 +426,8 @@ function nwShowEventDetail(type){
     weekly:{title:'WEEKLY LEADERBOARD',icon:'🏆',when:'MONDAY–SUNDAY',description:'Complete regular Sudoku puzzles in any room and at any difficulty to earn weekly ranking points. The top 10 and your own position will appear here when rankings are live.',foot:'Ranking points are separate from spendable coins. Rewards and leaderboard data are not live yet.'}
   };
   const e=content[type]||content.weekly;
-  evDisplay(`${evHeader(e.title,nwShowEvents)}<section class="nw-events-panel nw-events-detail"><div class="nw-detail-icon" aria-hidden="true">${e.icon}</div><h2>${e.title}</h2><div class="nw-season-pill">${e.when}</div><p>${e.description}</p><p class="nw-muted">${e.foot}</p><p class="nw-event-coming">COMING SOON</p><p class="nw-feature-disclaimer">Event timing follows 00:00 UTC (08:00 Malaysia time).</p></section>`);
+  evDisplay(`${evHeader(e.title,nwShowEvents)}<section class="nw-events-panel nw-events-detail"><div class="nw-detail-icon" aria-hidden="true">${e.icon}</div><h2>${e.title}</h2><div class="nw-season-pill">${e.when}</div><p>${e.description}</p><p class="nw-muted">${e.foot}</p>${type==='double'?`<div class="nw-feature-block"><strong>PARTNER SYSTEM · PREPARATION</strong><p>Thursday: invite a friend or request a random partner. Every participant, including each of the 20 planned prerecorded profiles, enters as an individual.</p><p>Friday–Sunday: teammates complete their own Sudoku boards and contribute to one shared team score.</p><small>This screen is a preparation preview. Partner requests and shared scores will require a real backend; nothing is submitted yet.</small></div>`:''}${type==='double'?'<button class="theme-button" id="nwDoublePracticeLaunch">TRY DOUBLE TROUBLE SOLO TEST</button>':''}<p class="nw-event-coming">COMING SOON</p><p class="nw-feature-disclaimer">Event timing follows 00:00 UTC (08:00 Malaysia time).</p></section>`);
+  if(type==='double')evRoot.querySelector('#nwDoublePracticeLaunch').onclick=()=>nwDoublePracticeStart();
 }
 
 function showCategories(){
@@ -411,7 +485,7 @@ const weirdImgs=['01_eyeball.png','02_telephone.png','03_melting_clock.png','04_
 const sudokuSrc=n=>currentWorld==='cakefail'?'assets/cakefail/'+cakefailImgs[n-1]:currentWorld==='baggagehell'?'assets/baggagehell/'+baggagehellImgs[n-1]:currentWorld==='donttakewater'?'assets/donttakewater/'+donttakewaterImgs[n-1]:currentWorld==='balloonwrong'?'assets/balloonwrong/'+balloonwrongImgs[n-1]:currentWorld==='underthebed'?'assets/underthebed/'+underthebedImgs[n-1]:currentWorld==='unpreparedchristmas'?'assets/unpreparedchristmas/'+unpreparedchristmasImgs[n-1]:currentWorld==='dontunwrap'?'assets/dontunwrap/'+dontunwrapImgs[n-1]:currentWorld==='solarsick'?'assets/solarsick/'+solarsickImgs[n-1]:currentWorld==='deepsea'?'assets/deepsea/'+deepseaImgs[n-1]:currentWorld==='bodyparts'?'assets/bodyparts/'+bodypartsImgs[n-1]:currentWorld==='diner'?'assets/diner/'+dinerImgs[n-1]:currentWorld==='alien'?'assets/alien/'+alienImgs[n-1]:currentWorld==='ugly'?'assets/ugly/'+uglyImgs[n-1]:currentWorld==='weird'?'assets/weird/'+weirdImgs[n-1]:currentWorld==='nineties'?'assets/90s/'+ninetiesImgs[n-1]:currentWorld==='olympus'?'assets/olympus/'+olympusImgs[n-1]:currentWorld==='fairy'?'assets/fairy/'+fairyImgs[n-1]:currentWorld==='christmas'?'assets/christmas/'+christmasImgs[n-1]:currentWorld==='patissserie'?'assets/patissserie/'+patissserieImgs[n-1]:'assets/events/'+sudokuImgs[n-1];
 let sudoku=null, sudokuTimer=null, sudokuLossTimer=null;
 function evSudokuCancelLoss(){if(sudokuLossTimer!==null){clearTimeout(sudokuLossTimer);sudokuLossTimer=null;}}
-function evSudokuLeave(){if(sudoku&&!sudoku.done&&sudoku.start)nwSaveResult(sudoku,false);evSudokuCancelLoss();clearInterval(sudokuTimer);sudoku=null;}
+function evSudokuLeave(){if(sudoku&&!sudoku.done&&sudoku.start&&!sudoku.practiceOpponent)nwSaveResult(sudoku,false);evSudokuCancelLoss();clearInterval(sudokuTimer);sudoku=null;}
 function evSudokuMenu(){evSudokuLeave();applyTheme(worlds[currentWorld].theme);evDisplay(`${evHeader(worlds[currentWorld].name,showRooms)}<section class="difficulty-panel"><button type="button" class="nw-fav-toggle" id="nwFavToggle" aria-pressed="${nwIsFav(currentWorld)}">${nwIsFav(currentWorld)?'♥ FAVOURITED':'♡ ADD TO FAV'}</button><h2>CHOOSE DIFFICULTY</h2><div class="difficulty-list">${Object.keys(difficulties).map(d=>`<button class="theme-button" data-difficulty="${d}">${d.toUpperCase()}</button>`).join('')}</div></section>`);evRoot.querySelectorAll('[data-difficulty]').forEach(b=>b.onclick=()=>evSudokuStart(b.dataset.difficulty));evRoot.querySelector('#nwFavToggle').onclick=()=>{const v=nwToggleFav(currentWorld),b=evRoot.querySelector('#nwFavToggle');b.textContent=v?'♥ FAVOURITED':'♡ ADD TO FAV';b.setAttribute('aria-pressed',String(v));};}
 function shuffled(v){const x=[...v];for(let i=x.length-1;i>0;i--){const k=Math.floor(Math.random()*(i+1));[x[k],x[i]]=[x[i],x[k]]}return x}
 function makeSudokuSolution(){const nums=shuffled([1,2,3,4,5,6,7,8,9]);const rOrder=shuffled([0,1,2]).flatMap(b=>shuffled([0,1,2]).map(n=>b*3+n));const cOrder=shuffled([0,1,2]).flatMap(b=>shuffled([0,1,2]).map(n=>b*3+n));return Array.from({length:81},(_,i)=>nums[(rOrder[Math.floor(i/9)]*3+Math.floor(rOrder[Math.floor(i/9)]/3)+cOrder[i%9])%9])}
@@ -489,12 +563,12 @@ function nwMakeUniquePuzzle(difficulty){
   // Never sacrifice uniqueness just to hit a nominal difficulty clue count.
   return best;
 }
-async function evSudokuStart(difficulty){
+async function evSudokuStart(difficulty,practiceOpponent=null){
   evSudokuLeave();
   applyTheme(worlds[currentWorld].theme);
-  const {answer,puzzle}=nwMakeUniquePuzzle(difficulty);
+  const {answer,puzzle}=practiceOpponent?{answer:[...practiceOpponent.solved_grid].map(Number),puzzle:[...practiceOpponent.puzzle_clues].map(Number)}:nwMakeUniquePuzzle(difficulty);
   const givens=new Set(puzzle.map((n,i)=>n?i:-1).filter(i=>i>=0));
-  sudoku={answer,values:[...puzzle],givens,selected:-1,choice:0,highlight:0,mistakes:0,wrong:new Set(),notes:false,noteMarks:{},history:[],hintsLeft:difficulties[difficulty].hints,start:Date.now(),difficulty,done:false,initialPuzzle:[...puzzle],reportAttempts:0,reportCorrect:0,reportHints:0,reportSaved:false};
+  sudoku={answer,values:[...puzzle],givens,selected:-1,choice:0,highlight:0,mistakes:0,wrong:new Set(),notes:false,noteMarks:{},history:[],hintsLeft:difficulties[difficulty].hints,start:Date.now(),difficulty,done:false,initialPuzzle:[...puzzle],reportAttempts:0,reportCorrect:0,reportHints:0,reportSaved:false,practiceOpponent,doublePractice:!practiceOpponent&&nwDoublePracticeActive};
   evSudokuRender();clearInterval(sudokuTimer);
   sudokuTimer=setInterval(()=>{if(!sudoku||sudoku.done)return;const el=evRoot.querySelector('#evSudoTime');if(el){const time=Math.floor((Date.now()-sudoku.start)/1000);el.textContent=`${String(Math.floor(time/60)).padStart(2,'0')}:${String(time%60).padStart(2,'0')}`}},1000);
 }
@@ -505,7 +579,7 @@ function nwRecordSudokuHistory(s,i){
 function evSudokuRender(){
   const s=sudoku;if(!s)return;
   const pts=difficulties[s.difficulty].points;
-  evDisplay(`${evHeader(worlds[currentWorld].name,evSudokuMenu)}<div class="ev-sudo-shell"><div class="ev-sudo-stats"><div><small>DIFFICULTY</small><strong>${s.difficulty.toUpperCase()}</strong></div><div><small>MISTAKES</small><strong id="evSudoErrors">0 / 3</strong></div><div><small>TIME</small><strong id="evSudoTime">00:00</strong></div><div><small>POINTS</small><strong>—</strong></div></div><div class="ev-sudoku-grid" id="evSudoBoard">${s.values.map((n,i)=>`<button class="ev-sudoku-cell" data-cell="${i}" aria-label="Sudoku row ${Math.floor(i/9)+1} column ${i%9+1}">${n?sudokuSymbol(n):''}</button>`).join('')}</div><div class="ev-sudoku-tray" aria-label="Select Sudoku symbol">${(currentWorld==='cakefail'?cakefailImgs:currentWorld==='baggagehell'?baggagehellImgs:currentWorld==='donttakewater'?donttakewaterImgs:currentWorld==='balloonwrong'?balloonwrongImgs:currentWorld==='underthebed'?underthebedImgs:currentWorld==='unpreparedchristmas'?unpreparedchristmasImgs:currentWorld==='dontunwrap'?dontunwrapImgs:currentWorld==='solarsick'?solarsickImgs:currentWorld==='deepsea'?deepseaImgs:currentWorld==='bodyparts'?bodypartsImgs:currentWorld==='diner'?dinerImgs:currentWorld==='alien'?alienImgs:currentWorld==='ugly'?uglyImgs:currentWorld==='weird'?weirdImgs:currentWorld==='nineties'?ninetiesImgs:currentWorld==='olympus'?olympusImgs:currentWorld==='fairy'?fairyImgs:currentWorld==='christmas'?christmasImgs:currentWorld==='patissserie'?patissserieImgs:sudokuImgs).map((x,i)=>`<button data-symbol="${i+1}" aria-label="Choose symbol ${i+1}">${sudokuSymbol(i+1)}<small class="ev-sudo-remain"></small></button>`).join('')}</div><div class="ev-sudo-tools ev-sudo-tools-clean">${[['evSudoHint','✦','HINT'],['evSudoNotes','✎','NOTES'],['evSudoUndo','↶','UNDO'],['evSudoErase','⌫','ERASE']].map(([id,symbol,label])=>`<button type="button" id="${id}" class="ev-sudo-tool" aria-label="${label}" title="${label}"><span class="ev-sudo-tool-icon" aria-hidden="true">${symbol}</span><span class="ev-sudo-tool-label">${label}</span></button>`).join('')}</div><p class="ev-note">Select a tile, then choose a symbol. Tap a symbol first to light up every matching tile.</p></div>`,evSudokuMenu);
+  evDisplay(`${evHeader(s.practiceOpponent?'BATTLE PRACTICE':s.doublePractice?'DOUBLE TROUBLE TEST':worlds[currentWorld].name,s.practiceOpponent?nwBattleReturn:s.doublePractice?nwDoublePracticeScreen:evSudokuMenu)}${s.practiceOpponent?`<p class="nw-practice-label">PRACTICE · ${s.difficulty.toUpperCase()} · HUMAN-PLAYED RECORDED CHALLENGER</p>`:''}<div class="ev-sudo-shell"><div class="ev-sudo-stats"><div><small>DIFFICULTY</small><strong>${s.difficulty.toUpperCase()}</strong></div><div><small>MISTAKES</small><strong id="evSudoErrors">0 / 3</strong></div><div><small>TIME</small><strong id="evSudoTime">00:00</strong></div><div><small>POINTS</small><strong>—</strong></div></div><div class="ev-sudoku-grid" id="evSudoBoard">${s.values.map((n,i)=>`<button class="ev-sudoku-cell" data-cell="${i}" aria-label="Sudoku row ${Math.floor(i/9)+1} column ${i%9+1}">${n?sudokuSymbol(n):''}</button>`).join('')}</div><div class="ev-sudoku-tray" aria-label="Select Sudoku symbol">${(currentWorld==='cakefail'?cakefailImgs:currentWorld==='baggagehell'?baggagehellImgs:currentWorld==='donttakewater'?donttakewaterImgs:currentWorld==='balloonwrong'?balloonwrongImgs:currentWorld==='underthebed'?underthebedImgs:currentWorld==='unpreparedchristmas'?unpreparedchristmasImgs:currentWorld==='dontunwrap'?dontunwrapImgs:currentWorld==='solarsick'?solarsickImgs:currentWorld==='deepsea'?deepseaImgs:currentWorld==='bodyparts'?bodypartsImgs:currentWorld==='diner'?dinerImgs:currentWorld==='alien'?alienImgs:currentWorld==='ugly'?uglyImgs:currentWorld==='weird'?weirdImgs:currentWorld==='nineties'?ninetiesImgs:currentWorld==='olympus'?olympusImgs:currentWorld==='fairy'?fairyImgs:currentWorld==='christmas'?christmasImgs:currentWorld==='patissserie'?patissserieImgs:sudokuImgs).map((x,i)=>`<button data-symbol="${i+1}" aria-label="Choose symbol ${i+1}">${sudokuSymbol(i+1)}<small class="ev-sudo-remain"></small></button>`).join('')}</div><div class="ev-sudo-tools ev-sudo-tools-clean">${[['evSudoHint','✦','HINT'],['evSudoNotes','✎','NOTES'],['evSudoUndo','↶','UNDO'],['evSudoErase','⌫','ERASE']].map(([id,symbol,label])=>`<button type="button" id="${id}" class="ev-sudo-tool" aria-label="${label}" title="${label}"><span class="ev-sudo-tool-icon" aria-hidden="true">${symbol}</span><span class="ev-sudo-tool-label">${label}</span></button>`).join('')}</div><p class="ev-note">Select a tile, then choose a symbol. Tap a symbol first to light up every matching tile.</p></div>`,evSudokuMenu);
   // Safari-safe Sudoku sizing: content must never determine an empty row's height.
   // Match the rendered grid's border-box height to its actual width.
   evSudokuKeepBoardSquare();
@@ -584,7 +658,7 @@ function evSudokuPlace(n){
   s.wrong.delete(i);evSudokuPaint();evSudokuCheck();
 }
 function sudokuSymbol(n){return (currentWorld==='halloween'||currentWorld==='patissserie'||currentWorld==='christmas'||currentWorld==='fairy'||currentWorld==='olympus'||currentWorld==='nineties'||currentWorld==='weird'||currentWorld==='ugly'||currentWorld==='alien'||currentWorld==='diner'||currentWorld==='bodyparts'||currentWorld==='deepsea'||currentWorld==='solarsick'||currentWorld==='dontunwrap'||currentWorld==='unpreparedchristmas'||currentWorld==='underthebed'||currentWorld==='balloonwrong'||currentWorld==='donttakewater'||currentWorld==='baggagehell'||currentWorld==='cakefail')?`<img src="${sudokuSrc(n)}" alt="${n}">`:`<span class="number-symbol">${n}</span>`;}
-function evSudokuEnd(won){const s=sudoku;if(!s)return;nwSaveResult(s,won);applyTheme(worlds[currentWorld].theme);const elapsed=Math.floor((Date.now()-s.start)/1000);const duration=`${Math.floor(elapsed/60)}:${String(elapsed%60).padStart(2,'0')}`;const pts=won?difficulties[s.difficulty].points+([100,70,30][s.mistakes]||0):0;if(won&&!s.pointsCredited){nwAwardPoints(pts);s.pointsCredited=true;}if(won)nwCaptureRun(s,pts);evDisplay(`${evHeader(worlds[currentWorld].name,showRooms)}<section class="result-panel"><div class="result-mark">${won?'✦':'×'}</div><h2>${won?'Puzzle Completed!':'Puzzle Not Completed'}</h2>${won?`<div class="result-score"><small>TOTAL POINTS</small><strong>${pts.toLocaleString()}</strong></div>`:'<p>Three mistakes. Try again!</p>'}<div class="result-stats"><div>DIFFICULTY<strong>${s.difficulty.toUpperCase()}</strong></div><div>TIME<strong>${duration}</strong></div><div>MISTAKES<strong>${s.mistakes} / 3</strong></div></div><div class="result-actions"><button class="theme-button" id="evSudoAgain">${won?'PLAY AGAIN':'RETRY'}</button><button class="theme-button" id="evSudoBack">BACK TO ROOMS</button></div>${nwRecordingControls()}</section>`);nwBindRecordingControls();evRoot.querySelector('#evSudoAgain').onclick=()=>evSudokuStart(s.difficulty);evRoot.querySelector('#evSudoBack').onclick=()=>showRooms();}
+function evSudokuEnd(won){const s=sudoku;if(!s)return;if(!s.practiceOpponent)nwSaveResult(s,won);applyTheme(worlds[currentWorld].theme);const elapsed=Math.floor((Date.now()-s.start)/1000);const duration=`${Math.floor(elapsed/60)}:${String(elapsed%60).padStart(2,'0')}`;const pts=won?difficulties[s.difficulty].points+([100,70,30][s.mistakes]||0):0;if(s.practiceOpponent){nwBattleFinish(s,won,pts,elapsed);return;}if(won&&!s.pointsCredited){nwAwardPoints(pts);s.pointsCredited=true;}if(won)nwCaptureRun(s,pts);if(s.doublePractice){nwDoublePracticeAfterSudoku(s,won,pts);return;}evDisplay(`${evHeader(worlds[currentWorld].name,showRooms)}<section class="result-panel"><div class="result-mark">${won?'✦':'×'}</div><h2>${won?'Puzzle Completed!':'Puzzle Not Completed'}</h2>${won?`<div class="result-score"><small>TOTAL POINTS</small><strong>${pts.toLocaleString()}</strong></div>`:'<p>Three mistakes. Try again!</p>'}<div class="result-stats"><div>DIFFICULTY<strong>${s.difficulty.toUpperCase()}</strong></div><div>TIME<strong>${duration}</strong></div><div>MISTAKES<strong>${s.mistakes} / 3</strong></div></div><div class="result-actions"><button class="theme-button" id="evSudoAgain">${won?'PLAY AGAIN':'RETRY'}</button><button class="theme-button" id="evSudoBack">BACK TO ROOMS</button></div>${nwRecordingControls()}</section>`);nwBindRecordingControls();evRoot.querySelector('#evSudoAgain').onclick=()=>evSudokuStart(s.difficulty);evRoot.querySelector('#evSudoBack').onclick=()=>showRooms();}
 
 function evSudokuCheck(){
   const s=sudoku;if(!s||s.done||!s.values.every((v,i)=>v===s.answer[i]))return;
