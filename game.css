@@ -3099,3 +3099,43 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-modal-primary{border:1px solid #ffe3e5;background:linear-gradient(#ffacb8,#f36b78);color:#36111d;box-shadow:0 4px 0 #7b3049}
 #game .nw-battle-finish .nw-battle-result-opponent{margin:17px auto}
 @media(prefers-reduced-motion:reduce){#game .nw-match-dots i{animation:none}#game .nw-opponent-track>div{transition:none}}
+
+
+/* Premium ruby-and-gold Monthly Battle presentation — production-facing UI only */
+#game.theme-hub .nw-battle-hub,#game .nw-battle-finish{position:relative;isolation:isolate;overflow:hidden;width:min(100% - 20px,470px);margin:16px auto 28px;padding:26px 20px 30px;border:2px solid #d99b72;border-radius:26px;color:#ffe9e7;background:radial-gradient(ellipse at 50% 3%,#70374b 0%,#3b1d2a 42%,#200f1b 100%);box-shadow:inset 0 0 0 5px #472438,inset 0 0 0 7px #9c5b65aa,0 15px 40px #10050bb3;text-align:center}
+#game .nw-battle-hub:before,#game .nw-battle-finish:before{content:'✦       ✧        ✦';position:absolute;inset:8px 0 auto;color:#f4bd8a80;letter-spacing:22px;pointer-events:none;font-size:10px}
+#game .nw-hub-ornament{font-size:34px;letter-spacing:.04em;color:#f8c78f;filter:drop-shadow(0 2px 10px #e88b81b0);margin:19px auto 4px}
+#game .nw-hub-laurel{font-size:26px;line-height:1;color:#eebf85;transform:rotate(-15deg)}
+#game .nw-battle-hub h2{font:800 clamp(25px,7.5vw,38px)/1.14 Georgia,serif;color:#ffe0a8;letter-spacing:.045em;text-shadow:0 2px 0 #6d2d40,0 0 25px #f8a6a655;margin:6px 0 15px}
+#game .nw-battle-hub h2 span{display:block;font-size:1.3em;letter-spacing:.09em}
+#game .nw-battle-hub .nw-season-pill{width:fit-content;max-width:100%;margin:0 auto 21px;background:#65374a;border:1px solid #d5a47e;border-radius:999px;padding:9px 17px;font-size:10px;font-weight:900;letter-spacing:.1em;color:#ffe4bd}
+#game .nw-battle-rate-card{background:linear-gradient(145deg,#40202f 0%,#2e1726 100%);border:1px solid #d89b7a;border-radius:16px;box-shadow:inset 0 0 0 3px #5b3042,0 7px 22px #0f040b66;padding:16px 10px 15px;margin:15px 0 24px;position:relative}
+#game .nw-battle-rate-card:after{content:'✦';position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);color:#ffe0a7;background:#40202f;border:1px solid #d89b7a;border-radius:50%;width:20px;height:20px;line-height:17px;font-size:13px}
+#game .nw-rate-eyebrow{display:block;color:#ffcebd;font-size:10px;font-weight:900;letter-spacing:.13em}
+#game .nw-rate-row{display:flex;align-items:center;justify-content:center;gap:15px;margin:6px 0 6px}
+#game .nw-rate-row strong{font:800 clamp(43px,14vw,68px)/1.1 Georgia,serif;color:#ffe5b7;text-shadow:0 3px 5px #13080c}
+#game .nw-rate-wreath{font:48px Georgia,serif;color:#d3a46b;transform:rotate(30deg)}
+#game .nw-rate-wreath-right{transform:scaleX(-1) rotate(30deg)}
+#game .nw-rate-record{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;color:#ffe0e1;font-size:11px;font-weight:800;letter-spacing:.04em}
+#game .nw-rate-record i{font-style:normal;color:#d8a672}
+#game .nw-battle-hub .nw-battle-start-button,#game .nw-battle-finish .nw-battle-start-button{width:100%;margin:8px auto 0;max-width:350px;min-height:62px;font:800 16px Georgia,serif;letter-spacing:.035em;border:2px solid #ffe0ba;border-radius:19px;background:linear-gradient(#ffb9bd,#e66b83 52%,#bc415e);box-shadow:inset 0 2px #fff4dc88,0 6px 0 #7f314b,0 10px 24px #12060fbb;color:#491c2b}
+#game .nw-hub-footer{margin:22px auto 4px;font-size:9px;color:#edb6c0;font-weight:800;letter-spacing:.07em}
+#game .nw-hub-footer span{color:#e8b980;margin:0 5px}
+#game .nw-battle-finish{padding-top:17px;animation:nwBattleAppear .35s ease-out both}
+#game .nw-victory-crown{font-size:62px;line-height:1.2;color:#ffdf9d;text-shadow:0 0 26px #ffb47e99;animation:nwCrownFloat 2.7s ease-in-out infinite}
+#game .nw-battle-finish.nw-defeat .nw-victory-crown{color:#e0a1b2}
+#game .nw-result-kicker{color:#f3bcc5;letter-spacing:.16em;font-size:10px;font-weight:900}
+#game .nw-battle-finish h2.nw-victory-title{font:900 clamp(36px,11vw,56px)/1.08 Georgia,serif;color:#ffe3a8;text-shadow:0 4px 0 #71334b,0 0 25px #ffbb8c77;margin:10px auto 12px;letter-spacing:.015em}
+#game .nw-battle-finish .nw-battle-result-opponent{flex-direction:row;justify-content:center;gap:12px;font-size:12px}
+#game .nw-battle-finish .nw-battle-result-avatar{width:52px;height:52px}
+#game .nw-battle-finish .nw-practice-scores{margin:14px auto}
+#game .nw-battle-finish .nw-practice-scores>div{border:1px solid #aa7481;background:#4a2938;gap:4px}
+#game .nw-battle-finish .nw-battle-rate-card{margin:18px 0 21px}
+#game .nw-battle-result-actions{display:grid;gap:11px;max-width:350px;margin:auto}
+#game .nw-battle-fine-button{min-height:46px;border:1px solid #bb889b;border-radius:15px;background:linear-gradient(#64394b,#422337);color:#ffeced;font-weight:900;letter-spacing:.08em;cursor:pointer}
+#game .nw-victory-sparkles{display:flex;justify-content:space-between;height:14px;color:#ffdf9e;opacity:.9;font-size:21px}
+#game .nw-victory-sparkles span:nth-child(even){color:#fc9aab;transform:translateY(23px)}
+@keyframes nwBattleAppear{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes nwCrownFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@media(max-width:360px){#game.theme-hub .nw-battle-hub,#game .nw-battle-finish{padding:22px 12px}#game .nw-rate-wreath{font-size:31px}#game .nw-rate-row{gap:8px}#game .nw-hub-footer{font-size:8px}}
+@media(prefers-reduced-motion:reduce){#game .nw-battle-finish,#game .nw-victory-crown{animation:none}}
