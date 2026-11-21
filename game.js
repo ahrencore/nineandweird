@@ -605,23 +605,46 @@ function nwTripleCreate(stage){
    for(const pos of nwTripleShuffle(positions,random).slice(0,target))tiles.push({id:id++,symbol:0,layer,...pos});
  }
  while(tiles.length%3)tiles.pop();
- // Any order from upper layers down is legal; interleave up to 3 triples
- // in a batch to increase choice without destroying the known clear path.
- const order=[];for(let layer=depth-1;layer>=0;layer--)order.push(...nwTripleShuffle(tiles.filter(t=>t.layer===layer),random));
- const types=Math.min(pool.length,hard?12:Math.min(9,5+Math.floor(stage/5)));
+ // Mystery piles share the same symbol pool, but their lower faces are concealed.
+ const stackCount=stage<4?0:hard?Math.min(4,2+Math.floor(stage/14)):stage<20?2:4;
+ const stackDepth=hard?Math.min(15,7+Math.floor(stage/8)):Math.min(10,4+Math.floor(stage/12));
+ for(let pile=0;pile<stackCount;pile++)for(let layer=0;layer<stackDepth;layer++)tiles.push({id:id++,symbol:0,layer,stack:pile,x:0,y:0});
+ while(tiles.length%3)tiles.pop();
+ // Choose a legal reveal order, interleaving the central board and the blind piles.
+ const order=[],remaining=tiles.slice();
+ while(remaining.length){
+   const free=remaining.filter(t=>nwTripleFree(t,remaining));
+   const t=free[Math.floor(random()*free.length)];order.push(t);remaining.splice(remaining.indexOf(t),1);
+ }
+ const types=Math.min(pool.length,hard?Math.min(18,12+Math.floor(stage/15)):Math.min(9,6+Math.floor(stage/3)));
  const selected=nwTripleShuffle(pool.slice(),random).slice(0,types);
  if(hard)rooms.forEach((r,i)=>{if(!selected.some(v=>Math.floor(v/9)===r))selected[i]=r*9+Math.floor(random()*9)});
- for(let i=0;i<order.length;i+=9){
-   const size=Math.min(9,order.length-i),picks=nwTripleShuffle(selected.slice(),random).slice(0,size/3);
-   const symbols=nwTripleShuffle(picks.flatMap(v=>[v,v,v]),random);
-   for(let j=0;j<size;j++)order[i+j].symbol=symbols[j];
+ // Construct a solution while keeping several incomplete triples in the tray.
+ // Never exceed six unmatched tiles, and never require a booster to clear.
+ let toOpen=order.length/3;const pending=[];let occupied=0;
+ const pressure=stage<4?3:hard?6:5;
+ for(const t of order){
+   const unused=selected.filter(v=>!pending.some(p=>p.symbol===v));
+   const canOpen=toOpen>0&&occupied<pressure&&unused.length>0&&!(occupied===5&&!pending.some(p=>p.count===2));
+   const closeable=pending.filter(p=>p.count===2);
+   let p;
+   if(canOpen&&(occupied<pressure-1||!pending.length||random()<.7)){
+     p={symbol:unused[Math.floor(random()*unused.length)],count:1};pending.push(p);toOpen--;occupied++;t.symbol=p.symbol;
+   }else{
+     const choices=occupied>=6&&closeable.length?closeable:pending;
+     p=choices[Math.floor(random()*choices.length)];
+     // At six singles, a second tile would overflow. Prevent this by always
+     // keeping a pair ready before reaching six occupied slots.
+     t.symbol=p.symbol;p.count++;if(p.count===3){pending.splice(pending.indexOf(p),1);occupied-=2}else occupied++;
+   }
  }
- return {stage,hard,tiles,tray:[],used:{undo:false,shuffle:false,magic:false},history:[],won:false,lost:false,room:nwTripleArtRooms[rooms[0]],started:Date.now(),week:nwTripleWeek(),practice:!nwTripleInEvent(),version:2};
+
+ return {stage,hard,stackCount,tiles,tray:[],used:{undo:false,shuffle:false,magic:false},history:[],won:false,lost:false,room:nwTripleArtRooms[rooms[0]],started:Date.now(),week:nwTripleWeek(),practice:!nwTripleInEvent(),version:2};
 }
-function nwTripleAvailable(tile){
- if(!nwTriple)return false;
- return !nwTriple.tiles.some(other=>other.id!==tile.id&&other.layer>tile.layer&&Math.abs(other.x-tile.x)<17.5&&Math.abs(other.y-tile.y)<17);
+function nwTripleFree(tile,tiles){
+ return !tiles.some(other=>other.id!==tile.id&&other.layer>tile.layer&&(tile.stack!=null?other.stack===tile.stack:other.stack==null&&Math.abs(other.x-tile.x)<17.5&&Math.abs(other.y-tile.y)<17));
 }
+function nwTripleAvailable(tile){return !!nwTriple&&nwTripleFree(tile,nwTriple.tiles)}
 function nwTriplePracticeData(){const data=nwRead('nineweird-triple-practice-v2',null);return data?.week===nwTripleWeek()?data:{week:nwTripleWeek(),stage:1,best:0};}
 function nwTripleSessionData(){return nwTripleInEvent()?nwTripleData():nwTriplePracticeData()}
 function nwTriplePersist(){
@@ -696,15 +719,20 @@ function nwTripleHome(){
 function nwTripleBegin(stage,resume=false){const d=nwTripleSessionData();const a=d.active;nwTriple=resume&&a?.version===2&&a.stage===stage&&!a.won&&!a.lost&&a.week===nwTripleWeek()&&a.practice===!nwTripleInEvent()?a:nwTripleCreate(stage);nwTripleDraw()}
 function nwTripleDraw(){
  const s=nwTriple;if(!s)return;if(s.week!==nwTripleWeek()||s.practice===nwTripleInEvent()){nwTripleHome();return}nwTriplePersist();applyTheme('hub');evRoot.classList.add('nw-triple-theme');
- const tiles=s.tiles.slice().sort((a,b)=>a.layer-b.layer).map(t=>{
+ const tiles=s.tiles.filter(t=>t.stack==null).sort((a,b)=>a.layer-b.layer).map(t=>{
    const enabled=nwTripleAvailable(t);
    return `<button type="button" class="nw-triple-tile ${enabled?'':'covered'}" data-tile="${t.id}" aria-label="${enabled?'Select':'Covered'} tile" ${enabled?'':'disabled'} style="left:${t.x}%;top:${t.y}%;z-index:${10+t.layer}">${nwTripleArt(t.symbol)}</button>`;
  }).join('');
+ const piles=[...new Set(s.tiles.filter(t=>t.stack!=null).map(t=>t.stack))].sort((a,b)=>a-b);
+ const pileRail=side=>`<div class="nw-triple-pile-rail">${piles.filter(i=>i%2===side).map(i=>{
+   const pile=s.tiles.filter(t=>t.stack===i).sort((a,b)=>b.layer-a.layer),top=pile[0];
+   return `<div class="nw-triple-pile"><button type="button" class="nw-triple-pile-top ${pile.length>1?'stacked':''}" data-tile="${top.id}" aria-label="Mystery stack, ${pile.length} tiles">${nwTripleArt(top.symbol)}</button><small>× ${pile.length}</small></div>`;
+ }).join('')}</div>`;
  const tray=Array.from({length:7},(_,i)=>`<span class="nw-triple-tray-slot">${s.tray[i]?nwTripleArt(s.tray[i].symbol):''}</span>`).join('');
  const action=s.won?`<div class="nw-triple-end"><div class="nw-triple-party">${nwTripleMascots()}</div><div class="nw-triple-sparks" aria-hidden="true">⋆˚<span class="nw-triple-spiral"></span>｡</div><h2>STAGE ${s.stage} CLEARED!</h2><p>${nwTripleIsHard(s.stage+1)?'HARD STAGE UP NEXT!':'BRILLIANTLY WEIRD!'}</p><button id="nwTripleNext" class="nw-triple-main-btn">NEXT STAGE ▶</button><button id="nwTripleBack" class="nw-triple-back-btn">BACK TO EVENT</button></div>`:s.lost?`<div class="nw-triple-end"><h2>TRAY FULL!</h2><p>ONE MORE TRY?</p><button id="nwTripleRetry" class="nw-triple-main-btn">RETRY STAGE ↻</button></div>`:'';
  evDisplay(`${evHeader('TRIPLE TROUBLE',nwTripleHome)}<section class="nw-triple nw-triple-play">
  <div class="nw-triple-stagehead"><div><small>${s.hard?'🔥 HARD STAGE':'TRIPLE TROUBLE'}</small><strong>STAGE ${s.stage}</strong></div><span>∞</span></div>
- <div class="nw-triple-board" aria-label="Layered tile matching board">${tiles}</div>
+ <div class="nw-triple-board-wrap ${s.stackCount?'has-piles':''}">${s.stackCount?pileRail(0):''}<div class="nw-triple-board" aria-label="Layered tile matching board">${tiles}</div>${s.stackCount?pileRail(1):''}</div>
  <div class="nw-triple-tray">${tray}</div>
  <div class="nw-triple-booster-row">${[['undo','↶','UNDO'],['shuffle','⤨','SHUFFLE'],['magic','<span class="nw-triple-spiral"></span>','MAGIC CLEAR']].map(([key,icon,label])=>`<button class="nw-triple-booster" data-booster="${key}" ${s.used[key]||(key==='undo'&&!s.history.length)?'disabled':''}><span>${icon}</span><b>${label}</b><i>${s.used[key]?'0':'1'}</i></button>`).join('')}</div>
  ${action}</section>`);
