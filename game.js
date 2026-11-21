@@ -416,7 +416,12 @@ function nwBattleStart(){
   if(!opponent)return;
   nwLastBattleProfile=profile.id;nwLastBattleRun=opponent.recording_id;
   const previousWorld=currentWorld;
-  nwBattleActive={opponent:{...opponent,display_name:profile.name,avatar:profile.avatar},worldBefore:previousWorld,profile};
+  // Fixed skill tier per profile; playback timing is chosen before play.
+  const tier=[3,2,3,1,0,0,1,0,1,2,1,0,2,1,0,1,2,0,2,3][profile.id];
+  const bounds={easy:[[240,360],[120,240],[60,120]],medium:[[360,540],[240,360],[120,240]],hard:[[540,780],[360,540],[180,360]],expert:[[720,1080],[480,720],[240,480]],extreme:[[900,1500],[600,900],[300,600]]};
+  const range=bounds[difficulty][tier];
+  const playback=range?Math.max(opponent.elapsed_seconds,Math.round(range[0]+Math.random()*(range[1]-range[0]))):opponent.elapsed_seconds;
+  nwBattleActive={opponent:{...opponent,playback_seconds:playback,display_name:profile.name,avatar:profile.avatar},worldBefore:previousWorld,profile};
   currentWorld=nwRandomBattleRoom();
   nwBattleReveal(nwBattleActive.opponent,profile,previousWorld);
 }
@@ -432,7 +437,7 @@ function nwBattleFinish(s,won,points,elapsed){
   s.battleResultSaved=true;
   const opponent=s.practiceOpponent;
   const playerScore=won?points:0;
-  const outcome=won?(elapsed<opponent.elapsed_seconds+2?'WIN':elapsed===opponent.elapsed_seconds+2?'DRAW':'LOSS'):'LOSS';
+  const outcome=won?(elapsed<(opponent.playback_seconds??opponent.elapsed_seconds)+2?'WIN':elapsed===(opponent.playback_seconds??opponent.elapsed_seconds)+2?'DRAW':'LOSS'):'LOSS';
   const history=nwBattlePracticeHistory();
   history.push({at:Date.now(),difficulty:s.difficulty,outcome,playerScore,opponentScore:opponent.points,seconds:elapsed,opponent:opponent.display_name,opponentId:opponent.profile_id});
   nwWrite(nwBattlePracticeKey,history.slice(-1000));
@@ -459,7 +464,7 @@ function nwBattleProgressTick(s){
   const seconds=(Date.now()-s.start)/1000;
   // Estimated visual timeline. Old recordings include finish time and mistake
   // totals, but NOT actual per-move timing; this is not a literal input replay.
-  const fraction=Math.max(0,Math.min(1,(seconds-2)/Math.max(1,opp.elapsed_seconds)));
+  const fraction=Math.max(0,Math.min(1,(seconds-2)/Math.max(1,opp.playback_seconds??opp.elapsed_seconds)));
   const eased=fraction<=0?0:fraction<1?Math.max(0,Math.min(.99,fraction*0.91+.04*Math.sin(fraction*10)*Math.sin(Math.PI*fraction))):1;
   const bar=evRoot.querySelector('#nwOpponentProgress');
   if(bar){bar.style.width=(eased*100).toFixed(1)+'%';bar.parentElement.setAttribute('aria-valuenow',String(Math.round(eased*100)))}
@@ -510,7 +515,7 @@ function nwShowEvents(){
   evDisplay(`${evHeader('EVENTS',showCategories)}<section class="nw-events-panel">
     <p class="nw-events-intro">A little Sudoku. A little chaos. Something for every day.</p>
     <div class="nw-event-schedule"><span>MON–WED <b>TRIPLE TROUBLE</b></span><span>THU <b>TEAM UP</b></span><span>FRI–SUN <b>DOUBLE TROUBLE</b></span></div>
-    <button class="nw-event-tile" id="nwEventShelf"><span class="nw-event-symbol" aria-hidden="true">🧸</span><span><strong>TRIPLE TROUBLE</strong><small>Three-day tile matching · Clear triples, climb stages.</small><em>${nwEventStatus('shelf')}</em></span><span class="nw-event-arrow" aria-hidden="true">›</span></button>
+    <button class="nw-event-tile" id="nwEventShelf"><span class="nw-event-symbol nw-triple-event-icon" aria-hidden="true"><img src="assets/ugly/02_chomps.png" alt=""></span><span><strong>TRIPLE TROUBLE</strong><small>Three-day tile matching · Clear triples, climb stages.</small><em>${nwEventStatus('shelf')}</em></span><span class="nw-event-arrow" aria-hidden="true">›</span></button>
     <button class="nw-event-tile" id="nwEventDouble"><span class="nw-event-symbol" aria-hidden="true">⚔️</span><span><strong>DOUBLE TROUBLE</strong><small>Friday–Sunday · 2v2 team Sudoku. Thursday is partner day.</small><em>${nwEventStatus('double')}</em></span><span class="nw-event-arrow" aria-hidden="true">›</span></button>
     <button class="nw-event-tile" id="nwEventWeekly"><span class="nw-event-symbol" aria-hidden="true">🏆</span><span><strong>WEEKLY LEADERBOARD</strong><small>Regular Sudoku scores from all rooms and difficulties.</small><em>${nwEventStatus('weekly')}</em></span><span class="nw-event-arrow" aria-hidden="true">›</span></button>
 
@@ -581,28 +586,52 @@ function nwTripleIsHard(n){return n>=7&&[0,4,7].includes(n%10)}
 function nwTripleTileSrc(type){const room=nwTripleArtRooms[Math.floor(type/9)%nwTripleArtRooms.length];const dir=nwTripleArtFiles[room];return dir[0]+dir[1][type%9]}
 function nwTripleRng(seed){let n=seed>>>0;return()=>{n=(Math.imul(n,1664525)+1013904223)>>>0;return n/4294967296}}
 function nwTripleShuffle(arr,rng){for(let i=arr.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}return arr}
+// All layers use the same footprint grid and tile geometry as the CSS.
+// A seeded removal order assigns complete triples in groups, so every board
+// has a valid path with at most seven tray slots needed along that path.
 function nwTripleCreate(stage){
- const hard=nwTripleIsHard(stage);const random=nwTripleRng((stage*405487+Number(nwTripleWeek().replaceAll('-',''))*17)>>>0);
- const waves=Math.min(9,Math.max(3,3+Math.floor((stage-1)/6)+(hard?2:0)));
- const artRoom= nwTripleArtRooms[Math.floor(random()*nwTripleArtRooms.length)];
- const roomIndex=nwTripleArtRooms.indexOf(artRoom),pool=Array.from({length:9},(_,i)=>roomIndex*9+i);
- // Each wave is made from two complete triples. Clearing waves top-to-bottom
- // is a guaranteed winning path even with the seven-position tray.
- const tiles=[];
- for(let layer=0;layer<waves;layer++){
-   const picks=nwTripleShuffle(pool.slice(),random).slice(0,2),symbols=nwTripleShuffle(picks.flatMap(n=>[n,n,n]),random);
-   for(let k=0;k<6;k++){
-     const x=(k%3)*24+14+(layer%3)*3+((Math.floor(k/3)+layer)%2)*4;
-     const y=Math.floor(k/3)*21+23+(layer%4)*2;
-     tiles.push({id:layer*6+k,symbol:symbols[k],layer,x,y});
-   }
+ const hard=nwTripleIsHard(stage),random=nwTripleRng((stage*405487+Number(nwTripleWeek().replaceAll('-',''))*17)>>>0);
+ const rooms=nwTripleShuffle(nwTripleArtRooms.map((_,i)=>i),random).slice(0,hard?Math.min(4,2+Math.floor(stage/20)):1);
+ const pool=rooms.flatMap(r=>Array.from({length:9},(_,i)=>r*9+i));
+ const depth=Math.min(7,3+Math.floor((stage-1)/9)+(hard?2:0));
+ const masks=[['01110','11111','11111','11111','01110'],['00100','01110','11111','01110','00100'],['11011','11111','01110','11111','11011'],['11100','11110','01111','00111','00110'],['11111','01110','00100','01110','11111'],['01111','11111','11110','11100','01000']];
+ const tiles=[];let id=0;
+ for(let layer=0;layer<depth;layer++){
+   const mask=masks[(stage+layer*2)%masks.length];
+   const positions=[];
+   for(let row=0;row<5;row++)for(let col=0;col<5;col++)if(mask[row][col]==='1')positions.push({x:3+col*18+(layer%2)*5,y:4+row*17+(layer%3)*3});
+   const target=Math.min(positions.length, (layer===0?18:12)+Math.floor(stage/12)+(hard?3:0));
+   // Keep an irregular silhouette; vary count and placement by layer.
+   for(const pos of nwTripleShuffle(positions,random).slice(0,target))tiles.push({id:id++,symbol:0,layer,...pos});
  }
- return {stage,hard,tiles,tray:[],used:{undo:false,shuffle:false,magic:false},history:[],won:false,lost:false,room:artRoom,started:Date.now()};
+ while(tiles.length%3)tiles.pop();
+ // Any order from upper layers down is legal; interleave up to 3 triples
+ // in a batch to increase choice without destroying the known clear path.
+ const order=[];for(let layer=depth-1;layer>=0;layer--)order.push(...nwTripleShuffle(tiles.filter(t=>t.layer===layer),random));
+ const types=Math.min(pool.length,hard?12:Math.min(9,5+Math.floor(stage/5)));
+ const selected=nwTripleShuffle(pool.slice(),random).slice(0,types);
+ if(hard)rooms.forEach((r,i)=>{if(!selected.some(v=>Math.floor(v/9)===r))selected[i]=r*9+Math.floor(random()*9)});
+ for(let i=0;i<order.length;i+=9){
+   const size=Math.min(9,order.length-i),picks=nwTripleShuffle(selected.slice(),random).slice(0,size/3);
+   const symbols=nwTripleShuffle(picks.flatMap(v=>[v,v,v]),random);
+   for(let j=0;j<size;j++)order[i+j].symbol=symbols[j];
+ }
+ return {stage,hard,tiles,tray:[],used:{undo:false,shuffle:false,magic:false},history:[],won:false,lost:false,room:nwTripleArtRooms[rooms[0]],started:Date.now(),week:nwTripleWeek(),practice:!nwTripleInEvent(),version:2};
 }
 function nwTripleAvailable(tile){
  if(!nwTriple)return false;
- return !nwTriple.tiles.some(other=>other.id!==tile.id&&other.layer>tile.layer&&Math.abs(other.x-tile.x)<18&&Math.abs(other.y-tile.y)<15);
+ return !nwTriple.tiles.some(other=>other.id!==tile.id&&other.layer>tile.layer&&Math.abs(other.x-tile.x)<17.5&&Math.abs(other.y-tile.y)<17);
 }
+function nwTriplePracticeData(){const data=nwRead('nineweird-triple-practice-v2',null);return data?.week===nwTripleWeek()?data:{week:nwTripleWeek(),stage:1,best:0};}
+function nwTripleSessionData(){return nwTripleInEvent()?nwTripleData():nwTriplePracticeData()}
+function nwTriplePersist(){
+ const s=nwTriple;if(!s||s.week!==nwTripleWeek()||s.practice===nwTripleInEvent())return;
+ const d=nwTripleSessionData();
+ if(s.won){d.best=Math.max(d.best,s.stage);d.stage=Math.max(d.stage,s.stage+1);delete d.active;}
+ else {d.active=s;d.stage=s.stage;}
+ if(s.practice)nwWrite('nineweird-triple-practice-v2',d);else nwTripleSave(d);
+}
+function nwTripleMascots(){return [1,4,6].map(i=>`<img src="assets/ugly/${uglyImgs[i]}" alt="" draggable="false">`).join('')}
 function nwTripleArt(symbol){return `<img src="${nwTripleTileSrc(symbol)}" alt="" draggable="false">`}
 function nwTripleRemember(){
  const s=nwTriple;s.history.push({tiles:s.tiles.map(t=>({...t})),tray:s.tray.slice()});
@@ -614,7 +643,7 @@ function nwTripleChoose(id){
  nwTripleRemember();const [tile]=s.tiles.splice(i,1);s.tray.push(tile);
  const count=s.tray.filter(t=>t.symbol===tile.symbol);
  if(count.length===3){let removed=0;s.tray=s.tray.filter(t=>{if(t.symbol===tile.symbol&&removed<3){removed++;return false}return true})}
- if(!s.tiles.length&&!s.tray.length){s.won=true;const d=nwTripleData();if(nwTripleInEvent()&&s.stage>=d.stage){d.best=Math.max(d.best,s.stage);d.stage=Math.max(d.stage,s.stage+1);nwTripleSave(d)}}
+ if(!s.tiles.length&&!s.tray.length){s.won=true}
  else if(s.tray.length>=7)s.lost=true;
  nwTripleDraw();
 }
@@ -624,56 +653,64 @@ function nwTripleBooster(kind){
    if(!s.history.length)return;
    const previous=s.history.pop();s.tiles=previous.tiles;s.tray=previous.tray;s.used.undo=true;
  }else if(kind==='shuffle'){
-   nwTripleRemember();const random=nwTripleRng((Date.now()^s.tiles.length)>>>0);
-   const groups={};for(const t of s.tiles)(groups[t.layer]??=[]).push(t);
-   for(const layer of Object.values(groups)){
-     const ids=nwTripleShuffle(layer.map(t=>t.symbol),random);
-     layer.forEach((t,i)=>{t.symbol=ids[i]});
+   const random=nwTripleRng((Date.now()^s.tiles.length)>>>0);
+   const order=s.tiles.slice().sort((a,b)=>b.layer-a.layer||a.id-b.id);
+   const available={};for(const t of s.tiles)available[t.symbol]=(available[t.symbol]||0)+1;
+   const pending={};for(const t of s.tray)pending[t.symbol]=(pending[t.symbol]||0)+1;
+   const sequence=[];
+   // Resolve tray partial triples before filling additional slots.
+   for(const [symbol,count] of Object.entries(pending).sort((a,b)=>b[1]-a[1])){
+     const need=3-count;if(available[symbol]<need)return;
+     for(let i=0;i<need;i++)sequence.push(+symbol);available[symbol]-=need;
    }
-   s.used.shuffle=true;
+   const triples=[];for(const [symbol,count] of Object.entries(available)){if(count%3)return;for(let i=0;i<count;i+=3)triples.push(+symbol)}
+   for(const symbol of nwTripleShuffle(triples,random))sequence.push(symbol,symbol,symbol);
+   if(sequence.length!==order.length)return;
+   nwTripleRemember();order.forEach((t,i)=>t.symbol=sequence[i]);
+   s.used.shuffle=true;s.history=[];
  }else if(kind==='magic'){
-   // Remove three matching available tiles, or finish a partial tray triple.
    const active=s.tiles.filter(nwTripleAvailable);
-   let choice=null;
-   for(const tile of active){const n=s.tray.filter(t=>t.symbol===tile.symbol).length;const a=active.filter(t=>t.symbol===tile.symbol);
+   const candidates=[...s.tray,...active,...s.tiles];let choice=null;
+   for(const tile of candidates){const n=s.tray.filter(t=>t.symbol===tile.symbol).length;const a=s.tiles.filter(t=>t.symbol===tile.symbol);
      if(a.length+n>=3){choice={symbol:tile.symbol,remove:3-n};break;}}
    if(!choice)return;
-   nwTripleRemember();let removed=0;s.tiles=s.tiles.filter(t=>{if(t.symbol===choice.symbol&&nwTripleAvailable(t)&&removed<choice.remove){removed++;return false}return true});
-   s.tray=s.tray.filter(t=>t.symbol!==choice.symbol);s.used.magic=true;
-   if(!s.tiles.length&&!s.tray.length){s.won=true;const d=nwTripleData();if(nwTripleInEvent()&&s.stage>=d.stage){d.best=Math.max(d.best,s.stage);d.stage=Math.max(d.stage,s.stage+1);nwTripleSave(d)}}
+   nwTripleRemember();const matches=s.tiles.filter(t=>t.symbol===choice.symbol).sort((a,b)=>b.layer-a.layer).slice(0,choice.remove);
+   const ids=new Set(matches.map(t=>t.id));s.tiles=s.tiles.filter(t=>!ids.has(t.id));
+   s.tray=s.tray.filter(t=>t.symbol!==choice.symbol);s.used.magic=true;s.history=[];
+   if(!s.tiles.length&&!s.tray.length){s.won=true}
  }
  nwTripleDraw();
 }
 function nwTripleHome(){
- evSudokuLeave();nwTriple=null;applyTheme('hub');const d=nwTripleData(),event=nwTripleInEvent();
+ evSudokuLeave();nwTriple=null;applyTheme('hub');evRoot.classList.add('nw-triple-theme');const d=nwTripleSessionData(),event=nwTripleInEvent();
  evDisplay(`${evHeader('EVENTS',nwShowEvents)}<section class="nw-triple nw-triple-home">
- <div class="nw-triple-sparks">✧ ✦ ✧</div><div class="nw-triple-mascots">👻 <span>🐙</span> 👁️</div>
+ <div class="nw-triple-sparks" aria-hidden="true">⋆˚<span class="nw-triple-spiral"></span>｡</div><div class="nw-triple-mascots">${nwTripleMascots()}</div>
  <h2 class="nw-triple-logo">TRIPLE<br><span>TROUBLE</span></h2><div class="nw-triple-ribbon">MONDAY – WEDNESDAY</div>
  <div class="nw-triple-unlimited">∞ UNLIMITED STAGES</div>
- <div class="nw-triple-info"><strong>✦ 1 FREE EACH LEVEL ✦</strong><div class="nw-triple-free-items"><span>↶<small>UNDO</small></span><span>⤨<small>SHUFFLE</small></span><span>✦<small>MAGIC CLEAR</small></span></div></div>
- <button id="nwTripleStart" class="nw-triple-main-btn">▶ ${event?'STAGE '+d.stage:'PLAY STAGES'}</button>
- <div class="nw-triple-rank"><h3>🏆 ${event?'EVENT PROGRESS':'STAGE PRACTICE'}</h3><p>${event?'Highest stage cleared: '+d.best:'The next event begins Monday (UTC).'}</p></div>
+ <div class="nw-triple-info"><strong>1 FREE EACH LEVEL</strong><div class="nw-triple-free-items"><span>↶<small>UNDO</small></span><span>⤨<small>SHUFFLE</small></span><span><i class="nw-triple-spiral"></i><small>MAGIC CLEAR</small></span></div></div>
+ <button id="nwTripleStart" class="nw-triple-main-btn">▶ ${d.active&&!d.active.lost?'CONTINUE STAGE '+d.stage:'STAGE '+d.stage}</button>
+ <div class="nw-triple-rank"><h3>🏆 ${event?'EVENT PROGRESS':'STAGE PRACTICE'}</h3><p>Highest stage cleared: ${d.best}</p></div>
  </section>`);
- evRoot.querySelector('#nwTripleStart').onclick=()=>nwTripleBegin(event?d.stage:1);
+ evRoot.querySelector('#nwTripleStart').onclick=()=>nwTripleBegin(d.stage,true);
 }
-function nwTripleBegin(stage){nwTriple=nwTripleCreate(stage);nwTripleDraw()}
+function nwTripleBegin(stage,resume=false){const d=nwTripleSessionData();const a=d.active;nwTriple=resume&&a?.version===2&&a.stage===stage&&!a.won&&!a.lost&&a.week===nwTripleWeek()&&a.practice===!nwTripleInEvent()?a:nwTripleCreate(stage);nwTripleDraw()}
 function nwTripleDraw(){
- const s=nwTriple;if(!s)return;applyTheme('hub');
+ const s=nwTriple;if(!s)return;if(s.week!==nwTripleWeek()||s.practice===nwTripleInEvent()){nwTripleHome();return}nwTriplePersist();applyTheme('hub');evRoot.classList.add('nw-triple-theme');
  const tiles=s.tiles.slice().sort((a,b)=>a.layer-b.layer).map(t=>{
    const enabled=nwTripleAvailable(t);
    return `<button type="button" class="nw-triple-tile ${enabled?'':'covered'}" data-tile="${t.id}" aria-label="${enabled?'Select':'Covered'} tile" ${enabled?'':'disabled'} style="left:${t.x}%;top:${t.y}%;z-index:${10+t.layer}">${nwTripleArt(t.symbol)}</button>`;
  }).join('');
  const tray=Array.from({length:7},(_,i)=>`<span class="nw-triple-tray-slot">${s.tray[i]?nwTripleArt(s.tray[i].symbol):''}</span>`).join('');
- const action=s.won?`<div class="nw-triple-end"><div class="nw-triple-party">👻 ✨ 🐙</div><h2>STAGE ${s.stage} CLEARED!</h2><p>${nwTripleIsHard(s.stage+1)?'HARD STAGE UP NEXT!':'BRILLIANTLY WEIRD!'}</p><button id="nwTripleNext" class="nw-triple-main-btn">NEXT STAGE ▶</button></div>`:s.lost?`<div class="nw-triple-end"><h2>TRAY FULL!</h2><p>ONE MORE TRY?</p><button id="nwTripleRetry" class="nw-triple-main-btn">RETRY STAGE ↻</button></div>`:'';
+ const action=s.won?`<div class="nw-triple-end"><div class="nw-triple-party">${nwTripleMascots()}</div><div class="nw-triple-sparks" aria-hidden="true">⋆˚<span class="nw-triple-spiral"></span>｡</div><h2>STAGE ${s.stage} CLEARED!</h2><p>${nwTripleIsHard(s.stage+1)?'HARD STAGE UP NEXT!':'BRILLIANTLY WEIRD!'}</p><button id="nwTripleNext" class="nw-triple-main-btn">NEXT STAGE ▶</button><button id="nwTripleBack" class="nw-triple-back-btn">BACK TO EVENT</button></div>`:s.lost?`<div class="nw-triple-end"><h2>TRAY FULL!</h2><p>ONE MORE TRY?</p><button id="nwTripleRetry" class="nw-triple-main-btn">RETRY STAGE ↻</button></div>`:'';
  evDisplay(`${evHeader('TRIPLE TROUBLE',nwTripleHome)}<section class="nw-triple nw-triple-play">
  <div class="nw-triple-stagehead"><div><small>${s.hard?'🔥 HARD STAGE':'TRIPLE TROUBLE'}</small><strong>STAGE ${s.stage}</strong></div><span>∞</span></div>
  <div class="nw-triple-board" aria-label="Layered tile matching board">${tiles}</div>
  <div class="nw-triple-tray">${tray}</div>
- <div class="nw-triple-booster-row">${[['undo','↶','UNDO'],['shuffle','⤨','SHUFFLE'],['magic','✦','MAGIC CLEAR']].map(([key,icon,label])=>`<button class="nw-triple-booster" data-booster="${key}" ${s.used[key]||(key==='undo'&&!s.history.length)?'disabled':''}><span>${icon}</span><b>${label}</b><i>${s.used[key]?'0':'1'}</i></button>`).join('')}</div>
+ <div class="nw-triple-booster-row">${[['undo','↶','UNDO'],['shuffle','⤨','SHUFFLE'],['magic','<span class="nw-triple-spiral"></span>','MAGIC CLEAR']].map(([key,icon,label])=>`<button class="nw-triple-booster" data-booster="${key}" ${s.used[key]||(key==='undo'&&!s.history.length)?'disabled':''}><span>${icon}</span><b>${label}</b><i>${s.used[key]?'0':'1'}</i></button>`).join('')}</div>
  ${action}</section>`);
  evRoot.querySelectorAll('[data-tile]').forEach(el=>el.onclick=()=>nwTripleChoose(+el.dataset.tile));
  evRoot.querySelectorAll('[data-booster]').forEach(el=>el.onclick=()=>nwTripleBooster(el.dataset.booster));
- if(s.won)evRoot.querySelector('#nwTripleNext').onclick=()=>nwTripleBegin(s.stage+1);
+ if(s.won){evRoot.querySelector('#nwTripleNext').onclick=()=>nwTripleBegin(s.stage+1);evRoot.querySelector('#nwTripleBack').onclick=nwTripleHome;}
  if(s.lost)evRoot.querySelector('#nwTripleRetry').onclick=()=>nwTripleBegin(s.stage);
 }
 
@@ -817,7 +854,7 @@ async function evSudokuStart(difficulty,practiceOpponent=null){
   const {answer,puzzle}=practiceOpponent?{answer:[...practiceOpponent.solved_grid].map(Number),puzzle:[...practiceOpponent.puzzle_clues].map(Number)}:nwMakeUniquePuzzle(difficulty);
   const givens=new Set(puzzle.map((n,i)=>n?i:-1).filter(i=>i>=0));
   sudoku={answer,values:[...puzzle],givens,selected:-1,choice:0,highlight:0,mistakes:0,wrong:new Set(),notes:false,noteMarks:{},history:[],hintsLeft:difficulties[difficulty].hints,start:Date.now(),difficulty,done:false,initialPuzzle:[...puzzle],reportAttempts:0,reportCorrect:0,reportHints:0,reportSaved:false,practiceOpponent,doublePractice:!practiceOpponent&&nwDoublePracticeActive};
-  evSudokuRender();clearInterval(sudokuTimer);
+  evSudokuRender();if(practiceOpponent)sudoku.start=Date.now();clearInterval(sudokuTimer);
   sudokuTimer=setInterval(()=>{if(!sudoku||sudoku.done)return;const el=evRoot.querySelector('#evSudoTime');if(el){const time=Math.floor((Date.now()-sudoku.start)/1000);el.textContent=`${String(Math.floor(time/60)).padStart(2,'0')}:${String(time%60).padStart(2,'0')}`}if(sudoku.practiceOpponent)nwBattleProgressTick(sudoku)},250);
 }
 // Preserve previous cell value AND pencil notes for undo, including hinted cells.

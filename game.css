@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Special+Elite&display=swap");
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#080611;color:#ffe9f8;font-family:system-ui,sans-serif}button{cursor:pointer;color:inherit}button:focus-visible{outline:2px solid #ffb2ea;outline-offset:2px}[hidden]{display:none!important}#loading,#home{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,#301342,#0a0714 68%);text-align:center;padding:20px}#loading h1{font-size:clamp(32px,9vw,58px);letter-spacing:.22em;color:#f7d8ff;text-shadow:0 0 10px #ed70ff,0 0 28px #ad38ef;animation:pulse 1.2s ease-in-out infinite alternate}@keyframes pulse{to{text-shadow:0 0 20px #ffb6ff,0 0 50px #b24cff}}#home h1{font-size:clamp(42px,11vw,70px);line-height:1.12;color:#f6d8ff;text-shadow:0 0 12px #d653f2,0 0 30px #8d37dd;margin:0 0 45px}.neon-button{min-width:190px;min-height:55px;border:2px solid #e889fa;border-radius:14px;background:linear-gradient(135deg,#8e32ab,#3a1459);box-shadow:0 0 18px #bb43df88;color:#fff;font-size:19px;font-weight:900;letter-spacing:2px}#game{width:100%;max-width:560px;margin:auto;min-height:100dvh;padding:14px 12px 30px;background:radial-gradient(ellipse at top,#451044,#19071e 60%,#0b0412)}.ev-head{position:relative!important;top:auto!important}.room-card{text-align:center;border:2px solid #ce63af;border-radius:20px;margin:25px auto;padding:30px 16px;background:radial-gradient(circle at top,#642055,#160919);box-shadow:0 0 20px #f54fbb55}.room-icon{font-size:44px}.room-card h2{font-size:30px;color:#ffe0a6;text-shadow:0 0 14px #fc42bc}.room-card p{color:#e9bfdc;margin-bottom:26px}.ev-sudo-tools-clean{grid-template-columns:repeat(4,minmax(0,1fr))!important}.ev-sudo-tool{min-width:0}.ev-sudo-tool-icon,.ev-sudo-tool-label{display:block}.ev-sudo-note-marks{font-size:8px;color:#ffe5f6;overflow-wrap:anywhere}.ev-sudoku-cell{aspect-ratio:1}.ev-root{position:static!important;min-height:0!important;padding:0!important;background:transparent!important}#game .ev-sudo-shell{width:100%}@media(max-width:390px){#game{padding:10px 6px 25px}.ev-sudo-shell{padding:8px 4px}.ev-sudo-stats{gap:3px}.ev-sudo-stats>div{padding:6px 1px}.ev-sudo-tools button{font-size:10px}}
 .ev-root{position:absolute;inset:0;z-index:55;background:radial-gradient(ellipse at top,#451044,#19071e 60%,#0b0412);color:#ffe9f8;overflow-y:auto;overscroll-behavior:contain;font:13px/1.4 system-ui,-apple-system,sans-serif;padding:14px 12px 36px;scrollbar-width:thin}
 .ev-root[hidden]{display:none!important}
@@ -3220,3 +3221,43 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-battle-title-list>div.earned{border-color:#ffca90;background:#593044;color:#ffe1b5}
 #game .nw-battle-title-list span{font-size:11px}
 #game .nw-battle-history-row{font-size:12px;margin:7px 0;color:#e5becf}
+
+/* Triple Trouble V5 — Blueberry Midnight. Scoped to this event only. */
+#game.nw-triple-theme{background:radial-gradient(ellipse at 50% 15%,#313B73 0,#161B34 52%,#101327 100%)!important;color:#FFF3E8;--accent:#A89CFF;--glow:#A89CFF;--text:#FFF3E8}
+#game.nw-triple-theme .ev-head strong{color:#F6D9F5!important;text-shadow:0 0 10px #A89CFF88!important}
+#game.nw-triple-theme .ev-head button{background:#232A52!important;border-color:#8077C1!important;color:#F6D9F5!important;box-shadow:0 0 8px #A89CFF44!important}
+#game .nw-triple{--tt-pink:#E98BC8;--tt-gold:#F6D9F5;--tt-cream:#F6EBDD;color:#FFF3E8;border-color:#5C639D;background:radial-gradient(ellipse at 51% 16%,#374276 0,#232A52 40%,#161B34 85%);box-shadow:0 14px 35px #080B1B99,inset 0 0 36px #A89CFF24}
+#game .nw-triple::before{content:none}
+#game .nw-triple-sparks{display:flex;justify-content:center;align-items:center;gap:4px;color:#DCD3FF;font-size:24px;letter-spacing:2px;line-height:1;filter:drop-shadow(0 0 8px #A89CFF99)}
+/* Vector spiral represents ꩜ without depending on phone font glyph support. */
+#game .nw-triple-spiral{display:inline-block!important;width:1em;height:1em;flex:none;vertical-align:middle;background:currentColor!important;position:static!important;border:0!important;border-radius:0!important;box-shadow:none!important;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 16c-3-4 5-7 7-1 3 8-11 13-16 4C1 8 13 0 23 6c15 9 2 29-12 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 16c-3-4 5-7 7-1 3 8-11 13-16 4C1 8 13 0 23 6c15 9 2 29-12 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat}
+#game .nw-triple-mascots,#game .nw-triple-party{display:flex;align-items:center;justify-content:center;gap:4px;line-height:0}
+#game .nw-triple-mascots img,#game .nw-triple-party img{width:60px;height:60px;object-fit:contain;filter:drop-shadow(0 3px 5px #11152C99);transform:rotate(-9deg)}
+#game .nw-triple-mascots img:nth-child(2),#game .nw-triple-party img:nth-child(2){width:76px;height:76px;transform:rotate(4deg)}
+#game .nw-triple-mascots img:nth-child(3),#game .nw-triple-party img:nth-child(3){transform:rotate(11deg)}
+#game .nw-triple-logo{font:400 clamp(37px,10vw,58px)/1.04 'Special Elite','Courier New',monospace;letter-spacing:.035em;color:#FFF3E8!important;-webkit-text-stroke:0;text-shadow:0 2px #5D548C,0 5px #24284D,0 0 20px #A89CFF88}
+#game .nw-triple-logo span{color:#F6D9F5}
+#game .nw-triple-ribbon{background:linear-gradient(130deg,#454783,#7664A9,#454783);border-color:#B8AEFF;color:#FFF3E8;box-shadow:0 3px 7px #10132788}
+#game .nw-triple-unlimited,#game .nw-triple-info>strong{color:#F6D9F5}
+#game .nw-triple-info,#game .nw-triple-rank,#game .nw-triple-stagehead{background:linear-gradient(160deg,#313B73,#232A52);border-color:#7078AF;box-shadow:inset 0 0 12px #A89CFF12}
+#game .nw-triple-rank h3,#game .nw-triple-stagehead small,#game .nw-triple-stagehead>span{color:#CFC7FF}
+#game .nw-triple-rank p,#game .nw-triple-stagehead strong{color:#FFF3E8}
+#game .nw-triple-free-items span,#game .nw-triple-booster{background:linear-gradient(145deg,#FAF1FF,#D8C9ED);border-color:#C7B9EA;color:#3E346E;box-shadow:0 4px 0 #555080,0 7px 10px #10132755}
+#game .nw-triple-free-items small,#game .nw-triple-booster b{color:#343055}
+#game .nw-triple-booster span{color:#7758A5;text-shadow:0 1px #fff}
+#game .nw-triple-booster i:not(.nw-triple-spiral){background:#6F5DB3;border-color:#DBD3FF}
+#game .nw-triple-main-btn{background:linear-gradient(#F6D9F5,#E98BC8 55%,#B96FAE);border-color:#F6D9F5;color:#292044;text-shadow:none;box-shadow:inset 0 2px #FFF3F9,0 5px 0 #794D90,0 8px 18px #10132799}
+#game .nw-triple-main-btn:active{box-shadow:inset 0 1px #FFF3F9,0 2px 0 #794D90}
+#game .nw-triple-board{height:auto;min-height:0;aspect-ratio:1/1.04;background:radial-gradient(ellipse,#3F4A8266,#161B3433 75%,transparent)}
+#game .nw-triple-tile{box-sizing:border-box;width:17.5%;height:17%;padding:5px;border-radius:9px;background:linear-gradient(145deg,#FFFDF7,#F6EBDD 75%,#E1D2CB);border-color:#D1C2C8;box-shadow:1px 4px 0 #776D89,0 6px 7px #10132788,inset 0 1px #fff}
+#game .nw-triple-tray{background:linear-gradient(#313B73,#232A52);border-color:#7782BA;box-shadow:inset 0 0 10px #10132788}
+#game .nw-triple-tray-slot{background:#161B34;border-color:#6873A5}
+#game .nw-triple-tray-slot:has(img){background:linear-gradient(#FFFDF7,#E1D2CB);border-color:#CEBED0}
+#game .nw-triple-end{background:radial-gradient(ellipse,#414B86,#232A52 70%,#161B34);border-color:#A89CFF;box-shadow:0 0 0 999px #101327BB,0 0 25px #A89CFF66;inset:55px 12px 45px;gap:8px}
+#game .nw-triple-end h2{font:400 clamp(24px,7vw,38px)/1.1 'Special Elite','Courier New',monospace;color:#F6D9F5;text-shadow:0 3px #4F477E,0 0 12px #A89CFF77}
+#game .nw-triple-end p{color:#DCD3FF}
+#game .nw-triple-back-btn{display:block;width:90%;max-width:350px;padding:12px;border:1px solid #A89CFF;border-radius:22px;background:#313B73;color:#F6D9F5;font-weight:800;letter-spacing:.04em;box-shadow:0 3px 0 #161B34;margin:3px auto}
+#game .nw-triple-event-icon img{width:100%;height:100%;max-width:48px;max-height:48px;object-fit:contain}
+@media(max-height:660px){#game .nw-triple-play{padding-top:8px;padding-bottom:16px}#game .nw-triple-stagehead{padding:7px 12px}#game .nw-triple-booster{padding:7px 3px}#game .nw-triple-board{width:87%}}
+#game.nw-triple-theme .ev-head{background:#161B34!important;border-color:#313B73!important}
+#game.nw-triple-theme{min-height:100dvh;box-sizing:border-box}
