@@ -3411,3 +3411,24 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-double-rankplayers span{overflow-wrap:anywhere;font-size:12px}
 #game .nw-double-rankavatar{width:26px;height:26px;border:1px solid #98B9DD;border-radius:50%;object-fit:cover}
 #game .nw-double-rankrow b{font:700 13px 'Space Mono',monospace}
+
+/* V16 — Double Trouble only: glitch title, rewards, and completion controls. */
+#game .nw-double-glitch{position:relative;isolation:isolate}
+#game .nw-double-glitch-copy{position:absolute;inset:0;opacity:0;pointer-events:none;color:#D9AB94;animation:nwDoubleGlitchTop 5s infinite}
+#game .nw-double-glitch-copy.second{color:#B7CDE8;animation-name:nwDoubleGlitchBottom}
+@keyframes nwDoubleGlitchTop{0%,88%,96%,100%{opacity:0;transform:none}90%{opacity:.75;clip-path:inset(12% 0 63% 0);transform:translateX(-3px)}94%{opacity:.6;clip-path:inset(48% 0 31% 0);transform:translateX(3px)}}
+@keyframes nwDoubleGlitchBottom{0%,88%,96%,100%{opacity:0;transform:none}90%{opacity:.7;clip-path:inset(58% 0 12% 0);transform:translateX(4px)}94%{opacity:.6;clip-path:inset(20% 0 60% 0);transform:translateX(-3px)}}
+@media(prefers-reduced-motion:reduce){#game .nw-double-glitch-copy{animation:none;opacity:0}}
+#game .nw-double h2.nw-double-result-title{font:400 clamp(30px,9vw,48px)/1.08 'Rubik Glitch',sans-serif;letter-spacing:0;color:#98B9DD;overflow-wrap:anywhere}
+#game .nw-double-completion{gap:10px}
+#game .nw-double-reward-tier{background:#403631;border:1px solid #74665F;border-radius:10px;padding:12px;--reward:#98B9DD}
+#game .nw-double-reward-tier.rival{--reward:#D9AB94}
+#game .nw-double-reward-tier h3{color:var(--reward);margin:0 0 8px}
+#game .nw-double-reward-tier>div{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 0;text-align:left;font-size:12px}
+#game .nw-double-reward-tier>div+div{border-top:1px solid #62534B}
+#game .nw-double-reward-tier strong,#game .nw-double-reward-record strong{color:var(--reward,#B7CDE8);white-space:nowrap;font:700 19px 'Space Mono',monospace}
+#game .nw-double-reward-progress,#game .nw-double-reward-record{background:#403631;border:1px solid #74665F;border-radius:8px;padding:10px;display:grid;gap:7px}
+#game .nw-double-reward-progress strong{font:700 15px 'Space Mono',monospace;color:#B7CDE8}
+#game .nw-double-eligibility-track{height:7px;background:#282321;border-radius:4px;overflow:hidden}
+#game .nw-double-eligibility-track i{display:block;height:100%;background:#98B9DD}
+#game .nw-double-reward-record small,#game .nw-double-reward-progress small{color:#D0BFB5;font-size:11px}
