@@ -3293,3 +3293,19 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-triple-fail-booster b{font-size:10px;font-weight:900;color:#343055;letter-spacing:.02em}
 #game .nw-triple-fail-booster i{position:absolute;right:-3px;top:-8px;border:2px solid #DBD3FF;border-radius:50%;background:#6F5DB3;color:white;font-style:normal;font-size:12px;width:24px;height:24px;display:grid;place-items:center;font-weight:900}
 #game .nw-triple-fail-booster:disabled{filter:grayscale(.65);opacity:.5}
+
+/* V10: matching physical dimensions, five-column shaped boards, true stack depth. */
+#game .nw-triple-board-wrap.has-piles{gap:6px;grid-template-columns:1fr minmax(0,7.575757fr) 1fr;align-items:center;padding:0 3px 10px}
+#game .nw-triple-board-wrap.has-piles.nw-triple-large-grid{grid-template-columns:1fr minmax(0,5.208333fr) 1fr}
+#game .nw-triple-board-wrap.has-piles .nw-triple-board{aspect-ratio:.7890909}
+#game .nw-triple-board-wrap.has-piles.nw-triple-large-grid .nw-triple-board{aspect-ratio:.665}
+#game .nw-triple-board-wrap.has-piles .nw-triple-tile,#game .nw-triple-board-wrap.has-piles .nw-triple-pile-top{box-sizing:border-box;padding:2px;border:1px solid #D1C2C8;border-radius:5px;background:linear-gradient(145deg,#FFFDF7,#F6EBDD 75%,#E1D2CB);box-shadow:0 2px 0 #776D89,0 3px 3px #10132788,inset 0 1px #fff;display:flex;align-items:center;justify-content:center;overflow:visible}
+#game .nw-triple-board-wrap.has-piles .nw-triple-pile-top{width:100%;aspect-ratio:.84}
+#game .nw-triple-board-wrap.has-piles .nw-triple-tile img,#game .nw-triple-board-wrap.has-piles .nw-triple-pile-top img{width:95%;height:95%;object-fit:contain;filter:drop-shadow(0 2px 1px #0003)}
+#game .nw-triple-board-wrap.has-piles .nw-triple-pile-top.stacked,#game .nw-triple-board-wrap.has-piles .nw-triple-tile.nw-triple-mystery{background:none;border-color:transparent;box-shadow:none;isolation:isolate}
+#game .nw-triple-pile-top.stacked::before,#game .nw-triple-pile-top.stacked::after,#game .nw-triple-board.nw-triple-shaped .nw-triple-tile.nw-triple-mystery::after{content:none}
+#game .nw-triple-hidden-back,#game .nw-triple-stack-face{position:absolute;inset:-1px;border:1px solid #D1C2C8;border-radius:5px;box-sizing:border-box;pointer-events:none}
+#game .nw-triple-hidden-back{transform:translate(0,calc(var(--tt-back)*1.8px));background:#A69DB5;border-bottom-color:#5F5874;box-shadow:0 1px 0 #5F5874}
+#game .nw-triple-stack-face{display:flex;align-items:center;justify-content:center;padding:2px;background:linear-gradient(145deg,#FFFDF7,#F6EBDD 75%,#E1D2CB);box-shadow:0 2px 0 #776D89,inset 0 1px #fff}
+#game .nw-triple-stack-dot{position:absolute;right:2px;top:2px;width:6px;height:6px;border-radius:50%;background:#8E84CE;border:1px solid #F6D9F5;pointer-events:none}
+#game .nw-triple-pile-rail{gap:36px;padding-bottom:24px}
