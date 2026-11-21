@@ -493,10 +493,24 @@ function nwBattleSeasonClock(){
  const d=new Date(),end=Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,1),hours=Math.max(0,Math.floor((end-d.getTime())/3600000));
  return Math.floor(hours/24)+'D '+hours%24+'H';
 }
+// Local-only milestone ledger. One entry per account, UTC month and tier.
+const nwBattleDiamondKey='nineweird-battle-diamond-claims-v1';
+function nwBattleDiamondClaims(){const v=nwRead(nwBattleDiamondKey,{});return v&&typeof v==='object'&&!Array.isArray(v)?v:{};}
+function nwBattleDiamondClaimed(month,wins){return nwBattleDiamondClaims()[month+':'+wins]===wins;}
+function nwDiamondBalance(){return Object.values(nwBattleDiamondClaims()).reduce((sum,n)=>sum+(nwSeasonFrameTiers.some(t=>t.wins===n)?n:0),0);}
+function nwClaimBattleDiamond(wins,month){
+ if(!nwPlayerStorageKey(nwBattleDiamondKey)||month!==nwSeasonId()||!nwSeasonFrameTiers.some(t=>t.wins===wins)||nwBattleMonthStats().wins<wins)return false;
+ const claims=nwBattleDiamondClaims(),key=month+':'+wins;
+ if(claims[key]===wins)return false;
+ claims[key]=wins;nwWrite(nwBattleDiamondKey,claims);
+ return nwBattleDiamondClaimed(month,wins);
+}
+function nwDiamondAmount(n){return `<span class="nw-diamond-amount"><img class="nw-diamond-icon" src="assets/currency/diamond.png" alt="Diamonds"><span>${n}</span></span>`;}
 function nwBattleRewards(){
- evSudokuLeave();applyTheme('hub');const st=nwBattleMonthStats();
- evDisplay(`${evHeader('',showBattle)}<section class="nw-battle nw-battle-ready nw-battle-rewards"><div class="nw-radio-ornament" aria-hidden="true">⋆ ☢ ⋆</div><h2>BATTLE REWARDS</h2><p class="nw-radio-season">${st.wins} MONTHLY WINS · RESETS IN ${nwBattleSeasonClock()}</p><div class="nw-radio-tiers">${nwSeasonFrameTiers.map(t=>`<div class="nw-radio-tier ${st.wins>=t.wins?'earned':''}"><div class="nw-radio-frame-preview"><img class="nw-radio-reward-art" src="frames/nw-monthly-${t.wins}.png" alt="${nwEscape(t.title)} frame"></div><div><strong>${nwEscape(t.title)}</strong><small>${t.wins} WINS · ${st.wins>=t.wins?'UNLOCKED':'LOCKED'}</small><div class="nw-radio-progress"><i style="width:${Math.min(100,st.wins/t.wins*100)}%"></i></div></div></div>`).join('')}</div><button class="nw-battle-fine-button" id="nwRadioBack">BACK TO BATTLE</button></section>`);
+ evSudokuLeave();applyTheme('hub');const st=nwBattleMonthStats(),month=nwSeasonId();
+ evDisplay(`${evHeader('',showBattle)}<section class="nw-battle nw-battle-ready nw-battle-rewards"><div class="nw-radio-ornament" aria-hidden="true">⋆ ☢ ⋆</div><h2>BATTLE REWARDS</h2><p class="nw-radio-season">${st.wins} MONTHLY WINS · RESETS IN ${nwBattleSeasonClock()}</p><div class="nw-battle-diamond-balance">YOUR DIAMONDS ${nwDiamondAmount(nwDiamondBalance())}</div><div class="nw-radio-tiers">${nwSeasonFrameTiers.map(t=>{const unlocked=st.wins>=t.wins,claimed=nwBattleDiamondClaimed(month,t.wins);return `<div class="nw-radio-tier ${unlocked?'earned':''}"><div class="nw-radio-frame-preview"><img class="nw-radio-reward-art" src="frames/nw-monthly-${t.wins}.png" alt="${nwEscape(t.title)} frame"></div><div><strong>${nwEscape(t.title)}</strong><small>${t.wins} WINS · ${unlocked?'UNLOCKED':'LOCKED'}</small><div class="nw-radio-progress"><i style="width:${Math.min(100,st.wins/t.wins*100)}%"></i></div><div class="nw-battle-diamond-row">${nwDiamondAmount(t.wins)}${claimed?'<span class="nw-battle-claim-status">CLAIMED</span>':unlocked?`<button type="button" class="nw-battle-claim" data-diamond-claim="${t.wins}">CLAIM</button>`:'<span class="nw-battle-claim-status">LOCKED</span>'}</div></div></div>`;}).join('')}</div><p class="nw-battle-claim-error" role="status" hidden></p><button class="nw-battle-fine-button" id="nwRadioBack">BACK TO BATTLE</button></section>`);
  evRoot.querySelector('#nwRadioBack').onclick=showBattle;
+ evRoot.querySelectorAll('[data-diamond-claim]').forEach(b=>b.onclick=async()=>{b.disabled=true;const wins=Number(b.dataset.diamondClaim),scoped=nwPlayerStorageKey(nwBattleDiamondKey);const claim=()=>scoped&&scoped===nwPlayerStorageKey(nwBattleDiamondKey)&&nwClaimBattleDiamond(wins,month);let ok=false;try{ok=navigator.locks?await navigator.locks.request(scoped||'nw-battle-no-account',claim):claim();}catch{}if(!b.isConnected)return;if(ok||nwBattleDiamondClaimed(month,wins)){nwBattleRewards();return;}b.disabled=false;const e=evRoot.querySelector('.nw-battle-claim-error');if(e){e.hidden=false;e.textContent='Unable to claim reward. Please try again.';}});
 }
 function showBattle(){
   evSudokuLeave();applyTheme('hub');
@@ -590,9 +604,9 @@ function nwDoubleReward(m,now=Date.now()){
 }
 function nwDoubleRewards(){
  clearInterval(nwDoubleTimer);nwDoubleTheme();const d=nwDoubleStore(),m=d.matches[nwDoublePeriod().id],past=Object.values(d.matches).filter(x=>x.end<=Date.now()).sort((a,b)=>b.end-a.end);
- const tier=(name,amounts,rival=false)=>`<article class="nw-double-reward-tier${rival?' rival':''}"><h3>${name}</h3>${amounts.map((n,i)=>`<div><span>${i?'SECOND CONTRIBUTOR':'HIGHEST CONTRIBUTOR'}</span><strong><img class="nw-diamond-icon" src="assets/currency/diamond.png" alt="Diamonds"> ${n}</strong></div>`).join('')}</article>`;
+ const tier=(name,amounts,rival=false)=>`<article class="nw-double-reward-tier${rival?' rival':''}"><h3>${name}</h3>${amounts.map((n,i)=>`<div><span>${i?'SECOND CONTRIBUTOR':'HIGHEST CONTRIBUTOR'}</span><strong>${nwDiamondAmount(n)}</strong></div>`).join('')}</article>`;
  const progress=m?`<div class="nw-double-reward-progress"><strong>${nwDoubleFmt(m.teamPoints)} / 1,000 PTS</strong><div class="nw-double-eligibility-track"><i style="width:${Math.max(0,Math.min(100,m.teamPoints/10))}%"></i></div><small>${m.teamPoints>=1000?'MINIMUM CONTRIBUTION REACHED':'Earn '+nwDoubleFmt(1000-m.teamPoints)+' more points to qualify.'}</small></div>`:'';
- const completed=past.length?`<h3>PAST EVENT REWARDS</h3>${past.map(x=>{const r=nwDoubleReward(x);return `<div class="nw-double-reward-record"><span>${nwEscape(x.id)} · ${r.eligible?'QUALIFIED':'NOT QUALIFIED'}</span><strong><img class="nw-diamond-icon" src="assets/currency/diamond.png" alt="Diamonds"> ${r.amount}</strong>${r.eligible?'<small>Reward claims unavailable for this match.</small>':''}</div>`}).join('')}`:'';
+ const completed=past.length?`<h3>PAST EVENT REWARDS</h3>${past.map(x=>{const r=nwDoubleReward(x);return `<div class="nw-double-reward-record"><span>${nwEscape(x.id)} · ${r.eligible?'QUALIFIED':'NOT QUALIFIED'}</span><strong>${nwDiamondAmount(r.amount)}</strong>${r.eligible?'<small>Reward claims unavailable for this match.</small>':''}</div>`}).join('')}`:'';
  evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-reward-page"><h2 class="nw-double-subtitle">.✦ ݁˖ REWARDS</h2>${tier('WINNING TEAM',[200,150])}${tier('LOSING TEAM',[100,50],true)}<p class="nw-double-note">Earn at least 1,000 individual points to qualify. Rewards are determined when the event ends.</p>${progress}${completed}${past.length?nwDoubleButton('nwDoubleHistory','EVENT HISTORY',true):''}</section>`);
  const history=evRoot.querySelector('#nwDoubleHistory');if(history)history.onclick=nwDoubleHistory;
 }

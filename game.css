@@ -3628,3 +3628,15 @@ html:has(#game:not([hidden])>.nw-battle-finish),body:has(#game:not([hidden])>.nw
 #game.theme-hub:has(>.nw-battle-finish)>.ev-head{background:#111710!important;border-color:#43552c!important;}
 #game.theme-hub:has(>.nw-battle-finish)>.ev-head .ev-btn{background:#263024!important;color:#C6F64E!important;border-color:#8FAE64!important;}
 #game.nw-double-theme .nw-double-reward-page .nw-diamond-icon{display:inline-block;width:1em;height:1em;object-fit:contain;vertical-align:-.12em;}
+
+/* V26: compact currency pairs and monthly Battle claim controls only. */
+#game .nw-battle-rewards .nw-diamond-amount,#game .nw-double-reward-page .nw-diamond-amount{display:inline-flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;vertical-align:middle;line-height:1;flex:0 0 auto}
+#game .nw-battle-rewards .nw-diamond-icon,#game.nw-double-theme .nw-double-reward-page .nw-diamond-icon{display:block;width:1em;height:1em;object-fit:contain;flex:none;animation:nwDiamondShimmer 5s ease-in-out infinite}
+#game .nw-battle-diamond-balance{display:flex;justify-content:center;align-items:center;gap:8px;font:700 12px Oxanium,sans-serif;color:#F0F7DD;margin:12px 0}
+#game .nw-battle-diamond-row{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:8px;color:#F0F7DD;font:700 14px Oxanium,sans-serif}
+#game .nw-battle-claim{font:700 11px Oxanium,sans-serif;background:#C6F64E;color:#111710;border:1px solid #C6F64E;border-radius:6px;padding:5px 10px;cursor:pointer}
+#game .nw-battle-claim:disabled{opacity:.6;cursor:default}
+#game .nw-battle-claim-status{font:600 10px Oxanium,sans-serif;color:#B7C99A}
+#game .nw-battle-claim-error{color:#FF7757;font-size:12px}
+@keyframes nwDiamondShimmer{0%,80%,100%{filter:none}90%{filter:brightness(1.25) drop-shadow(0 0 3px #7edaff)}}
+@media(prefers-reduced-motion:reduce){#game .nw-battle-rewards .nw-diamond-icon,#game.nw-double-theme .nw-double-reward-page .nw-diamond-icon{animation:none}}
