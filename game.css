@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700&family=Rubik+Glitch&family=Space+Mono:wght@400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Special+Elite&display=swap");
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#080611;color:#ffe9f8;font-family:system-ui,sans-serif}button{cursor:pointer;color:inherit}button:focus-visible{outline:2px solid #ffb2ea;outline-offset:2px}[hidden]{display:none!important}#loading,#home{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,#301342,#0a0714 68%);text-align:center;padding:20px}#loading h1{font-size:clamp(32px,9vw,58px);letter-spacing:.22em;color:#f7d8ff;text-shadow:0 0 10px #ed70ff,0 0 28px #ad38ef;animation:pulse 1.2s ease-in-out infinite alternate}@keyframes pulse{to{text-shadow:0 0 20px #ffb6ff,0 0 50px #b24cff}}#home h1{font-size:clamp(42px,11vw,70px);line-height:1.12;color:#f6d8ff;text-shadow:0 0 12px #d653f2,0 0 30px #8d37dd;margin:0 0 45px}.neon-button{min-width:190px;min-height:55px;border:2px solid #e889fa;border-radius:14px;background:linear-gradient(135deg,#8e32ab,#3a1459);box-shadow:0 0 18px #bb43df88;color:#fff;font-size:19px;font-weight:900;letter-spacing:2px}#game{width:100%;max-width:560px;margin:auto;min-height:100dvh;padding:14px 12px 30px;background:radial-gradient(ellipse at top,#451044,#19071e 60%,#0b0412)}.ev-head{position:relative!important;top:auto!important}.room-card{text-align:center;border:2px solid #ce63af;border-radius:20px;margin:25px auto;padding:30px 16px;background:radial-gradient(circle at top,#642055,#160919);box-shadow:0 0 20px #f54fbb55}.room-icon{font-size:44px}.room-card h2{font-size:30px;color:#ffe0a6;text-shadow:0 0 14px #fc42bc}.room-card p{color:#e9bfdc;margin-bottom:26px}.ev-sudo-tools-clean{grid-template-columns:repeat(4,minmax(0,1fr))!important}.ev-sudo-tool{min-width:0}.ev-sudo-tool-icon,.ev-sudo-tool-label{display:block}.ev-sudo-note-marks{font-size:8px;color:#ffe5f6;overflow-wrap:anywhere}.ev-sudoku-cell{aspect-ratio:1}.ev-root{position:static!important;min-height:0!important;padding:0!important;background:transparent!important}#game .ev-sudo-shell{width:100%}@media(max-width:390px){#game{padding:10px 6px 25px}.ev-sudo-shell{padding:8px 4px}.ev-sudo-stats{gap:3px}.ev-sudo-stats>div{padding:6px 1px}.ev-sudo-tools button{font-size:10px}}
 .ev-root{position:absolute;inset:0;z-index:55;background:radial-gradient(ellipse at top,#451044,#19071e 60%,#0b0412);color:#ffe9f8;overflow-y:auto;overscroll-behavior:contain;font:13px/1.4 system-ui,-apple-system,sans-serif;padding:14px 12px 36px;scrollbar-width:thin}
@@ -3376,3 +3377,37 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-double-summary{display:grid;gap:10px;padding:14px 0;border-block:1px solid #62534B}
 #game .nw-double-summary div{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#D0BFB5;gap:12px}
 #game .nw-double-summary strong{color:#F1E6D9;font:700 20px Georgia,serif}
+
+/* V15 — Double Trouble only: compact After Hours lobby and separate selections. */
+#game .nw-double{font-family:'Bricolage Grotesque',system-ui,sans-serif}
+#game .nw-double-home{gap:7px;padding:6px 10px 14px}
+#game .nw-double-decoration{font-size:19px;line-height:1.1;color:#B7CDE8;animation:nwDoubleFloat 3s ease-in-out infinite}
+@keyframes nwDoubleFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@media(prefers-reduced-motion:reduce){#game .nw-double-decoration{animation:none}}
+#game .nw-double-home .nw-double-mascots{height:54px;gap:8px}
+#game .nw-double-home .nw-double-mascots img{width:54px;height:54px}
+#game .nw-double h2.nw-double-logo{font:400 clamp(32px,9vw,48px)/.98 'Rubik Glitch',sans-serif;letter-spacing:0;color:#98B9DD;margin:0}
+#game .nw-double h2.nw-double-subtitle{font:700 clamp(22px,6vw,32px)/1.1 'Bricolage Grotesque',sans-serif;letter-spacing:0}
+#game .nw-double h3,#game .nw-double-btn,#game .nw-double-team-head small{font-family:'Bricolage Grotesque',system-ui,sans-serif}
+#game .nw-double-count{padding:5px;gap:1px}
+#game .nw-double-count strong,#game .nw-double-team-head strong,#game .nw-double-person span,#game .nw-double-earned,#game .nw-double-summary strong{font-family:'Space Mono',monospace}
+#game .nw-double-teams{grid-template-columns:minmax(0,1fr) 23px minmax(0,1fr);align-items:center;gap:5px}
+#game .nw-double-team{min-width:0;padding:7px 4px}
+#game .nw-double-team-head{flex-direction:column;gap:2px;padding-bottom:5px;margin-bottom:6px}
+#game .nw-double-team-head strong{font-size:clamp(16px,4.5vw,23px)}
+#game .nw-double-team-head small{font-size:10px;letter-spacing:0}
+#game .nw-double-team .nw-double-people{gap:3px}
+#game .nw-double-team .nw-double-avatar{width:clamp(30px,9vw,42px);height:clamp(30px,9vw,42px)}
+#game .nw-double-team .nw-double-person{gap:3px}
+#game .nw-double-team .nw-double-person strong{font-size:10px;line-height:1.15;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#game .nw-double-team .nw-double-person span{font-size:clamp(9px,2.7vw,13px)}
+#game .nw-double-vs{font:700 13px 'Bricolage Grotesque',sans-serif}
+#game .nw-double-track,#game .nw-double-margin{grid-column:1/-1}
+#game .nw-double-home .nw-double-alert{padding:3px;font-size:11px}
+#game .nw-double-level{display:flex;justify-content:space-between;align-items:center;padding-inline:14px}
+#game .nw-double-rankrow{display:flex;align-items:center;gap:7px;background:#403631;border:1px solid #62534B;border-radius:8px;padding:8px;color:#B7CDE8}
+#game .nw-double-rankplayers{flex:1;min-width:0;text-align:left;display:grid;gap:4px;color:#F1E6D9}
+#game .nw-double-rankplayers>div{display:flex;align-items:center;gap:5px;min-width:0}
+#game .nw-double-rankplayers span{overflow-wrap:anywhere;font-size:12px}
+#game .nw-double-rankavatar{width:26px;height:26px;border:1px solid #98B9DD;border-radius:50%;object-fit:cover}
+#game .nw-double-rankrow b{font:700 13px 'Space Mono',monospace}
