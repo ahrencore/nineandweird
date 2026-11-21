@@ -121,7 +121,7 @@ function nwAvailableFrames(){
   const st=nwBattleMonthStats();
   return [{id:'usual',title:'The Usual',src:'frames/nw-free-usual.png'},
     {id:'weird',title:'The Weird',src:'frames/nw-free-weird.png'},
-    ...nwSeasonFrameTiers.filter(t=>st.wins>=t.wins).map(t=>({id:'monthly-'+t.wins,title:t.title,monthly:true,wins:t.wins}))];
+    ...nwSeasonFrameTiers.filter(t=>st.wins>=t.wins).map(t=>({id:'monthly-'+t.wins,title:t.title,monthly:true,wins:t.wins,src:`frames/nw-monthly-${t.wins}.png`}))];
 }
 function nwSelectedFrame(){
   const saved=nwRead(nwFrameKey,{id:'usual'});
@@ -130,7 +130,7 @@ function nwSelectedFrame(){
 }
 function nwFrameArt(avatar,extraClass=''){
   const f=nwSelectedFrame();
-  return `<span class="nw-equipped-frame ${extraClass}">${nwAvatarImg(avatar,'nw-equipped-avatar')}${f.src?`<img src="${f.src}" class="nw-equipped-art" alt="">`:`<span class="nw-season-frame-ring">✧</span><strong class="nw-season-frame-title">${nwEscape(f.title)}</strong>`}</span>`;
+  return `<span class="nw-equipped-frame ${f.monthly?'nw-monthly-art-frame':''} ${extraClass}">${nwAvatarImg(avatar,'nw-equipped-avatar')}${f.src?`<img src="${f.src}" class="nw-equipped-art" alt="">`:`<span class="nw-season-frame-ring">✧</span><strong class="nw-season-frame-title">${nwEscape(f.title)}</strong>`}</span>`;
 }
 function nwFramePicker(){
  const equipped=nwSelectedFrame().id;
@@ -445,13 +445,15 @@ function nwBattleFinish(s,won,points,elapsed){
   const isWin=outcome==='WIN',isDraw=outcome==='DRAW';
   const resultTitle=isWin?'YOU WON!':isDraw?'IT’S A DRAW!':'OPPONENT WON!';
   const stats=nwBattleMonthStats();
+  const opponentWon=!isWin&&!isDraw;
+  applyTheme('hub');
   evDisplay(`${evHeader('BATTLE',nwBattleReturn)}<section class="nw-battle nw-battle-ready nw-battle-finish ${isWin?'nw-victory':isDraw?'nw-draw':'nw-defeat'}">
     <div class="nw-victory-sparkles" aria-hidden="true"><span>✦</span><span>✧</span><span>✦</span><span>✧</span><span>✦</span></div>
     <div class="nw-victory-crown" aria-hidden="true">${isWin?'♛':isDraw?'✦':'⚔'}</div>
     <div class="nw-result-kicker">MONTHLY BATTLE · ${nwEscape(s.difficulty.toUpperCase())}</div>
-    <h2 class="nw-victory-title">${resultTitle}</h2><div class="nw-result-player-frame">${nwFrameArt(nwProfile().avatar)}</div>
-    <div class="nw-battle-result-opponent">${nwAvatarImg(opponent.avatar,'nw-battle-result-avatar')}<span>VS <strong>${nwEscape(opponent.display_name)}</strong></span></div>
-    <div class="nw-battle-race-result"><span>${isWin?'VICTORY':isDraw?'DRAW':'DEFEAT'}</span><strong>${nwEscape(opponent.display_name)}</strong></div>
+    <h2 class="nw-victory-title">${resultTitle}</h2><div class="nw-result-player-frame">${opponentWon?nwAvatarImg(opponent.avatar,'nw-result-winner-avatar'):nwFrameArt(nwProfile().avatar)}</div>
+    ${opponentWon?`<strong class="nw-result-winner-name">${nwEscape(opponent.display_name)}</strong>`:''}
+    <div class="nw-battle-result-opponent">${opponentWon?nwAvatarImg(nwProfile().avatar,'nw-battle-result-avatar'):nwAvatarImg(opponent.avatar,'nw-battle-result-avatar')}<span>VS <strong>${nwEscape(opponentWon?nwProfile().name:opponent.display_name)}</strong></span></div>
     ${nwBattleRateCard(stats)}
     <div class="nw-battle-result-actions"><button class="nw-battle-start-button" id="nwPracticeAgain">⚔ NEXT BATTLE</button><button class="nw-battle-fine-button" id="nwPracticeBack">BATTLE MENU</button></div>
   </section>`);
@@ -493,7 +495,7 @@ function nwBattleSeasonClock(){
 }
 function nwBattleRewards(){
  evSudokuLeave();applyTheme('hub');const st=nwBattleMonthStats();
- evDisplay(`${evHeader('',showBattle)}<section class="nw-battle nw-battle-ready nw-battle-rewards"><div class="nw-radio-ornament" aria-hidden="true">⋆ ☢ ⋆</div><h2>BATTLE REWARDS</h2><p class="nw-radio-season">${st.wins} MONTHLY WINS · RESETS IN ${nwBattleSeasonClock()}</p><div class="nw-radio-tiers">${nwSeasonFrameTiers.map(t=>`<div class="nw-radio-tier ${st.wins>=t.wins?'earned':''}"><div class="nw-radio-frame-preview"><span class="nw-equipped-frame"><span class="nw-radio-frame-center">✦</span><span class="nw-season-frame-ring">✧</span><strong class="nw-season-frame-title">${nwEscape(t.title)}</strong></span></div><div><strong>${nwEscape(t.title)}</strong><small>${t.wins} WINS · ${st.wins>=t.wins?'UNLOCKED':'LOCKED'}</small><div class="nw-radio-progress"><i style="width:${Math.min(100,st.wins/t.wins*100)}%"></i></div></div></div>`).join('')}</div><button class="nw-battle-fine-button" id="nwRadioBack">BACK TO BATTLE</button></section>`);
+ evDisplay(`${evHeader('',showBattle)}<section class="nw-battle nw-battle-ready nw-battle-rewards"><div class="nw-radio-ornament" aria-hidden="true">⋆ ☢ ⋆</div><h2>BATTLE REWARDS</h2><p class="nw-radio-season">${st.wins} MONTHLY WINS · RESETS IN ${nwBattleSeasonClock()}</p><div class="nw-radio-tiers">${nwSeasonFrameTiers.map(t=>`<div class="nw-radio-tier ${st.wins>=t.wins?'earned':''}"><div class="nw-radio-frame-preview"><img class="nw-radio-reward-art" src="frames/nw-monthly-${t.wins}.png" alt="${nwEscape(t.title)} frame"></div><div><strong>${nwEscape(t.title)}</strong><small>${t.wins} WINS · ${st.wins>=t.wins?'UNLOCKED':'LOCKED'}</small><div class="nw-radio-progress"><i style="width:${Math.min(100,st.wins/t.wins*100)}%"></i></div></div></div>`).join('')}</div><button class="nw-battle-fine-button" id="nwRadioBack">BACK TO BATTLE</button></section>`);
  evRoot.querySelector('#nwRadioBack').onclick=showBattle;
 }
 function showBattle(){
@@ -588,9 +590,9 @@ function nwDoubleReward(m,now=Date.now()){
 }
 function nwDoubleRewards(){
  clearInterval(nwDoubleTimer);nwDoubleTheme();const d=nwDoubleStore(),m=d.matches[nwDoublePeriod().id],past=Object.values(d.matches).filter(x=>x.end<=Date.now()).sort((a,b)=>b.end-a.end);
- const tier=(name,amounts,rival=false)=>`<article class="nw-double-reward-tier${rival?' rival':''}"><h3>${name}</h3>${amounts.map((n,i)=>`<div><span>${i?'SECOND CONTRIBUTOR':'HIGHEST CONTRIBUTOR'}</span><strong>💎 ${n}</strong></div>`).join('')}</article>`;
+ const tier=(name,amounts,rival=false)=>`<article class="nw-double-reward-tier${rival?' rival':''}"><h3>${name}</h3>${amounts.map((n,i)=>`<div><span>${i?'SECOND CONTRIBUTOR':'HIGHEST CONTRIBUTOR'}</span><strong><img class="nw-diamond-icon" src="assets/currency/diamond.png" alt="Diamonds"> ${n}</strong></div>`).join('')}</article>`;
  const progress=m?`<div class="nw-double-reward-progress"><strong>${nwDoubleFmt(m.teamPoints)} / 1,000 PTS</strong><div class="nw-double-eligibility-track"><i style="width:${Math.max(0,Math.min(100,m.teamPoints/10))}%"></i></div><small>${m.teamPoints>=1000?'MINIMUM CONTRIBUTION REACHED':'Earn '+nwDoubleFmt(1000-m.teamPoints)+' more points to qualify.'}</small></div>`:'';
- const completed=past.length?`<h3>PAST EVENT REWARDS</h3>${past.map(x=>{const r=nwDoubleReward(x);return `<div class="nw-double-reward-record"><span>${nwEscape(x.id)} · ${r.eligible?'QUALIFIED':'NOT QUALIFIED'}</span><strong>💎 ${r.amount}</strong>${r.eligible?'<small>Reward claims unavailable for this match.</small>':''}</div>`}).join('')}`:'';
+ const completed=past.length?`<h3>PAST EVENT REWARDS</h3>${past.map(x=>{const r=nwDoubleReward(x);return `<div class="nw-double-reward-record"><span>${nwEscape(x.id)} · ${r.eligible?'QUALIFIED':'NOT QUALIFIED'}</span><strong><img class="nw-diamond-icon" src="assets/currency/diamond.png" alt="Diamonds"> ${r.amount}</strong>${r.eligible?'<small>Reward claims unavailable for this match.</small>':''}</div>`}).join('')}`:'';
  evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-reward-page"><h2 class="nw-double-subtitle">.✦ ݁˖ REWARDS</h2>${tier('WINNING TEAM',[200,150])}${tier('LOSING TEAM',[100,50],true)}<p class="nw-double-note">Earn at least 1,000 individual points to qualify. Rewards are determined when the event ends.</p>${progress}${completed}${past.length?nwDoubleButton('nwDoubleHistory','EVENT HISTORY',true):''}</section>`);
  const history=evRoot.querySelector('#nwDoubleHistory');if(history)history.onclick=nwDoubleHistory;
 }

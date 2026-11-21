@@ -3618,3 +3618,13 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 @keyframes nwRadioFlicker{0%,84%,100%{opacity:1;text-shadow:0 0 10px currentColor}89%{opacity:.72;text-shadow:none}94%{opacity:1;text-shadow:0 0 15px currentColor}}
 @keyframes nwRadioFloat{0%,100%{translate:0 0}50%{translate:0 -5px}}
 @media(prefers-reduced-motion:reduce){#game .nw-battle-hub h2 span,#game .nw-radio-mascots img,#game .nw-radio-vs,#game .nw-matchmaking h2,#game .nw-battle-finish h2.nw-victory-title,#game .nw-battle-rewards h2,#game .nw-battle-modal h2{animation:none}}
+
+/* V25 — approved monthly frame artwork, Battle result palette and Diamond icon. */
+#game .nw-monthly-art-frame .nw-equipped-avatar{inset:auto;left:13.5%;top:18%;width:68%;height:68%;}
+#game .nw-radio-frame-preview .nw-radio-reward-art{display:block;width:100%;height:100%;object-fit:contain;}
+#game .nw-battle-finish .nw-result-winner-avatar{width:100%;height:100%;object-fit:cover;border-radius:50%;border:3px solid #C6F64E;background:#263024;box-shadow:0 0 17px #C6F6455;}
+#game .nw-battle-finish .nw-result-winner-name{display:block;color:#F0F7DD;font:700 17px Oxanium,sans-serif;overflow-wrap:anywhere;}
+html:has(#game:not([hidden])>.nw-battle-finish),body:has(#game:not([hidden])>.nw-battle-finish){background:#111710!important;color:#F0F7DD!important;}
+#game.theme-hub:has(>.nw-battle-finish)>.ev-head{background:#111710!important;border-color:#43552c!important;}
+#game.theme-hub:has(>.nw-battle-finish)>.ev-head .ev-btn{background:#263024!important;color:#C6F64E!important;border-color:#8FAE64!important;}
+#game.nw-double-theme .nw-double-reward-page .nw-diamond-icon{display:inline-block;width:1em;height:1em;object-fit:contain;vertical-align:-.12em;}
