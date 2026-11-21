@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Bungee+Shade&family=Oxanium:wght@400;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Bricolage+Grotesque:wght@400;600;700&family=Rubik+Glitch&family=Space+Mono:wght@400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Special+Elite&display=swap");
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#080611;color:#ffe9f8;font-family:system-ui,sans-serif}button{cursor:pointer;color:inherit}button:focus-visible{outline:2px solid #ffb2ea;outline-offset:2px}[hidden]{display:none!important}#loading,#home{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,#301342,#0a0714 68%);text-align:center;padding:20px}#loading h1{font-size:clamp(32px,9vw,58px);letter-spacing:.22em;color:#f7d8ff;text-shadow:0 0 10px #ed70ff,0 0 28px #ad38ef;animation:pulse 1.2s ease-in-out infinite alternate}@keyframes pulse{to{text-shadow:0 0 20px #ffb6ff,0 0 50px #b24cff}}#home h1{font-size:clamp(42px,11vw,70px);line-height:1.12;color:#f6d8ff;text-shadow:0 0 12px #d653f2,0 0 30px #8d37dd;margin:0 0 45px}.neon-button{min-width:190px;min-height:55px;border:2px solid #e889fa;border-radius:14px;background:linear-gradient(135deg,#8e32ab,#3a1459);box-shadow:0 0 18px #bb43df88;color:#fff;font-size:19px;font-weight:900;letter-spacing:2px}#game{width:100%;max-width:560px;margin:auto;min-height:100dvh;padding:14px 12px 30px;background:radial-gradient(ellipse at top,#451044,#19071e 60%,#0b0412)}.ev-head{position:relative!important;top:auto!important}.room-card{text-align:center;border:2px solid #ce63af;border-radius:20px;margin:25px auto;padding:30px 16px;background:radial-gradient(circle at top,#642055,#160919);box-shadow:0 0 20px #f54fbb55}.room-icon{font-size:44px}.room-card h2{font-size:30px;color:#ffe0a6;text-shadow:0 0 14px #fc42bc}.room-card p{color:#e9bfdc;margin-bottom:26px}.ev-sudo-tools-clean{grid-template-columns:repeat(4,minmax(0,1fr))!important}.ev-sudo-tool{min-width:0}.ev-sudo-tool-icon,.ev-sudo-tool-label{display:block}.ev-sudo-note-marks{font-size:8px;color:#ffe5f6;overflow-wrap:anywhere}.ev-sudoku-cell{aspect-ratio:1}.ev-root{position:static!important;min-height:0!important;padding:0!important;background:transparent!important}#game .ev-sudo-shell{width:100%}@media(max-width:390px){#game{padding:10px 6px 25px}.ev-sudo-shell{padding:8px 4px}.ev-sudo-stats{gap:3px}.ev-sudo-stats>div{padding:6px 1px}.ev-sudo-tools button{font-size:10px}}
@@ -3557,3 +3558,63 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 @media(prefers-reduced-motion:reduce){
   #game.nw-double-theme .nw-double:not(.nw-double-home) > h2:not(.nw-double-logo){animation:none}
 }
+
+/* V24 — Radioactive Battle. All rules are restricted to Battle elements. */
+#game:has(>.nw-battle-hub),#game:has(>.nw-matchmaking),#game:has(>.nw-battle-finish),#game:has(>.nw-battle-rewards){background:radial-gradient(ellipse at 50% 18%,#26351c,#111710 65%,#090e09)!important;color:#F0F7DD;min-height:100dvh}
+#game:has(>.nw-battle-hub)>.ev-head,#game:has(>.nw-matchmaking)>.ev-head,#game:has(>.nw-battle-finish)>.ev-head,#game:has(>.nw-battle-rewards)>.ev-head{background:transparent!important;border-color:#43552c!important}
+#game:has(>.nw-battle-hub)>.ev-head button,#game:has(>.nw-matchmaking)>.ev-head button,#game:has(>.nw-battle-finish)>.ev-head button,#game:has(>.nw-battle-rewards)>.ev-head button{background:#263024!important;border:1px solid #8FAE64!important;color:#C6F64E!important;box-shadow:0 0 12px #a7e34a22!important;font-family:Oxanium,sans-serif}
+#game:has(>.nw-matchmaking)>.ev-head strong,#game:has(>.nw-battle-finish)>.ev-head strong{color:#C6F64E!important;text-shadow:0 0 8px #C6F64E55!important;font-family:Oxanium,sans-serif}
+#game.theme-hub .nw-battle-hub,#game .nw-battle-finish,#game .nw-matchmaking,#game.theme-hub .nw-battle-rewards{position:relative;isolation:isolate;overflow:hidden;width:min(100% - 12px,470px);margin:7px auto 20px;min-height:0;padding:18px 16px 24px;border:1px solid #677e3e;border-radius:24px;color:#F0F7DD;font-family:Oxanium,system-ui,sans-serif;background:url('assets/battle/radioactive.svg') center/100% 100% no-repeat,radial-gradient(ellipse at 50% 14%,#31421e 0,#1a2516 36%,#111710 73%);box-shadow:inset 0 0 26px #a7ef3215,0 12px 28px #0008;text-align:center}
+#game .nw-battle-hub:before,#game .nw-battle-finish:before{content:none}
+#game .nw-radio-ornament{font-size:22px;color:#C6F64E;text-shadow:0 0 12px #a6e83d88;line-height:1.1}
+#game .nw-radio-mascots{display:flex;align-items:center;justify-content:center;gap:14px;margin:4px auto 0}
+#game .nw-radio-mascots img{width:77px;height:77px;object-fit:contain;filter:drop-shadow(0 0 9px #bbf24655);transform:rotate(-9deg);animation:nwRadioFloat 4s ease-in-out infinite}
+#game .nw-radio-mascots img+img{transform:rotate(9deg);animation-delay:-2s}
+#game.theme-hub .nw-battle-hub h2{margin:0;color:#C6F64E;text-shadow:none;font:400 clamp(36px,10.8vw,58px)/1.3 'Bungee Shade',Impact,sans-serif;letter-spacing:0}
+#game.theme-hub .nw-battle-hub h2 span{display:inline-block;font-size:1em;letter-spacing:0;color:#C6F64E;background:linear-gradient(0deg,#8bb332,#C6F64E,#f3ffb8,#C6F64E,#8bb332);background-size:100% 220%;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 7px #C6F64E55);animation:nwRadioLiquid 4s linear infinite}
+#game .nw-radio-tagline{font-size:10px;letter-spacing:.13em;color:#F0F7DD;margin:4px 0 13px}
+#game .nw-battle-hub .nw-season-pill{background:#263024;border:1px solid #718c49;color:#C6F64E;font:700 10px Oxanium,sans-serif;letter-spacing:.045em;margin:0 auto 10px;padding:7px 10px}
+#game .nw-battle-rate-card{border:1px solid #85a84a;background:linear-gradient(150deg,#273322,#182317);box-shadow:inset 0 0 16px #b9f34d13,0 0 13px #b9f34d12;padding:11px 8px;margin:10px 0 17px}
+#game .nw-battle-rate-card:after{background:#263024;border-color:#85a84a;color:#C6F64E}
+#game .nw-rate-eyebrow,#game .nw-rate-record{color:#F0F7DD;font-family:Oxanium,sans-serif}
+#game .nw-rate-row strong{font:800 clamp(37px,12vw,54px)/1.1 Oxanium,sans-serif;color:#C6F64E;text-shadow:0 0 14px #92d04155}
+#game .nw-rate-wreath,#game .nw-rate-record i{color:#8FAE64}
+#game .nw-rate-wreath{font-size:34px}
+#game .nw-radio-next{padding:4px 9px 12px;color:#F0F7DD;font-size:11px;font-weight:600}
+#game .nw-radio-next>div:first-child{display:flex;justify-content:space-between;gap:8px;margin-bottom:7px}
+#game .nw-radio-next b{color:#C6F64E}
+#game .nw-radio-progress{height:7px;border-radius:999px;background:#0c130c;border:1px solid #42572a;overflow:hidden}
+#game .nw-radio-progress i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#79a52d,#C6F64E);box-shadow:0 0 9px #C6F64E}
+#game .nw-battle-hub .nw-battle-start-button,#game .nw-battle-finish .nw-battle-start-button,#game .nw-match-main,#game .nw-battle-overlay .nw-modal-primary{background:linear-gradient(155deg,#d7ff83,#C6F64E 52%,#90c13a);border:1px solid #e1ff9a;color:#111710;font:800 16px Oxanium,sans-serif;letter-spacing:.045em;border-radius:13px;min-height:49px;box-shadow:0 3px 0 #4c6c21,0 0 16px #b9f34d30;margin:8px auto 0}
+#game .nw-battle-fine-button,#game .nw-match-cancel,#game .nw-battle-overlay .nw-modal-secondary{display:block;width:100%;max-width:350px;margin:11px auto 0;background:#263024;border:1px solid #8FAE64;border-radius:12px;color:#D9F6AB;font:700 13px Oxanium,sans-serif;min-height:44px;box-shadow:0 0 12px #a5dd2420}
+#game .nw-matchmaking h2,#game .nw-battle-finish h2.nw-victory-title,#game.theme-hub .nw-battle-rewards h2,#game .nw-battle-modal h2{font:800 clamp(23px,7vw,36px)/1.16 Oxanium,sans-serif;color:#C6F64E;text-shadow:0 0 10px #C6F64E66;animation:nwRadioFlicker 6s infinite;margin:13px 0 20px}
+#game .nw-battle-finish.nw-defeat h2.nw-victory-title,#game .nw-battle-finish.nw-defeat .nw-victory-crown{color:#FF7757}
+#game .nw-match-kicker,#game .nw-matchmaking p,#game .nw-result-kicker,#game .nw-battle-modal p{color:#B7C99A;font-family:Oxanium,sans-serif}
+#game .nw-radio-matchup{display:flex;align-items:center;justify-content:center;gap:12px;margin:24px auto 18px}
+#game .nw-radio-self{width:88px;flex:none;color:#F0F7DD;font:700 11px Oxanium,sans-serif}
+#game .nw-radio-self-frame{width:88px;height:88px;margin-bottom:7px}
+#game .nw-radio-vs{font:800 26px Oxanium,sans-serif;color:#C6F64E;animation:nwRadioFlicker 6s infinite}
+#game .nw-match-avatar-ring{width:100px;height:100px;margin:0;padding:5px;background:conic-gradient(#e8ffb0,#88ad47,#314422,#C6F64E,#e8ffb0);box-shadow:0 0 0 4px #334524,0 0 20px #C6F64E44}
+#game .nw-match-avatar{background:#263024}#game .nw-matchmaking>strong{color:#F0F7DD}#game .nw-match-dots i{background:#C6F64E}
+#game .nw-opponent-panel{background:linear-gradient(130deg,#1b2618,#263024);border-color:#8FAE64;color:#F0F7DD;font-family:Oxanium,sans-serif}
+#game .nw-opponent-small-avatar,#game .nw-battle-result-avatar{border-color:#C6F64E;background:#263024}
+#game .nw-opponent-top span,#game .nw-opponent-errors span{color:#C6F64E}#game .nw-opponent-errors{color:#C4D0AE}
+#game .nw-opponent-track{background:#111710;border-color:#627b42}#game .nw-opponent-track>div{background:linear-gradient(90deg,#779b30,#C6F64E)}
+#game .nw-battle-modal{background:radial-gradient(ellipse at top,#394b24,#192418 70%,#111710);border-color:#8FAE64;box-shadow:0 0 20px #b7ef4033,0 16px 50px #000c;color:#F0F7DD;font-family:Oxanium,sans-serif}
+#game .nw-battle-modal .nw-modal-glow,#game .nw-victory-crown,#game .nw-victory-sparkles,#game .nw-victory-sparkles span:nth-child(even){color:#C6F64E;text-shadow:0 0 20px #C6F64E55}
+#game .nw-battle-modal-actions button{font-size:11px;min-height:48px;margin:0}
+#game .nw-battle-result-opponent{color:#F0F7DD}
+#game .nw-battle-race-result{background:#263024;border-color:#8FAE64;color:#F0F7DD}#game .nw-battle-race-result span{color:#C6F64E}
+#game .nw-battle-finish.nw-defeat .nw-battle-race-result span{color:#FF7757}
+#game .nw-radio-season{color:#C6F64E;font:600 11px Oxanium,sans-serif}
+#game .nw-radio-tiers{display:grid;gap:8px;margin:18px 0}
+#game .nw-radio-tier{display:grid;grid-template-columns:66px minmax(0,1fr);gap:12px;align-items:center;padding:9px;background:#263024;border:1px solid #526638;border-radius:11px;text-align:left}
+#game .nw-radio-tier.earned{border-color:#C6F64E;box-shadow:0 0 12px #C6F64E22}
+#game .nw-radio-tier strong{font:700 15px Oxanium,sans-serif;color:#F0F7DD}#game .nw-radio-tier small{display:block;font-size:10px;color:#B7C99A;margin:5px 0 8px}
+#game .nw-radio-frame-preview{width:62px;height:62px;display:grid;place-items:center;position:relative}
+#game .nw-radio-frame-preview .nw-season-frame-title{font:700 7px/1.1 Oxanium,sans-serif;top:-3px;white-space:normal;padding:3px 0;color:#ffebb7}
+#game .nw-radio-frame-center{color:#F0F7DD;font-size:20px}
+@keyframes nwRadioLiquid{from{background-position:0 0}to{background-position:0 220%}}
+@keyframes nwRadioFlicker{0%,84%,100%{opacity:1;text-shadow:0 0 10px currentColor}89%{opacity:.72;text-shadow:none}94%{opacity:1;text-shadow:0 0 15px currentColor}}
+@keyframes nwRadioFloat{0%,100%{translate:0 0}50%{translate:0 -5px}}
+@media(prefers-reduced-motion:reduce){#game .nw-battle-hub h2 span,#game .nw-radio-mascots img,#game .nw-radio-vs,#game .nw-matchmaking h2,#game .nw-battle-finish h2.nw-victory-title,#game .nw-battle-rewards h2,#game .nw-battle-modal h2{animation:none}}

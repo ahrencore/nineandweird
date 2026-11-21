@@ -360,7 +360,7 @@ function nwBattleSelectProfile(){
 function nwBattleReveal(opponent,profile,previousWorld){
   const serial=++nwBattleSearchSerial;
   evSudokuLeave();applyTheme('hub');
-  evDisplay(`${evHeader('BATTLE',()=>{++nwBattleSearchSerial;showBattle()})}<section class="nw-matchmaking"><div class="nw-match-kicker">MONTHLY BATTLE</div><h2 id="nwMatchTitle">SEARCHING FOR AN OPPONENT</h2><div class="nw-match-avatar-ring"><div id="nwMatchAvatar" class="nw-match-avatar">${nwBattleProfileArt(profile,'nw-match-avatar-image')}</div></div><strong id="nwMatchName">•••</strong><div id="nwMatchDots" class="nw-match-dots"><i></i><i></i><i></i></div><p id="nwMatchSub">Finding your match...</p><button type="button" id="nwMatchGo" class="nw-match-main" hidden>START MATCH</button><button type="button" id="nwMatchCancel" class="nw-match-cancel">CANCEL</button></section>`);
+  evDisplay(`${evHeader('BATTLE',()=>{++nwBattleSearchSerial;showBattle()})}<section class="nw-matchmaking"><div class="nw-match-kicker">MONTHLY BATTLE</div><h2 id="nwMatchTitle">SEARCHING FOR AN OPPONENT</h2><div class="nw-radio-matchup"><div class="nw-radio-self"><div class="nw-radio-self-frame">${nwFrameArt(nwProfile().avatar)}</div><small>YOU</small></div><b class="nw-radio-vs">VS</b><div class="nw-match-avatar-ring"><div id="nwMatchAvatar" class="nw-match-avatar">${nwBattleProfileArt(profile,'nw-match-avatar-image')}</div></div></div><strong id="nwMatchName">•••</strong><div id="nwMatchDots" class="nw-match-dots"><i></i><i></i><i></i></div><p id="nwMatchSub">Finding your match...</p><button type="button" id="nwMatchGo" class="nw-match-main" hidden>START MATCH</button><button type="button" id="nwMatchCancel" class="nw-match-cancel">CANCEL</button></section>`);
   let n=0;
   const shuffleTimer=setInterval(()=>{
     if(serial!==nwBattleSearchSerial){clearInterval(shuffleTimer);return}
@@ -487,20 +487,28 @@ function nwBattleOpponentWonPopup(s){
   wrapper.querySelector('#nwEndMatch').onclick=()=>{wrapper.remove();s.done=true;nwBattleFinish(s,false,0,Math.floor((Date.now()-s.start)/1000))};
   cont.focus({preventScroll:true});
 }
+function nwBattleSeasonClock(){
+ const d=new Date(),end=Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,1),hours=Math.max(0,Math.floor((end-d.getTime())/3600000));
+ return Math.floor(hours/24)+'D '+hours%24+'H';
+}
+function nwBattleRewards(){
+ evSudokuLeave();applyTheme('hub');const st=nwBattleMonthStats();
+ evDisplay(`${evHeader('',showBattle)}<section class="nw-battle nw-battle-ready nw-battle-rewards"><div class="nw-radio-ornament" aria-hidden="true">⋆ ☢ ⋆</div><h2>BATTLE REWARDS</h2><p class="nw-radio-season">${st.wins} MONTHLY WINS · RESETS IN ${nwBattleSeasonClock()}</p><div class="nw-radio-tiers">${nwSeasonFrameTiers.map(t=>`<div class="nw-radio-tier ${st.wins>=t.wins?'earned':''}"><div class="nw-radio-frame-preview"><span class="nw-equipped-frame"><span class="nw-radio-frame-center">✦</span><span class="nw-season-frame-ring">✧</span><strong class="nw-season-frame-title">${nwEscape(t.title)}</strong></span></div><div><strong>${nwEscape(t.title)}</strong><small>${t.wins} WINS · ${st.wins>=t.wins?'UNLOCKED':'LOCKED'}</small><div class="nw-radio-progress"><i style="width:${Math.min(100,st.wins/t.wins*100)}%"></i></div></div></div>`).join('')}</div><button class="nw-battle-fine-button" id="nwRadioBack">BACK TO BATTLE</button></section>`);
+ evRoot.querySelector('#nwRadioBack').onclick=showBattle;
+}
 function showBattle(){
   evSudokuLeave();applyTheme('hub');
   const d=new Date(),month=d.toLocaleString('en-US',{month:'long',year:'numeric',timeZone:'UTC'});
-  const stats=nwBattleMonthStats();
-  evDisplay(`${evHeader('BATTLE',showCategories)}<section class="nw-battle nw-battle-ready nw-battle-hub">
-    <div class="nw-hub-ornament" aria-hidden="true">✦ &nbsp; ⚔ &nbsp; ✦</div>
-    <div class="nw-hub-laurel" aria-hidden="true">❧</div>
-    <h2>MONTHLY <span>BATTLE</span></h2><div class="nw-battle-player-frame">${nwFrameArt(nwProfile().avatar)}</div>
-    <div class="nw-season-pill">✦ ${month.toUpperCase()} ✦</div>
+  const stats=nwBattleMonthStats(),next=nwSeasonFrameTiers.find(t=>stats.wins<t.wins);
+  evDisplay(`${evHeader('',showCategories)}<section class="nw-battle nw-battle-ready nw-battle-hub">
+    <div class="nw-radio-ornament" aria-hidden="true">⋆ ☢ ⋆</div><div class="nw-radio-mascots" aria-hidden="true"><img src="assets/alien/02_radioactive_milk.png" alt=""><img src="assets/solarsick/04_nauseous_planet.png" alt=""></div>
+    <h2><span>BATTLE</span></h2><div class="nw-radio-tagline">ONE PUZZLE. TWO PLAYERS.</div>
+    <div class="nw-season-pill">${month.toUpperCase()} · RESETS IN ${nwBattleSeasonClock()}</div>
     ${nwBattleRateCard(stats)}
-    <button type="button" class="nw-battle-start-button" id="nwStartRandomBattle">⚔ &nbsp; START BATTLE</button>
-    <div class="nw-hub-footer">ONE PUZZLE <span>✦</span> TWO CHALLENGERS <span>✦</span> ONE WINNER</div>
+    <div class="nw-radio-next">${next?`<div><span>NEXT: ${nwEscape(next.title.toUpperCase())}</span><b>${stats.wins} / ${next.wins}</b></div><div class="nw-radio-progress"><i style="width:${Math.min(100,stats.wins/next.wins*100)}%"></i></div>`:'ALL MONTHLY TITLES UNLOCKED'}</div>
+    <button type="button" class="nw-battle-start-button" id="nwStartRandomBattle">ϟ FIND OPPONENT</button><button type="button" class="nw-battle-fine-button" id="nwRadioRewards">.✦ ݁˖ BATTLE REWARDS</button>
   </section>`);
-  evRoot.querySelector('#nwStartRandomBattle').onclick=()=>nwBattleStart();
+  evRoot.querySelector('#nwStartRandomBattle').onclick=()=>nwBattleStart();evRoot.querySelector('#nwRadioRewards').onclick=nwBattleRewards;
 }
 // Universal event boundaries use UTC, not the player's local calendar.
 function nwEventPhase(){return ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'][new Date().getUTCDay()]}
