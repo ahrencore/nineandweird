@@ -3278,3 +3278,18 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-triple-board.nw-triple-shaped .nw-triple-tile{padding:2px;border-width:1px;border-radius:5px;box-shadow:0 2px 0 #776D89,0 3px 3px #10132788,inset 0 1px #fff}
 #game .nw-triple-board.nw-triple-shaped .nw-triple-tile.nw-triple-mystery{box-shadow:0 2px 0 #776D89,0 3px 3px #10132788,inset 0 0 0 2px #A89CFF}
 #game .nw-triple-board.nw-triple-shaped .nw-triple-tile.nw-triple-mystery::after{content:'';position:absolute;right:1px;top:1px;width:5px;height:5px;border-radius:50%;background:#7669B8;border:1px solid #F6D9F5;pointer-events:none}
+
+
+/* V9 Triple Trouble polish: unify mystery tile size and add fail boosters. */
+#game .nw-triple-board.nw-triple-shaped .nw-triple-tile.nw-triple-mystery{box-shadow:0 2px 0 #776D89,0 3px 3px #10132788,inset 0 1px #fff}
+#game .nw-triple-board.nw-triple-shaped .nw-triple-tile.nw-triple-mystery::after{content:'';position:absolute;right:2px;top:2px;width:6px;height:6px;border-radius:50%;background:#8E84CE;border:1px solid #F6D9F5;pointer-events:none}
+#game .nw-triple-pile-top{width:100%;aspect-ratio:1/.97;padding:2px;border-radius:6px;border-width:1px;box-shadow:0 2px 0 #776D89,0 3px 3px #10132788,inset 0 1px #fff}
+#game .nw-triple-pile-top.stacked{box-shadow:0 2px 0 #776D89,0 3px 3px #10132788,inset 0 1px #fff,0 0 0 2px #8E84CE55;overflow:visible}
+#game .nw-triple-pile-top.stacked::before{content:'';position:absolute;inset:4px 5px 0 4px;border-radius:6px;background:linear-gradient(180deg,#A89CFF44,#5F569B22);transform:translate(4px,5px);z-index:-1;pointer-events:none}
+#game .nw-triple-pile-top.stacked::after{content:'';position:absolute;right:2px;top:2px;width:6px;height:6px;border-radius:50%;background:#8E84CE;border:1px solid #F6D9F5;pointer-events:none}
+#game .nw-triple-end .nw-triple-fail-boosters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%;max-width:360px;margin:4px 0 2px}
+#game .nw-triple-fail-booster{position:relative;min-width:0;padding:10px 3px 8px;border:2px solid #DBD3FF;border-radius:14px;background:linear-gradient(145deg,#FAF1FF,#D8C9ED);box-shadow:0 4px 0 #555080,0 7px 10px #10132755;display:flex;align-items:center;flex-direction:column;gap:2px;color:#3E346E}
+#game .nw-triple-fail-booster span{font-weight:900;font-size:26px;color:#7758A5;text-shadow:0 1px #fff}
+#game .nw-triple-fail-booster b{font-size:10px;font-weight:900;color:#343055;letter-spacing:.02em}
+#game .nw-triple-fail-booster i{position:absolute;right:-3px;top:-8px;border:2px solid #DBD3FF;border-radius:50%;background:#6F5DB3;color:white;font-style:normal;font-size:12px;width:24px;height:24px;display:grid;place-items:center;font-weight:900}
+#game .nw-triple-fail-booster:disabled{filter:grayscale(.65);opacity:.5}

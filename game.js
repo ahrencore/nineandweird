@@ -679,7 +679,7 @@ function nwTripleCandidate(stage,variant){
    }
  }
 
- return {stage,hard,shape,stackCount,tiles,tray:[],used:{undo:false,shuffle:false,magic:false},history:[],won:false,lost:false,room:nwTripleArtRooms[rooms[0]],started:Date.now(),week:nwTripleWeek(),practice:!nwTripleInEvent(),version:2};
+ return {stage,hard,shape,stackCount,tiles,tray:[],used:{undo:false,shuffle:false,magic:false},history:[],won:false,lost:false,room:nwTripleArtRooms[rooms[0]],started:Date.now(),week:nwTripleWeek(),practice:!nwTripleInEvent(),version:3};
 }
 // Choose a deterministic, less obvious board from several solvable candidates.
 // The probe only sees exposed symbols, never hidden artwork. This is a heuristic,
@@ -741,10 +741,12 @@ function nwTripleChoose(id){
  if(count.length===3){let removed=0;s.tray=s.tray.filter(t=>{if(t.symbol===tile.symbol&&removed<3){removed++;return false}return true})}
  if(!s.tiles.length&&!s.tray.length){s.won=true}
  else if(s.tray.length>=7)s.lost=true;
+ if(s.tray.length<7)s.lost=false;
  nwTripleDraw();
 }
+
 function nwTripleBooster(kind){
- const s=nwTriple;if(!s||s.won||s.lost||s.used[kind])return;
+ const s=nwTriple;if(!s||s.won||s.used[kind])return;
  if(kind==='undo'){
    if(!s.history.length)return;
    const previous=s.history.pop();s.tiles=previous.tiles;s.tray=previous.tray;s.used.undo=true;
@@ -775,6 +777,7 @@ function nwTripleBooster(kind){
    s.tray=s.tray.filter(t=>t.symbol!==choice.symbol);s.used.magic=true;s.history=[];
    if(!s.tiles.length&&!s.tray.length){s.won=true}
  }
+ if(s.tray.length<7)s.lost=false;
  nwTripleDraw();
 }
 function nwTripleHome(){
@@ -789,7 +792,7 @@ function nwTripleHome(){
  </section>`);
  evRoot.querySelector('#nwTripleStart').onclick=()=>nwTripleBegin(d.stage,true);
 }
-function nwTripleBegin(stage,resume=false){const d=nwTripleSessionData();const a=d.active;nwTriple=resume&&a?.version===2&&a.stage===stage&&!a.won&&!a.lost&&a.week===nwTripleWeek()&&a.practice===!nwTripleInEvent()?a:nwTripleCreate(stage);nwTripleDraw()}
+function nwTripleBegin(stage,resume=false){const d=nwTripleSessionData();const a=d.active;nwTriple=resume&&a?.version>=2&&a.stage===stage&&!a.won&&!a.lost&&a.week===nwTripleWeek()&&a.practice===!nwTripleInEvent()?a:nwTripleCreate(stage);nwTripleDraw()}
 function nwTripleDraw(){
  const s=nwTriple;if(!s)return;if(s.week!==nwTripleWeek()||s.practice===nwTripleInEvent()){nwTripleHome();return}nwTriplePersist();applyTheme('hub');evRoot.classList.add('nw-triple-theme');
  const mysteryTops=new Map();for(const t of s.tiles){if(t.mystery!=null&&(!mysteryTops.has(t.mystery)||mysteryTops.get(t.mystery).layer<t.layer))mysteryTops.set(t.mystery,t)}
@@ -803,7 +806,8 @@ function nwTripleDraw(){
    return `<div class="nw-triple-pile"><button type="button" class="nw-triple-pile-top stacked" data-tile="${top.id}" aria-label="Mystery stack">${nwTripleArt(top.symbol)}</button></div>`;
  }).join('')}</div>`;
  const tray=Array.from({length:7},(_,i)=>`<span class="nw-triple-tray-slot">${s.tray[i]?nwTripleArt(s.tray[i].symbol):''}</span>`).join('');
- const action=s.won?`<div class="nw-triple-end"><div class="nw-triple-party">${nwTripleMascots()}</div><div class="nw-triple-sparks" aria-hidden="true">⋆˚<span class="nw-triple-spiral"></span>｡</div><h2>STAGE ${s.stage} CLEARED!</h2><p>${nwTripleIsHard(s.stage+1)?'HARD STAGE UP NEXT!':'BRILLIANTLY WEIRD!'}</p><button id="nwTripleNext" class="nw-triple-main-btn">NEXT STAGE ▶</button><button id="nwTripleBack" class="nw-triple-back-btn">BACK TO EVENT</button></div>`:s.lost?`<div class="nw-triple-end"><h2>TRAY FULL!</h2><p>ONE MORE TRY?</p><button id="nwTripleRetry" class="nw-triple-main-btn">RETRY STAGE ↻</button></div>`:'';
+ const lostBoosters=[['undo','↶','UNDO'],['shuffle','⤨','SHUFFLE'],['magic','<span class=\"nw-triple-spiral\"></span>','MAGIC CLEAR']].map(([key,icon,label])=>`<button class=\"nw-triple-fail-booster\" data-fail-booster=\"${key}\" ${s.used[key]||(key==='undo'&&!s.history.length)?'disabled':''}><span>${icon}</span><b>${label}</b><i>${s.used[key]?'0':'1'}</i></button>`).join('');
+ const action=s.won?`<div class="nw-triple-end"><div class="nw-triple-party">${nwTripleMascots()}</div><div class="nw-triple-sparks" aria-hidden="true">⋆˚<span class="nw-triple-spiral"></span>｡</div><h2>STAGE ${s.stage} CLEARED!</h2><p>${nwTripleIsHard(s.stage+1)?'HARD STAGE UP NEXT!':'BRILLIANTLY WEIRD!'}</p><button id="nwTripleNext" class="nw-triple-main-btn">NEXT STAGE ▶</button><button id="nwTripleBack" class="nw-triple-back-btn">BACK TO EVENT</button></div>`:s.lost?`<div class="nw-triple-end"><h2>TRAY FULL!</h2><p>USE A BOOSTER OR TRY AGAIN.</p><div class="nw-triple-fail-boosters">${lostBoosters}</div><button id="nwTripleRetry" class="nw-triple-main-btn">RETRY STAGE ↻</button><button id="nwTripleBack" class="nw-triple-back-btn">BACK TO EVENT</button></div>`:'';
  evDisplay(`${evHeader('TRIPLE TROUBLE',nwTripleHome)}<section class="nw-triple nw-triple-play">
  <div class="nw-triple-stagehead"><div><small>${s.hard?'🔥 HARD STAGE':'TRIPLE TROUBLE'}</small><strong>STAGE ${s.stage}</strong></div><span>∞</span></div>
  <div class="nw-triple-board-wrap ${s.stackCount?'has-piles':''}">${s.stackCount?pileRail(0):''}<div class="nw-triple-board ${s.shape?'nw-triple-shaped':''}" aria-label="Layered tile matching board">${tiles}</div>${s.stackCount?pileRail(1):''}</div>
@@ -813,7 +817,7 @@ function nwTripleDraw(){
  evRoot.querySelectorAll('[data-tile]').forEach(el=>el.onclick=()=>nwTripleChoose(+el.dataset.tile));
  evRoot.querySelectorAll('[data-booster]').forEach(el=>el.onclick=()=>nwTripleBooster(el.dataset.booster));
  if(s.won){evRoot.querySelector('#nwTripleNext').onclick=()=>nwTripleBegin(s.stage+1);evRoot.querySelector('#nwTripleBack').onclick=nwTripleHome;}
- if(s.lost)evRoot.querySelector('#nwTripleRetry').onclick=()=>nwTripleBegin(s.stage);
+ if(s.lost){evRoot.querySelectorAll('[data-fail-booster]').forEach(el=>el.onclick=()=>nwTripleBooster(el.dataset.failBooster));evRoot.querySelector('#nwTripleRetry').onclick=()=>nwTripleBegin(s.stage);evRoot.querySelector('#nwTripleBack').onclick=nwTripleHome;}
 }
 
 function showCategories(){
