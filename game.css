@@ -3640,3 +3640,59 @@ html:has(#game:not([hidden])>.nw-battle-finish),body:has(#game:not([hidden])>.nw
 #game .nw-battle-claim-error{color:#FF7757;font-size:12px}
 @keyframes nwDiamondShimmer{0%,80%,100%{filter:none}90%{filter:brightness(1.25) drop-shadow(0 0 3px #7edaff)}}
 @media(prefers-reduced-motion:reduce){#game .nw-battle-rewards .nw-diamond-icon,#game.nw-double-theme .nw-double-reward-page .nw-diamond-icon{animation:none}}
+
+/* V27 — isolated Ruby lobby and galaxy catalogue. */
+html:has(#game.nw-lobby-theme:not([hidden])),body:has(#game.nw-lobby-theme:not([hidden])),html:has(#game.nw-galaxy-theme:not([hidden])),body:has(#game.nw-galaxy-theme:not([hidden])){background:#160B0E!important;color:#ffe5e5!important}
+#game.theme-hub.nw-lobby-theme,#game.theme-hub.nw-galaxy-theme{background:radial-gradient(ellipse at 50% 18%,#421923 0%,#211017 42%,#160B0E 78%)!important;color:#ffe5e5!important;min-height:100dvh;box-sizing:border-box;padding-top:max(14px,env(safe-area-inset-top))}
+#game .nw-lobby-top{max-width:470px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:42px}
+#game .nw-lobby-top-right{display:flex;align-items:center;gap:9px;min-width:0}
+#game .nw-lobby-back,#game .nw-lobby-icon{background:#321820;border:1px solid #a64a59;color:#ffd4da;border-radius:11px;padding:8px;cursor:pointer;font:800 12px system-ui;min-height:36px;box-shadow:0 0 9px #f36b781c}
+#game .nw-lobby-icon{display:grid;place-items:center;width:36px;height:36px;padding:7px;color:#f36b78}
+#game .nw-lobby-icon svg{width:100%;height:100%}
+#game .nw-lobby-money .nw-diamond-amount{display:inline-flex;align-items:center;gap:3px;white-space:nowrap;font:800 14px Oxanium,system-ui;color:#fff0e8}
+#game .nw-lobby-money .nw-diamond-icon{width:19px;height:19px;object-fit:contain;display:block;flex:none;animation:nwDiamondShimmer 5s ease-in-out infinite}
+#game .nw-lobby{max-width:440px;margin:0 auto;padding:8px 10px 16px;display:grid;gap:12px;position:relative;box-sizing:border-box}
+#game .nw-lobby-profile{appearance:none;border:0;background:transparent;color:#fff0e8;display:grid;justify-items:center;gap:5px;margin:4px auto 8px;padding:0;width:100%;cursor:pointer;min-width:0;position:relative;isolation:isolate}
+#game .nw-lobby-profile:before{content:'✧';position:absolute;top:28%;left:12%;color:#f36b78;font-size:18px;opacity:.7;text-shadow:0 0 8px #f36b78}
+#game .nw-lobby-profile:after{content:'✦';position:absolute;top:53%;right:12%;color:#f36b78;font-size:13px;opacity:.6}
+#game .nw-lobby-profile .nw-equipped-frame{width:clamp(108px,30vw,154px);height:clamp(108px,30vw,154px);filter:drop-shadow(0 0 16px #f36b7844)}
+#game .nw-lobby-profile>strong{font:800 clamp(18px,5vw,23px) Oxanium,system-ui;max-width:100%;overflow-wrap:anywhere;line-height:1.2}
+#game .nw-lobby-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;justify-items:center;gap:12px 15px}
+#game .nw-lobby-nav,#game .nw-lobby-portal{box-sizing:border-box;cursor:pointer;appearance:none;display:flex;flex-direction:column;align-items:center;justify-content:center;isolation:isolate;min-width:0;position:relative;text-align:center;gap:4px;overflow:hidden;touch-action:manipulation}
+#game .nw-lobby-nav{width:100%;height:clamp(100px,28vw,140px);border-radius:17px;border:1.5px solid #a64a59;background:radial-gradient(ellipse at 50% 12%,#51232e,#30151d 65%,#251018);color:#ffd5dc;box-shadow:0 4px 0 #39131d,inset 0 1px 0 #f36b782b,0 0 13px #f36b7817;padding:9px 5px}
+#game .nw-lobby-nav strong{font:800 clamp(12px,3.4vw,16px) Oxanium,system-ui;letter-spacing:.04em;line-height:1.1}
+#game .nw-lobby-nav-art{width:58px;height:58px;display:grid;place-items:center;position:relative;isolation:isolate}
+#game .nw-lobby-nav-art img,#game .nw-lobby-nav-art svg{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 5px #0006)}
+#game .nw-lobby-orbit:before{content:'';position:absolute;inset:13px -9px;border:1.5px solid #f78c9b;border-radius:50%;transform:rotate(-30deg);z-index:-1;box-shadow:0 0 8px #f36b7855}
+#game .nw-lobby-heart:before{content:'♡';position:absolute;color:#ff9bac;font-size:63px;line-height:1;z-index:-1;transform:rotate(-12deg)}
+#game .nw-lobby-heart img{width:42px;height:42px}
+#game .nw-lobby-portal{width:clamp(104px,29vw,144px);aspect-ratio:1;border-radius:50%;padding:9px 5px;border:2px solid var(--portal-accent);color:var(--portal-accent);background:radial-gradient(ellipse at 50% 18%,var(--portal-panel),var(--portal-bg) 77%);box-shadow:0 0 15px color-mix(in srgb,var(--portal-accent) 24%,transparent),inset 0 0 12px color-mix(in srgb,var(--portal-accent) 16%,transparent)}
+#game .nw-lobby-portal.triple{--portal-accent:#C5B8FF;--portal-panel:#424778;--portal-bg:#161b34}
+#game .nw-lobby-portal.double{--portal-accent:#FF4690;--portal-panel:#553025;--portal-bg:#191310}
+#game .nw-lobby-portal.battle{--portal-accent:#C6F64E;--portal-panel:#374926;--portal-bg:#111710}
+#game .nw-lobby-portal-decor{font-size:12px;line-height:1;text-shadow:0 0 8px currentColor;letter-spacing:1px}
+#game .nw-lobby-mascots{display:flex;align-items:center;justify-content:center;width:100%;height:clamp(27px,9vw,43px);gap:2px}
+#game .nw-lobby-mascots img{width:31%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 3px #0009)}
+#game .nw-lobby-portal strong{display:block;font-size:clamp(12px,3.8vw,17px);line-height:1.03;color:inherit;text-shadow:0 0 7px currentColor}
+#game .nw-lobby-portal.triple strong{font-family:'Special Elite',monospace;font-weight:400;color:#f6d9f5}
+#game .nw-lobby-portal.double strong{font-family:'Rubik Glitch',sans-serif;font-weight:400;animation:nwLobbyFlicker 6s infinite}
+#game .nw-lobby-portal.battle strong{font-family:'Bungee Shade',sans-serif;font-weight:400;background:linear-gradient(0deg,#71952A,#C6F64E,#F4FFCA,#C6F64E,#71952A);background-size:100% 220%;background-clip:text;-webkit-background-clip:text;color:transparent;text-shadow:none;animation:nwRadioLiquid 4s linear infinite}
+#game .nw-lobby button:active{filter:brightness(1.15)}
+#game .nw-lobby button:focus-visible,#game .nw-lobby-top button:focus-visible,#game .nw-planet:focus-visible{outline:2px solid #fff1e5;outline-offset:3px}
+#game .nw-lobby-utility{max-width:390px;margin:35px auto;text-align:center;display:grid;gap:18px;justify-items:center;color:#ffd5dc}
+#game .nw-lobby-utility .nw-lobby-nav{height:auto;padding:16px}
+#game .nw-galaxy-theme>.ev-head{background:#160b0e!important;border-color:#75404c!important}
+#game .nw-galaxy-theme>.ev-head strong{font-size:clamp(14px,4vw,20px)!important;color:#ffd5dc!important}
+#game .nw-galaxy-theme>.nw-planet-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px 9px!important;max-width:520px!important;margin:10px auto 24px!important;padding:0 3px!important;align-items:start}
+#game .nw-planet{position:relative;display:block;box-sizing:border-box;width:100%;aspect-ratio:1;background:none!important;border:0!important;padding:0!important;min-width:0;min-height:0;color:var(--planet-ink);cursor:pointer;isolation:isolate}
+#game .nw-planet-disc{box-sizing:border-box;position:absolute;inset:15.55%;border-radius:50%;display:grid;place-items:center;background:var(--planet-bg);border:2px solid var(--planet-accent);box-shadow:0 0 13px color-mix(in srgb,var(--planet-accent) 27%,transparent),inset 0 0 8px color-mix(in srgb,var(--planet-accent) 12%,transparent)}
+#game .nw-planet-pieces{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));width:72%;height:72%;place-items:center;gap:0;box-sizing:border-box}
+#game .nw-planet-pieces img{display:block;width:100%;height:100%;max-width:none;max-height:none;min-width:0;min-height:0;object-fit:contain}
+#game .nw-planet-pieces>span:not(.nw-planet-lock){font:800 clamp(13px,5vw,24px)/1 system-ui;color:var(--planet-ink)}
+#game .nw-planet-orbit{display:block;position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;font-family:Oxanium,system-ui;filter:drop-shadow(0 0 2px #15080e)}
+#game .nw-planet.locked{cursor:default;opacity:.55}
+#game .nw-planet-lock{grid-column:1/-1;grid-row:1/-1;font-size:30px;color:var(--planet-accent)}
+#game .nw-planet-grid .nw-empty-favs{grid-column:1/-1;text-align:center;padding:25px 10px}
+@keyframes nwLobbyFlicker{0%,86%,100%{opacity:1}90%{opacity:.7}94%{opacity:1}}
+@media(max-height:680px){#game .nw-lobby{gap:5px;padding-top:0}#game .nw-lobby-profile{margin:0 auto 4px}#game .nw-lobby-profile .nw-equipped-frame{width:105px;height:105px}#game .nw-lobby-grid{gap:8px 12px}#game .nw-lobby-portal{width:106px}#game .nw-lobby-nav{height:99px}#game .nw-lobby-nav-art{width:45px;height:45px}}
+@media(prefers-reduced-motion:reduce){#game .nw-lobby-portal strong,#game .nw-lobby-money .nw-diamond-icon{animation:none}}
