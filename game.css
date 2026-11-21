@@ -3331,3 +3331,48 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-triple-home #nwTripleStart{display:flex;align-items:center;justify-content:center;gap:9px;width:min(93%,340px);box-sizing:border-box;min-height:49px;padding:12px 10px;margin:10px auto 5px;background:linear-gradient(155deg,#626CC0,#464C98 60%,#373B79);border:1px solid #9598DB;border-radius:13px;color:#fff!important;font:400 clamp(14px,4.2vw,19px)/1.2 'Special Elite','Courier New',monospace;letter-spacing:.025em;text-shadow:0 1px 2px #232A52;box-shadow:inset 0 1px #ADB2EF65,0 3px 0 #282D61,0 5px 12px #10132777}
 #game .nw-triple-home #nwTripleStart .nw-triple-play-symbol{font:400 25px/1 system-ui,sans-serif;color:#fff;flex:none;transform:translateY(-1px)}
 #game .nw-triple-home #nwTripleStart:active{transform:translateY(2px);box-shadow:inset 0 1px #ADB2EF65,0 1px 0 #282D61}
+
+/* V14 — Double Trouble / After Hours. Only the event hub and results. */
+#game.nw-double-theme{background:#282321!important;color:#F1E6D9;min-height:100dvh;--ink:#F1E6D9;--accent:#98B9DD;--panel:#403631;--line:#74665F}
+#game.nw-double-theme .ev-head{background:#282321!important;border-color:#62534B!important}
+#game.nw-double-theme .ev-head strong{font:700 clamp(14px,4vw,20px)/1.1 Georgia,serif!important;color:#98B9DD!important;text-shadow:none!important;letter-spacing:.03em}
+#game.nw-double-theme .ev-head button{background:#403631!important;border:1px solid #74665F!important;color:#F1E6D9!important;box-shadow:none!important}
+#game .nw-double{box-sizing:border-box;display:flex;flex-direction:column;gap:12px;width:100%;max-width:470px;margin:0 auto;padding:18px 12px 28px;text-align:center;color:#F1E6D9;background:#282321;border:none;font:14px/1.4 system-ui,sans-serif}
+#game .nw-double h2{font:900 clamp(34px,10vw,54px)/.94 Georgia,'Times New Roman',serif;color:#98B9DD;text-shadow:none;margin:4px 0 6px;letter-spacing:-.05em}
+#game .nw-double h3{font:700 15px/1.3 Georgia,serif;letter-spacing:.07em;color:#B7CDE8;margin:8px 0 0}
+#game .nw-double-mascots{display:flex;justify-content:center;align-items:center;gap:4px;height:67px}
+#game .nw-double-mascots img{width:65px;height:65px;object-fit:contain;transform:rotate(-8deg)}
+#game .nw-double-mascots img+img{transform:rotate(8deg)}
+#game .nw-double-kicker,#game .nw-double-count small{color:#B7CDE8;font-size:11px;letter-spacing:.12em;font-weight:700}
+#game .nw-double-mode{font-size:11px;color:#D0BFB5;margin:0}
+#game .nw-double-count{padding:10px;border-top:1px solid #62534B;border-bottom:1px solid #62534B;display:grid;gap:4px}
+#game .nw-double-count strong{font:700 clamp(16px,4.8vw,24px)/1.2 Georgia,serif;color:#F1E6D9;font-variant-numeric:tabular-nums}
+#game .nw-double-teams{display:grid;gap:7px}
+#game .nw-double-team{background:#403631;border:1px solid #62534B;border-radius:12px;padding:12px;--team:#98B9DD}
+#game .nw-double-team.rival{--team:#D9AB94}
+#game .nw-double-team-head{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--team);padding-bottom:10px;border-bottom:1px solid #62534B;margin-bottom:12px}
+#game .nw-double-team-head small{font-weight:700;font-size:11px;letter-spacing:.07em}
+#game .nw-double-team-head strong{font:700 clamp(24px,7vw,34px)/1 Georgia,serif;font-variant-numeric:tabular-nums}
+#game .nw-double-people{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#game .nw-double-person{display:flex;flex-direction:column;align-items:center;min-width:0;gap:5px;color:#F1E6D9}
+#game .nw-double-person strong{max-width:100%;overflow-wrap:anywhere;font-size:13px}
+#game .nw-double-person span{font:700 18px/1.2 Georgia,serif;font-variant-numeric:tabular-nums}
+#game .nw-double-avatar{width:56px;height:56px;object-fit:cover;border:2px solid var(--team,#98B9DD);border-radius:50%;background:#282321}
+#game .nw-double-avatar.unknown{display:grid;place-items:center;font:700 28px Georgia,serif;color:#B7CDE8}
+#game .nw-double-vs{font:italic 700 17px Georgia,serif;color:#B7CDE8}
+#game .nw-double-track{background:#D9AB94;height:9px;border-radius:3px;overflow:hidden;position:relative;margin-top:5px}
+#game .nw-double-track i{display:block;height:100%;background:#98B9DD;transition:width .3s}
+#game .nw-double-margin{font-size:11px;letter-spacing:.04em;color:#B7CDE8;font-weight:700}
+#game .nw-double-btn{display:block;width:100%;min-height:44px;border:1px solid #B7CDE8;border-radius:7px;background:#98B9DD;color:#282321!important;font:700 15px/1.25 Georgia,serif;letter-spacing:.035em;padding:11px 8px;box-shadow:0 2px 0 #1B1817;text-shadow:none;white-space:normal;overflow-wrap:anywhere}
+#game .nw-double-btn.secondary{background:#403631;color:#B7CDE8!important;border-color:#74665F}
+#game .nw-double-btn:active{transform:translateY(1px)}
+#game .nw-double-levels{display:grid;gap:8px}
+#game .nw-double-note,#game .nw-double-rewards p{margin:0;color:#D0BFB5;font-size:13px}
+#game .nw-double-alert{background:#403631;border:1px solid #D9AB94;border-radius:7px;padding:10px;color:#F1E6D9;margin:0}
+#game .nw-double-rewards{padding:12px;border-top:1px solid #62534B}
+#game .nw-double-rewards h3{margin:0 0 5px}
+#game .nw-double select{width:100%;background:#403631;color:#F1E6D9;border:1px solid #74665F;border-radius:6px;padding:10px;font:inherit;margin:7px 0}
+#game .nw-double-earned{font:700 clamp(44px,12vw,68px)/1 Georgia,serif;color:#98B9DD;font-variant-numeric:tabular-nums;padding:12px 0}
+#game .nw-double-summary{display:grid;gap:10px;padding:14px 0;border-block:1px solid #62534B}
+#game .nw-double-summary div{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#D0BFB5;gap:12px}
+#game .nw-double-summary strong{color:#F1E6D9;font:700 20px Georgia,serif}
