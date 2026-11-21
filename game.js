@@ -589,46 +589,86 @@ function nwTripleShuffle(arr,rng){for(let i=arr.length-1;i>0;i--){const j=Math.f
 // All layers use the same footprint grid and tile geometry as the CSS.
 // A seeded removal order assigns complete triples in groups, so every board
 // has a valid path with at most seven tray slots needed along that path.
-function nwTripleCreate(stage){
- const hard=nwTripleIsHard(stage),random=nwTripleRng((stage*405487+Number(nwTripleWeek().replaceAll('-',''))*17)>>>0);
- const rooms=nwTripleShuffle(nwTripleArtRooms.map((_,i)=>i),random).slice(0,hard?Math.min(4,2+Math.floor(stage/20)):1);
+function nwTripleCandidate(stage,variant){
+ const hard=nwTripleIsHard(stage),random=nwTripleRng((stage*405487+Number(nwTripleWeek().replaceAll('-',''))*17+Math.imul(variant,2654435761))>>>0);
+ const rooms=nwTripleShuffle(nwTripleArtRooms.map((_,i)=>i),random).slice(0,hard?Math.min(4,3+Math.floor(stage/30)):stage<4?1:2);
  const pool=rooms.flatMap(r=>Array.from({length:9},(_,i)=>r*9+i));
- const depth=Math.min(7,3+Math.floor((stage-1)/9)+(hard?2:0));
- const masks=[['01110','11111','11111','11111','01110'],['00100','01110','11111','01110','00100'],['11011','11111','01110','11111','11011'],['11100','11110','01111','00111','00110'],['11111','01110','00100','01110','11111'],['01111','11111','11110','11100','01000']];
+ // A complete, deliberate foreground silhouette. Lower layers stay within
+ // that same shape; only symbols, depth and the hidden piles vary.
+ const shapes=[
+  ['Diamond',['0001000','0011100','0111110','1111111','0111110','0011100','0001000']],
+  ['T',['1111111','1111111','0011100','0011100','0011100','0011100','0011100']],
+  ['Hourglass',['1111111','0111110','0011100','0001000','0011100','0111110','1111111']],
+  ['Hollow Square',['1111111','1111111','1100011','1100011','1100011','1111111','1111111']],
+  ['Cross',['0011100','0011100','1111111','1111111','1111111','0011100','0011100']],
+  ['Heart',['0110110','1111111','1111111','1111111','0111110','0011100','0001000']],
+  ['Butterfly',['1100011','1110111','0111110','0011100','0111110','1110111','1100011']],
+  ['Spiral',['1111111','1000001','1011101','1010101','1010001','1011111','1111111']],
+  ['Pyramid',['0001000','0011100','0011100','0111110','0111110','1111111','1111111']],
+  ['Flower',['0011100','0111110','1101011','1111111','1101011','0111110','0011100']],
+  ['Arrow',['0001000','0011100','0111110','1111111','0011100','0011100','0011100']],
+  ['Staircase',['1110000','1111000','0111100','0011110','0001111','0000111','0000011']],
+  ['Crown',['1001001','1101011','1111111','0111110','0111110','0111110','0111110']],
+  ['H',['1100011','1100011','1100011','1111111','1111111','1100011','1100011']],
+  ['S',['0111111','1100000','1100000','0111110','0000011','0000011','1111110']],
+  ['X',['1100011','0110110','0011100','0001000','0011100','0110110','1100011']],
+  ['Lantern',['0011100','0111110','1100011','1111111','1100011','0111110','0011100']],
+  ['Crescent',['0011110','0111000','1110000','1110000','1110000','0111000','0011110']],
+  ['Ring',['0011100','0111110','1100011','1100011','1100011','0111110','0011100']],
+  ['Bow',['1100011','1110111','1111111','0111110','0011100','0110110','1100011']]
+ ];
+ const [shape,mask]=shapes[(stage-1)%shapes.length];
+ const flip=Math.floor((stage-1)/shapes.length)%2;
+ const cells=[];for(let row=0;row<7;row++)for(let col=0;col<7;col++)if(mask[row][col]==='1')cells.push({x:2+(flip?6-col:col)*13.6,y:3+row*13});
  const tiles=[];let id=0;
- for(let layer=0;layer<depth;layer++){
-   const mask=masks[(stage+layer*2)%masks.length];
-   const positions=[];
-   for(let row=0;row<5;row++)for(let col=0;col<5;col++)if(mask[row][col]==='1')positions.push({x:3+col*18+(layer%2)*5,y:4+row*17+(layer%3)*3});
-   const target=Math.min(positions.length, (layer===0?18:12)+Math.floor(stage/12)+(hard?3:0));
-   // Keep an irregular silhouette; vary count and placement by layer.
-   for(const pos of nwTripleShuffle(positions,random).slice(0,target))tiles.push({id:id++,symbol:0,layer,...pos});
+ const width=13.2,height=12.4;
+ // Side piles and in-board piles are fully blind: a constant visual marker,
+ // never a count or a shadow whose thickness depends on the remaining depth.
+ const stackCount=hard?Math.min(4,2+Math.floor(stage/14)):stage<18?2:4;
+ const embeddedCount=hard?Math.min(7,4+Math.floor(stage/16)):Math.min(5,2+Math.floor(stage/12));
+ const embedded=nwTripleShuffle(cells.slice(),random).slice(0,embeddedCount);
+ const target=hard?Math.min(210,108+Math.min(60,(stage-7)*13)+Math.max(0,Math.floor((stage-14)/5))*3):Math.min(192,66+Math.floor((stage-1)/3)*6);
+ for(let pile=0;pile<stackCount;pile++){
+   const count=hard?7+Math.floor(random()*7):4+Math.floor(random()*4);
+   for(let layer=0;layer<count;layer++)tiles.push({id:id++,symbol:0,layer,stack:pile,x:0,y:0});
  }
- while(tiles.length%3)tiles.pop();
- // Mystery piles share the same symbol pool, but their lower faces are concealed.
- const stackCount=stage<4?0:hard?Math.min(4,2+Math.floor(stage/14)):stage<20?2:4;
- const stackDepth=hard?Math.min(15,7+Math.floor(stage/8)):Math.min(10,4+Math.floor(stage/12));
- for(let pile=0;pile<stackCount;pile++)for(let layer=0;layer<stackDepth;layer++)tiles.push({id:id++,symbol:0,layer,stack:pile,x:0,y:0});
+ for(let k=0;k<embedded.length;k++){
+   const cell=embedded[k],count=hard?3+Math.floor(random()*5):2+Math.floor(random()*3);
+   for(let j=0;j<count;j++)tiles.push({id:id++,symbol:0,layer:9+j,mystery:k,...cell,w:width,h:height});
+ }
+ // The top face is always complete, even when the bottom layer is partial.
+ for(const cell of cells){const k=embedded.indexOf(cell);tiles.push({id:id++,symbol:0,layer:8,...cell,w:width,h:height,...(k>=0?{mystery:k}:{})});}
+ const total=Math.ceil(Math.max(target,tiles.length+cells.length*.55)/3)*3;
+ for(let layer=7;tiles.length<total&&layer>=0;layer--){
+   const dx=layer%2?1.6:0,dy=layer%2?1.8:0;
+   const positions=nwTripleShuffle(cells.slice(),random);
+   for(const cell of positions){if(tiles.length===total)break;tiles.push({id:id++,symbol:0,layer,x:cell.x+dx,y:cell.y+dy,w:width,h:height});}
+ }
+ // Capacity is sufficient for the bounded targets above. If a future shape is
+ // smaller, discard only a partial bottom layer, never the visible silhouette.
  while(tiles.length%3)tiles.pop();
  // Choose a legal reveal order, interleaving the central board and the blind piles.
  const order=[],remaining=tiles.slice();
  while(remaining.length){
    const free=remaining.filter(t=>nwTripleFree(t,remaining));
-   const t=free[Math.floor(random()*free.length)];order.push(t);remaining.splice(remaining.indexOf(t),1);
+   const weight=t=>t.stack!=null?6:t.mystery!=null?5:1;
+   let choice=random()*free.reduce((sum,t)=>sum+weight(t),0);let t=free[free.length-1];
+   for(const candidate of free){choice-=weight(candidate);if(choice<0){t=candidate;break;}}
+   order.push(t);remaining.splice(remaining.indexOf(t),1);
  }
- const types=Math.min(pool.length,hard?Math.min(18,12+Math.floor(stage/15)):Math.min(9,6+Math.floor(stage/3)));
+ const types=Math.min(pool.length,hard?Math.min(27,20+Math.floor(stage/15)):stage<4?9:Math.min(18,14+Math.floor(stage/10)));
  const selected=nwTripleShuffle(pool.slice(),random).slice(0,types);
- if(hard)rooms.forEach((r,i)=>{if(!selected.some(v=>Math.floor(v/9)===r))selected[i]=r*9+Math.floor(random()*9)});
+ rooms.forEach((r,i)=>{if(!selected.some(v=>Math.floor(v/9)===r))selected[i]=r*9+Math.floor(random()*9)});
  // Construct a solution while keeping several incomplete triples in the tray.
  // Never exceed six unmatched tiles, and never require a booster to clear.
  let toOpen=order.length/3;const pending=[];let occupied=0;
- const pressure=stage<4?3:hard?6:5;
+ const pressure=6;
  for(const t of order){
    const unused=selected.filter(v=>!pending.some(p=>p.symbol===v));
    const canOpen=toOpen>0&&occupied<pressure&&unused.length>0&&!(occupied===5&&!pending.some(p=>p.count===2));
    const closeable=pending.filter(p=>p.count===2);
    let p;
-   if(canOpen&&(occupied<pressure-1||!pending.length||random()<.7)){
+   if(canOpen&&(occupied<pressure-1||!pending.length||random()<.94)){
      p={symbol:unused[Math.floor(random()*unused.length)],count:1};pending.push(p);toOpen--;occupied++;t.symbol=p.symbol;
    }else{
      const choices=occupied>=6&&closeable.length?closeable:pending;
@@ -639,10 +679,43 @@ function nwTripleCreate(stage){
    }
  }
 
- return {stage,hard,stackCount,tiles,tray:[],used:{undo:false,shuffle:false,magic:false},history:[],won:false,lost:false,room:nwTripleArtRooms[rooms[0]],started:Date.now(),week:nwTripleWeek(),practice:!nwTripleInEvent(),version:2};
+ return {stage,hard,shape,stackCount,tiles,tray:[],used:{undo:false,shuffle:false,magic:false},history:[],won:false,lost:false,room:nwTripleArtRooms[rooms[0]],started:Date.now(),week:nwTripleWeek(),practice:!nwTripleInEvent(),version:2};
+}
+// Choose a deterministic, less obvious board from several solvable candidates.
+// The probe only sees exposed symbols, never hidden artwork. This is a heuristic,
+// not a measurement of human skill. Keep the seven-slot tray and all boosters.
+function nwTripleChallengeScore(tiles){
+ const exposed=tiles.filter(t=>nwTripleFree(t,tiles));
+ const initial=new Map();for(const t of exposed)initial.set(t.symbol,(initial.get(t.symbol)||0)+1);
+ let score=[...initial.values()].reduce((sum,n)=>sum+Math.floor(n/3)*.18,0);
+ for(let policy=0;policy<3;policy++){
+  const left=tiles.slice(),tray=[];let steps=0;
+  while(left.length){
+   const free=left.filter(t=>nwTripleFree(t,left)),visible=new Map(),held=new Map();
+   for(const t of free)visible.set(t.symbol,(visible.get(t.symbol)||0)+1);
+   for(const t of tray)held.set(t,(held.get(t)||0)+1);
+   const priority=t=>{const h=held.get(t.symbol)||0,v=visible.get(t.symbol)||0;
+    return policy===2?h*100+v:(h===2?100:h+v>=3?50:h===1?20:0)+v*3+(policy===1&&t.stack!=null?2:0)+h;
+   };
+   const pick=free.reduce((best,t)=>priority(t)>priority(best)?t:best,free[0]);
+   left.splice(left.indexOf(pick),1);tray.push(pick.symbol);steps++;
+   if(tray.filter(v=>v===pick.symbol).length===3){for(let i=tray.length-1;i>=0;i--)if(tray[i]===pick.symbol)tray.splice(i,1)}
+   if(tray.length>=7)break;
+  }
+  score+=steps/tiles.length+(left.length===0&&tray.length===0?1:0);
+ }
+ return score;
+}
+function nwTripleCreate(stage){
+ let best=null,bestRank=Infinity;
+ for(let i=0;i<12;i++){
+   const candidate=nwTripleCandidate(stage,i),rank=nwTripleChallengeScore(candidate.tiles);
+   if(rank<bestRank){best=candidate;bestRank=rank;}
+ }
+ return best;
 }
 function nwTripleFree(tile,tiles){
- return !tiles.some(other=>other.id!==tile.id&&other.layer>tile.layer&&(tile.stack!=null?other.stack===tile.stack:other.stack==null&&Math.abs(other.x-tile.x)<17.5&&Math.abs(other.y-tile.y)<17));
+ return !tiles.some(other=>other.id!==tile.id&&other.layer>tile.layer&&(tile.stack!=null?other.stack===tile.stack:other.stack==null&&other.x<tile.x+(tile.w??17.5)&&other.x+(other.w??17.5)>tile.x&&other.y<tile.y+(tile.h??17)&&other.y+(other.h??17)>tile.y));
 }
 function nwTripleAvailable(tile){return !!nwTriple&&nwTripleFree(tile,nwTriple.tiles)}
 function nwTriplePracticeData(){const data=nwRead('nineweird-triple-practice-v2',null);return data?.week===nwTripleWeek()?data:{week:nwTripleWeek(),stage:1,best:0};}
@@ -719,20 +792,21 @@ function nwTripleHome(){
 function nwTripleBegin(stage,resume=false){const d=nwTripleSessionData();const a=d.active;nwTriple=resume&&a?.version===2&&a.stage===stage&&!a.won&&!a.lost&&a.week===nwTripleWeek()&&a.practice===!nwTripleInEvent()?a:nwTripleCreate(stage);nwTripleDraw()}
 function nwTripleDraw(){
  const s=nwTriple;if(!s)return;if(s.week!==nwTripleWeek()||s.practice===nwTripleInEvent()){nwTripleHome();return}nwTriplePersist();applyTheme('hub');evRoot.classList.add('nw-triple-theme');
- const tiles=s.tiles.filter(t=>t.stack==null).sort((a,b)=>a.layer-b.layer).map(t=>{
+ const mysteryTops=new Map();for(const t of s.tiles){if(t.mystery!=null&&(!mysteryTops.has(t.mystery)||mysteryTops.get(t.mystery).layer<t.layer))mysteryTops.set(t.mystery,t)}
+ const tiles=s.tiles.filter(t=>t.stack==null&&(t.mystery==null||mysteryTops.get(t.mystery)===t)).sort((a,b)=>a.layer-b.layer).map(t=>{
    const enabled=nwTripleAvailable(t);
-   return `<button type="button" class="nw-triple-tile ${enabled?'':'covered'}" data-tile="${t.id}" aria-label="${enabled?'Select':'Covered'} tile" ${enabled?'':'disabled'} style="left:${t.x}%;top:${t.y}%;z-index:${10+t.layer}">${nwTripleArt(t.symbol)}</button>`;
+   return `<button type="button" class="nw-triple-tile ${enabled?'':'covered'} ${t.mystery!=null?'nw-triple-mystery':''}" data-tile="${t.id}" aria-label="${enabled?'Select':'Covered'} ${t.mystery!=null?'mystery stack':'tile'}" ${enabled?'':'disabled'} style="left:${t.x}%;top:${t.y}%;z-index:${10+t.layer}${t.w?`;width:${t.w}%;height:${t.h}%`: ''}">${nwTripleArt(t.symbol)}</button>`;
  }).join('');
  const piles=[...new Set(s.tiles.filter(t=>t.stack!=null).map(t=>t.stack))].sort((a,b)=>a-b);
  const pileRail=side=>`<div class="nw-triple-pile-rail">${piles.filter(i=>i%2===side).map(i=>{
    const pile=s.tiles.filter(t=>t.stack===i).sort((a,b)=>b.layer-a.layer),top=pile[0];
-   return `<div class="nw-triple-pile"><button type="button" class="nw-triple-pile-top ${pile.length>1?'stacked':''}" data-tile="${top.id}" aria-label="Mystery stack, ${pile.length} tiles">${nwTripleArt(top.symbol)}</button><small>× ${pile.length}</small></div>`;
+   return `<div class="nw-triple-pile"><button type="button" class="nw-triple-pile-top stacked" data-tile="${top.id}" aria-label="Mystery stack">${nwTripleArt(top.symbol)}</button></div>`;
  }).join('')}</div>`;
  const tray=Array.from({length:7},(_,i)=>`<span class="nw-triple-tray-slot">${s.tray[i]?nwTripleArt(s.tray[i].symbol):''}</span>`).join('');
  const action=s.won?`<div class="nw-triple-end"><div class="nw-triple-party">${nwTripleMascots()}</div><div class="nw-triple-sparks" aria-hidden="true">⋆˚<span class="nw-triple-spiral"></span>｡</div><h2>STAGE ${s.stage} CLEARED!</h2><p>${nwTripleIsHard(s.stage+1)?'HARD STAGE UP NEXT!':'BRILLIANTLY WEIRD!'}</p><button id="nwTripleNext" class="nw-triple-main-btn">NEXT STAGE ▶</button><button id="nwTripleBack" class="nw-triple-back-btn">BACK TO EVENT</button></div>`:s.lost?`<div class="nw-triple-end"><h2>TRAY FULL!</h2><p>ONE MORE TRY?</p><button id="nwTripleRetry" class="nw-triple-main-btn">RETRY STAGE ↻</button></div>`:'';
  evDisplay(`${evHeader('TRIPLE TROUBLE',nwTripleHome)}<section class="nw-triple nw-triple-play">
  <div class="nw-triple-stagehead"><div><small>${s.hard?'🔥 HARD STAGE':'TRIPLE TROUBLE'}</small><strong>STAGE ${s.stage}</strong></div><span>∞</span></div>
- <div class="nw-triple-board-wrap ${s.stackCount?'has-piles':''}">${s.stackCount?pileRail(0):''}<div class="nw-triple-board" aria-label="Layered tile matching board">${tiles}</div>${s.stackCount?pileRail(1):''}</div>
+ <div class="nw-triple-board-wrap ${s.stackCount?'has-piles':''}">${s.stackCount?pileRail(0):''}<div class="nw-triple-board ${s.shape?'nw-triple-shaped':''}" aria-label="Layered tile matching board">${tiles}</div>${s.stackCount?pileRail(1):''}</div>
  <div class="nw-triple-tray">${tray}</div>
  <div class="nw-triple-booster-row">${[['undo','↶','UNDO'],['shuffle','⤨','SHUFFLE'],['magic','<span class="nw-triple-spiral"></span>','MAGIC CLEAR']].map(([key,icon,label])=>`<button class="nw-triple-booster" data-booster="${key}" ${s.used[key]||(key==='undo'&&!s.history.length)?'disabled':''}><span>${icon}</span><b>${label}</b><i>${s.used[key]?'0':'1'}</i></button>`).join('')}</div>
  ${action}</section>`);
