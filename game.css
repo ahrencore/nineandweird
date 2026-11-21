@@ -3458,3 +3458,40 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-double-reward-tier{--reward:#FF94B3}
 #game .nw-double-reward-tier.rival{--reward:#F3BF91;border-color:#B88966;box-shadow:0 0 10px #F3BF9122}
 #game .nw-double-glitch-copy{text-shadow:0 0 5px #F3BF9155}
+
+/* V19 — Sugar Disorder event lobby, dimensional candy-night illustration in CSS. */
+#game.nw-double-theme:has(.nw-double-home){background:radial-gradient(ellipse at 50% 32%,#542639,#210f1d 72%,#180e16)!important}
+#game .nw-double-home{position:relative;isolation:isolate;overflow:hidden;width:100%;max-width:470px;margin:5px auto 0;padding:16px 12px 25px;gap:9px;border:2px solid #dd779e;border-radius:30px;background:radial-gradient(ellipse at 50% 19%,#a64667 0%,#57253e 34%,#321727 66%,#482337 100%);box-shadow:inset 0 0 28px #ff8bb444,0 0 13px #ff669344,0 5px 14px #120a13aa}
+#game .nw-double-home::before,#game .nw-double-home::after{content:'';position:absolute;pointer-events:none;z-index:-1;inset:0;background-repeat:no-repeat}
+#game .nw-double-home::before{background-image:repeating-conic-gradient(from -12deg at 50% 16%,#ffb2b925 0deg 7deg,transparent 7deg 21deg);mask-image:radial-gradient(ellipse 72% 27% at 50% 16%,#000 0%,transparent 100%)}
+#game .nw-double-home::after{background-image:radial-gradient(circle at 0% 27%,#ad5479 0%,#743653 7%,transparent 7.4%),radial-gradient(circle at 100% 36%,#c47383 0%,#763a55 8%,transparent 8.4%),radial-gradient(circle at 4% 101%,#ff9bb1 0%,#b34f7b 12%,transparent 12.4%),radial-gradient(circle at 27% 104%,#dc8ba2 0%,#8e3d69 10%,transparent 10.4%),radial-gradient(circle at 71% 105%,#f3bf91 0%,#bd6578 11%,transparent 11.4%),radial-gradient(circle at 100% 100%,#ff99bf 0%,#ad4e7a 13%,transparent 13.4%);opacity:.8}
+#game .nw-double-home .nw-double-decoration{color:#ffe2a9;text-shadow:0 0 8px #ffbc77;font-size:19px;line-height:1.05}
+#game .nw-double-home .nw-double-mascots{height:66px;gap:5px;position:relative;margin:0 auto}
+#game .nw-double-home .nw-double-mascots img{width:70px;height:70px;filter:drop-shadow(0 3px 2px #31101d) drop-shadow(0 0 10px #ff80a8)}
+#game .nw-double-home .nw-double-mascots img+img{filter:drop-shadow(0 3px 2px #31101d) drop-shadow(0 0 10px #ffce94)}
+#game .nw-double-home h2.nw-double-logo{font-size:clamp(36px,10.2vw,53px);line-height:.94;transform:rotate(-2deg);color:#fff0d9;text-shadow:0 2px #ff83af,0 4px #cc286a,0 6px #791b48,0 0 16px #ff4f96;margin:2px 0 5px}
+#game .nw-double-home .nw-double-logo>span:first-child{display:block;background:linear-gradient(#ff8db9 5%,#fff4dc 60%,#ffd38f);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:none;filter:drop-shadow(0 3px #e83b82) drop-shadow(0 5px #8d2350) drop-shadow(0 0 7px #ff6693)}
+#game .nw-double-home .nw-double-kicker{font-size:12px;letter-spacing:.19em;color:#ffece1;margin:4px 0 3px;text-shadow:0 2px 3px #2b111d}
+#game .nw-double-home .nw-double-count{position:relative;border:2px solid #f29abc;border-radius:24px;padding:7px 4px;background:radial-gradient(ellipse at 50% 0%,#8f4263,#472036 75%);box-shadow:inset 0 0 10px #ef6f9f66,0 3px #8b3158,0 0 11px #ff669355}
+#game .nw-double-home .nw-double-count small{color:#ffd19f;font-size:10px}
+#game .nw-double-home .nw-double-count small::before,#game .nw-double-home .nw-double-count small::after{content:'✦';color:#ffd19f;padding:0 6px}
+#game .nw-double-home .nw-double-count strong{font-size:clamp(14px,4.5vw,23px);color:#fff1db;white-space:nowrap;text-shadow:0 2px #5a2438}
+#game .nw-double-home .nw-double-teams{grid-template-columns:minmax(0,1fr) 17px minmax(0,1fr);gap:7px 3px;position:relative}
+#game .nw-double-home .nw-double-team{position:relative;border:2px solid #ff8cba;border-radius:22px;padding:10px 4px 12px;background:radial-gradient(ellipse at 15% 0%,#ff9bc5aa,transparent 45%),radial-gradient(ellipse at 80% 100%,#ec408f99,transparent 48%),linear-gradient(150deg,#a64069,#5b2040 48%,#76284c);box-shadow:inset 0 2px 2px #ffd6e4,inset 0 -3px 4px #ff6bab66,0 4px #9a2e58,0 0 12px #ff669366;--team:#ff9bc5}
+#game .nw-double-home .nw-double-team.rival{border-color:#ffd59b;background:radial-gradient(ellipse at 15% 0%,#ffcf96aa,transparent 45%),radial-gradient(ellipse at 80% 100%,#ef9a5c99,transparent 48%),linear-gradient(150deg,#a56353,#65372f 48%,#8f5140);box-shadow:inset 0 2px 2px #fff0d0,inset 0 -3px 4px #ffba7866,0 4px #95543f,0 0 12px #ffc08155;--team:#ffd09b}
+#game .nw-double-home .nw-double-team-head{border:0;padding:0;margin:0 0 8px;gap:4px}
+#game .nw-double-home .nw-double-team-head small{color:#fff0df;font-size:clamp(9px,2.7vw,12px);font-weight:800;text-shadow:0 1px #572239}
+#game .nw-double-home .nw-double-team-head strong{font-size:clamp(18px,5.1vw,27px);text-shadow:0 2px #542339}
+#game .nw-double-home .nw-double-team .nw-double-avatar{width:clamp(31px,10vw,47px);height:clamp(31px,10vw,47px);background:#381c2d;border-color:var(--team);box-shadow:0 0 0 2px #fff3dc22,0 0 9px var(--team)}
+#game .nw-double-home .nw-double-team .nw-double-person strong{font-size:clamp(9px,2.7vw,12px);color:#fff2e7}
+#game .nw-double-home .nw-double-team .nw-double-person span{font-size:clamp(10px,3vw,14px);color:#ffe8d8}
+#game .nw-double-home .nw-double-vs{position:relative;z-index:2;width:42px;height:42px;margin-left:-12px;display:grid;place-items:center;color:#fff0d9;font-size:15px;isolation:isolate;filter:drop-shadow(0 0 4px #ffb28c);text-shadow:0 1px #a32f59}
+#game .nw-double-home .nw-double-vs::before,#game .nw-double-home .nw-double-vs::after{content:'';position:absolute;inset:0;z-index:-1;clip-path:polygon(50% 0%,61% 25%,85% 13%,77% 39%,100% 50%,77% 61%,85% 87%,61% 75%,50% 100%,39% 75%,15% 87%,23% 61%,0 50%,23% 39%,15% 13%,39% 25%);background:#ffe2ab}
+#game .nw-double-home .nw-double-vs::after{inset:3px;background:linear-gradient(#ff9db9,#d52f73)}
+#game .nw-double-home .nw-double-track{height:16px;margin:8px 3px 0;border:2px solid #ffd4d7;border-radius:20px;background:linear-gradient(#ffe8c8,#ffbd81 60%,#e58a63);box-shadow:0 0 0 3px #a64b66,0 0 12px #ff9c9c77,inset 0 1px #fff}
+#game .nw-double-home .nw-double-track i{background:linear-gradient(#ffc1dd,#ff70aa 48%,#d12e75);box-shadow:inset 0 2px 2px #fff5,2px 0 4px #fff9}
+#game .nw-double-home .nw-double-margin{color:#ffece1;font-size:11px;margin-top:3px;text-shadow:0 1px #31101f}
+#game .nw-double-home .nw-double-btn{position:relative;overflow:hidden;border:2px solid #ffb1d1;border-radius:28px;min-height:47px;background:linear-gradient(175deg,#ffa8cf 0%,#ec4d91 25%,#c42d70 68%,#e95b96);box-shadow:inset 0 2px 2px #ffe1ef,inset 0 -3px 3px #ffacc077,0 4px #8b2854,0 0 14px #ff669366;color:#fff4e5!important;font-size:17px;letter-spacing:.04em;text-shadow:0 2px 2px #752346}
+#game .nw-double-home .nw-double-btn::before{content:'';position:absolute;top:5px;left:8%;width:16%;height:4px;background:linear-gradient(90deg,#fff9,transparent);border-radius:50%;pointer-events:none}
+#game .nw-double-home .nw-double-btn.secondary{background:linear-gradient(#8f4566,#4f253c 65%,#7c3a57);font-size:15px;min-height:43px;box-shadow:inset 0 2px 2px #ffc6dd66,0 3px #592039,0 0 9px #ff669344}
+@media(max-height:740px){#game .nw-double-home{padding:10px 10px 18px;gap:7px}#game .nw-double-home .nw-double-mascots{height:54px}#game .nw-double-home .nw-double-mascots img{width:58px;height:58px}#game .nw-double-home h2.nw-double-logo{font-size:clamp(32px,9vw,44px)}#game .nw-double-home .nw-double-team{padding-block:7px 9px}}
