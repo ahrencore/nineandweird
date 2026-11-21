@@ -3309,3 +3309,14 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-triple-stack-face{display:flex;align-items:center;justify-content:center;padding:2px;background:linear-gradient(145deg,#FFFDF7,#F6EBDD 75%,#E1D2CB);box-shadow:0 2px 0 #776D89,inset 0 1px #fff}
 #game .nw-triple-stack-dot{position:absolute;right:2px;top:2px;width:6px;height:6px;border-radius:50%;background:#8E84CE;border:1px solid #F6D9F5;pointer-events:none}
 #game .nw-triple-pile-rail{gap:36px;padding-bottom:24px}
+
+/* V11 Triple Trouble: square geometry, stationary pile lanes, rescue controls. */
+#game .nw-triple-board-wrap.has-piles.nw-triple-large-grid .nw-triple-board{aspect-ratio:15.2/19.2}
+#game .nw-triple-board-wrap.has-piles.nw-triple-legacy-grid .nw-triple-board{aspect-ratio:12.4/13.2}
+#game .nw-triple-board-wrap.has-piles .nw-triple-pile-top{aspect-ratio:1}
+#game .nw-triple-tray-slot{aspect-ratio:1;box-sizing:border-box}
+#game .nw-triple-pile-rail .nw-triple-pile{width:100%;aspect-ratio:1;flex-shrink:0}
+#game .nw-triple-pile-empty{visibility:hidden;pointer-events:none}
+#game .nw-triple-stack-dot{display:none}
+#game .nw-triple-end .nw-triple-fail-boosters{display:flex;justify-content:center;width:90%;gap:10px}
+#game .nw-triple-fail-boosters .nw-triple-fail-booster{flex:1;max-width:150px}

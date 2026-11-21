@@ -748,7 +748,7 @@ function nwTripleChoose(id){
 }
 
 function nwTripleBooster(kind){
- const s=nwTriple;if(!s||s.won||s.used[kind])return;
+ const s=nwTriple;if(!s||s.won||s.used[kind]||(kind==='shuffle'&&s.tray.length>=7))return;
  if(kind==='undo'){
    if(!s.history.length)return;
    const previous=s.history.pop();s.tiles=previous.tiles;s.tray=previous.tray;s.used.undo=true;
@@ -789,14 +789,14 @@ function nwTripleHome(){
  <h2 class="nw-triple-logo">TRIPLE<br><span>TROUBLE</span></h2><div class="nw-triple-ribbon">MONDAY – WEDNESDAY</div>
  <div class="nw-triple-unlimited">∞ UNLIMITED STAGES</div>
  <div class="nw-triple-info"><strong>1 FREE EACH LEVEL</strong><div class="nw-triple-free-items"><span>↶<small>UNDO</small></span><span>⤨<small>SHUFFLE</small></span><span><i class="nw-triple-spiral"></i><small>MAGIC CLEAR</small></span></div></div>
- <button id="nwTripleStart" class="nw-triple-main-btn">▶ ${d.active&&!d.active.lost?'CONTINUE STAGE '+d.stage:'STAGE '+d.stage}</button>
+ <button id="nwTripleStart" class="nw-triple-main-btn">▶ ${d.active?'CONTINUE STAGE '+d.stage:'STAGE '+d.stage}</button>
  <div class="nw-triple-rank"><h3>🏆 ${event?'EVENT PROGRESS':'STAGE PRACTICE'}</h3><p>Highest stage cleared: ${d.best}</p></div>
  </section>`);
  evRoot.querySelector('#nwTripleStart').onclick=()=>nwTripleBegin(d.stage,true);
 }
-function nwTripleBegin(stage,resume=false){const d=nwTripleSessionData();const a=d.active;nwTriple=resume&&a?.version>=2&&a.stage===stage&&!a.won&&!a.lost&&a.week===nwTripleWeek()&&a.practice===!nwTripleInEvent()?a:nwTripleCreate(stage);nwTripleDraw()}
+function nwTripleBegin(stage,resume=false){const d=nwTripleSessionData();const a=d.active;nwTriple=resume&&a?.version>=2&&a.stage===stage&&!a.won&&a.week===nwTripleWeek()&&a.practice===!nwTripleInEvent()?a:nwTripleCreate(stage);nwTripleDraw()}
 function nwTripleStackArt(symbol,depth){
- return Array.from({length:Math.max(0,depth-1)},(_,i)=>`<span class="nw-triple-hidden-back" style="--tt-back:${depth-1-i}" aria-hidden="true"></span>`).join('')+`<span class="nw-triple-stack-face">${nwTripleArt(symbol)}<span class="nw-triple-stack-dot" aria-hidden="true"></span></span>`;
+ return Array.from({length:Math.max(0,depth-1)},(_,i)=>`<span class="nw-triple-hidden-back" style="--tt-back:${depth-1-i}" aria-hidden="true"></span>`).join('')+`<span class="nw-triple-stack-face">${nwTripleArt(symbol)}</span>`;
 }
 function nwTripleDraw(){
  const s=nwTriple;if(!s)return;if(s.week!==nwTripleWeek()||s.practice===nwTripleInEvent()){nwTripleHome();return}nwTriplePersist();applyTheme('hub');evRoot.classList.add('nw-triple-theme');
@@ -806,24 +806,25 @@ function nwTripleDraw(){
    const enabled=nwTripleAvailable(t);
    return `<button type="button" class="nw-triple-tile ${enabled?'':'covered'} ${t.mystery!=null?'nw-triple-mystery':''}" data-tile="${t.id}" aria-label="${enabled?'Select':'Covered'} ${t.mystery!=null?'mystery stack':'tile'}" ${enabled?'':'disabled'} style="left:${t.x}%;top:${t.y}%;z-index:${10+t.layer}${t.w?`;width:${t.w}%;height:${t.h}%`: ''}">${t.mystery!=null?nwTripleStackArt(t.symbol,mysteryDepth.get(t.mystery)):nwTripleArt(t.symbol)}</button>`;
  }).join('');
- const piles=[...new Set(s.tiles.filter(t=>t.stack!=null).map(t=>t.stack))].sort((a,b)=>a-b);
+ const piles=Array.from({length:s.stackCount||0},(_,i)=>i);
  const pileRail=side=>`<div class="nw-triple-pile-rail">${piles.filter(i=>i%2===side).map(i=>{
    const pile=s.tiles.filter(t=>t.stack===i).sort((a,b)=>b.layer-a.layer),top=pile[0];
+   if(!top)return `<div class="nw-triple-pile nw-triple-pile-empty" aria-hidden="true"></div>`;
    return `<div class="nw-triple-pile"><button type="button" class="nw-triple-pile-top stacked" data-tile="${top.id}" aria-label="Mystery stack">${nwTripleStackArt(top.symbol,pile.length)}</button></div>`;
  }).join('')}</div>`;
  const tray=Array.from({length:7},(_,i)=>`<span class="nw-triple-tray-slot">${s.tray[i]?nwTripleArt(s.tray[i].symbol):''}</span>`).join('');
- const lostBoosters=[['undo','↶','UNDO'],['shuffle','⤨','SHUFFLE'],['magic','<span class=\"nw-triple-spiral\"></span>','MAGIC CLEAR']].map(([key,icon,label])=>`<button class=\"nw-triple-fail-booster\" data-fail-booster=\"${key}\" ${s.used[key]||(key==='undo'&&!s.history.length)?'disabled':''}><span>${icon}</span><b>${label}</b><i>${s.used[key]?'0':'1'}</i></button>`).join('');
- const action=s.won?`<div class="nw-triple-end"><div class="nw-triple-party">${nwTripleMascots()}</div><div class="nw-triple-sparks" aria-hidden="true">⋆˚<span class="nw-triple-spiral"></span>｡</div><h2>STAGE ${s.stage} CLEARED!</h2><p>${nwTripleIsHard(s.stage+1)?'HARD STAGE UP NEXT!':'BRILLIANTLY WEIRD!'}</p><button id="nwTripleNext" class="nw-triple-main-btn">NEXT STAGE ▶</button><button id="nwTripleBack" class="nw-triple-back-btn">BACK TO EVENT</button></div>`:s.lost?`<div class="nw-triple-end"><h2>TRAY FULL!</h2><p>USE A BOOSTER OR TRY AGAIN.</p><div class="nw-triple-fail-boosters">${lostBoosters}</div><button id="nwTripleRetry" class="nw-triple-main-btn">RETRY STAGE ↻</button><button id="nwTripleBack" class="nw-triple-back-btn">BACK TO EVENT</button></div>`:'';
+ const lostBoosters=[['undo','↶','UNDO'],['magic','<span class="nw-triple-spiral"></span>','MAGIC CLEAR']].filter(([key])=>!s.used[key]&&(key!=='undo'||s.history.length)&&(key!=='magic'||s.tray.some(t=>s.tiles.filter(x=>x.symbol===t.symbol).length+s.tray.filter(x=>x.symbol===t.symbol).length>=3))).map(([key,icon,label])=>`<button class="nw-triple-fail-booster" data-fail-booster="${key}"><span>${icon}</span><b>${label}</b><i>1</i></button>`).join('');
+ const action=s.won?`<div class="nw-triple-end"><div class="nw-triple-party">${nwTripleMascots()}</div><div class="nw-triple-sparks" aria-hidden="true">⋆˚<span class="nw-triple-spiral"></span>｡</div><h2>STAGE ${s.stage} CLEARED!</h2><p>${nwTripleIsHard(s.stage+1)?'HARD STAGE UP NEXT!':'BRILLIANTLY WEIRD!'}</p><button id="nwTripleNext" class="nw-triple-main-btn">NEXT STAGE ▶</button><button id="nwTripleBack" class="nw-triple-back-btn">BACK TO EVENT</button></div>`:s.lost?`<div class="nw-triple-end"><h2>TRAY FULL!</h2>${lostBoosters?`<p>YOU STILL HAVE BOOSTERS LEFT!</p><div class="nw-triple-fail-boosters">${lostBoosters}</div>`:`<p>NO RESCUE BOOSTERS LEFT.</p>`}<button id="nwTripleRetry" class="nw-triple-main-btn">RETRY STAGE ↻</button><button id="nwTripleBack" class="nw-triple-back-btn">END GAME</button></div>`:'';
  evDisplay(`${evHeader('TRIPLE TROUBLE',nwTripleHome)}<section class="nw-triple nw-triple-play">
  <div class="nw-triple-stagehead"><div><small>${s.hard?'🔥 HARD STAGE':'TRIPLE TROUBLE'}</small><strong>STAGE ${s.stage}</strong></div><span>∞</span></div>
  <div class="nw-triple-board-wrap ${s.stackCount?'has-piles':''} ${s.version>=4?'nw-triple-large-grid':'nw-triple-legacy-grid'}">${s.stackCount?pileRail(0):''}<div class="nw-triple-board ${s.shape?'nw-triple-shaped':''}" aria-label="Layered tile matching board">${tiles}</div>${s.stackCount?pileRail(1):''}</div>
  <div class="nw-triple-tray">${tray}</div>
- <div class="nw-triple-booster-row">${[['undo','↶','UNDO'],['shuffle','⤨','SHUFFLE'],['magic','<span class="nw-triple-spiral"></span>','MAGIC CLEAR']].map(([key,icon,label])=>`<button class="nw-triple-booster" data-booster="${key}" ${s.used[key]||(key==='undo'&&!s.history.length)?'disabled':''}><span>${icon}</span><b>${label}</b><i>${s.used[key]?'0':'1'}</i></button>`).join('')}</div>
+ <div class="nw-triple-booster-row">${[['undo','↶','UNDO'],['shuffle','⤨','SHUFFLE'],['magic','<span class="nw-triple-spiral"></span>','MAGIC CLEAR']].map(([key,icon,label])=>`<button class="nw-triple-booster" data-booster="${key}" ${s.used[key]||(key==='undo'&&!s.history.length)||(key==='shuffle'&&s.tray.length>=7)?'disabled':''}><span>${icon}</span><b>${label}</b><i>${s.used[key]?'0':'1'}</i></button>`).join('')}</div>
  ${action}</section>`);
  evRoot.querySelectorAll('[data-tile]').forEach(el=>el.onclick=()=>nwTripleChoose(+el.dataset.tile));
  evRoot.querySelectorAll('[data-booster]').forEach(el=>el.onclick=()=>nwTripleBooster(el.dataset.booster));
  if(s.won){evRoot.querySelector('#nwTripleNext').onclick=()=>nwTripleBegin(s.stage+1);evRoot.querySelector('#nwTripleBack').onclick=nwTripleHome;}
- if(s.lost){evRoot.querySelectorAll('[data-fail-booster]').forEach(el=>el.onclick=()=>nwTripleBooster(el.dataset.failBooster));evRoot.querySelector('#nwTripleRetry').onclick=()=>nwTripleBegin(s.stage);evRoot.querySelector('#nwTripleBack').onclick=nwTripleHome;}
+ if(s.lost){evRoot.querySelectorAll('[data-fail-booster]').forEach(el=>el.onclick=()=>nwTripleBooster(el.dataset.failBooster));evRoot.querySelector('#nwTripleRetry').onclick=()=>nwTripleBegin(s.stage);evRoot.querySelector('#nwTripleBack').onclick=()=>{const d=nwTripleSessionData();delete d.active;if(s.practice)nwWrite('nineweird-triple-practice-v2',d);else nwTripleSave(d);nwTripleHome();};}
 }
 
 function showCategories(){
