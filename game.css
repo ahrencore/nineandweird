@@ -3320,3 +3320,13 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-triple-stack-dot{display:none}
 #game .nw-triple-end .nw-triple-fail-boosters{display:flex;justify-content:center;width:90%;gap:10px}
 #game .nw-triple-fail-boosters .nw-triple-fail-booster{flex:1;max-width:150px}
+
+
+/* V12 — Triple Trouble landing screen only. */
+#game .nw-triple-home .nw-triple-info{width:min(100%,340px);box-sizing:border-box;padding:10px 12px 12px;margin-top:12px}
+#game .nw-triple-home .nw-triple-free-items{gap:8px;margin:8px auto 0;max-width:270px}
+#game .nw-triple-home .nw-triple-free-items>span{aspect-ratio:auto;min-height:57px;padding:7px 2px;box-sizing:border-box;border-radius:10px;font-size:24px;box-shadow:0 2px 0 #555080,0 4px 7px #10132755}
+#game .nw-triple-home .nw-triple-free-items small{font-size:9px;margin-top:4px}
+#game .nw-triple-home #nwTripleStart{display:flex;align-items:center;justify-content:center;gap:9px;width:min(93%,340px);box-sizing:border-box;min-height:49px;padding:12px 10px;margin:10px auto 5px;background:linear-gradient(155deg,#626CC0,#464C98 60%,#373B79);border:1px solid #9598DB;border-radius:13px;color:#fff!important;font:400 clamp(14px,4.2vw,19px)/1.2 'Special Elite','Courier New',monospace;letter-spacing:.025em;text-shadow:0 1px 2px #232A52;box-shadow:inset 0 1px #ADB2EF65,0 3px 0 #282D61,0 5px 12px #10132777}
+#game .nw-triple-home #nwTripleStart .nw-triple-play-symbol{font:400 25px/1 system-ui,sans-serif;color:#fff;flex:none}
+#game .nw-triple-home #nwTripleStart:active{transform:translateY(2px);box-shadow:inset 0 1px #ADB2EF65,0 1px 0 #282D61}

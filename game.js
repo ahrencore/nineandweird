@@ -789,8 +789,7 @@ function nwTripleHome(){
  <h2 class="nw-triple-logo">TRIPLE<br><span>TROUBLE</span></h2><div class="nw-triple-ribbon">MONDAY – WEDNESDAY</div>
  <div class="nw-triple-unlimited">∞ UNLIMITED STAGES</div>
  <div class="nw-triple-info"><strong>1 FREE EACH LEVEL</strong><div class="nw-triple-free-items"><span>↶<small>UNDO</small></span><span>⤨<small>SHUFFLE</small></span><span><i class="nw-triple-spiral"></i><small>MAGIC CLEAR</small></span></div></div>
- <button id="nwTripleStart" class="nw-triple-main-btn">▶ ${d.active?'CONTINUE STAGE '+d.stage:'STAGE '+d.stage}</button>
- <div class="nw-triple-rank"><h3>🏆 ${event?'EVENT PROGRESS':'STAGE PRACTICE'}</h3><p>Highest stage cleared: ${d.best}</p></div>
+ <button id="nwTripleStart" class="nw-triple-main-btn"><span class="nw-triple-play-symbol" aria-hidden="true">▹</span><span>${d.active?'CONTINUE STAGE '+d.stage:'PLAY STAGE '+d.stage}</span></button>
  </section>`);
  evRoot.querySelector('#nwTripleStart').onclick=()=>nwTripleBegin(d.stage,true);
 }
