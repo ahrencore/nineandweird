@@ -3224,7 +3224,7 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 
 /* Triple Trouble V5 — Blueberry Midnight. Scoped to this event only. */
 #game.nw-triple-theme{background:radial-gradient(ellipse at 50% 15%,#313B73 0,#161B34 52%,#101327 100%)!important;color:#FFF3E8;--accent:#A89CFF;--glow:#A89CFF;--text:#FFF3E8}
-#game.nw-triple-theme .ev-head strong{color:#F6D9F5!important;text-shadow:0 0 10px #A89CFF88!important}
+#game.nw-triple-theme .ev-head strong{font:400 clamp(24px,6vw,38px)/1.05 'Special Elite','Courier New',monospace!important;letter-spacing:.03em;color:#F6D9F5!important;text-shadow:0 0 10px #A89CFF88!important}
 #game.nw-triple-theme .ev-head button{background:#232A52!important;border-color:#8077C1!important;color:#F6D9F5!important;box-shadow:0 0 8px #A89CFF44!important}
 #game .nw-triple{--tt-pink:#E98BC8;--tt-gold:#F6D9F5;--tt-cream:#F6EBDD;color:#FFF3E8;border-color:#5C639D;background:radial-gradient(ellipse at 51% 16%,#374276 0,#232A52 40%,#161B34 85%);box-shadow:0 14px 35px #080B1B99,inset 0 0 36px #A89CFF24}
 #game .nw-triple::before{content:none}
@@ -3241,13 +3241,14 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-triple-unlimited,#game .nw-triple-info>strong{color:#F6D9F5}
 #game .nw-triple-info,#game .nw-triple-rank,#game .nw-triple-stagehead{background:linear-gradient(160deg,#313B73,#232A52);border-color:#7078AF;box-shadow:inset 0 0 12px #A89CFF12}
 #game .nw-triple-rank h3,#game .nw-triple-stagehead small,#game .nw-triple-stagehead>span{color:#CFC7FF}
-#game .nw-triple-rank p,#game .nw-triple-stagehead strong{color:#FFF3E8}
+#game .nw-triple-rank p{color:#FFF3E8}
+#game .nw-triple-stagehead strong{font:400 clamp(28px,7vw,42px)/1.02 'Special Elite','Courier New',monospace;color:#FFF3E8;letter-spacing:.025em;text-shadow:0 2px #5D548C,0 4px #24284D,0 0 16px #A89CFF55}
 #game .nw-triple-free-items span,#game .nw-triple-booster{background:linear-gradient(145deg,#FAF1FF,#D8C9ED);border-color:#C7B9EA;color:#3E346E;box-shadow:0 4px 0 #555080,0 7px 10px #10132755}
 #game .nw-triple-free-items small,#game .nw-triple-booster b{color:#343055}
 #game .nw-triple-booster span{color:#7758A5;text-shadow:0 1px #fff}
 #game .nw-triple-booster i:not(.nw-triple-spiral){background:#6F5DB3;border-color:#DBD3FF}
-#game .nw-triple-main-btn{background:linear-gradient(#F6D9F5,#E98BC8 55%,#B96FAE);border-color:#F6D9F5;color:#292044;text-shadow:none;box-shadow:inset 0 2px #FFF3F9,0 5px 0 #794D90,0 8px 18px #10132799}
-#game .nw-triple-main-btn:active{box-shadow:inset 0 1px #FFF3F9,0 2px 0 #794D90}
+#game .nw-triple-main-btn,#game .nw-triple-back-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:min(90%,350px);box-sizing:border-box;min-height:52px;padding:12px 14px;margin:4px auto;background:linear-gradient(155deg,#626CC0,#464C98 60%,#373B79);border:1px solid #9598DB;border-radius:13px;color:#fff!important;font:400 clamp(17px,4.9vw,24px)/1.08 'Special Elite','Courier New',monospace;letter-spacing:.03em;text-shadow:0 1px 2px #232A52;box-shadow:inset 0 1px #ADB2EF65,0 3px 0 #282D61,0 5px 12px #10132777;text-transform:none}
+#game .nw-triple-main-btn:active,#game .nw-triple-back-btn:active{transform:translateY(2px);box-shadow:inset 0 1px #ADB2EF65,0 1px 0 #282D61}
 #game .nw-triple-board{height:auto;min-height:0;aspect-ratio:1/1.04;background:radial-gradient(ellipse,#3F4A8266,#161B3433 75%,transparent)}
 #game .nw-triple-tile{box-sizing:border-box;width:17.5%;height:17%;padding:5px;border-radius:9px;background:linear-gradient(145deg,#FFFDF7,#F6EBDD 75%,#E1D2CB);border-color:#D1C2C8;box-shadow:1px 4px 0 #776D89,0 6px 7px #10132788,inset 0 1px #fff}
 #game .nw-triple-tray{background:linear-gradient(#313B73,#232A52);border-color:#7782BA;box-shadow:inset 0 0 10px #10132788}
@@ -3256,7 +3257,7 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-triple-end{background:radial-gradient(ellipse,#414B86,#232A52 70%,#161B34);border-color:#A89CFF;box-shadow:0 0 0 999px #101327BB,0 0 25px #A89CFF66;inset:55px 12px 45px;gap:8px}
 #game .nw-triple-end h2{font:400 clamp(24px,7vw,38px)/1.1 'Special Elite','Courier New',monospace;color:#F6D9F5;text-shadow:0 3px #4F477E,0 0 12px #A89CFF77}
 #game .nw-triple-end p{color:#DCD3FF}
-#game .nw-triple-back-btn{display:block;width:90%;max-width:350px;padding:12px;border:1px solid #A89CFF;border-radius:22px;background:#313B73;color:#F6D9F5;font-weight:800;letter-spacing:.04em;box-shadow:0 3px 0 #161B34;margin:3px auto}
+#game .nw-triple-back-btn{justify-content:center}
 #game .nw-triple-event-icon img{width:100%;height:100%;max-width:48px;max-height:48px;object-fit:contain}
 @media(max-height:660px){#game .nw-triple-play{padding-top:8px;padding-bottom:16px}#game .nw-triple-stagehead{padding:7px 12px}#game .nw-triple-booster{padding:7px 3px}#game .nw-triple-board{width:87%}}
 #game.nw-triple-theme .ev-head{background:#161B34!important;border-color:#313B73!important}
@@ -3328,5 +3329,5 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 #game .nw-triple-home .nw-triple-free-items>span{aspect-ratio:auto;min-height:57px;padding:7px 2px;box-sizing:border-box;border-radius:10px;font-size:24px;box-shadow:0 2px 0 #555080,0 4px 7px #10132755}
 #game .nw-triple-home .nw-triple-free-items small{font-size:9px;margin-top:4px}
 #game .nw-triple-home #nwTripleStart{display:flex;align-items:center;justify-content:center;gap:9px;width:min(93%,340px);box-sizing:border-box;min-height:49px;padding:12px 10px;margin:10px auto 5px;background:linear-gradient(155deg,#626CC0,#464C98 60%,#373B79);border:1px solid #9598DB;border-radius:13px;color:#fff!important;font:400 clamp(14px,4.2vw,19px)/1.2 'Special Elite','Courier New',monospace;letter-spacing:.025em;text-shadow:0 1px 2px #232A52;box-shadow:inset 0 1px #ADB2EF65,0 3px 0 #282D61,0 5px 12px #10132777}
-#game .nw-triple-home #nwTripleStart .nw-triple-play-symbol{font:400 25px/1 system-ui,sans-serif;color:#fff;flex:none}
+#game .nw-triple-home #nwTripleStart .nw-triple-play-symbol{font:400 25px/1 system-ui,sans-serif;color:#fff;flex:none;transform:translateY(-1px)}
 #game .nw-triple-home #nwTripleStart:active{transform:translateY(2px);box-shadow:inset 0 1px #ADB2EF65,0 1px 0 #282D61}
