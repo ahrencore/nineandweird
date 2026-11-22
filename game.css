@@ -3957,3 +3957,11 @@ html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:n
 #game.nw-trophy-theme>.ev-head :is(strong,button) {
   font-family: 'Pangolin', system-ui, sans-serif !important;
 }
+
+
+/* V40 — Pangolin throughout account/authentication screens, including
+   profile setup, upgrades and password recovery. Friends remains unchanged. */
+#game.nw-account-theme:not(:has(.nw-friend-tabs)),
+#game.nw-account-theme:not(:has(.nw-friend-tabs)) :not(svg,svg *) {
+  font-family: 'Pangolin', system-ui, sans-serif !important;
+}
