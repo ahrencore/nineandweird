@@ -3749,27 +3749,27 @@ html:has(#game.nw-lobby-theme:not([hidden])),body:has(#game.nw-lobby-theme:not([
 
 /* V31 — orbital accents for the six V30 monthly battle frames only.
    Existing PNGs, avatars and frame geometry remain unchanged. */
-#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar) .nw-monthly-art-frame,
+#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar,.nw-radio-self-frame) .nw-monthly-art-frame,
 #game .nw-radio-frame-preview:has(>img[src^="frames/nw-monthly-"]){--nw-orbit-size:12%;--nw-orbit-inset:6%;--nw-orbit-time:6s;--nw-orbit-delay:0s;--nw-orbit-glow:#f8ebdd;--nw-orbit-image:none}
-#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar) .nw-monthly-art-frame::before,
+#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar,.nw-radio-self-frame) .nw-monthly-art-frame::before,
 #game .nw-radio-frame-preview:has(>img[src^="frames/nw-monthly-"])::before{content:"";position:absolute;inset:var(--nw-orbit-inset);z-index:3;pointer-events:none;background:var(--nw-orbit-image) center top/var(--nw-orbit-size) auto no-repeat;transform-origin:50% 50%;animation:nwFrameAccentOrbit var(--nw-orbit-time) linear infinite;animation-delay:var(--nw-orbit-delay);filter:drop-shadow(0 0 3px var(--nw-orbit-glow));opacity:.9}
 @keyframes nwFrameAccentOrbit{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar) .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-10.png"]),
+#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar,.nw-radio-self-frame) .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-10.png"]),
 #game .nw-radio-frame-preview:has(>img[src="frames/nw-monthly-10.png"]){--nw-orbit-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20d%3D%22M16%202Q18%2013%2030%2016Q18%2018%2016%2030Q14%2018%202%2016Q14%2014%2016%202Z%22%20fill%3D%22%23ffb3cf%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.2%22%2F%3E%3C%2Fsvg%3E");--nw-orbit-glow:#ffb3cf;--nw-orbit-time:7s;--nw-orbit-delay:0s;--nw-orbit-inset:9%}
-#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar) .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-25.png"]),
+#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar,.nw-radio-self-frame) .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-25.png"]),
 #game .nw-radio-frame-preview:has(>img[src="frames/nw-monthly-25.png"]){--nw-orbit-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cellipse%20cx%3D%2216%22%20cy%3D%2216%22%20rx%3D%228%22%20ry%3D%2212%22%20fill%3D%22%23a8e9ff%22%20stroke%3D%22%23fff6df%22%20stroke-width%3D%222%22%2F%3E%3Ccircle%20cx%3D%2213%22%20cy%3D%2213%22%20r%3D%222.5%22%20fill%3D%22%23bda7ff%22%2F%3E%3Ccircle%20cx%3D%2218%22%20cy%3D%2220%22%20r%3D%222.8%22%20fill%3D%22%23bda7ff%22%2F%3E%3C%2Fsvg%3E");--nw-orbit-glow:#a8e9ff;--nw-orbit-time:6.7s;--nw-orbit-delay:-1s;--nw-orbit-inset:9%}
-#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar) .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-50.png"]),
+#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar,.nw-radio-self-frame) .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-50.png"]),
 #game .nw-radio-frame-preview:has(>img[src="frames/nw-monthly-50.png"]){--nw-orbit-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20d%3D%22M16%202Q18%2013%2030%2016Q18%2018%2016%2030Q14%2018%202%2016Q14%2014%2016%202Z%22%20fill%3D%22%2380f6ff%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.2%22%2F%3E%3C%2Fsvg%3E");--nw-orbit-glow:#80f6ff;--nw-orbit-time:5.8s;--nw-orbit-delay:-2s;--nw-orbit-inset:8%}
-#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar) .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-100.png"]),
+#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar,.nw-radio-self-frame) .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-100.png"]),
 #game .nw-radio-frame-preview:has(>img[src="frames/nw-monthly-100.png"]){--nw-orbit-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20d%3D%22M2%2016Q16%202%2030%2016Q16%2030%202%2016Z%22%20fill%3D%22%23c6f64e%22%20stroke%3D%22%23efffcb%22%20stroke-width%3D%221.5%22%2F%3E%3Cellipse%20cx%3D%2216%22%20cy%3D%2216%22%20rx%3D%223.5%22%20ry%3D%227%22%20fill%3D%22%23163b36%22%2F%3E%3C%2Fsvg%3E");--nw-orbit-glow:#c6f64e;--nw-orbit-time:6.2s;--nw-orbit-delay:-3s;--nw-orbit-inset:6%}
-#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar) .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-150.png"]),
+#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar,.nw-radio-self-frame) .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-150.png"]),
 #game .nw-radio-frame-preview:has(>img[src="frames/nw-monthly-150.png"]){--nw-orbit-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20d%3D%22M4%2026L17%2010L28%204L23%2017Z%22%20fill%3D%22%23ff65aa%22%2F%3E%3Cpath%20d%3D%22M12%2028L23%2019%22%20stroke%3D%22%23ffcd80%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%228%22%20r%3D%224%22%20fill%3D%22%23fff4dc%22%2F%3E%3C%2Fsvg%3E");--nw-orbit-glow:#ff65aa;--nw-orbit-time:5s;--nw-orbit-delay:-1s;--nw-orbit-inset:6%}
-#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar) .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-200.png"]),
+#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar,.nw-radio-self-frame) .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-200.png"]),
 #game .nw-radio-frame-preview:has(>img[src="frames/nw-monthly-200.png"]){--nw-orbit-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20d%3D%22M16%202Q18%2013%2030%2016Q18%2018%2016%2030Q14%2018%202%2016Q14%2014%2016%202Z%22%20fill%3D%22%23a7eaff%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.2%22%2F%3E%3C%2Fsvg%3E");--nw-orbit-glow:#a7eaff;--nw-orbit-time:5.6s;--nw-orbit-delay:-2s;--nw-orbit-inset:7%}
-#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar) .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-200.png"])::after,
+#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar,.nw-radio-self-frame) .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-200.png"])::after,
 #game .nw-radio-frame-preview:has(>img[src="frames/nw-monthly-200.png"])::after{content:"";position:absolute;inset:11%;z-index:3;pointer-events:none;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20d%3D%22M16%202Q18%2013%2030%2016Q18%2018%2016%2030Q14%2018%202%2016Q14%2014%2016%202Z%22%20fill%3D%22%23ff9adf%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.2%22%2F%3E%3C%2Fsvg%3E") center top/9% auto no-repeat;transform-origin:50% 50%;animation:nwFrameAccentOrbit 7s linear infinite reverse;animation-delay:-3s;filter:drop-shadow(0 0 3px #ff9adf);opacity:.85}
-@media(prefers-reduced-motion:reduce){#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar) .nw-monthly-art-frame::before,
-#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar) .nw-monthly-art-frame::after,
+@media(prefers-reduced-motion:reduce){#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar,.nw-radio-self-frame) .nw-monthly-art-frame::before,
+#game :is(.nw-lobby-profile,.nw-profile-with-frame,.nw-result-player-frame,.nw-match-avatar,.nw-radio-self-frame) .nw-monthly-art-frame::after,
 #game .nw-radio-frame-preview:has(>img[src^="frames/nw-monthly-"])::before,
 #game .nw-radio-frame-preview:has(>img[src^="frames/nw-monthly-"])::after{animation:none!important;display:none!important}}
 
@@ -3778,3 +3778,27 @@ html:has(#game.nw-lobby-theme:not([hidden])),body:has(#game.nw-lobby-theme:not([
 #game .nw-match-avatar:has(.nw-recorded-frame){background:none;overflow:visible;border-radius:0}
 #game .nw-opponent-small-avatar:has(.nw-recorded-frame){background:none;border:0;overflow:visible}
 #game .nw-recorded-frame:is(.nw-double-avatar,.nw-battle-result-avatar,.nw-match-avatar-image,.nw-opponent-small-img){border:0;background:none;box-shadow:none;overflow:visible;flex-shrink:0}
+
+/* V33 — isolated Battle UI, clean lobby and consistent team portraits. */
+#game.theme-hub.nw-battle-theme{--surface:#111710;--panel:#263024;--ink:#F0F7DD;--accent:#C6F64E;--line:#8FAE64;--room-border:#8FAE64;--room-glow:#C6F64E;--peer:#314422;--same:#43552c;--selected:#526638;background:radial-gradient(ellipse at 50% 18%,#26351c,#111710 65%,#090e09)!important;color:#F0F7DD!important;border-color:#43552c!important;box-shadow:none;}
+html:has(#game.nw-battle-theme:not([hidden])),body:has(#game.nw-battle-theme:not([hidden])){background:#111710!important;color:#F0F7DD!important}
+#game.theme-hub.nw-battle-theme>.ev-head,#game:has(>.nw-opponent-panel)>.ev-head{background:#111710!important;color:#F0F7DD!important;border-color:#43552c!important;box-shadow:0 0 10px #C6F64E18!important}
+#game.theme-hub.nw-battle-theme>.ev-head .ev-btn,#game:has(>.nw-opponent-panel)>.ev-head .ev-btn{background:#263024!important;color:#C6F64E!important;border-color:#8FAE64!important;box-shadow:0 0 8px #C6F64E22!important;font-family:Oxanium,sans-serif}
+#game.theme-hub.nw-battle-theme>.ev-head strong,#game:has(>.nw-opponent-panel)>.ev-head strong{color:#C6F64E!important;text-shadow:0 0 8px #C6F64E55!important;font-family:Oxanium,sans-serif}
+#game.theme-hub.nw-battle-theme>section:is(.nw-battle-hub,.nw-matchmaking,.nw-battle-finish,.nw-battle-rewards){border-color:#677e3e!important;box-shadow:inset 0 0 26px #a7ef3215,0 12px 28px #0008!important}
+#game.nw-battle-theme button:focus-visible,#game:has(>.nw-opponent-panel)>.ev-head button:focus-visible,#game .nw-battle-overlay button:focus-visible{outline:2px solid #C6F64E!important;outline-offset:2px}
+#game .nw-opponent-panel{box-shadow:0 4px 14px #11171066}
+#game .nw-radio-self-frame{overflow:visible}
+#game.nw-double-theme .nw-double-person>.nw-equipped-frame.nw-double-avatar{display:grid;width:56px;height:56px;border:0;background:none;box-shadow:none;overflow:visible;border-radius:0;flex:none}
+#game.nw-double-theme .nw-double-team .nw-double-person>.nw-equipped-frame.nw-double-avatar{width:clamp(36px,10.5vw,54px);height:clamp(36px,10.5vw,54px)}
+#game.nw-double-theme .nw-double-person>.nw-equipped-frame.nw-double-avatar .nw-equipped-art{inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:contain;border:0;box-shadow:none;background:none}
+#game.nw-double-theme .nw-double-person>.nw-equipped-frame.nw-double-avatar .nw-equipped-avatar{inset:16%;width:68%;height:68%;max-width:none;max-height:none;border:0;box-shadow:none;background:none}
+#game.nw-lobby-theme .nw-lobby-divider{width:min(58%,220px);height:14px;margin:0 auto 3px;color:#BBA8E5;opacity:.75;pointer-events:none}
+#game.nw-lobby-theme .nw-lobby-divider svg{display:block;width:100%;height:100%;overflow:visible}
+#game .nw-lobby-heart:before{font-size:inherit;width:100%;height:100%;display:grid;place-items:center;font-size:clamp(45px,14vw,63px)}
+#game .nw-lobby-portal-disc{gap:8px}
+#game .nw-lobby-portal-decor{font-size:clamp(10px,3vw,15px)}
+#game .nw-lobby-portal strong{font-size:clamp(13px,3.8vw,18px)}
+@media(max-height:680px){#game.nw-lobby-theme .nw-lobby-divider{height:10px;margin-bottom:1px}}
+#game.nw-battle-theme :is(.nw-battle-start-button,.nw-match-main):active{box-shadow:0 2px 0 #4c6c21,0 5px 12px #11171099}
+#game .nw-battle-overlay{background:#090f09d9}
