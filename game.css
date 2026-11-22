@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Finger+Paint&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Bungee+Shade&family=Oxanium:wght@400;600;700;800&display=swap");
@@ -3840,3 +3841,49 @@ html:has(#game.nw-trophy-theme:not([hidden])),body:has(#game.nw-trophy-theme:not
 #game.nw-trophy-theme .nw-difficulty-track i{background:#F4ED91}
 #game.nw-trophy-theme .nw-battle-title-list>div.earned{background:#403b4d!important;border-color:#F4ED91;color:#F4ED91}
 @media(prefers-reduced-motion:reduce){#game.nw-trophy-theme .nw-wish-star{animation:none;opacity:.7}}
+
+/* V35 — Blueberry Milkshake account screens, scoped away from gameplay. */
+#game.theme-hub.nw-account-theme{--surface:#0A0D18;--panel:#292D47;--ink:#F5F0FF;--accent:#AABFFF;--line:#AABFFF;--room-border:#AABFFF;--room-glow:#AABFFF;--nw-notify:#AABFFF;background:radial-gradient(ellipse at 50% 18%,#17192B,#0A0D18 65%)!important;color:#F5F0FF;min-height:100dvh;font-family:'Pixelify Sans',system-ui,sans-serif}
+html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:not([hidden])){background:#0A0D18!important;color:#F5F0FF!important}
+#game.nw-account-theme>.ev-head{background:#0A0D18!important;border-color:#AABFFF44!important;box-shadow:none!important;color:#AABFFF!important}
+#game.nw-account-theme>.ev-head :is(strong,button){font-family:'Pixelify Sans',system-ui,sans-serif!important;color:#AABFFF!important;text-shadow:none!important}
+#game.nw-account-theme>.ev-head button{background:#292D47!important;border-color:#AABFFF88!important;box-shadow:none!important}
+#game.nw-account-theme .nw-new-panel{position:relative;isolation:isolate;overflow:hidden;background:#0A0D18!important;border:1px solid #AABFFF44;box-shadow:none;color:#F5F0FF;padding:18px 14px 24px}
+#game.nw-account-theme .nw-new-panel:before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 1% 21%,transparent 24px,#AABFFF30 25px,transparent 27px),radial-gradient(circle at 100% 44%,transparent 39px,#AABFFF25 40px,transparent 42px),radial-gradient(circle at 7% 86%,transparent 19px,#F2B8D52b 20px,transparent 22px),radial-gradient(circle at 90% 7%,transparent 14px,#F2B8D533 15px,transparent 17px);animation:nwAccountBubbles 8s ease-in-out infinite}
+@keyframes nwAccountBubbles{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+#game.nw-account-theme .nw-account-heading{text-align:center;margin:8px 0 20px}
+#game.nw-account-theme .nw-account-heading h2{font:700 clamp(25px,7vw,38px)/1.15 'Pixelify Sans',system-ui,sans-serif;color:#AABFFF;text-shadow:0 0 12px #AABFFF44;margin:8px 0}
+#game.nw-account-theme .nw-account-heading p{color:#F2B8D5;font:400 17px/1.4 'Pixelify Sans',system-ui,sans-serif;margin:4px 0}
+#game.nw-account-theme .nw-account-deco{font:20px system-ui,sans-serif;color:#F2B8D5;letter-spacing:3px;animation:nwAccountBubbles 6s ease-in-out infinite}
+#game.nw-account-theme :is(h2,h3){font-family:'Pixelify Sans',system-ui,sans-serif;color:#AABFFF;text-shadow:none}
+#game.nw-account-theme :is(.nw-muted,.nw-auth-switch,.nw-auth-divider,.nw-new-label,.nw-frame-choice small){color:#AABFFF!important}
+#game.nw-account-theme :is(.nw-auth-card,.nw-avatar-choice,.nw-frame-choice,.nw-profile-editor){background:#292D47!important;border-color:#AABFFF55!important;color:#F5F0FF!important;box-shadow:none!important}
+#game.nw-account-theme .nw-profile-editor{padding:12px;border-radius:12px}
+#game.nw-account-theme :is(input,#nwName){background:#17192B!important;border:1px solid #AABFFF77!important;color:#F5F0FF!important;font:15px system-ui,sans-serif!important;box-shadow:none!important;width:100%;padding:12px;border-radius:9px}
+#game.nw-account-theme .nw-action{font:600 18px 'Pixelify Sans',system-ui,sans-serif!important;background:#AABFFF!important;color:#0A0D18!important;border:1px solid #AABFFF!important;box-shadow:none!important;text-shadow:none!important}
+#game.nw-account-theme .nw-auth-secondary{background:#292D47!important;color:#F5F0FF!important;border-color:#AABFFF88!important}
+#game.nw-account-theme :is(.nw-text-link,.nw-inline-link){color:#F2B8D5!important}
+#game.nw-account-theme :is(.nw-avatar-choice.chosen,.nw-frame-choice.active){border:2px solid #AABFFF!important;background:#393e61!important}
+#game.nw-account-theme :is(#nwAuthNotice,#nwRegisterNotice,#nwProfileNotice){color:#F2B8D5;font:13px/1.5 system-ui,sans-serif}
+#game.nw-account-theme button:focus-visible,#game.nw-account-theme input:focus-visible{outline:2px solid #AABFFF!important;outline-offset:2px}
+#game.nw-account-theme .nw-account-nav{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+#game.nw-account-theme .nw-account-nav button{margin:0}
+#game.nw-account-theme .nw-friends-entry{display:flex;justify-content:space-between;margin:12px 0}
+#game.nw-account-theme .nw-account-welcome>:is(.nw-profile-avatar,h2,#nwAccountStatus,#nwProfileFrames,#nwProfileEdit){display:none!important}
+#game.nw-account-theme .nw-account-welcome .nw-auth-card{margin:0;background:transparent!important;border:0;padding:14px 3px}
+#game.nw-account-theme #nwEmailFields{margin:10px 0 18px}
+#game.nw-account-theme .nw-friend-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+#game.nw-account-theme .nw-friend-tabs button{font:600 13px 'Pixelify Sans',system-ui,sans-serif;background:#292D47;color:#F5F0FF;border:1px solid #AABFFF77;border-radius:8px;padding:12px 3px}
+#game.nw-account-theme .nw-friend-tabs button.active{background:#AABFFF;color:#0A0D18}
+#game.nw-account-theme .nw-friend-content{background:#292D47;border:1px solid #AABFFF44;padding:14px;border-radius:12px;margin-top:14px;font:14px/1.5 system-ui,sans-serif}
+#game.nw-account-theme .nw-action:disabled{opacity:.45}
+/* Reusable notification ring: raised moving highlight around the button, not a red badge. */
+@property --nw-notify-angle{syntax:'<angle>';initial-value:0deg;inherits:false}
+#game .nw-notification-orbit{position:relative;isolation:isolate;--nw-notify:#AABFFF;animation:nwNotifyGlow 3s ease-in-out infinite!important}
+#game.nw-battle-theme .nw-notification-orbit{--nw-notify:#C6F64E}
+#game.nw-double-theme .nw-notification-orbit{--nw-notify:#FF4690}
+#game.nw-trophy-theme .nw-notification-orbit{--nw-notify:#F4ED91}
+#game .nw-notification-orbit:after{content:'';position:absolute;inset:-2px;border-radius:inherit;padding:2px;pointer-events:none;background:conic-gradient(from var(--nw-notify-angle),transparent 0deg 275deg,var(--nw-notify) 330deg,#fff 353deg,transparent 360deg);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:nwNotifyOrbit 3s linear infinite}
+@keyframes nwNotifyOrbit{to{--nw-notify-angle:360deg}}
+@keyframes nwNotifyGlow{0%,100%{box-shadow:0 0 4px var(--nw-notify)}50%{box-shadow:0 0 13px var(--nw-notify)}}
+@media(prefers-reduced-motion:reduce){#game.nw-account-theme .nw-new-panel:before,#game.nw-account-theme .nw-account-deco,#game .nw-notification-orbit,#game .nw-notification-orbit:after{animation:none!important}#game .nw-notification-orbit{outline:2px solid var(--nw-notify);outline-offset:2px}}
