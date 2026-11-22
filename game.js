@@ -1,5 +1,5 @@
 const evRoot=document.getElementById('game');
-function evDisplay(html){window.nwCloud?.clearCaptcha?.();document.getElementById("home").hidden=true;evRoot.hidden=false;evRoot.innerHTML=html;queueMicrotask(nwRefreshNotificationOrbits);}
+function evDisplay(html){window.nwCloud?.clearCaptcha?.();evRoot.hidden=false;evRoot.innerHTML=html;queueMicrotask(nwRefreshNotificationOrbits);}
 function evHeader(title,back){queueMicrotask(()=>{const b=evRoot.querySelector('[data-back]');if(b)b.onclick=()=>back();});return `<header class="ev-head"><button class="ev-btn ev-btn-alt" data-back aria-label="Back">‹ BACK</button><strong>${title}</strong><span></span></header>`;}
 const worlds={classic:{name:'CLASSIC',label:'Classic',theme:'classic'},dark:{name:'CLASSIC DARK',label:'Classic Dark',theme:'dark'},halloween:{name:'HALLOWEEN',label:'Halloween',theme:'halloween'},patissserie:{name:'PÂTISSERIE',label:'Pâtisserie',theme:'patissserie'},christmas:{name:'CHRISTMAS',label:'Christmas',theme:'christmas'},fairy:{name:'FAIRY WORLD',label:'Fairy World',theme:'fairy'},olympus:{name:'OLYMPUS',label:'Olympus',theme:'olympus'},nineties:{name:'90s THROWBACK',label:'90s Throwback',theme:'nineties'},weird:{name:'WHAT AM I LOOKING AT?',label:'What Am I Looking At?',theme:'weird'},ugly:{name:'UGLY LITTLE THINGS',label:'Ugly Little Things',theme:'ugly'},alien:{name:'ALIEN SUPERMARKET',label:'Alien Supermarket',theme:'alien'},diner:{name:'DO NOT EAT THAT',label:'Do Not Eat That',theme:'diner'},bodyparts:{name:'BODY PARTS DEPARTMENT',label:'Body Parts Department',theme:'bodyparts'},deepsea:{name:'DEEP SEA MISFITS',label:'Deep Sea Misfits',theme:'deepsea'},solarsick:{name:'THE SOLAR SYSTEM IS SICK',label:'The Solar System Is Sick',theme:'solarsick'},dontunwrap:{name:"PLEASE DON'T UNWRAP THAT",label:"Please Don't Unwrap That",theme:'dontunwrap'},unpreparedchristmas:{name:'UNPREPARED CHRISTMAS',label:'Unprepared Christmas',theme:'unpreparedchristmas'},underthebed:{name:'SOMETHING UNDER THE BED',label:'Something Under the Bed',theme:'underthebed'},balloonwrong:{name:'BALLOON ANIMALS GONE WRONG',label:'Balloon Animals Gone Wrong',theme:'balloonwrong'},donttakewater:{name:'DO NOT TAKE WITH WATER',label:'Do Not Take With Water',theme:'donttakewater'},baggagehell:{name:'BAGGAGE CLAIM FROM HELL',label:'Baggage Claim from Hell',theme:'baggagehell'},cakefail:{name:'CAKE DECORATING WAS A MISTAKE',label:'Cake Decorating Was a Mistake',theme:'cakefail'}};
 let currentWorld='halloween',roomPage=0,roomCollection='all';
@@ -83,7 +83,8 @@ const nwDefaultAvatar=nwAvatarChoices[0];
 function nwAvatarValue(v){return nwAvatarChoices.includes(v)?v:nwDefaultAvatar}
 function nwAvatarImg(v,cls=''){const src=nwEscape(nwAvatarValue(v));return `<img src="${src}" alt="" class="${cls}">`}
 function nwEscape(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function nwProfile(){const p=nwRead(nwProfileKey,{});return {name:typeof p.name==='string'?p.name:'Guest Player',avatar:nwAvatarValue(p.avatar)}}
+function nwGuestName(id){return 'Guest_'+String(id).replace(/-/g,'').slice(0,14).toLowerCase();}
+function nwProfile(){const p=nwRead(nwProfileKey,{}),u=window.nwCloud?.user();return {name:u?.is_anonymous?nwGuestName(u.id):typeof p.name==='string'?p.name:'Guest Player',avatar:nwAvatarValue(p.avatar)}}
 function nwResults(){const v=nwRead(nwResultsKey,[]);return Array.isArray(v)?v.filter(x=>x&&Number.isFinite(x.started)&&typeof x.difficulty==='string').slice(-2500):[]}
 function nwSaveResult(s,won){
   if(!s||s.reportSaved)return;s.reportSaved=true;
@@ -138,7 +139,7 @@ function nwFramePicker(){
 }
 function nwBindFramePicker(){evRoot.querySelectorAll('[data-frame]').forEach(b=>b.onclick=()=>{const frame=nwAvailableFrames().find(f=>f.id===b.dataset.frame);if(!frame)return;nwWrite(nwFrameKey,{id:frame.id,month:frame.monthly?nwSeasonId():null});nwShowProfile();});}
 // V35 account UI: real requests require a future cloud service, never simulate them.
-function nwUsernameValid(name){return /^[A-Za-z0-9._]{3,20}$/.test(name)&&!nwBattleProfiles.some(p=>p.name.toLowerCase()===name.toLowerCase());}
+function nwUsernameValid(name){return /^[A-Za-z0-9._]{3,20}$/.test(name)&&!/^guest_/i.test(name)&&!nwBattleProfiles.some(p=>p.name.toLowerCase()===name.toLowerCase());}
 function nwAccountTheme(){applyTheme('hub');evRoot.classList.add('nw-account-theme');}
 function nwAccountHeading(title,sub=''){return `<div class="nw-account-heading"><div class="nw-account-deco" aria-hidden="true">⋆ . ࿔ ˚</div><h2>${title}</h2>${sub?`<p>${sub}</p>`:''}</div>`;}
 function nwHasBattleClaim(){return !!nwPlayerStorageKey(nwBattleDiamondKey)&&nwSeasonFrameTiers.some(t=>nwBattleMonthStats().wins>=t.wins&&!nwBattleDiamondClaimed(nwSeasonId(),t.wins));}
@@ -160,18 +161,18 @@ function nwShowProfile(){
   const u=window.nwCloud?.user();const anon=!!u?.is_anonymous;const p=nwProfile();const recovery=!!window.nwCloud?.isRecovering?.();const profileLocked=!u;
   if(recovery&&u&&!anon){nwShowRecovery();return;}
 
-  const lockedEditor=`<div class="nw-profile-editor ${profileLocked?'nw-profile-locked':''}"><label class="nw-new-label" for="nwName">USERNAME</label><input id="nwName" maxlength="20" value="${nwEscape(p.name)}" autocomplete="username" ${profileLocked?'disabled':''}><p class="nw-muted">3–20 letters, numbers, dots or underscores. No spaces.</p><label class="nw-new-label">CHOOSE AN AVATAR</label><div class="nw-avatar-grid">${nwAvatarChoices.map((a,i)=>`<button class="nw-avatar-choice ${a===p.avatar?'chosen':''}" data-avatar="${a}" aria-label="Choose avatar ${i+1}" ${profileLocked?'disabled':''}>${nwAvatarImg(a,'nw-avatar-choice-img')}</button>`).join('')}</div><button class="nw-action" id="nwSaveProfile" ${profileLocked?'disabled':''}>SAVE PROFILE</button><p id="nwProfileNotice" role="status" hidden></p></div>`;
+  const lockedEditor=`<div class="nw-profile-editor ${profileLocked?'nw-profile-locked':''}"><label class="nw-new-label" for="nwName">USERNAME</label><input id="nwName" maxlength="20" value="${nwEscape(p.name)}" autocomplete="username" ${profileLocked||anon?'disabled':''}><p class="nw-muted">${anon?'Register to choose your own username.':'3–20 letters, numbers, dots or underscores. No spaces. Guest_ is reserved.'}</p><label class="nw-new-label">CHOOSE AN AVATAR</label><div class="nw-avatar-grid">${nwAvatarChoices.map((a,i)=>`<button class="nw-avatar-choice ${a===p.avatar?'chosen':''}" data-avatar="${a}" aria-label="Choose avatar ${i+1}" ${profileLocked?'disabled':''}>${nwAvatarImg(a,'nw-avatar-choice-img')}</button>`).join('')}</div><button class="nw-action" id="nwSaveProfile" ${profileLocked?'disabled':''}>SAVE PROFILE</button><p id="nwProfileNotice" role="status" hidden></p></div>`;
 
   let authBlock='';
   if(!u){
     authBlock=`<div class="nw-auth-card">${nwAccountHeading('HELLO, WEIRDO!','Your little universe awaits.')}<button class="nw-action nw-auth-secondary" id="nwEmailEntry" type="button">CONTINUE WITH EMAIL</button><div id="nwEmailFields" hidden><label class="nw-new-label" for="nwEmail">EMAIL</label><input id="nwEmail" type="email" autocomplete="email" placeholder="you@example.com"><label class="nw-new-label" for="nwPassword">PASSWORD</label><input id="nwPassword" type="password" autocomplete="current-password" minlength="6" placeholder="Password"><button class="nw-text-link" id="nwReset" type="button">Forgot password?</button><button class="nw-action nw-auth-primary" id="nwSignIn" data-auth-busy>SIGN IN</button></div><div class="nw-auth-divider"><span>OR</span></div><div class="nw-auth-stack"><button class="nw-action nw-auth-secondary" id="nwGoogle" data-auth-busy>CONTINUE WITH GOOGLE</button><button class="nw-action nw-auth-secondary" id="nwDiscord" data-auth-busy>CONTINUE WITH DISCORD</button><button class="nw-action nw-auth-secondary" id="nwMakeCloudGuest" data-auth-busy>CONTINUE AS GUEST</button></div><p class="nw-auth-switch">New here? <button class="nw-inline-link" id="nwGoRegister" type="button">Create an account</button></p><p id="nwAuthNotice" hidden></p><div class="nw-captcha"><div class="nw-captcha-widget"></div><p class="nw-muted nw-captcha-status" hidden></p></div></div>`;
   }else if(anon){
-    authBlock=`<div class="nw-auth-card"><h3>ACCOUNT</h3><div class="nw-auth-stack"><button class="nw-action nw-auth-secondary" id="nwGoogle">CONTINUE WITH GOOGLE</button><button class="nw-action nw-auth-secondary" id="nwDiscord">CONTINUE WITH DISCORD</button></div><button class="nw-action nw-auth-secondary" id="nwSignOut">SIGN OUT</button><p id="nwAuthNotice" hidden></p></div>`;
+    authBlock=`<div class="nw-auth-card"><h3>ACCOUNT</h3><p class="nw-muted">Register to choose your own username.</p><div class="nw-auth-stack"><button class="nw-action nw-auth-secondary" id="nwGoogle">REGISTER WITH GOOGLE</button><button class="nw-action nw-auth-secondary" id="nwDiscord">REGISTER WITH DISCORD</button></div><button class="nw-action nw-auth-secondary" id="nwSignOut">SIGN OUT</button><p id="nwAuthNotice" hidden></p></div>`;
   }else{
     authBlock=`<div class="nw-auth-card"><h3>ACCOUNT</h3><button class="nw-action nw-auth-secondary" id="nwSignOut">SIGN OUT</button><p id="nwAuthNotice" hidden></p></div>`;
   }
 
-  evDisplay(`${evHeader('PLAYER PROFILE',showCategories)}<section class="nw-new-panel ${u?'':'nw-account-welcome'}">${u?nwAccountHeading('MY PROFILE'): ''}<div class="nw-profile-avatar nw-profile-with-frame">${nwFrameArt(p.avatar)}</div><h2>${nwEscape(p.name)}</h2><p class="nw-muted" id="nwAccountStatus">${anon?'Guest':u?'Signed in: '+nwEscape(u.email||'Account'):'Guest'}</p>${u?`<div class="nw-account-nav"><button id="nwOpenAvatars" class="nw-action nw-auth-secondary">EDIT PROFILE</button><button id="nwOpenFrames" class="nw-action nw-auth-secondary">FRAMES</button></div><button id="nwOpenFriends" class="nw-action nw-auth-secondary nw-friends-entry">FRIENDS <span>›</span></button>`:''}<div id="nwProfileFrames" ${u?'hidden':''}>${nwFramePicker()}</div><div id="nwProfileEdit" ${u?'hidden':''}>${lockedEditor}</div>${authBlock}</section>`);nwBindFramePicker();
+  evDisplay(`${u?evHeader('PLAYER PROFILE',showCategories):'<header class="ev-head"><span></span><strong>WELCOME</strong><span></span></header>'}<section class="nw-new-panel ${u?'':'nw-account-welcome'}">${u?nwAccountHeading('MY PROFILE'): ''}<div class="nw-profile-avatar nw-profile-with-frame">${nwFrameArt(p.avatar)}</div><h2>${nwEscape(p.name)}</h2><p class="nw-muted" id="nwAccountStatus">${anon?'Guest':u?'Signed in: '+nwEscape(u.email||'Account'):'Guest'}</p>${u?`<div class="nw-account-nav"><button id="nwOpenAvatars" class="nw-action nw-auth-secondary">EDIT PROFILE</button><button id="nwOpenFrames" class="nw-action nw-auth-secondary">FRAMES</button></div><button id="nwOpenFriends" class="nw-action nw-auth-secondary nw-friends-entry">FRIENDS <span>›</span></button>`:''}<div id="nwProfileFrames" ${u?'hidden':''}>${nwFramePicker()}</div><div id="nwProfileEdit" ${u?'hidden':''}>${lockedEditor}</div>${authBlock}${!u?'<p class="nw-auth-switch"><a href="privacy.html">Privacy Policy</a></p>':''}</section>`);nwBindFramePicker();
   const on=(id,fn)=>{const b=evRoot.querySelector('#'+id);if(b)b.onclick=fn;};
   if(u&&!anon&&p.name==='Guest Player'){evRoot.querySelector('#nwProfileEdit').hidden=false;}
   on('nwOpenAvatars',()=>{evRoot.querySelector('#nwProfileEdit').hidden=false;evRoot.querySelector('#nwProfileFrames').hidden=true;});
@@ -197,8 +198,8 @@ function nwShowProfile(){
   const save=evRoot.querySelector('#nwSaveProfile');
   save.onclick=async()=>{
     if(!window.nwCloud?.user())return;
-    const accountId=window.nwCloud.user().id;const name=evRoot.querySelector('#nwName').value;
-    if(name!==p.name&&!nwUsernameValid(name)){profileNotice('Choose 3–20 letters, numbers, dots or underscores. Recorded opponent names are reserved.');return;}
+    const accountId=window.nwCloud.user().id;const name=anon?nwGuestName(accountId):evRoot.querySelector('#nwName').value;
+    if(!anon&&!nwUsernameValid(name)){profileNotice('Choose 3–20 letters, numbers, dots or underscores. Guest_ and recorded opponent names are reserved.');return;}
     if(!anon&&name==='Guest Player'){profileNotice('Choose a valid username before saving.');return;}
     save.disabled=true;
     try{
@@ -301,11 +302,6 @@ function nwShowRecovery(){
 let nwVerifiedAccount=null, nwRouteJob=null, nwRouteKey=null, nwStartupDone=false, nwLastAuthKey=null, nwRouteSerial=0;
 function nwSetupVerified(){return !!nwCloud.user()&&nwVerifiedAccount===nwCloud.user().id;}
 function nwAuthKey(){const u=nwCloud.user();return u?`${u.id}:${!!u.is_anonymous}:${nwCloud.isRecovering()}`:'signed-out';}
-function nwShowWelcome(){
-  const p=nwProfile();nwAccountTheme();
-  evDisplay(`<section class="nw-new-panel nw-setup-welcome">${nwAccountHeading('WELCOME, WEIRDO!',nwEscape(p.name))}<div class="nw-profile-avatar nw-profile-with-frame">${nwFrameArt(p.avatar)}</div><button class="nw-action" id="nwWelcomeStart">START</button></section>`);
-  evRoot.querySelector('#nwWelcomeStart').onclick=showCategories;
-}
 function nwShowSetup(data){
   nwAccountTheme();let avatar=nwAvatarValue(data?.avatar);const accountId=nwCloud.user()?.id;
   evDisplay(`<header class="ev-head"><span></span><strong>PROFILE SETUP</strong><span></span></header><section class="nw-new-panel nw-first-setup">${nwAccountHeading('SET UP YOUR PROFILE','Make this little universe yours.')}<form id="nwSetupForm"><label class="nw-new-label" for="nwSetupName">USERNAME</label><input id="nwSetupName" maxlength="20" autocomplete="username" required placeholder="Your username"><p class="nw-muted">3–20 letters, numbers, dots or underscores. No spaces.</p><button type="button" id="nwCheckName" class="nw-action nw-auth-secondary">CHECK AVAILABILITY</button><p id="nwSetupNotice" role="status" aria-live="polite" hidden></p><label class="nw-new-label">CHOOSE AN AVATAR</label><div class="nw-avatar-grid">${nwAvatarChoices.map((a,i)=>`<button type="button" class="nw-avatar-choice ${a===avatar?'chosen':''}" data-setup-avatar="${a}" aria-label="Choose avatar ${i+1}" aria-pressed="${a===avatar}">${nwAvatarImg(a,'nw-avatar-choice-img')}</button>`).join('')}</div><button class="nw-action" id="nwFinishSetup" type="submit">SAVE &amp; CONTINUE</button></form><button type="button" class="nw-action nw-auth-secondary" id="nwSetupSignOut">SIGN OUT</button></section>`);
@@ -314,8 +310,8 @@ function nwShowSetup(data){
   const say=(m)=>{msg.textContent=m;msg.hidden=!m};
   input.oninput=()=>say('');
   evRoot.querySelectorAll('[data-setup-avatar]').forEach(b=>b.onclick=()=>{avatar=b.dataset.setupAvatar;evRoot.querySelectorAll('[data-setup-avatar]').forEach(x=>{x.classList.toggle('chosen',x===b);x.setAttribute('aria-pressed',String(x===b));});});
-  async function verify(name){if(!nwUsernameValid(name))throw Error('Choose 3–20 letters, numbers, dots or underscores. Recorded opponent names are reserved.');if(!await nwCloud.usernameAvailable(name))throw Error('That username is already taken.');}
-  async function action(doSave){const name=input.value;check.disabled=save.disabled=out.disabled=input.disabled=true;try{await verify(name);if(nwCloud.user()?.id!==accountId||!form.isConnected)return;if(!doSave){say('Username available!');return;}await nwCloud.saveProfile(name,avatar);if(nwCloud.user()?.id!==accountId||!form.isConnected)return;nwWrite(nwProfileKey,{name,avatar});nwVerifiedAccount=accountId;nwShowWelcome();}catch(e){say(e.message||'Please try again.');}finally{check.disabled=save.disabled=out.disabled=input.disabled=false;}}
+  async function verify(name){if(!nwUsernameValid(name))throw Error('Choose 3–20 letters, numbers, dots or underscores. Guest_ and recorded opponent names are reserved.');if(!await nwCloud.usernameAvailable(name))throw Error('That username is already taken.');}
+  async function action(doSave){const name=input.value;check.disabled=save.disabled=out.disabled=input.disabled=true;try{await verify(name);if(nwCloud.user()?.id!==accountId||!form.isConnected)return;if(!doSave){say('Username available!');return;}await nwCloud.saveProfile(name,avatar);if(nwCloud.user()?.id!==accountId||!form.isConnected)return;nwWrite(nwProfileKey,{name,avatar});nwVerifiedAccount=accountId;showCategories();}catch(e){say(e.message||'Please try again.');}finally{check.disabled=save.disabled=out.disabled=input.disabled=false;}}
   check.onclick=()=>void action(false);form.onsubmit=e=>{e.preventDefault();void action(true);};out.onclick=async()=>{try{await nwCloud.signOut();await nwRouteAccount();}catch(e){say(e.message);}};
 }
 function nwShowAccountRetry(error){nwAccountTheme();evDisplay(`<section class="nw-new-panel">${nwAccountHeading('PROFILE UNAVAILABLE')}<p class="nw-muted" role="alert">${nwEscape(error.message||'Could not load your profile.')}</p><button class="nw-action" id="nwRetryAccount">TRY AGAIN</button><button class="nw-action nw-auth-secondary" id="nwRetrySignOut">SIGN OUT</button></section>`);evRoot.querySelector('#nwRetryAccount').onclick=()=>void nwRouteAccount();evRoot.querySelector('#nwRetrySignOut').onclick=async()=>{try{await nwCloud.signOut();await nwRouteAccount();}catch(e){nwShowAccountRetry(e);}};}
@@ -325,17 +321,17 @@ function nwRouteAccount(){
   const job=(async()=>{
     const u=nwCloud.user();if(nwCloud.isRecovering()&&u){nwShowRecovery();return;}
     if(!u){nwVerifiedAccount=null;nwShowProfile();return;}
-    if(!u.is_anonymous&&nwSetupVerified()){nwShowWelcome();return;}
+    if(!u.is_anonymous&&nwSetupVerified()){showCategories();return;}
     nwAccountTheme();evDisplay(`<section class="nw-new-panel">${nwAccountHeading('LOADING PROFILE')}</section>`);
     try{const data=await nwCloud.readProfile();if(nwAuthKey()!==key)return;
+      if(u.is_anonymous){const name=nwGuestName(u.id),avatar=nwAvatarValue(data?.avatar||nwRead(nwProfileKey,{}).avatar);nwWrite(nwProfileKey,{name,avatar});if(!data||data.display_name!==name){try{await nwCloud.saveProfile(name,avatar)}catch(e){console.warn('Guest profile sync:',e.message)}}if(nwAuthKey()===key)showCategories();return;}
       if(data)nwWrite(nwProfileKey,{name:data.display_name||'Guest Player',avatar:nwAvatarValue(data.avatar)});
-      if(u.is_anonymous){showCategories();return;}
-      if(data?.profile_setup_complete===true&&nwUsernameValid(data.display_name)){nwVerifiedAccount=u.id;nwShowWelcome();}else nwShowSetup(data);
+      if(data?.profile_setup_complete===true&&nwUsernameValid(data.display_name)){nwVerifiedAccount=u.id;showCategories();}else nwShowSetup(data);
     }catch(e){if(nwAuthKey()!==key)return;if(u.is_anonymous){showCategories();return;}nwShowAccountRetry(e);}
   })();nwRouteJob=job;job.finally(()=>{if(nwRouteJob===job)nwRouteJob=null;});return job;
 }
-async function nwStartV36(){
-  try{await nwCloud.ready;nwStartupDone=true;nwLastAuthKey=nwAuthKey();if(nwCloud.user())await nwRouteAccount();else document.getElementById('home').hidden=false;}
+async function nwStartV37(){
+  try{await nwCloud.ready;nwStartupDone=true;nwLastAuthKey=nwAuthKey();await nwRouteAccount();}
   catch(e){nwStartupDone=true;nwShowAccountRetry(e);}
 }
 if(window.nwCloud){
@@ -940,7 +936,7 @@ function nwTripleDraw(){
 const nwGalaxyOrder=["classic", "dark", "weird", "ugly", "alien", "solarsick", "diner", "underthebed", "bodyparts", "halloween", "dontunwrap", "deepsea", "balloonwrong", "nineties", "cakefail", "baggagehell", "donttakewater", "patissserie", "unpreparedchristmas", "christmas", "fairy", "olympus"];
 const nwGalaxyColors={"classic": ["#fff", "#e3d3c7", "#111"], "dark": ["#050505", "#bbbbd0", "#fff"], "weird": ["#30284F", "#EFFF4F", "#F7F3FF"], "ugly": ["#343139", "#A8E64D", "#FAF3E8"], "alien": ["#182332", "#5BFFD8", "#EAFBFF"], "solarsick": ["#170B24", "#FF4FD2", "#FFE9FF"], "diner": ["#163F47", "#D9363D", "#FFF0D5"], "underthebed": ["#292237", "#F7D892", "#FFF1D9"], "bodyparts": ["#E1F0EC", "#9471B4", "#443B56"], "halloween": ["#270f36", "#f28cd5", "#ffe9f8"], "dontunwrap": ["#372B23", "#C47A3B", "#FFF4DB"], "deepsea": ["#071018", "#5AF2E3", "#EAFBFF"], "balloonwrong": ["#FFF2F8", "#E84AA8", "#5B2A63"], "nineties": ["#24294d", "#36e0dc", "#f6f4ff"], "cakefail": ["#F4D5DC", "#A95570", "#633B46"], "baggagehell": ["#F8DFC1", "#C46434", "#4C281A"], "donttakewater": ["#241431", "#F2AE9A", "#FFEDE6"], "patissserie": ["#F5E8D3", "#A87542", "#493021"], "unpreparedchristmas": ["#EAF7FF", "#579CC5", "#245D83"], "christmas": ["#EAF7FF", "#579CC5", "#245D83"], "fairy": ["#e9d9fa", "#9959d9", "#3c255f"], "olympus": ["#e8d8bc", "#347daa", "#203b60"]};
 function nwLobbyIcon(kind){const p={shop:'<path d="M4 9h16l-1 12H5L4 9Z M8 9V6a4 4 0 0 1 8 0v3"/>',settings:'<path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/>'};return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p[kind]}</svg>`;}
-function nwLobbyUtility(kind){evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-lobby-theme');evDisplay(`${evHeader(kind==='shop'?'SHOP':'SETTINGS',showCategories)}<section class="nw-lobby-utility">${kind==='shop'?`<div class="nw-lobby-money">${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</div><h2>COMING SOON</h2>`:`<button id="nwSettingsProfile" class="nw-lobby-nav">PROFILE / ACCOUNT</button>`}</section>`);const b=evRoot.querySelector('#nwSettingsProfile');if(b)b.onclick=nwShowProfile;nwResetViewToTop();}
+function nwLobbyUtility(kind){evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-lobby-theme');evDisplay(`${evHeader(kind==='shop'?'SHOP':'SETTINGS',showCategories)}<section class="nw-lobby-utility">${kind==='shop'?`<div class="nw-lobby-money">${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</div><h2>COMING SOON</h2>`:`<button id="nwSettingsProfile" class="nw-lobby-nav">PROFILE / ACCOUNT</button><a href="privacy.html">Privacy Policy</a>`}</section>`);const b=evRoot.querySelector('#nwSettingsProfile');if(b)b.onclick=nwShowProfile;nwResetViewToTop();}
 function nwLobbyEventStatus(kind,now=new Date()){
   const day=now.getUTCDay();
   if(kind==='battle')return {live:true,label:'NOW LIVE: '+now.toLocaleString('en-US',{month:'long',timeZone:'UTC'}).toUpperCase()};
@@ -958,21 +954,48 @@ function nwLobbyPortal(id,cls,title,decor){
  const state=nwLobbyEventStatus(cls),name=title.replace(/<br>/g,' ');
  return `<button type="button" id="${id}" data-lobby-event="${cls}" data-event-name="${name}" aria-label="${name} — ${state.label}" class="nw-lobby-portal ${cls}${state.live?' is-live':''}"><span class="nw-lobby-portal-disc"><span class="nw-lobby-portal-decor" aria-hidden="true">${decor}</span><strong>${title}</strong></span><svg class="nw-lobby-event-orbit" viewBox="0 0 180 180" aria-hidden="true"><defs><path id="${id}Arc" d="M8 90 A82 82 0 0 0 172 90"/></defs><circle cx="90" cy="90" r="75" fill="none" stroke="currentColor" stroke-width=".8" opacity=".35"/><circle class="nw-event-pulse" cx="90" cy="90" r="62" fill="none" stroke="currentColor" stroke-width="2.2"/><g class="nw-event-star"><path d="M152 82l2 6 6 2-6 2-2 6-2-6-6-2 6-2Z" fill="currentColor"/></g><text fill="currentColor" font-size="10.4" letter-spacing=".05"><textPath href="#${id}Arc" startOffset="50%" text-anchor="middle">${state.label}</textPath></text></svg></button>`;
 }
+// V37: rotate the original portal nodes; no replacement artwork or duplicate SVG IDs.
+function nwBindEventCarousel(){
+ const root=evRoot.querySelector('.nw-event-carousel'),track=root.querySelector('.nw-event-track'),viewport=root.querySelector('.nw-event-viewport'),dots=root.querySelector('.nw-event-dots');
+ const source=[...track.children];let ordered=[],index=0,signature='',pauseUntil=0,gesture=null,blockClick=0;
+ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+ const priority=()=>[...source].sort((a,b)=>Number(nwLobbyEventStatus(b.dataset.lobbyEvent).live)-Number(nwLobbyEventStatus(a.dataset.lobbyEvent).live));
+ function draw(animate=false){
+   const old=new Map([...track.children].map(el=>[el,el.getBoundingClientRect()]));
+   source.forEach(el=>el.getAnimations?.().forEach(a=>{if(a.effect?.target===el)a.cancel();}));
+   const ring=ordered.slice(index).concat(ordered.slice(0,index));
+   ring.forEach((el,i)=>{track.appendChild(el);el.hidden=i>=3;});
+   if(animate&&!reduced.matches)ring.slice(0,3).forEach(el=>{const a=old.get(el),b=el.getBoundingClientRect(),dx=a&&a.width?a.left-b.left:0;if(!el.animate)return;if(Math.abs(dx)>viewport.clientWidth/2||!a?.width){el.animate([{opacity:0,transform:'translateX(12px)'},{opacity:1,transform:'none'}],{duration:420,easing:'ease-out'});}else if(dx)el.animate([{transform:`translateX(${dx}px)`},{transform:'none'}],{duration:420,easing:'ease-out'});});
+   dots.querySelectorAll('button').forEach((b,i)=>b.setAttribute('aria-current',String(i===index)));
+ }
+ function refresh(){const next=priority(),sig=next.map(el=>el.id+':'+nwLobbyEventStatus(el.dataset.lobbyEvent).live).join('|');if(sig===signature)return;signature=sig;ordered=next;index=0;dots.replaceChildren();ordered.forEach((el,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Show '+el.dataset.eventName+' first');b.onclick=()=>{pauseUntil=Date.now()+9000;index=i;draw(true);};dots.appendChild(b);});draw();}
+ function step(n,manual=false){if(manual)pauseUntil=Date.now()+9000;if(ordered.length<2)return;index=(index+n+ordered.length)%ordered.length;draw(true);}
+ refresh();root.querySelector('.nw-event-prev').onclick=()=>step(-1,true);root.querySelector('.nw-event-next').onclick=()=>step(1,true);
+ viewport.addEventListener('pointerdown',e=>{if(!e.isPrimary||e.button!==0)return;gesture={id:e.pointerId,x:e.clientX,y:e.clientY};pauseUntil=Date.now()+9000;});
+ viewport.addEventListener('pointermove',e=>{if(!gesture||e.pointerId!==gesture.id)return;if(Math.abs(e.clientX-gesture.x)>12&&Math.abs(e.clientX-gesture.x)>Math.abs(e.clientY-gesture.y)){try{viewport.setPointerCapture(e.pointerId)}catch{}}});
+ viewport.addEventListener('pointerup',e=>{if(!gesture||gesture.id!==e.pointerId)return;const dx=e.clientX-gesture.x,dy=e.clientY-gesture.y;gesture=null;if(Math.abs(dx)>30&&Math.abs(dx)>Math.abs(dy)){blockClick=Date.now()+500;step(dx<0?1:-1,true);}});
+ viewport.addEventListener('pointercancel',()=>{gesture=null});viewport.addEventListener('lostpointercapture',()=>{gesture=null});
+ viewport.addEventListener('click',e=>{if(Date.now()<blockClick){e.preventDefault();e.stopImmediatePropagation();}},true);
+ root.addEventListener('focusin',()=>{pauseUntil=Date.now()+9000;});
+ const clock=setInterval(()=>{if(!root.isConnected){clearInterval(clock);return;}refresh();},1000);
+ const auto=setInterval(()=>{if(!root.isConnected){clearInterval(auto);return;}if(document.hidden||gesture||reduced.matches||Date.now()<pauseUntil||(root.contains(document.activeElement)&&document.activeElement.matches(':focus-visible')))return;step(1);},5000);
+}
 function showCategories(){
   if(!nwCloud.user()||(!nwCloud.user().is_anonymous&&!nwSetupVerified())||nwCloud.isRecovering()){void nwRouteAccount();return;}
   evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-lobby-theme');const p=nwProfile();
   const nav=(id,title,art)=>`<button type="button" class="nw-lobby-nav" id="${id}">${art}<strong>${title}</strong></button>`;
   const portal=nwLobbyPortal;
-  evDisplay(`<header class="nw-lobby-top"><button id="toHome" class="nw-lobby-back">‹ BACK</button><div class="nw-lobby-top-right"><span class="nw-lobby-money">${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</span><button id="nwLobbyShop" class="nw-lobby-icon" aria-label="Shop">${nwLobbyIcon('shop')}</button><button id="nwLobbySettings" class="nw-lobby-icon" aria-label="Settings">${nwLobbyIcon('settings')}</button></div></header><section class="nw-lobby">${nwLobbyTitle()}<button id="nwProfileButton" class="nw-lobby-profile" aria-label="Open player profile">${nwFrameArt(p.avatar)}<strong>${nwEscape(p.name)}</strong></button><div class="nw-lobby-divider" aria-hidden="true"><svg viewBox="0 0 220 14"><path d="M13 8Q44 3 74 7T139 7Q171 3 207 8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M5 2l1.5 4 4 1.5-4 1.5L5 13 3.5 9 0 7.5 3.5 6ZM215 2l1.5 4 3.5 1.5-3.5 1.5-1.5 4-1.5-4-4-1.5 4-1.5Z" fill="currentColor"/></svg></div><div class="nw-lobby-grid">
+  evRoot.classList.add('nw-lobby-v37');
+  evDisplay(`<header class="nw-lobby-top"><button id="nwProfileButton" class="nw-lobby-profile" aria-label="Open player profile">${nwFrameArt(p.avatar)}<strong>${nwEscape(p.name)}</strong></button><div class="nw-lobby-top-right"><span class="nw-lobby-money">${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</span><button id="nwLobbySettings" class="nw-lobby-icon" aria-label="Settings">${nwLobbyIcon('settings')}</button></div></header><section class="nw-lobby">${nwLobbyTitle()}
     ${nav('nwWorlds','WORLDS',`<span class="nw-lobby-nav-art nw-lobby-planet"><svg viewBox="0 0 80 70" aria-hidden="true"><g fill="none" stroke="#81C8FF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 30C20 11 41 6 54 17C68 30 61 50 47 56C33 62 19 52 18 40"/><path d="M19 26C4 37 4 49 17 48C34 48 62 30 70 20C77 9 62 10 55 15"/></g><path d="M37 20l2 5 5 2-5 2-2 5-2-5-5-2 5-2Z" fill="#81C8FF"/></svg></span>`)}
+    <section class="nw-event-carousel" aria-label="Events"><div class="nw-event-heading">EVENTS</div><div class="nw-event-viewport"><div class="nw-event-track">
     ${portal('nwTriplePortal','triple','TRIPLE<br>TROUBLE','⋆˚꩜｡')}
-    ${nav('nwFavorites','FAVORITES',`<span class="nw-lobby-nav-art nw-lobby-heart" aria-hidden="true"></span>`)}
     ${portal('nwDoublePortal','double','DOUBLE<br>TROUBLE','⋆ ☁︎ ☾ ⋆')}
-    ${nav('nwTrophy','TROPHY CASE',`<span class="nw-lobby-nav-art nw-lobby-trophy"><svg viewBox="0 0 80 70" aria-hidden="true"><path d="M24 11H56V29Q56 44 40 47Q24 44 24 29Z M24 16H11V25Q11 39 29 39 M56 16H69V25Q69 39 51 39 M40 47V58 M27 62H53" fill="none" stroke="#ffcf9a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 16l3 8 8 3-8 3-3 8-3-8-8-3 8-3Z" fill="#ffe6bb"/></svg></span>`)}
     ${portal('nwBattle','battle','BATTLE','ϟ ☢ ϟ')}
-    </div></section>`);
+    </div></div><div class="nw-event-controls"><button type="button" class="nw-event-prev" aria-label="Previous event">‹</button><div class="nw-event-dots"></div><button type="button" class="nw-event-next" aria-label="Next event">›</button></div></section>
+    <div class="nw-lobby-bottom">${nav('nwFavorites','FAVORITES',`<span class="nw-lobby-nav-art nw-lobby-heart" aria-hidden="true"></span>`)}${nav('nwTrophy','TROPHY CASE',`<span class="nw-lobby-nav-art nw-lobby-trophy"><svg viewBox="0 0 80 70" aria-hidden="true"><path d="M24 11H56V29Q56 44 40 47Q24 44 24 29Z M24 16H11V25Q11 39 29 39 M56 16H69V25Q69 39 51 39 M40 47V58 M27 62H53" fill="none" stroke="#ffcf9a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 16l3 8 8 3-8 3-3 8-3-8-8-3 8-3Z" fill="#ffe6bb"/></svg></span>`)}${nav('nwLobbyShop','SHOP',`<span class="nw-lobby-nav-art">${nwLobbyIcon('shop')}</span>`)}</div></section>`);
   const by=id=>evRoot.querySelector('#'+id);const openRooms=collection=>{roomCollection=collection;nwScroll[collection]=0;nwRoomPages[collection]=0;showRooms(0)};
-  by('toHome').onclick=showHome;by('nwWorlds').onclick=()=>openRooms('all');by('nwFavorites').onclick=()=>openRooms('fav');by('nwTriplePortal').onclick=nwTripleHome;by('nwDoublePortal').onclick=nwDoublePracticeScreen;by('nwBattle').onclick=showBattle;by('nwTrophy').onclick=()=>nwShowTrophy();by('nwProfileButton').onclick=nwShowProfile;by('nwLobbyShop').onclick=()=>nwLobbyUtility('shop');by('nwLobbySettings').onclick=()=>nwLobbyUtility('settings');if(nwLobbyClock===null)nwLobbyClock=setInterval(()=>{if(evRoot.hidden||!evRoot.querySelector('[data-lobby-event]')){clearInterval(nwLobbyClock);nwLobbyClock=null;return;}nwLobbyUpdateEventStatus();},1000);nwResetViewToTop();
+  by('nwWorlds').onclick=()=>openRooms('all');by('nwFavorites').onclick=()=>openRooms('fav');by('nwTriplePortal').onclick=nwTripleHome;by('nwDoublePortal').onclick=nwDoublePracticeScreen;by('nwBattle').onclick=showBattle;by('nwTrophy').onclick=()=>nwShowTrophy();by('nwProfileButton').onclick=nwShowProfile;by('nwLobbyShop').onclick=()=>nwLobbyUtility('shop');by('nwLobbySettings').onclick=()=>nwLobbyUtility('settings');if(nwLobbyClock===null)nwLobbyClock=setInterval(()=>{if(evRoot.hidden||!evRoot.querySelector('[data-lobby-event]')){clearInterval(nwLobbyClock);nwLobbyClock=null;return;}nwLobbyUpdateEventStatus();},1000);nwBindEventCarousel();nwResetViewToTop();
 }
 function showRooms(page=0){
   const ids=roomCollection==='fav'?nwFavs():nwGalaxyOrder;
@@ -990,7 +1013,7 @@ function showRooms(page=0){
   evDisplay(`${evHeader(roomCollection==='fav'?'FAVORITES':'SELECT A WORLD',showCategories)}<div class="world-grid world-list nw-planet-grid">${tiles||'<p class="nw-empty-favs">No favourites yet. Find a world you love and tap ♡ on the difficulty screen.</p>'}</div>`);
   evRoot.querySelectorAll('[data-world]').forEach(b=>b.onclick=()=>{nwSaveScroll();currentWorld=b.dataset.world;evSudokuMenu();nwResetViewToTop()});nwRestoreScroll();
 }
-function showHome(){evSudokuLeave();evRoot.hidden=true;document.getElementById('home').hidden=false;}
+
 const sudokuImgs=['01_Pink_Neon_Bat.png','02_Blue_Neon_Moon.png','03_Orange_Neon_Pumpkin.png','04_Green_Neon_Cat.png','05_White_Pink_Ghost.png','06_Red_Neon_Heart.png','07_Purple_Neon_Candy.png','08_Yellow_Neon_Star.png','09_Cyan_Neon_Cross.png'];
 const patissserieImgs=['01_croissant.png','02_macaron.png','03_eclair.png','04_fruit_tart.png','05_cinnamon_roll.png','06_donut.png','07_madeleine.png','08_pretzel.png','09_cupcake.png'];
 const christmasImgs=['01_santa_hat.png','02_christmas_tree.png','03_gold_star.png','04_snowflake.png','05_gingerbread.png','06_snowman.png','07_purple_gift.png','08_pink_candy_cane.png','09_orange_candle.png'];
@@ -1203,4 +1226,4 @@ function evSudokuCheck(){
   s.done=true;clearInterval(sudokuTimer);evSudokuEnd(true);
 }
 
-document.getElementById("start").onclick=()=>void nwRouteAccount();
+

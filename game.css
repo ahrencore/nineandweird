@@ -3893,3 +3893,38 @@ html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:n
 #game.nw-account-theme .nw-setup-welcome{text-align:center;padding-top:32px}
 #game.nw-account-theme .nw-setup-welcome .nw-profile-avatar{margin:24px auto}
 #game.nw-account-theme .nw-first-setup .nw-avatar-grid{margin:10px 0 18px}
+
+/* V37 — layout only. Original portal artwork, keyframes and fonts remain above. */
+#game.nw-lobby-v37{height:100dvh;min-height:0;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden;padding-bottom:max(10px,env(safe-area-inset-bottom));}
+#game.nw-lobby-v37 .nw-lobby-top{width:100%;flex:none;min-height:44px;padding:0 5px;}
+#game.nw-lobby-v37 .nw-lobby-top .nw-lobby-profile{display:flex;align-items:center;justify-content:flex-start;gap:7px;flex:1;width:auto;margin:0;min-width:0;text-align:left;}
+#game.nw-lobby-v37 .nw-lobby-profile:before,#game.nw-lobby-v37 .nw-lobby-profile:after{display:none;}
+#game.nw-lobby-v37 .nw-lobby-profile .nw-equipped-frame{width:44px;height:44px;flex:none;}
+#game.nw-lobby-v37 .nw-lobby-profile>strong{font-size:clamp(10px,3vw,15px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#game.nw-lobby-v37 .nw-lobby{width:100%;max-width:470px;flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-evenly;gap:clamp(4px,1.2dvh,14px);padding:0 5px;}
+#game.nw-lobby-v37 #nwWorlds{flex:1;max-height:240px;min-height:85px;height:auto;gap:8px;}
+#game.nw-lobby-v37 #nwWorlds .nw-lobby-nav-art{width:clamp(44px,12dvh,105px);height:clamp(44px,12dvh,105px);}
+#game.nw-lobby-v37 #nwWorlds strong{font-size:clamp(22px,6vw,34px);}
+#game.nw-lobby-v37 .nw-event-carousel{flex:none;min-width:0;}
+#game.nw-lobby-v37 .nw-event-heading{font-family:'Finger Paint',cursive;font-size:13px;text-align:left;color:#F8EBDD;padding-left:4px;}
+#game.nw-lobby-v37 .nw-event-viewport{overflow:hidden;touch-action:pan-y;user-select:none;}
+#game.nw-lobby-v37 .nw-event-track{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;justify-items:center;gap:0;padding:2px 0;}
+#game.nw-lobby-v37 .nw-event-track .nw-lobby-portal{width:100%;max-width:min(155px,22dvh);touch-action:pan-y;}
+#game.nw-lobby-v37 .nw-event-track .nw-lobby-portal[hidden]{display:none!important;}
+#game.nw-lobby-v37 .nw-event-track .nw-lobby-portal strong{font-size:clamp(9px,2.9vw,15px);}
+#game.nw-lobby-v37 .nw-event-controls{display:flex;align-items:center;justify-content:center;gap:10px;height:26px;}
+#game.nw-lobby-v37 .nw-event-controls>button{background:none;border:0;color:#BCADD9;font:25px/1 'Finger Paint',cursive;width:30px;height:26px;padding:0;}
+#game.nw-lobby-v37 .nw-event-dots{display:flex;align-items:center;gap:2px;max-width:65%;overflow:auto;}
+#game.nw-lobby-v37 .nw-event-dots button{width:20px;height:22px;flex:none;border:0;background:none;padding:0;display:grid;place-items:center;}
+#game.nw-lobby-v37 .nw-event-dots button:before{content:'';width:6px;height:6px;border-radius:50%;background:#64577E;}
+#game.nw-lobby-v37 .nw-event-dots button[aria-current=true]:before{background:#F08BC2;box-shadow:0 0 6px #F08BC2;width:8px;height:8px;}
+#game.nw-lobby-v37 .nw-lobby-bottom{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;flex:none;}
+#game.nw-lobby-v37 .nw-lobby-bottom .nw-lobby-nav{height:clamp(55px,10dvh,88px);padding:4px;gap:4px;}
+#game.nw-lobby-v37 .nw-lobby-bottom .nw-lobby-nav-art{width:clamp(24px,5dvh,39px);height:clamp(24px,5dvh,39px);}
+#game.nw-lobby-v37 .nw-lobby-bottom .nw-lobby-heart:before{font-size:38px;}
+#game.nw-lobby-v37 .nw-lobby-bottom .nw-lobby-nav strong{font-size:clamp(9px,2.8vw,13px);}
+@media(max-height:560px){#game.nw-lobby-v37 .nw-lobby-title{padding:2px 0;line-height:1.2}#game.nw-lobby-v37 #nwWorlds .nw-lobby-nav-art{width:40px;height:40px}#game.nw-lobby-v37 .nw-event-track .nw-lobby-portal{max-width:105px}}
+@media(max-height:400px){#game.nw-lobby-v37{height:auto;min-height:100dvh;overflow:visible}}
+#game.nw-lobby-v37>.nw-lobby-top{box-sizing:border-box;width:min(100%,470px);}
+#game.nw-lobby-v37>.nw-lobby{box-sizing:border-box;}
+@media(max-height:680px){#game.nw-lobby-v37 #nwWorlds{max-height:clamp(85px,30dvh,190px)}#game.nw-lobby-v37>.nw-lobby{justify-content:space-evenly}}
