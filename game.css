@@ -3621,7 +3621,7 @@ html:has(#game.theme-cakefail:not([hidden])),body:has(#game.theme-cakefail:not([
 @media(prefers-reduced-motion:reduce){#game .nw-battle-hub h2 span,#game .nw-radio-mascots img,#game .nw-radio-vs,#game .nw-matchmaking h2,#game .nw-battle-finish h2.nw-victory-title,#game .nw-battle-rewards h2,#game .nw-battle-modal h2{animation:none}}
 
 /* V25 — approved monthly frame artwork, Battle result palette and Diamond icon. */
-#game .nw-monthly-art-frame .nw-equipped-avatar{inset:auto;left:13.5%;top:18%;width:68%;height:68%;}
+#game .nw-monthly-art-frame .nw-equipped-avatar{inset:16%;width:68%;height:68%;}
 #game .nw-radio-frame-preview .nw-radio-reward-art{display:block;width:100%;height:100%;object-fit:contain;}
 #game .nw-battle-finish .nw-result-winner-avatar{width:100%;height:100%;object-fit:cover;border-radius:50%;border:3px solid #C6F64E;background:#263024;box-shadow:0 0 17px #C6F6455;}
 #game .nw-battle-finish .nw-result-winner-name{display:block;color:#F0F7DD;font:700 17px Oxanium,sans-serif;overflow-wrap:anywhere;}
