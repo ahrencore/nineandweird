@@ -109,7 +109,9 @@
       if(error)throw new Error(error.message);
       return data;
     },
-    async readProfile(){const c=await get();if(!user)return null;const {data,error}=await c.from('nw_profiles').select('display_name,avatar').eq('user_id',user.id).maybeSingle();if(error)throw new Error(error.message);return data;},
-    async saveProfile(name,avatar){const c=await get();if(!user)throw new Error('Please sign in first.');const {error}=await c.from('nw_profiles').update({display_name:name,avatar,updated_at:new Date().toISOString()}).eq('user_id',user.id);if(error)throw new Error(error.message);}
+    async readProfile(){const c=await get();if(!user)return null;const {data,error}=await c.from('nw_profiles').select('display_name,avatar,profile_setup_complete').eq('user_id',user.id).maybeSingle();if(error)throw new Error(error.message);return data;},
+    async usernameAvailable(name){const c=await get();if(!user||user.is_anonymous)throw Error('Please sign in first.');const {data,error}=await c.rpc('nw_username_available_v36',{p_name:name});if(error)throw Error(error.message);return data===true;},
+    async saveProfile(name,avatar){const c=await get();const account=user;if(!account)throw Error('Please sign in first.');const payload={display_name:name,avatar,updated_at:new Date().toISOString()};if(!account.is_anonymous)payload.profile_setup_complete=true;const {data,error}=await c.from('nw_profiles').update(payload).eq('user_id',account.id).select('user_id').maybeSingle();if(error)throw Error(error.code==='23505'?'That username is already taken.':error.message);if(!data){if(user?.id!==account.id)throw Error('Account changed. Please try again.');const {error:insertError}=await c.from('nw_profiles').insert({...payload,user_id:account.id});if(insertError)throw Error(insertError.code==='23505'?'That username is already taken or your profile already exists. Try again.':insertError.message);}}
+
   };
 })();

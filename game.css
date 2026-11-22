@@ -3887,3 +3887,9 @@ html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:n
 @keyframes nwNotifyOrbit{to{--nw-notify-angle:360deg}}
 @keyframes nwNotifyGlow{0%,100%{box-shadow:0 0 4px var(--nw-notify)}50%{box-shadow:0 0 13px var(--nw-notify)}}
 @media(prefers-reduced-motion:reduce){#game.nw-account-theme .nw-new-panel:before,#game.nw-account-theme .nw-account-deco,#game .nw-notification-orbit,#game .nw-notification-orbit:after{animation:none!important}#game .nw-notification-orbit{outline:2px solid var(--nw-notify);outline-offset:2px}}
+
+/* V36 onboarding only */
+#game.nw-account-theme .nw-first-setup #nwSetupNotice{color:#F2B8D5;font:14px/1.5 system-ui,sans-serif;margin:8px 0}
+#game.nw-account-theme .nw-setup-welcome{text-align:center;padding-top:32px}
+#game.nw-account-theme .nw-setup-welcome .nw-profile-avatar{margin:24px auto}
+#game.nw-account-theme .nw-first-setup .nw-avatar-grid{margin:10px 0 18px}

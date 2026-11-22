@@ -155,6 +155,7 @@ function nwShowFriends(tab='list',back=nwShowProfile){
  evRoot.querySelectorAll('[data-friend-tab]').forEach(b=>b.onclick=()=>nwShowFriends(b.dataset.friendTab,back));nwResetViewToTop();
 }
 function nwShowProfile(){
+  if(nwCloud?.user()&&!nwCloud.user().is_anonymous&&!nwCloud.isRecovering()&&!nwSetupVerified()){void nwRouteAccount();return;}
   evSudokuLeave();nwAccountTheme();
   const u=window.nwCloud?.user();const anon=!!u?.is_anonymous;const p=nwProfile();const recovery=!!window.nwCloud?.isRecovering?.();const profileLocked=!u;
   if(recovery&&u&&!anon){nwShowRecovery();return;}
@@ -196,13 +197,13 @@ function nwShowProfile(){
   const save=evRoot.querySelector('#nwSaveProfile');
   save.onclick=async()=>{
     if(!window.nwCloud?.user())return;
-    const name=evRoot.querySelector('#nwName').value;
+    const accountId=window.nwCloud.user().id;const name=evRoot.querySelector('#nwName').value;
     if(name!==p.name&&!nwUsernameValid(name)){profileNotice('Choose 3–20 letters, numbers, dots or underscores. Recorded opponent names are reserved.');return;}
     if(!anon&&name==='Guest Player'){profileNotice('Choose a valid username before saving.');return;}
     save.disabled=true;
     try{
-      if(window.nwCloud?.user())await nwCloud.saveProfile(name,avatar);
-      nwWrite(nwProfileKey,{name,avatar});nwShowProfile();
+      if(window.nwCloud?.user()){if(!anon&&!(await nwCloud.usernameAvailable(name)))throw new Error('That username is already taken.');await nwCloud.saveProfile(name,avatar);}
+      if(nwCloud.user()?.id!==accountId)return;nwWrite(nwProfileKey,{name,avatar});nwShowProfile();
     }catch(e){profileNotice('Could not save profile: '+e.message);save.disabled=false;}
   };
   if(u){
@@ -225,13 +226,12 @@ function nwShowProfile(){
       const guestButton=evRoot.querySelector('#nwMakeCloudGuest');if(guestButton)guestButton.disabled=true;
       try{
         await nwCloud.signInAnonymously();
-        await nwLoadCloudProfile();
-        nwShowProfile();
+        await nwRouteAccount();
       }catch(e){if(guestButton)guestButton.disabled=false;throw e;}
     });
     evRoot.querySelector('#nwSignIn').onclick=()=>action(async()=>{
       const {email,password}=credentials();if(!password)throw new Error('Enter your password.');
-      await nwCloud.signIn(email,password);await nwLoadCloudProfile();nwShowProfile();
+      await nwCloud.signIn(email,password);await nwRouteAccount();
     });
     evRoot.querySelector('#nwReset').onclick=()=>nwShowForgotPassword(evRoot.querySelector('#nwEmail')?.value?.trim()||'');
   }
@@ -257,7 +257,7 @@ function nwShowRegister(initialEmail=''){
     if(password.length<6)throw new Error('Use at least 6 characters for your password.');
     if(password!==confirm)throw new Error('The passwords do not match.');
     const result=await nwCloud.signUp(email,password);
-    if(result?.session){await nwLoadCloudProfile();nwShowProfile()}
+    if(result?.session){await nwRouteAccount()}
     else say('Check your email. If this address can be registered, you’ll receive a confirmation link. Already have an account? Sign in instead.');
   });
 }
@@ -290,41 +290,59 @@ function nwShowRecovery(){
     if(p.length<8){msg.textContent='Use at least 8 characters.';msg.hidden=false;return;}
     if(p!==confirm){msg.textContent='The passwords do not match.';msg.hidden=false;return;}
     submit.disabled=true;msg.hidden=true;
-    try{await nwCloud.finishRecovery(p);nwShowProfile();const n=evRoot.querySelector('#nwAuthNotice');if(n){n.textContent='Password updated. You can use your new password next time you sign in.';n.hidden=false;}}
+    try{await nwCloud.finishRecovery(p);await nwRouteAccount();const n=evRoot.querySelector('#nwAuthNotice');if(n){n.textContent='Password updated. You can use your new password next time you sign in.';n.hidden=false;}}
     catch(err){msg.textContent=err.message||'Could not update your password.';msg.hidden=false;submit.disabled=false;}
   };
   evRoot.querySelector('#nwCancelRecovery').onclick=async()=>{
     try{await nwCloud.signOut();nwShowProfile();}catch(err){msg.textContent=err.message;msg.hidden=false;}
   };
 }
-async function nwLoadCloudProfile(){
-  const accountId=window.nwCloud?.user()?.id;
-  if(!accountId)return;
-  try{const data=await nwCloud.readProfile();if(data && nwCloud.user()?.id===accountId){
-    const avatar=nwAvatarValue(data.avatar);
-    nwWrite(nwProfileKey,{name:data.display_name||'Guest Player',avatar});
-  }}catch(e){console.warn('Could not load Nine & Weird profile',e.message)}
+// V36: server-backed first-time profile gate. Never trust another account's local name.
+let nwVerifiedAccount=null, nwRouteJob=null, nwRouteKey=null, nwStartupDone=false, nwLastAuthKey=null, nwRouteSerial=0;
+function nwSetupVerified(){return !!nwCloud.user()&&nwVerifiedAccount===nwCloud.user().id;}
+function nwAuthKey(){const u=nwCloud.user();return u?`${u.id}:${!!u.is_anonymous}:${nwCloud.isRecovering()}`:'signed-out';}
+function nwShowWelcome(){
+  const p=nwProfile();nwAccountTheme();
+  evDisplay(`<section class="nw-new-panel nw-setup-welcome">${nwAccountHeading('WELCOME, WEIRDO!',nwEscape(p.name))}<div class="nw-profile-avatar nw-profile-with-frame">${nwFrameArt(p.avatar)}</div><button class="nw-action" id="nwWelcomeStart">START</button></section>`);
+  evRoot.querySelector('#nwWelcomeStart').onclick=showCategories;
+}
+function nwShowSetup(data){
+  nwAccountTheme();let avatar=nwAvatarValue(data?.avatar);const accountId=nwCloud.user()?.id;
+  evDisplay(`<header class="ev-head"><span></span><strong>PROFILE SETUP</strong><span></span></header><section class="nw-new-panel nw-first-setup">${nwAccountHeading('SET UP YOUR PROFILE','Make this little universe yours.')}<form id="nwSetupForm"><label class="nw-new-label" for="nwSetupName">USERNAME</label><input id="nwSetupName" maxlength="20" autocomplete="username" required placeholder="Your username"><p class="nw-muted">3–20 letters, numbers, dots or underscores. No spaces.</p><button type="button" id="nwCheckName" class="nw-action nw-auth-secondary">CHECK AVAILABILITY</button><p id="nwSetupNotice" role="status" aria-live="polite" hidden></p><label class="nw-new-label">CHOOSE AN AVATAR</label><div class="nw-avatar-grid">${nwAvatarChoices.map((a,i)=>`<button type="button" class="nw-avatar-choice ${a===avatar?'chosen':''}" data-setup-avatar="${a}" aria-label="Choose avatar ${i+1}" aria-pressed="${a===avatar}">${nwAvatarImg(a,'nw-avatar-choice-img')}</button>`).join('')}</div><button class="nw-action" id="nwFinishSetup" type="submit">SAVE &amp; CONTINUE</button></form><button type="button" class="nw-action nw-auth-secondary" id="nwSetupSignOut">SIGN OUT</button></section>`);
+  const form=evRoot.querySelector('#nwSetupForm'),input=evRoot.querySelector('#nwSetupName'),msg=evRoot.querySelector('#nwSetupNotice'),check=evRoot.querySelector('#nwCheckName'),save=evRoot.querySelector('#nwFinishSetup'),out=evRoot.querySelector('#nwSetupSignOut');
+  if(nwUsernameValid(data?.display_name||''))input.value=data.display_name;
+  const say=(m)=>{msg.textContent=m;msg.hidden=!m};
+  input.oninput=()=>say('');
+  evRoot.querySelectorAll('[data-setup-avatar]').forEach(b=>b.onclick=()=>{avatar=b.dataset.setupAvatar;evRoot.querySelectorAll('[data-setup-avatar]').forEach(x=>{x.classList.toggle('chosen',x===b);x.setAttribute('aria-pressed',String(x===b));});});
+  async function verify(name){if(!nwUsernameValid(name))throw Error('Choose 3–20 letters, numbers, dots or underscores. Recorded opponent names are reserved.');if(!await nwCloud.usernameAvailable(name))throw Error('That username is already taken.');}
+  async function action(doSave){const name=input.value;check.disabled=save.disabled=out.disabled=input.disabled=true;try{await verify(name);if(nwCloud.user()?.id!==accountId||!form.isConnected)return;if(!doSave){say('Username available!');return;}await nwCloud.saveProfile(name,avatar);if(nwCloud.user()?.id!==accountId||!form.isConnected)return;nwWrite(nwProfileKey,{name,avatar});nwVerifiedAccount=accountId;nwShowWelcome();}catch(e){say(e.message||'Please try again.');}finally{check.disabled=save.disabled=out.disabled=input.disabled=false;}}
+  check.onclick=()=>void action(false);form.onsubmit=e=>{e.preventDefault();void action(true);};out.onclick=async()=>{try{await nwCloud.signOut();await nwRouteAccount();}catch(e){say(e.message);}};
+}
+function nwShowAccountRetry(error){nwAccountTheme();evDisplay(`<section class="nw-new-panel">${nwAccountHeading('PROFILE UNAVAILABLE')}<p class="nw-muted" role="alert">${nwEscape(error.message||'Could not load your profile.')}</p><button class="nw-action" id="nwRetryAccount">TRY AGAIN</button><button class="nw-action nw-auth-secondary" id="nwRetrySignOut">SIGN OUT</button></section>`);evRoot.querySelector('#nwRetryAccount').onclick=()=>void nwRouteAccount();evRoot.querySelector('#nwRetrySignOut').onclick=async()=>{try{await nwCloud.signOut();await nwRouteAccount();}catch(e){nwShowAccountRetry(e);}};}
+function nwRouteAccount(){
+  const key=nwAuthKey();if(nwRouteJob&&nwRouteKey===key)return nwRouteJob;
+  nwRouteKey=key;nwRouteSerial++;
+  const job=(async()=>{
+    const u=nwCloud.user();if(nwCloud.isRecovering()&&u){nwShowRecovery();return;}
+    if(!u){nwVerifiedAccount=null;nwShowProfile();return;}
+    if(!u.is_anonymous&&nwSetupVerified()){nwShowWelcome();return;}
+    nwAccountTheme();evDisplay(`<section class="nw-new-panel">${nwAccountHeading('LOADING PROFILE')}</section>`);
+    try{const data=await nwCloud.readProfile();if(nwAuthKey()!==key)return;
+      if(data)nwWrite(nwProfileKey,{name:data.display_name||'Guest Player',avatar:nwAvatarValue(data.avatar)});
+      if(u.is_anonymous){showCategories();return;}
+      if(data?.profile_setup_complete===true&&nwUsernameValid(data.display_name)){nwVerifiedAccount=u.id;nwShowWelcome();}else nwShowSetup(data);
+    }catch(e){if(nwAuthKey()!==key)return;if(u.is_anonymous){showCategories();return;}nwShowAccountRetry(e);}
+  })();nwRouteJob=job;job.finally(()=>{if(nwRouteJob===job)nwRouteJob=null;});return job;
+}
+async function nwStartV36(){
+  try{await nwCloud.ready;nwStartupDone=true;nwLastAuthKey=nwAuthKey();if(nwCloud.user())await nwRouteAccount();else document.getElementById('home').hidden=false;}
+  catch(e){nwStartupDone=true;nwShowAccountRetry(e);}
 }
 if(window.nwCloud){
-  // A different account must never inherit the old account's in-memory game screen.
-  let nwVisibleAccountId=undefined;
-  nwCloud.onChange(()=>{
-    const activeId=nwCloud.user()?.id||null;
-    const changed=nwVisibleAccountId!==undefined && nwVisibleAccountId!==activeId;
-    nwVisibleAccountId=activeId;
-    if(changed){
-      evSudokuLeave();
-      nwScroll.usual=nwScroll.weird=nwScroll.fav=0;
-      nwRoomPages.usual=nwRoomPages.weird=nwRoomPages.fav=0;
-      if(!nwCloud.isRecovering())nwShowProfile();
-    }
-    if(nwCloud.isRecovering()&&nwCloud.user()){nwShowRecovery();return;}
-    if(nwCloud.user())nwLoadCloudProfile().then(()=>{
-      if(document.getElementById('nwAccountStatus') && nwCloud.user()?.id===activeId)nwShowProfile();
-    });
-    else if(document.getElementById('nwAccountStatus')||document.getElementById('nwRecoveryForm'))nwShowProfile();
+  nwCloud.onChange(()=>{if(!nwStartupDone)return;const key=nwAuthKey();if(key===nwLastAuthKey)return;nwLastAuthKey=key;nwVerifiedAccount=null;const serial=nwRouteSerial;
+    // Run outside Supabase's auth callback lock; token refresh for same identity is ignored.
+    setTimeout(()=>{if(nwAuthKey()!==key||nwRouteSerial!==serial)return;evSudokuLeave();nwScroll.usual=nwScroll.weird=nwScroll.fav=0;nwRoomPages.usual=nwRoomPages.weird=nwRoomPages.fav=0;void nwRouteAccount();},0);
   });
-  nwCloud.ready.then(()=>{if(nwCloud.isRecovering()&&nwCloud.user())nwShowRecovery()}).catch(e=>console.warn('NW cloud start',e.message));
 }
 
 function nwShowTrophy(tab='home',offset=0){
@@ -941,6 +959,7 @@ function nwLobbyPortal(id,cls,title,decor){
  return `<button type="button" id="${id}" data-lobby-event="${cls}" data-event-name="${name}" aria-label="${name} — ${state.label}" class="nw-lobby-portal ${cls}${state.live?' is-live':''}"><span class="nw-lobby-portal-disc"><span class="nw-lobby-portal-decor" aria-hidden="true">${decor}</span><strong>${title}</strong></span><svg class="nw-lobby-event-orbit" viewBox="0 0 180 180" aria-hidden="true"><defs><path id="${id}Arc" d="M8 90 A82 82 0 0 0 172 90"/></defs><circle cx="90" cy="90" r="75" fill="none" stroke="currentColor" stroke-width=".8" opacity=".35"/><circle class="nw-event-pulse" cx="90" cy="90" r="62" fill="none" stroke="currentColor" stroke-width="2.2"/><g class="nw-event-star"><path d="M152 82l2 6 6 2-6 2-2 6-2-6-6-2 6-2Z" fill="currentColor"/></g><text fill="currentColor" font-size="10.4" letter-spacing=".05"><textPath href="#${id}Arc" startOffset="50%" text-anchor="middle">${state.label}</textPath></text></svg></button>`;
 }
 function showCategories(){
+  if(!nwCloud.user()||(!nwCloud.user().is_anonymous&&!nwSetupVerified())||nwCloud.isRecovering()){void nwRouteAccount();return;}
   evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-lobby-theme');const p=nwProfile();
   const nav=(id,title,art)=>`<button type="button" class="nw-lobby-nav" id="${id}">${art}<strong>${title}</strong></button>`;
   const portal=nwLobbyPortal;
@@ -1184,4 +1203,4 @@ function evSudokuCheck(){
   s.done=true;clearInterval(sudokuTimer);evSudokuEnd(true);
 }
 
-document.getElementById("start").onclick=showCategories;
+document.getElementById("start").onclick=()=>void nwRouteAccount();
