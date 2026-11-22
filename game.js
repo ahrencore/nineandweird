@@ -120,8 +120,8 @@ const nwSeasonFrameTiers=[
 function nwSeasonId(){return new Date().toISOString().slice(0,7)}
 function nwAvailableFrames(){
   const st=nwBattleMonthStats();
-  return [{id:'usual',title:'The Usual',src:'frames/nw-free-usual.png'},
-    {id:'weird',title:'The Weird',src:'frames/nw-free-weird.png'},
+  return [{id:'usual',title:'The Usual',src:'frames/nw-free-usual.png?v=42'},
+    {id:'weird',title:'The Weird',src:'frames/nw-free-weird.png?v=42'},
     ...nwSeasonFrameTiers.filter(t=>st.wins>=t.wins).map(t=>({id:'monthly-'+t.wins,title:t.title,monthly:true,wins:t.wins,src:`frames/nw-monthly-${t.wins}.png`}))];
 }
 function nwSelectedFrame(){
@@ -133,11 +133,19 @@ function nwFrameArt(avatar,extraClass=''){
   const f=nwSelectedFrame();
   return `<span class="nw-equipped-frame ${f.monthly?'nw-monthly-art-frame':''} ${extraClass}">${nwAvatarImg(avatar,'nw-equipped-avatar')}${f.src?`<img src="${f.src}" class="nw-equipped-art" alt="">`:`<span class="nw-season-frame-ring">✧</span><strong class="nw-season-frame-title">${nwEscape(f.title)}</strong>`}</span>`;
 }
+function nwFrameRemark(frame){return frame.monthly?'Resets every 1st of the month (UTC).':'Permanent frame.';}
 function nwFramePicker(){
- const equipped=nwSelectedFrame().id;
- return `<div class="nw-frame-selector"><h3>PROFILE FRAMES</h3><div class="nw-frame-options">${nwAvailableFrames().map(f=>`<button type="button" class="nw-frame-choice ${f.id===equipped?'active':''}" data-frame="${f.id}">${f.src?`<img src="${f.src}" alt="">`:'<span class="nw-frame-tier-icon">♛</span>'}<small>${nwEscape(f.title)}</small></button>`).join('')}</div></div>`;
+ const equipped=nwSelectedFrame();
+ return `<div class="nw-frame-selector"><h3>PROFILE FRAMES</h3><div class="nw-frame-options">${nwAvailableFrames().map(f=>`<button type="button" class="nw-frame-choice ${f.id===equipped.id?'active':''}" aria-pressed="${f.id===equipped.id}" data-frame="${f.id}">${f.src?`<img src="${f.src}" alt="">`:'<span class="nw-frame-tier-icon">♛</span>'}<small>${nwEscape(f.title)}</small><small class="nw-frame-kind">${f.monthly?'Monthly':'Permanent'}</small></button>`).join('')}</div><p class="nw-frame-remark" role="status">${nwFrameRemark(equipped)}</p></div>`;
 }
-function nwBindFramePicker(){evRoot.querySelectorAll('[data-frame]').forEach(b=>b.onclick=()=>{const frame=nwAvailableFrames().find(f=>f.id===b.dataset.frame);if(!frame)return;nwWrite(nwFrameKey,{id:frame.id,month:frame.monthly?nwSeasonId():null});nwShowProfile();});}
+function nwBindFramePicker(){evRoot.querySelectorAll('[data-frame]').forEach(b=>b.onclick=()=>{
+ const frame=nwAvailableFrames().find(f=>f.id===b.dataset.frame);if(!frame)return;
+ nwWrite(nwFrameKey,{id:frame.id,month:frame.monthly?nwSeasonId():null});
+ const selected=nwSelectedFrame();
+ const preview=evRoot.querySelector('.nw-profile-with-frame');if(preview)preview.innerHTML=nwFrameArt(nwProfile().avatar);
+ evRoot.querySelectorAll('[data-frame]').forEach(choice=>{const active=choice.dataset.frame===selected.id;choice.classList.toggle('active',active);choice.setAttribute('aria-pressed',String(active));});
+ const remark=evRoot.querySelector('.nw-frame-remark');if(remark)remark.textContent=nwFrameRemark(selected);
+});}
 // V35 account UI: real requests require a future cloud service, never simulate them.
 function nwUsernameValid(name){return /^[A-Za-z0-9._]{3,20}$/.test(name)&&!/^guest_/i.test(name)&&!nwBattleProfiles.some(p=>p.name.toLowerCase()===name.toLowerCase());}
 function nwAccountTheme(){applyTheme('hub');evRoot.classList.add('nw-account-theme');}

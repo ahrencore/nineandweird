@@ -3985,3 +3985,16 @@ html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:n
   #game .nw-lobby-portal.triple strong,
   #game .nw-triple-logo { animation:none; }
 }
+
+/* V42 — profile-only cleanup. Keep established periwinkle account palette. */
+#game.nw-account-theme:has(#nwOpenFrames) .nw-frame-selector{background:#17192B;border-color:#AABFFF55;color:#F5F0FF;box-shadow:none}
+#game.nw-account-theme:has(#nwOpenFrames) .nw-frame-selector h3{color:#AABFFF;text-shadow:none}
+#game.nw-account-theme:has(#nwOpenFrames) .nw-frame-choice.active{outline:2px solid #AABFFF;outline-offset:1px}
+#game.nw-account-theme:has(#nwOpenFrames) .nw-frame-choice .nw-frame-kind{font-size:10px;font-weight:400;color:#F2B8D5!important;line-height:1.2}
+#game.nw-account-theme:has(#nwOpenFrames) .nw-frame-remark{font:400 12px/1.4 'Pangolin',system-ui,sans-serif;color:#AABFFF;text-align:center;margin:12px 0 2px}
+#game.nw-account-theme:has(#nwOpenFrames) .nw-avatar-choice.chosen .nw-avatar-choice-img{filter:drop-shadow(0 3px 7px #AABFFF40)}
+#game.nw-account-theme:has(#nwOpenFrames) .nw-profile-locked input:disabled{color:#AABFFF!important}
+#game.nw-account-theme:has(#nwOpenFrames) .nw-auth-divider::before,#game.nw-account-theme:has(#nwOpenFrames) .nw-auth-divider::after{background:#AABFFF55}
+#game.nw-account-theme:has(#nwOpenFrames) input::placeholder{color:#AABFFF99}
+#game.nw-account-theme:has(#nwOpenFrames) a{color:#F2B8D5}
+@media(hover:hover) and (pointer:fine){#game.nw-account-theme:has(#nwOpenFrames) .nw-avatar-choice:not(:disabled):hover{border-color:#AABFFF!important;box-shadow:0 0 11px #AABFFF33!important}}
