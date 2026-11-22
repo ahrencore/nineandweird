@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Rubik+Wet+Paint&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Pangolin&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Chelsea+Market&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&display=swap");
@@ -3964,4 +3965,23 @@ html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:n
 #game.nw-account-theme:not(:has(.nw-friend-tabs)),
 #game.nw-account-theme:not(:has(.nw-friend-tabs)) :not(svg,svg *) {
   font-family: 'Pangolin', system-ui, sans-serif !important;
+}
+
+/* V41 corrected: event title typography and Signal Interference only. */
+#game .nw-double h2.nw-double-logo,
+#game .nw-lobby-portal.double strong {
+  font-family:'Rubik Wet Paint','Rubik Glitch',sans-serif;
+}
+#game .nw-lobby-portal.triple strong,
+#game .nw-triple-logo {
+  animation:nwTripleSignalInterference 5s infinite;
+}
+@keyframes nwTripleSignalInterference {
+  0%,60%,100% { transform:translateX(0); text-shadow:0 0 5px #bdaaff; }
+  72% { transform:translateX(-2px); text-shadow:3px 0 #ed79bb,-3px 0 #7d9fff; }
+  84% { transform:translateX(2px); text-shadow:-3px 0 #ed79bb,3px 0 #7d9fff; }
+}
+@media(prefers-reduced-motion:reduce) {
+  #game .nw-lobby-portal.triple strong,
+  #game .nw-triple-logo { animation:none; }
 }
