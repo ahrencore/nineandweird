@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Finger+Paint&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Bungee+Shade&family=Oxanium:wght@400;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Bricolage+Grotesque:wght@400;600;700&family=Rubik+Glitch&family=Space+Mono:wght@400;700&display=swap");
@@ -3802,3 +3803,40 @@ html:has(#game.nw-battle-theme:not([hidden])),body:has(#game.nw-battle-theme:not
 @media(max-height:680px){#game.nw-lobby-theme .nw-lobby-divider{height:10px;margin-bottom:1px}}
 #game.nw-battle-theme :is(.nw-battle-start-button,.nw-match-main):active{box-shadow:0 2px 0 #4c6c21,0 5px 12px #11171099}
 #game .nw-battle-overlay{background:#090f09d9}
+
+/* V34 — fully scoped Lavender Lemonade trophy archive and Radioactive results */
+#game.theme-hub.nw-battle-theme>section.nw-battle.nw-battle-finish{background:url('assets/battle/radioactive.svg') center/100% 100% no-repeat,radial-gradient(ellipse at 50% 14%,#31421e 0,#1a2516 36%,#111710 73%)!important;color:#F0F7DD!important}
+#game.nw-battle-theme .nw-battle-finish.nw-defeat h2.nw-victory-title,#game.nw-battle-theme .nw-battle-finish.nw-defeat .nw-victory-crown{color:#FF7757;text-shadow:0 0 14px #FF775766}
+#game .nw-battle-finish .nw-battle-result-opponent>.nw-equipped-frame.nw-battle-result-avatar{width:58px;height:58px;flex:none;border:0;background:none;box-shadow:none;overflow:visible;border-radius:0}
+#game.theme-hub.nw-trophy-theme{--surface:#191729;--panel:#302B46;--ink:#F9F2FF;--accent:#F4ED91;--line:#DFCAFF;--room-border:#DFCAFF;--room-glow:#F4ED91;background:radial-gradient(ellipse at 12% 12%,#302B46,#191729 65%)!important;color:#F9F2FF;min-height:100dvh}
+html:has(#game.nw-trophy-theme:not([hidden])),body:has(#game.nw-trophy-theme:not([hidden])){background:#191729!important;color:#F9F2FF!important}
+#game.nw-trophy-theme>.ev-head{background:#191729!important;border-color:#DFCAFF44!important;color:#F4ED91!important;box-shadow:none!important}
+#game.nw-trophy-theme>.ev-head strong,#game.nw-trophy-theme>.ev-head button{font-family:'Gaegu',cursive!important;color:#F4ED91!important;text-shadow:none!important}
+#game.nw-trophy-theme>.ev-head button{background:#302B46!important;border-color:#DFCAFF!important;box-shadow:none!important;font-size:16px}
+#game.nw-trophy-theme .nw-trophy-panel{position:relative;isolation:isolate;overflow:hidden;background:radial-gradient(ellipse at 80% 0%,#302B46,#191729 78%)!important;color:#F9F2FF;border:1px solid #DFCAFF55;box-shadow:0 8px 26px #100d1c66;padding:18px 14px 24px}
+#game.nw-trophy-theme .nw-trophy-panel:before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.6;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 580'%3E%3Cg fill='none' stroke='%23DFCAFF' stroke-width='1.3' stroke-linecap='round'%3E%3Cpath d='M8 74Q22 60 44 44M12 86Q25 70 48 54M298 190Q320 167 344 159M6 372Q23 353 49 340M303 538Q322 521 352 508' opacity='.5'/%3E%3C/g%3E%3Cg fill='%23F4ED91'%3E%3Cpath d='M49 36l2 6 6 2-6 2-2 6-2-6-6-2 6-2ZM340 147l2 6 6 2-6 2-2 6-2-6-6-2 6-2ZM50 331l2 6 6 2-6 2-2 6-2-6-6-2 6-2ZM350 501l2 6 6 2-6 2-2 6-2-6-6-2 6-2Z'/%3E%3Ccircle cx='16' cy='220' r='1.5'/%3E%3Ccircle cx='330' cy='340' r='2'/%3E%3C/g%3E%3C/svg%3E") center/100% 100% no-repeat}
+#game.nw-trophy-theme .nw-trophy-heading{position:relative;overflow:hidden;text-align:center;padding:24px 0 18px}
+#game.nw-trophy-theme .nw-trophy-heading h2{font:700 clamp(32px,9vw,48px)/1.1 'Gaegu',cursive;color:#F4ED91;text-shadow:0 0 12px #F4ED9144;margin:8px 0}
+#game.nw-trophy-theme .nw-trophy-doodle{color:#DFCAFF;font-size:18px;letter-spacing:3px}
+#game.nw-trophy-theme .nw-wish-star{position:absolute;left:5%;top:4px;color:#F4ED91;font-style:normal;pointer-events:none;animation:nwWishShoot 6s linear infinite;text-shadow:0 0 8px currentColor}
+#game.nw-trophy-theme .nw-wish-star:before{content:'';position:absolute;right:8px;top:7px;width:38px;height:2px;background:linear-gradient(90deg,transparent,#DFCAFF);transform:rotate(25deg);transform-origin:right}
+#game.nw-trophy-theme .nw-wish-star.b{left:27%;color:#DFCAFF;animation-delay:-3s}
+@keyframes nwWishShoot{0%{opacity:0;transform:translate(0,0)}10%{opacity:1}45%{opacity:.8;transform:translate(180px,65px)}55%,100%{opacity:0;transform:translate(230px,85px)}}
+#game.nw-trophy-theme .nw-trophy-intro{justify-content:center;color:#DFCAFF;font:700 19px 'Gaegu',cursive;margin:4px 0 22px}
+#game.nw-trophy-theme .nw-trophy-menu{display:grid;gap:13px}
+#game.nw-trophy-theme .nw-trophy-menu button{display:grid;grid-template-columns:42px minmax(0,1fr) 14px;align-items:center;gap:12px;text-align:left;background:#302B46eb;border:1px solid #DFCAFF;color:#DFCAFF;border-radius:16px;padding:16px 12px;min-height:88px;box-shadow:0 3px 0 #191729}
+#game.nw-trophy-theme .nw-trophy-menu button:nth-child(2){border-color:#F4ED91;color:#F4ED91}
+#game.nw-trophy-theme .nw-trophy-menu svg{width:42px;height:42px}
+#game.nw-trophy-theme .nw-trophy-menu strong{display:block;font:700 23px/1.05 'Gaegu',cursive}
+#game.nw-trophy-theme .nw-trophy-menu small{display:block;color:#F9F2FF;font:12px/1.4 system-ui,sans-serif;margin-top:5px}
+#game.nw-trophy-theme .nw-trophy-menu b{font-size:25px}
+#game.nw-trophy-theme button:focus-visible{outline:2px solid #F4ED91!important;outline-offset:2px}
+#game.nw-trophy-theme :is(.nw-report-head,.nw-report-grid article,.nw-report-difficulty,.nw-battle-title-list>div){background:#302B46!important;border:1px solid #DFCAFF44;color:#F9F2FF}
+#game.nw-trophy-theme :is(.nw-report-head strong,.nw-report-grid strong){color:#F4ED91;font-family:'Gaegu',cursive;font-weight:700;font-size:30px}
+#game.nw-trophy-theme :is(.nw-report-head span,.nw-report-grid small,.nw-report-grid em,.nw-report-grid span,.nw-muted,.nw-battle-history-row){color:#DFCAFF!important}
+#game.nw-trophy-theme :is(h3,.nw-week-nav strong){color:#F4ED91;font-family:'Gaegu',cursive;font-size:18px}
+#game.nw-trophy-theme .nw-week-nav button{background:#302B46;border-color:#DFCAFF;color:#F4ED91}
+#game.nw-trophy-theme .nw-difficulty-track{background:#191729}
+#game.nw-trophy-theme .nw-difficulty-track i{background:#F4ED91}
+#game.nw-trophy-theme .nw-battle-title-list>div.earned{background:#403b4d!important;border-color:#F4ED91;color:#F4ED91}
+@media(prefers-reduced-motion:reduce){#game.nw-trophy-theme .nw-wish-star{animation:none;opacity:.7}}

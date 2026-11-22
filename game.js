@@ -301,18 +301,25 @@ if(window.nwCloud){
   nwCloud.ready.then(()=>{if(nwCloud.isRecovering()&&nwCloud.user())nwShowRecovery()}).catch(e=>console.warn('NW cloud start',e.message));
 }
 
-function nwShowTrophy(tab='brain',offset=0){
-  evSudokuLeave();applyTheme('hub');const r=nwWeeklyReport(offset),prior=nwWeeklyReport(offset-1),p=nwProfile();
+function nwShowTrophy(tab='home',offset=0){
+  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-trophy-theme');const r=nwWeeklyReport(offset),prior=nwWeeklyReport(offset-1),p=nwProfile();
   const weekTitle=new Date(r.start).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
   const brain=()=>`<div class="nw-report-head"><strong>${r.brain===null?'—':r.brain} / 1000</strong><span>Brain Power · playful game score, not IQ</span></div><div class="nw-report-grid"><article><small>ACCURACY</small><strong>${r.accuracy==null?'—':r.accuracy+'%'}</strong><em>Correct placements / attempts</em><span>${nwReportDelta(r.accuracy,prior.accuracy,' pts')} vs prior week</span></article><article><small>SPEED</small><strong>${nwFormatTime(r.adjusted)}</strong><em>Average difficulty-adjusted time</em><span>${r.adjusted!=null&&prior.adjusted!=null?nwFormatTime(Math.abs(r.adjusted-prior.adjusted))+(r.adjusted<=prior.adjusted?' faster':' slower'):'—'} vs prior week</span></article><article><small>WIN RATE</small><strong>${r.consistency==null?'—':r.consistency+'%'}</strong><em>${r.wins.length}/${r.rows.length} puzzles won</em><span>${nwReportDelta(r.consistency,prior.consistency,' pts')} vs prior week</span></article><article><small>IMPROVEMENT</small><strong>${nwReportDelta(r.brain,prior.brain)}</strong><em>Change in overall Brain Power</em><span>Compare weeks using arrows below</span></article></div><div class="nw-report-difficulty"><h3>DIFFICULTY PERFORMANCE</h3>${Object.entries(r.difficulty).map(([d,v])=>`<div class="nw-difficulty-line"><span>${d.toUpperCase()}</span><strong>${v.won} / ${v.played} completed</strong><div class="nw-difficulty-track"><i style="width:${v.played?(v.won/v.played*100):0}%"></i></div></div>`).join('')}</div><p class="nw-muted">${r.rows.length?'Based on recorded puzzles this week. Hints are included in activity but not counted as manual correct placements.':'No recorded puzzles in this week yet. Play a puzzle to start your report.'}</p>`;
   const battle=()=>{
     const history=nwBattlePracticeHistory(),byMonth={};
     for(const g of history){const key=new Date(g.at).toISOString().slice(0,7);const st=byMonth[key]||(byMonth[key]={wins:0,losses:0,draws:0});if(g.outcome==='WIN')st.wins++;else if(g.outcome==='LOSS')st.losses++;else st.draws++;}
     const months=Object.entries(byMonth).sort((a,b)=>b[0].localeCompare(a[0]));
-    return `<div class="nw-report-head"><strong>${nwBattleMonthStats().rate}%</strong><span>Monthly Battle Win Rate · ${nwBattleMonthStats().wins} Wins / ${nwBattleMonthStats().losses} Losses</span></div><h3>MONTHLY TITLE FRAMES</h3><div class="nw-battle-title-list">${nwSeasonFrameTiers.map(t=>`<div class="${nwBattleMonthStats().wins>=t.wins?'earned':''}"><span>${t.wins} WINS</span><strong>${nwEscape(t.title)}</strong></div>`).join('')}</div><h3>PAST SEASONS</h3>${months.length?months.map(([key,st])=>`<p class="nw-battle-history-row"><strong>${key}</strong> · ${st.wins} wins · ${st.losses} losses</p>`).join(''):'<p class="nw-muted">Your Battle history will appear here.</p>'}`;
+    return `<div class="nw-report-head"><strong>${nwBattleMonthStats().rate}%</strong><span>Monthly Battle Win Rate · ${nwBattleMonthStats().wins} Wins / ${nwBattleMonthStats().losses} Losses / ${nwBattleMonthStats().draws} Draws</span></div><h3>MONTHLY TITLE FRAMES</h3><div class="nw-battle-title-list">${nwSeasonFrameTiers.map(t=>`<div class="${nwBattleMonthStats().wins>=t.wins?'earned':''}"><span>${t.wins} WINS</span><strong>${nwEscape(t.title)}</strong></div>`).join('')}</div><h3>PAST SEASONS</h3>${months.length?months.map(([key,st])=>`<p class="nw-battle-history-row"><strong>${key}</strong> · ${st.wins} wins · ${st.losses} losses · ${st.draws} draws</p>`).join(''):'<p class="nw-muted">Your Battle history will appear here.</p>'}`;
   };
-  evDisplay(`${evHeader('TROPHY CASE',showCategories)}<section class="nw-new-panel"><div class="nw-trophy-intro">🏆 <strong>${nwEscape(p.name)}'s Trophy Case</strong></div><div class="nw-tabs"><button id="nwBrainTab" class="${tab==='brain'?'active':''}">BRAIN REPORT</button><button id="nwBattleTab" class="${tab==='battle'?'active':''}">BATTLE RECORDS</button></div>${tab==='brain'?`<div class="nw-week-nav"><button id="nwOlderWeek">‹</button><strong>WEEK OF ${weekTitle.toUpperCase()}</strong><button id="nwNewerWeek" ${offset>=0?'disabled':''}>›</button></div>${brain()}`:battle()}<button id="nwWeeklyPreview" class="nw-action" type="button">WEEKLY LEADERBOARD</button></section>`);
-  evRoot.querySelector('#nwWeeklyPreview').onclick=()=>nwShowEventDetail('weekly');evRoot.querySelector('#nwBrainTab').onclick=()=>nwShowTrophy('brain',0);evRoot.querySelector('#nwBattleTab').onclick=()=>nwShowTrophy('battle',0);
+  const icons={brain:'<path d="M24 39C10 43 5 30 12 23C5 12 19 7 24 14C29 7 43 12 36 23C43 30 38 43 24 39ZM24 14V39M12 23Q19 19 19 29M36 23Q29 19 29 29"/>',achievements:'<circle cx="24" cy="18" r="12"/><path d="M16 28L12 43L24 38L36 43L32 28M24 11L26 16L32 18L26 20L24 25L22 20L16 18L22 16Z"/>',battle:'<path d="M10 8L36 34M38 8L12 34M10 8L12 18M10 8L20 10M38 8L36 18M38 8L28 10M29 28L41 40M19 28L7 40M30 40L41 29M7 29L18 40"/>'};
+  const items=[['brain','Weekly Reports','Your little brain diary'],['achievements','Achievements','Celebrate your milestones'],['battle','Battle Records','Your victories and defeats']];
+  const label=items.find(x=>x[0]===tab)?.[1]||'Trophy Case';
+  const title=`<div class="nw-trophy-heading"><i class="nw-wish-star a" aria-hidden="true">✦</i><i class="nw-wish-star b" aria-hidden="true">✧</i><h2>${label}</h2><div class="nw-trophy-doodle" aria-hidden="true">✧ ── ☆ ── ✧</div></div>`;
+  const landing=`<div class="nw-trophy-intro"><strong>${nwEscape(p.name)}’s Trophy Case</strong></div><div class="nw-trophy-menu">${items.map(([id,name,desc])=>`<button type="button" data-trophy="${id}"><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${icons[id]}</svg><span><strong>${name}</strong><small>${desc}</small></span><b aria-hidden="true">›</b></button>`).join('')}</div>`;
+  const report=`<div class="nw-week-nav"><button id="nwOlderWeek" aria-label="Previous week">‹</button><strong>WEEK OF ${weekTitle.toUpperCase()}</strong><button id="nwNewerWeek" aria-label="Next week" ${offset>=0?'disabled':''}>›</button></div>${brain()}`;
+  const achievements=`<div class="nw-report-head"><strong>✦ Coming soon ✦</strong><span>Your permanent milestones will appear here.</span></div>`;
+  evDisplay(`${evHeader('TROPHY CASE',tab==='home'?showCategories:()=>nwShowTrophy())}<section class="nw-new-panel nw-trophy-panel">${title}${tab==='brain'?report:tab==='battle'?battle():tab==='achievements'?achievements:landing}</section>`);
+  evRoot.querySelectorAll('[data-trophy]').forEach(b=>b.onclick=()=>nwShowTrophy(b.dataset.trophy));
   if(tab==='brain'){evRoot.querySelector('#nwOlderWeek').onclick=()=>nwShowTrophy('brain',offset-1);evRoot.querySelector('#nwNewerWeek').onclick=()=>nwShowTrophy('brain',offset+1)}
 }
 
@@ -459,7 +466,7 @@ function nwBattleFinish(s,won,points,elapsed){
     <div class="nw-result-kicker">MONTHLY BATTLE · ${nwEscape(s.difficulty.toUpperCase())}</div>
     <h2 class="nw-victory-title">${resultTitle}</h2><div class="nw-result-player-frame">${opponentWon?nwBattleProfileArt(opponent):nwFrameArt(nwProfile().avatar)}</div>
     ${opponentWon?`<strong class="nw-result-winner-name">${nwEscape(opponent.display_name)}</strong>`:''}
-    <div class="nw-battle-result-opponent">${opponentWon?nwAvatarImg(nwProfile().avatar,'nw-battle-result-avatar'):nwBattleProfileArt(opponent,'nw-battle-result-avatar')}<span>VS <strong>${nwEscape(opponentWon?nwProfile().name:opponent.display_name)}</strong></span></div>
+    <div class="nw-battle-result-opponent">${opponentWon?nwFrameArt(nwProfile().avatar,'nw-battle-result-avatar'):nwBattleProfileArt(opponent,'nw-battle-result-avatar')}<span>VS <strong>${nwEscape(opponentWon?nwProfile().name:opponent.display_name)}</strong></span></div>
     ${nwBattleRateCard(stats)}
     <div class="nw-battle-result-actions"><button class="nw-battle-start-button" id="nwPracticeAgain">⚔ NEXT BATTLE</button><button class="nw-battle-fine-button" id="nwPracticeBack">BATTLE MENU</button></div>
   </section>`);
@@ -547,11 +554,9 @@ function nwShowEvents(){
     <div class="nw-event-schedule"><span>MON–WED <b>TRIPLE TROUBLE</b></span><span>THU <b>TEAM UP</b></span><span>FRI–SUN <b>DOUBLE TROUBLE</b></span></div>
     <button class="nw-event-tile" id="nwEventShelf"><span class="nw-event-symbol nw-triple-event-icon" aria-hidden="true"><img src="assets/ugly/02_chomps.png" alt=""></span><span><strong>TRIPLE TROUBLE</strong><small>Three-day tile matching · Clear triples, climb stages.</small><em>${nwEventStatus('shelf')}</em></span><span class="nw-event-arrow" aria-hidden="true">›</span></button>
     <button class="nw-event-tile" id="nwEventDouble"><span class="nw-event-symbol" aria-hidden="true">⚔️</span><span><strong>DOUBLE TROUBLE</strong><small>Friday–Sunday · 2v2 team Sudoku. Thursday is partner day.</small><em>${nwEventStatus('double')}</em></span><span class="nw-event-arrow" aria-hidden="true">›</span></button>
-    <button class="nw-event-tile" id="nwEventWeekly"><span class="nw-event-symbol" aria-hidden="true">🏆</span><span><strong>WEEKLY LEADERBOARD</strong><small>Regular Sudoku scores from all rooms and difficulties.</small><em>${nwEventStatus('weekly')}</em></span><span class="nw-event-arrow" aria-hidden="true">›</span></button>
 
   </section>`);
   evRoot.querySelector('#nwEventShelf').onclick=nwTripleHome;
-  evRoot.querySelector('#nwEventWeekly').onclick=()=>nwShowEventDetail('weekly');
   evRoot.querySelector('#nwEventDouble').onclick=()=>nwShowEventDetail('double');
 }
 
@@ -624,6 +629,7 @@ function nwDoublePracticeAfterSudoku(s,won,pts){
  const again=evRoot.querySelector('#nwDoubleAgain');if(again)again.onclick=()=>nwDoubleLaunch(s.difficulty);const change=evRoot.querySelector('#nwDoubleChangeDifficulty');if(change)change.onclick=nwDoubleDifficulty;evRoot.querySelector('#nwDoubleContinue').onclick=nwDoublePracticeScreen;
 }
 function nwShowEventDetail(type){
+  if(type==='weekly'){nwShowTrophy();return}
   if(type==='double'){nwDoublePracticeScreen();return}
   evSudokuLeave();applyTheme('hub');
   const content={
