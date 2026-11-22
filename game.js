@@ -558,7 +558,8 @@ function nwBattleSeasonClock(){
 const nwBattleDiamondKey='nineweird-battle-diamond-claims-v1';
 function nwBattleDiamondClaims(){const v=nwRead(nwBattleDiamondKey,{});return v&&typeof v==='object'&&!Array.isArray(v)?v:{};}
 function nwBattleDiamondClaimed(month,wins){return nwBattleDiamondClaims()[month+':'+wins]===wins;}
-function nwDiamondBalance(){return Object.values(nwBattleDiamondClaims()).reduce((sum,n)=>sum+(nwSeasonFrameTiers.some(t=>t.wins===n)?n:0),0);}
+function nwBattleDiamondTotal(){return Object.values(nwBattleDiamondClaims()).reduce((sum,n)=>sum+(nwSeasonFrameTiers.some(t=>t.wins===n)?n:0),0);}
+function nwDiamondBalance(){const d=nwRead(nwTripleKey,null);return Math.max(0,nwBattleDiamondTotal()+(Number.isSafeInteger(d?.diamondDelta)?d.diamondDelta:0));}
 function nwClaimBattleDiamond(wins,month){
  if(!nwPlayerStorageKey(nwBattleDiamondKey)||month!==nwSeasonId()||!nwSeasonFrameTiers.some(t=>t.wins===wins)||nwBattleMonthStats().wins<wins)return false;
  const claims=nwBattleDiamondClaims(),key=month+':'+wins;
@@ -690,15 +691,55 @@ function nwShowEventDetail(type){
 }
 
 // Triple Trouble: independent layered 3-match puzzle event. No Sudoku state mutated.
-const nwTripleKey='nineweird-triple-stage-v1';
+const nwTripleKey='nineweird-triple-economy-beta-v1';
+const nwTTOldKey='nineweird-triple-stage-v1';
 const nwTripleArtRooms=['halloween','patissserie','christmas','fairy','olympus','nineties','weird','ugly','alien','diner','bodyparts','deepsea','solarsick','dontunwrap','unpreparedchristmas','underthebed','balloonwrong','donttakewater','baggagehell','cakefail'];
 // Preserve the original room indices so existing saved tiles keep their artwork.
 const nwTripleAllowedRooms=['weird','ugly','alien','diner','solarsick','underthebed','patissserie','halloween','nineties','dontunwrap'];
 let nwTriple=null;
-function nwTripleWeek(){const t=new Date();const mon=Date.UTC(t.getUTCFullYear(),t.getUTCMonth(),t.getUTCDate())-((t.getUTCDay()+6)%7)*86400000;return new Date(mon).toISOString().slice(0,10)}
-function nwTripleInEvent(){return [1,2,3].includes(new Date().getUTCDay())}
-function nwTripleData(){const saved=nwRead(nwTripleKey,null);const week=nwTripleWeek();return saved?.week===week?saved:{week,stage:1,best:0};}
+const nwTTMilestones=[[2,[['diamonds',20]]],[4,[['shuffle',1]]],[6,[['ticket',2]]],[8,[['magic',1]]],[10,[['diamonds',40]]],[12,[['shuffle',1]]],[14,[['ticket',3]]],[16,[['magic',1]]],[18,[['diamonds',60]]],[20,[['shuffle',2]]],[22,[['ticket',5]]],[24,[['magic',2]]],[26,[['diamonds',100]]],[28,[['shuffle',2],['magic',2]]],[30,[['diamonds',200],['ticket',10]]]];
+const nwTTPrices={undo:60,shuffle:80,magic:100,ticket:100};
+const nwTTNames={undo:'Undo',shuffle:'Shuffle',magic:'Magic Clear',ticket:'Event Ticket',diamonds:'Diamonds'};
+const nwTTPacks=[{price:'4.90',tickets:10,diamonds:200,shuffle:1,magic:0},{price:'9.90',tickets:30,diamonds:500,shuffle:2,magic:1},{price:'23.90',tickets:100,diamonds:1500,shuffle:3,magic:3}];
+function nw433ComingSoon(back){nwTTModal('Coming Soon!','<p>This feature is not available just yet. Stay tuned for a future update!</p>',[{label:'OKAY',run:back}]);}
+function nwTTNow(){return Date.now()}
+function nwTripleWeek(now=nwTTNow()){const t=new Date(now);const mon=Date.UTC(t.getUTCFullYear(),t.getUTCMonth(),t.getUTCDate())-((t.getUTCDay()+6)%7)*86400000;return new Date(mon).toISOString().slice(0,10)}
+function nwTripleInEvent(){return [1,2,3].includes(new Date(nwTTNow()).getUTCDay())}
+function nwTTDay(now){return new Date(now).toISOString().slice(0,10)}
+function nwTTNew(week,day,now,delta=0){return {week,day,stage:1,best:0,diamondDelta:delta,diamonds:nwBattleDiamondTotal()+delta,natural:10,extra:0,next:0,ads:0,spent:0,boosters:{undo:0,shuffle:0,magic:0},welcomed:false,claimed:[],packs:[],notices:[]}}
+function nwTTSync(old,now){const week=nwTripleWeek(now),day=nwTTDay(now);const delta=Number.isSafeInteger(old?.diamondDelta)?old.diamondDelta:0;if(!old||old.week!==week)return nwTTNew(week,day,now,delta);const d=old;d.diamonds=Math.max(0,nwBattleDiamondTotal()+delta);if(d.day!==day){d.day=day;d.natural=10;d.next=0;d.ads=0;}if(d.natural<10&&d.next>0&&now>=d.next){const n=Math.min(10-d.natural,1+Math.floor((now-d.next)/3600000));d.natural+=n;d.next=d.natural===10?0:d.next+n*3600000;}return d}
+function nwTripleData(){const old=nwRead(nwTripleKey,null),d=nwTTSync(old,nwTTNow());if(!old){const legacy=nwRead(nwTTOldKey,null);if(legacy?.week===d.week&&Number.isSafeInteger(legacy.best)&&legacy.best>=0){d.best=legacy.best;d.stage=d.best+1;}}nwTripleSave(d);return d}
 function nwTripleSave(obj){nwWrite(nwTripleKey,obj)}
+function nwTTCount(d){return d.natural+d.extra}
+function nwTTSpendTicket(d,now=nwTTNow()){if(d.natural>0){if(d.natural===10||!d.next)d.next=now+3600000;d.natural--;return true;}if(d.extra>0){d.extra--;return true;}return false}
+function nwTTGrant(d,kind,n){if(kind==='diamonds'){d.diamondDelta+=n;d.diamonds+=n;}else if(kind==='ticket')d.extra+=n;else d.boosters[kind]+=n;}
+function nwTTNotice(d,title,items){d.notices.push({title,items});}
+function nwTTClear(d,stage){d.best=Math.max(d.best,stage);d.stage=Math.max(d.stage,stage+1);for(const [m,items] of nwTTMilestones){if(d.best>=m&&!d.claimed.includes(m)){d.claimed.push(m);for(const [k,n] of items)nwTTGrant(d,k,n);nwTTNotice(d,'Stage '+m+' cleared!',items);}}delete d.active;}
+function nwTTWelcome(d){if(d.welcomed||!nwTripleInEvent())return false;d.welcomed=true;for(const k of ['undo','shuffle','magic'])nwTTGrant(d,k,1);nwTTNotice(d,'Welcome gifts claimed!',[['undo',1],['shuffle',1],['magic',1]]);if(d.best>0)nwTTClear(d,d.best);return true;}
+function nwTTPurchase(d,kind,source){if(!nwTripleInEvent()||source!=='diamonds')return 'Coming soon.';const cost=nwTTPrices[kind];if(!cost||d.diamonds<cost)return 'Not enough Diamonds.';if(kind==='ticket'&&d.spent+cost>10000)return 'Event ticket exchange limit reached.';d.diamonds-=cost;d.diamondDelta-=cost;if(kind==='ticket')d.spent+=cost;nwTTGrant(d,kind,1);nwTTNotice(d,'Purchase successful!',[[kind,1]]);return null;}
+
+function nwTTItem(k,n){return k==='diamonds'?nwDiamondAmount(n):`<span>${{ticket:'🎟',undo:'↶',shuffle:'⤨',magic:'꩜'}[k]} ${n} × ${nwTTNames[k]}</span>`}
+function nwTTModal(title,html,actions){const o=document.createElement('div');o.className='nw43-overlay';o.innerHTML=`<section role="dialog" aria-modal="true" aria-label="${nwEscape(title)}" class="nw43-dialog"><h2>${nwEscape(title)}</h2>${html}<div class="nw43-actions">${actions.map((a,i)=>`<button type="button" data-tt-modal="${i}" ${a.disabled?'disabled':''}>${a.html??nwEscape(a.label)}</button>`).join('')}</div></section>`;evRoot.appendChild(o);o.querySelectorAll('[data-tt-modal]').forEach(b=>b.onclick=()=>{const a=actions[+b.dataset.ttModal];o.remove();a.run?.()});o.querySelector('button:not([disabled])')?.focus();}
+// V43.2: reward presentation only.
+function nw432Rewards(items){return `<div class="nw432-rewards ${items.length===1?'single':''}">${items.map(([k,n],i)=>{const booster=['undo','shuffle','magic'].includes(k);const icon=k==='shuffle'?'<svg viewBox="0 0 64 64"><path d="M7 17h8c15 0 18 30 34 30h7m-9-9 9 9-9 9M7 47h8c15 0 18-30 34-30h7m-9-9 9 9-9 9" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>':k==='undo'?'<svg viewBox="0 0 64 64"><path d="M25 12 9 28l16 16M10 28h25a15 15 0 0 1 0 30H23" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>':nwTTRewardIcon(k);return `<div class="nw432-prize ${booster?'is-booster':'is-currency'} prize-${k}" style="--delay:${i*70}ms" role="group" aria-label="${n} ${nwTTNames[k]}"><span class="nw432-category">${booster?'BOOSTER':k==='ticket'?'EVENT TICKET':'DIAMONDS'}</span><span class="nw432-icon" aria-hidden="true">${icon}</span><strong>${nwTTNames[k]}</strong><b>${booster?'×':'+'}${n.toLocaleString()}</b></div>`}).join('')}</div>`;}
+function nw432Destination(items){const k=new Set(items.map(([x])=>x));return k.size===1&&k.has('diamonds')?'Added to your Diamond balance on this device.':k.size===1&&k.has('ticket')?'Added to your available tickets.':!k.has('diamonds')&&!k.has('ticket')?'Added to your booster inventory.':'Rewards added to your inventory and balances on this device.';}
+function nwTTShowNotices(){if(evRoot.querySelector('.nw43-overlay')||!nwTripleInEvent())return;const d=nwTripleData(),n=d.notices[0];if(!n)return;nwTTModal('Congratulations!',`<p>${nwEscape(n.title)}</p>${nw432Rewards(n.items)}<p>${nw432Destination(n.items)}</p>`,[{label:'AWESOME!',run:()=>{const latest=nwTripleData();latest.notices.shift();nwTripleSave(latest);nwTTShowNotices()}}]);}
+function nwTTWelcomePopup(){const d=nwTripleData();if(d.welcomed){nwTTShowNotices();return;}nwTTModal('Welcome to Triple Trouble!',`<p>Here are your gifts for this event. Use them wisely!</p>${nw432Rewards([['undo',1],['shuffle',1],['magic',1]])}`,[{label:'CLAIM MY GIFTS',run:()=>{const latest=nwTripleData();nwTTWelcome(latest);nwTripleSave(latest);nwTripleHome()}}]);}
+function nwTTBuy(kind){if(!nwTripleInEvent())return;const d=nwTripleData();const redraw=()=>{if(nwTriple)nwTripleDraw();else nwTripleHome()};const account=nwPlayerStorageKey(nwTripleKey);const buy=()=>{if(!account||account!==nwPlayerStorageKey(nwTripleKey))return;const state=nwTripleData(),error=nwTTPurchase(state,kind,'diamonds');if(error){nwTTModal('Not available',`<p>${nwEscape(error)}</p>`,[{label:'OK'}]);return;}nwTripleSave(state);redraw();};nwTTModal('Get '+nwTTNames[kind],`<p>Diamond balance: ${nwDiamondAmount(d.diamonds)}</p>${kind==='ticket'?`<p>${d.spent}/10,000 Diamonds spent on tickets</p>`:''}<p>Rewarded ads are coming soon.</p>`,[{label:'Buy for '+nwTTPrices[kind]+' Diamonds',disabled:d.diamonds<nwTTPrices[kind]||(kind==='ticket'&&d.spent+100>10000),run:buy},{label:'Watch Ad',run:()=>nw433ComingSoon(()=>nwTTBuy(kind))},{label:'Cancel'}]);}
+function nwTTRewardIcon(k){return k==='diamonds'?'<img class="nw-diamond-icon" src="assets/currency/diamond.png" alt="">':k==='magic'?'<span class="nw-triple-spiral" aria-hidden="true"></span>':`<span aria-hidden="true">${{ticket:'🎟',shuffle:'⤨',undo:'↶'}[k]}</span>`;}
+function nwTTPackArt(p,i){return `<div class="nw431-pack tier-${i}"><div class="nw431-pack-top"><span class="nw431-pack-art" aria-hidden="true">${Array.from({length:i+2},(_,j)=>`<i style="--n:${j}">✦</i>`).join('')}</span><div><strong>${p.tickets} Tickets</strong><small>${nwDiamondAmount(p.diamonds)} Diamonds</small></div><b class="nw431-price">RM${p.price}</b></div><div class="nw431-bonuses"><span>${nwTTRewardIcon('shuffle')} ${p.shuffle} Shuffle</span>${p.magic?`<span>${nwTTRewardIcon('magic')} ${p.magic} Magic Clear</span>`:''}</div></div>`;}
+function nwTTShop(){const d=nwTripleData();nwTTModal('More tickets',`<p>${nwTTCount(d)} available</p><p>Premium packs · coming soon</p>`,[{label:'Get a ticket · Diamonds or Watch Ad',run:()=>nwTTBuy('ticket')},...nwTTPacks.map((p,i)=>({label:`RM${p.price} pack`,html:nwTTPackArt(p,i),run:()=>nw433ComingSoon(nwTTShop)})),{label:'Close'}]);}
+function nwTTRank(){const d=nwTripleData();nwTTModal('Leaderboard',`<div class="nw431-rank-result"><small>YOUR HIGHEST STAGE</small><strong>${d.best}</strong><span>Online rankings · coming soon</span></div><p>Progress in this version is saved on this device.</p>`,[{label:'Close'}]);}
+function nwTTTime(ms){const n=Math.max(0,Math.ceil(ms/1000));return `${String(Math.floor(n/60)).padStart(2,'0')}:${String(n%60).padStart(2,'0')}`}
+function nwTTTicketMarkup(d){return `<div class="nw43-tickets"><span>🎟 <strong data-tt-total>${nwTTCount(d)}</strong> tickets</span><small data-tt-timer>${d.natural===10?'Free tickets full':'Next free ticket '+nwTTTime(d.next-nwTTNow())} · ${d.natural}/10 free · ${d.extra} extra</small><button type="button" data-tt-buy-ticket>+ TICKETS</button></div>`}
+function nwTTProgress(d){const reached=Math.min(d.best,30),next=nwTTMilestones.find(x=>x[0]>reached),fill=Math.max(0,Math.min(100,(reached-2)/28*100));return `<section class="nw431-track" aria-label="Milestone rewards"><div class="nw43-progress-label"><strong>MILESTONE REWARDS</strong><b>${reached} / 30</b></div><div class="nw433-scroll" tabindex="0" aria-label="Swipe to explore the reward milestones"><div class="nw431-journey" style="--fill:${fill}%"><div class="nw431-rail"><i></i></div>${nwTTMilestones.map(([m,items])=>`<div data-tt-milestone="${m}" class="nw431-stop ${d.claimed.includes(m)?'earned':''} ${next?.[0]===m?'next':''}" aria-label="Stage ${m}: ${items.map(([k,n])=>n+' '+nwTTNames[k]).join(', ')}, ${d.claimed.includes(m)?'claimed':'locked'}"><div class="nw431-reward">${items.map(([k,n])=>`<span class="nw433-item">${nwTTRewardIcon(k)}<small>${n}</small></span>`).join('')}</div><i class="nw431-node">${d.claimed.includes(m)?'✓':''}</i><small>${m}</small></div>`).join('')}</div></div><p>${next?`Next: Stage ${next[0]} · ${next[1].map(([k,n])=>nwTTItem(k,n)).join(' + ')}`:'All milestones completed!'}</p></section>`;}
+function nw433FocusTrack(){const sc=evRoot.querySelector('.nw433-scroll');if(!sc)return;const node=sc.querySelector('.nw431-stop.next')||sc.querySelector('.nw431-stop:last-child');if(node)sc.scrollLeft=Math.max(0,node.offsetLeft-(sc.clientWidth-node.offsetWidth)/2);}
+
+function nwTTBind(){evRoot.querySelectorAll('[data-tt-buy-ticket]').forEach(b=>b.onclick=nwTTShop);nwTTShowNotices()}
+function nwTTAbandon(retry){const s=nwTriple;if(!s||s.won){nwTripleHome();return;}if(s.practice){if(s.lost){const d=nwTriplePracticeData();delete d.active;nwWrite('nineweird-triple-practice-v2',d);}nwTriple=null;nwTripleHome();return;}const finish=()=>{const d=nwTripleData();if(d.active){nwTTSpendTicket(d);delete d.active;nwTripleSave(d);}nwTriple=null;if(retry&&nwTTCount(d)>0)nwTripleBegin(d.stage);else nwTripleHome();};if(s.lost)finish();else nwTTModal('Leave this attempt?',`<p>Abandoning the stage uses one ticket. Your boosters already used will not return.</p>`,[{label:'Leave · lose 1 ticket',run:finish},{label:'Keep playing'}]);}
+// A reopened browser forfeits an unfinished event attempt once, not on routine redraw.
+function nwTTRecoverInterrupted(){if(!nwTripleInEvent())return;const d=nwTripleData();if(d.active){nwTTSpendTicket(d);delete d.active;nwTripleSave(d);}}
+setInterval(()=>{if(!evRoot.querySelector('[data-tt-total]'))return;if(!nwTripleInEvent()){nwTripleHome();return;}const d=nwTripleData();evRoot.querySelectorAll('[data-tt-total]').forEach(e=>e.textContent=nwTTCount(d));evRoot.querySelectorAll('[data-tt-timer]').forEach(e=>e.textContent=(d.natural===10?'Free tickets full':'Next free ticket '+nwTTTime(d.next-nwTTNow()))+` · ${d.natural}/10 free · ${d.extra} extra`);},1000);
 function nwTripleIsHard(n){return n>=7&&[0,4,7].includes(n%10)}
 function nwTripleTileSrc(type){const room=nwTripleArtRooms[Math.floor(type/9)%nwTripleArtRooms.length];const dir=nwTripleArtFiles[room];return dir[0]+dir[1][type%9]}
 function nwTripleRng(seed){let n=seed>>>0;return()=>{n=(Math.imul(n,1664525)+1013904223)>>>0;return n/4294967296}}
@@ -837,10 +878,11 @@ function nwTripleFree(tile,tiles){
 function nwTripleAvailable(tile){return !!nwTriple&&nwTripleFree(tile,nwTriple.tiles)}
 function nwTriplePracticeData(){const data=nwRead('nineweird-triple-practice-v2',null);return data?.week===nwTripleWeek()?data:{week:nwTripleWeek(),stage:1,best:0};}
 function nwTripleSessionData(){return nwTripleInEvent()?nwTripleData():nwTriplePracticeData()}
-function nwTriplePersist(){
+function nwTriplePersist(spentKind){
  const s=nwTriple;if(!s||s.week!==nwTripleWeek()||s.practice===nwTripleInEvent())return;
  const d=nwTripleSessionData();
- if(s.won){d.best=Math.max(d.best,s.stage);d.stage=Math.max(d.stage,s.stage+1);delete d.active;}
+ if(spentKind&&!s.practice){if(d.boosters[spentKind]<=0)throw Error('No booster available');d.boosters[spentKind]--;}
+ if(s.won){if(s.practice){d.best=Math.max(d.best,s.stage);d.stage=Math.max(d.stage,s.stage+1);delete d.active;}else nwTTClear(d,s.stage);}
  else {d.active=s;d.stage=s.stage;}
  if(s.practice)nwWrite('nineweird-triple-practice-v2',d);else nwTripleSave(d);
 }
@@ -862,10 +904,18 @@ function nwTripleChoose(id){
  nwTripleDraw();
 }
 
-function nwTripleBooster(kind){
- const s=nwTriple;if(!s||s.won||s.used[kind]||(kind==='shuffle'&&s.tray.length>=7))return;
+// Build and validate an entire booster result before changing the board or inventory.
+function nw431MagicPlan(s){
+ const symbols=[...new Set([...s.tray,...s.tiles.filter(t=>nwTripleFree(t,s.tiles)),...s.tiles].map(t=>t.symbol))];
+ // A failed stage MUST remove a held tile, not just a triple somewhere on the board.
+ for(const symbol of symbols){const held=s.tray.filter(t=>t.symbol===symbol);if(s.lost&&!held.length)continue;
+ const need=3-held.length;if(need<0)continue;const matches=s.tiles.filter(t=>t.symbol===symbol).sort((a,b)=>Number(nwTripleFree(b,s.tiles))-Number(nwTripleFree(a,s.tiles))||b.layer-a.layer).slice(0,need);
+ if(matches.length===need&&held.length+matches.length===3)return {symbol,held,matches};}return null;
+}
+function nw431BoosterPlan(original,kind){
+ const s=JSON.parse(JSON.stringify(original));let cleared=null;
  if(kind==='undo'){
-   if(!s.history.length)return;
+   if(!s.history.length)return null;
    const previous=s.history.pop();s.tiles=previous.tiles;s.tray=previous.tray;s.used.undo=true;
  }else if(kind==='shuffle'){
    const random=nwTripleRng((Date.now()^s.tiles.length)>>>0);
@@ -881,34 +931,45 @@ function nwTripleBooster(kind){
    const triples=[];for(const [symbol,count] of Object.entries(available)){if(count%3)return;for(let i=0;i<count;i+=3)triples.push(+symbol)}
    for(const symbol of nwTripleShuffle(triples,random))sequence.push(symbol,symbol,symbol);
    if(sequence.length!==order.length)return;
-   nwTripleRemember();order.forEach((t,i)=>t.symbol=sequence[i]);
+   order.forEach((t,i)=>t.symbol=sequence[i]);
    s.used.shuffle=true;s.history=[];
  }else if(kind==='magic'){
-   const active=s.tiles.filter(nwTripleAvailable);
-   const candidates=[...s.tray,...active,...s.tiles];let choice=null;
-   for(const tile of candidates){const n=s.tray.filter(t=>t.symbol===tile.symbol).length;const a=s.tiles.filter(t=>t.symbol===tile.symbol);
-     if(a.length+n>=3){choice={symbol:tile.symbol,remove:3-n};break;}}
-   if(!choice)return;
-   nwTripleRemember();const matches=s.tiles.filter(t=>t.symbol===choice.symbol).sort((a,b)=>b.layer-a.layer).slice(0,choice.remove);
-   const ids=new Set(matches.map(t=>t.id));s.tiles=s.tiles.filter(t=>!ids.has(t.id));
-   s.tray=s.tray.filter(t=>t.symbol!==choice.symbol);s.used.magic=true;s.history=[];
-   if(!s.tiles.length&&!s.tray.length){s.won=true}
- }
- if(s.tray.length<7)s.lost=false;
- nwTripleDraw();
+   const plan=nw431MagicPlan(s);if(!plan)return null;
+   const ids=new Set(plan.matches.map(t=>t.id)),heldIds=new Set(plan.held.map(t=>t.id));
+   s.tiles=s.tiles.filter(t=>!ids.has(t.id));s.tray=s.tray.filter(t=>!heldIds.has(t.id));
+   if(original.tiles.length+original.tray.length-s.tiles.length-s.tray.length!==3)return null;
+   s.used.magic=true;s.history=[];cleared=plan.symbol;
+ }else return null;
+ const signature=x=>JSON.stringify([x.tiles.map(t=>[t.id,t.symbol]),x.tray.map(t=>[t.id,t.symbol])]);
+ if(signature(original)===signature(s))return null;
+ if(original.lost&&s.tray.length>=7)return null;
+ s.won=!s.tiles.length&&!s.tray.length;s.lost=!s.won&&s.tray.length>=7;
+ return {state:s,cleared};
 }
+function nw431ClearEffect(symbol){const tray=evRoot.querySelector('.nw-triple-tray');if(!tray)return;const fx=document.createElement('div');fx.className='nw431-clear-fx';fx.setAttribute('role','status');fx.innerHTML=`<span>MAGIC CLEAR · −3 TILES</span><div>${Array.from({length:3},()=>nwTripleArt(symbol)).join('')}</div>`;tray.appendChild(fx);setTimeout(()=>fx.remove(),1300);}
+function nwTripleBooster(kind){
+ const s=nwTriple;if(!s||s.won||!['undo','shuffle','magic'].includes(kind)||(kind==='shuffle'&&s.tray.length>=7))return;
+ if(s.week!==nwTripleWeek()||s.practice===nwTripleInEvent())return;
+ if(s.practice?s.used[kind]:!nwTripleData().boosters[kind]){if(!s.practice)nwTTBuy(kind);return;}
+ const result=nw431BoosterPlan(s,kind);
+ if(!result){if(!s.practice)nwTTModal('Booster not used','<p>No valid change was possible. Your booster has not been consumed.</p>',[{label:'OK'}]);return;}
+ nwTriple=result.state;nwTriplePersist(kind);nwTripleDraw();if(result.cleared!==null)nw431ClearEffect(result.cleared);
+}
+const nwTTRecovered=new Set();
 function nwTripleHome(){
+ const account=nwPlayerStorageKey(nwTripleKey);if(!account){void nwRouteAccount();return;}if(!nwTTRecovered.has(account)){nwTTRecovered.add(account);nwTTRecoverInterrupted();}
  evSudokuLeave();nwTriple=null;applyTheme('hub');evRoot.classList.add('nw-triple-theme');const d=nwTripleSessionData(),event=nwTripleInEvent();
  evDisplay(`${evHeader('EVENTS',showCategories)}<section class="nw-triple nw-triple-home">
  <div class="nw-triple-sparks" aria-hidden="true">⋆˚<span class="nw-triple-spiral"></span>｡</div><div class="nw-triple-mascots">${nwTripleMascots()}</div>
  <h2 class="nw-triple-logo">TRIPLE<br><span>TROUBLE</span></h2><div class="nw-triple-ribbon">MONDAY – WEDNESDAY</div>
- <div class="nw-triple-unlimited">∞ UNLIMITED STAGES</div>
- <div class="nw-triple-info"><strong>1 FREE EACH LEVEL</strong><div class="nw-triple-free-items"><span>↶<small>UNDO</small></span><span>⤨<small>SHUFFLE</small></span><span><i class="nw-triple-spiral"></i><small>MAGIC CLEAR</small></span></div></div>
+ ${event?`<div class="nw43-wallet">YOUR DIAMONDS ${nwDiamondAmount(d.diamonds)}</div>${nwTTTicketMarkup(d)}${nwTTProgress(d)}<div class="nw431-ranking"><span>Highest stage: ${d.best}</span><button id="nw431Rank" type="button">♜ RANK</button></div>`:`<p>Practice mode · no event rewards or ticket cost</p>`}
  <button id="nwTripleStart" class="nw-triple-main-btn"><span class="nw-triple-play-symbol" aria-hidden="true">▹</span><span>${d.active?'CONTINUE STAGE '+d.stage:'PLAY STAGE '+d.stage}</span></button>
  </section>`);
  evRoot.querySelector('#nwTripleStart').onclick=()=>nwTripleBegin(d.stage,true);
+ nw433FocusTrack();
+ if(event){evRoot.querySelector('#nw431Rank').onclick=nwTTRank;if(!d.welcomed)nwTTWelcomePopup();else nwTTBind()}
 }
-function nwTripleBegin(stage,resume=false){const d=nwTripleSessionData();const a=d.active;nwTriple=resume&&a?.version>=2&&a.stage===stage&&!a.won&&a.week===nwTripleWeek()&&a.practice===!nwTripleInEvent()?a:nwTripleCreate(stage);nwTripleDraw()}
+function nwTripleBegin(stage,resume=false){const d=nwTripleSessionData();if(nwTripleInEvent()){if(!d.welcomed){nwTTWelcomePopup();return;}if(nwTTCount(d)<=0){nwTTShop();return;}stage=d.stage;}const a=d.active;nwTriple=resume&&a?.version>=2&&a.stage===stage&&!a.won&&a.week===nwTripleWeek()&&a.practice===!nwTripleInEvent()?a:nwTripleCreate(stage);nwTripleDraw()}
 function nwTripleStackArt(symbol,depth){
  return Array.from({length:Math.max(0,depth-1)},(_,i)=>`<span class="nw-triple-hidden-back" style="--tt-back:${depth-1-i}" aria-hidden="true"></span>`).join('')+`<span class="nw-triple-stack-face">${nwTripleArt(symbol)}</span>`;
 }
@@ -927,18 +988,20 @@ function nwTripleDraw(){
    return `<div class="nw-triple-pile"><button type="button" class="nw-triple-pile-top stacked" data-tile="${top.id}" aria-label="Mystery stack">${nwTripleStackArt(top.symbol,pile.length)}</button></div>`;
  }).join('')}</div>`;
  const tray=Array.from({length:7},(_,i)=>`<span class="nw-triple-tray-slot">${s.tray[i]?nwTripleArt(s.tray[i].symbol):''}</span>`).join('');
- const lostBoosters=[['undo','↶','UNDO'],['magic','<span class="nw-triple-spiral"></span>','MAGIC CLEAR']].filter(([key])=>!s.used[key]&&(key!=='undo'||s.history.length)&&(key!=='magic'||s.tray.some(t=>s.tiles.filter(x=>x.symbol===t.symbol).length+s.tray.filter(x=>x.symbol===t.symbol).length>=3))).map(([key,icon,label])=>`<button class="nw-triple-fail-booster" data-fail-booster="${key}"><span>${icon}</span><b>${label}</b><i>1</i></button>`).join('');
- const action=s.won?`<div class="nw-triple-end"><div class="nw-triple-party">${nwTripleMascots()}</div><div class="nw-triple-sparks" aria-hidden="true">⋆˚<span class="nw-triple-spiral"></span>｡</div><h2>STAGE ${s.stage} CLEARED!</h2><p>${nwTripleIsHard(s.stage+1)?'HARD STAGE UP NEXT!':'BRILLIANTLY WEIRD!'}</p><button id="nwTripleNext" class="nw-triple-main-btn">NEXT STAGE ▹</button><button id="nwTripleBack" class="nw-triple-back-btn">BACK TO EVENT</button></div>`:s.lost?`<div class="nw-triple-end"><h2>TRAY FULL!</h2>${lostBoosters?`<p>YOU STILL HAVE BOOSTERS LEFT!</p><div class="nw-triple-fail-boosters">${lostBoosters}</div>`:`<p>NO RESCUE BOOSTERS LEFT.</p>`}<button id="nwTripleRetry" class="nw-triple-main-btn">RETRY STAGE ↻</button><button id="nwTripleBack" class="nw-triple-back-btn">END GAME</button></div>`:'';
- evDisplay(`${evHeader('TRIPLE TROUBLE',nwTripleHome)}<section class="nw-triple nw-triple-play">
- <div class="nw-triple-stagehead"><div><small>${s.hard?'🔥 HARD STAGE':'TRIPLE TROUBLE'}</small><strong>STAGE ${s.stage}</strong></div><span>∞</span></div>
+ const economy=s.practice?null:nwTripleData();const count=k=>s.practice?(s.used[k]?0:1):economy.boosters[k];
+ const lostBoosters=[['undo','↶','UNDO'],['magic','<span class="nw-triple-spiral"></span>','MAGIC CLEAR']].filter(([key])=>(!s.practice||!s.used[key])&&(key!=='undo'||s.history.length)&&(key!=='magic'||!!nw431MagicPlan(s))).map(([key,icon,label])=>`<button class="nw-triple-fail-booster" data-fail-booster="${key}"><span>${icon}</span><b>${label}</b><i>${count(key)||'GET'}</i></button>`).join('');
+ const action=s.won?`<div class="nw-triple-end"><div class="nw-triple-party">${nwTripleMascots()}</div><div class="nw-triple-sparks" aria-hidden="true">⋆˚<span class="nw-triple-spiral"></span>｡</div><h2>STAGE ${s.stage} CLEARED!</h2><p>${nwTripleIsHard(s.stage+1)?'HARD STAGE UP NEXT!':'BRILLIANTLY WEIRD!'}</p><button id="nwTripleNext" class="nw-triple-main-btn">NEXT STAGE ▹</button><button id="nwTripleBack" class="nw-triple-back-btn">BACK TO EVENT</button></div>`:s.lost?`<div class="nw-triple-end"><h2>TRAY FULL!</h2>${lostBoosters?`<p>RESCUE THIS STAGE?</p><div class="nw-triple-fail-boosters">${lostBoosters}</div>`:`<p>NO RESCUE POSSIBLE.</p>`}<button id="nwTripleRetry" class="nw-triple-main-btn">RETRY STAGE ↻</button><button id="nwTripleBack" class="nw-triple-back-btn">END GAME</button></div>`:'';
+ evDisplay(`${evHeader('TRIPLE TROUBLE',()=>nwTTAbandon(false))}<section class="nw-triple nw-triple-play">
+ ${economy?nwTTTicketMarkup(economy):''}<div class="nw-triple-stagehead"><div><small>${s.hard?'🔥 HARD STAGE':'TRIPLE TROUBLE'}</small><strong>STAGE ${s.stage}</strong></div></div>
  <div class="nw-triple-board-wrap ${s.stackCount?'has-piles':''} ${s.version>=4?'nw-triple-large-grid':'nw-triple-legacy-grid'}">${s.stackCount?pileRail(0):''}<div class="nw-triple-board ${s.shape?'nw-triple-shaped':''}" aria-label="Layered tile matching board">${tiles}</div>${s.stackCount?pileRail(1):''}</div>
  <div class="nw-triple-tray">${tray}</div>
- <div class="nw-triple-booster-row">${[['undo','↶','UNDO'],['shuffle','⤨','SHUFFLE'],['magic','<span class="nw-triple-spiral"></span>','MAGIC CLEAR']].map(([key,icon,label])=>`<button class="nw-triple-booster" data-booster="${key}" ${s.used[key]||(key==='undo'&&!s.history.length)||(key==='shuffle'&&s.tray.length>=7)?'disabled':''}><span>${icon}</span><b>${label}</b><i>${s.used[key]?'0':'1'}</i></button>`).join('')}</div>
+ <div class="nw-triple-booster-row">${[['undo','↶','UNDO'],['shuffle','⤨','SHUFFLE'],['magic','<span class="nw-triple-spiral"></span>','MAGIC CLEAR']].map(([key,icon,label])=>`<button class="nw-triple-booster" data-booster="${key}" ${(s.practice&&s.used[key])||(key==='undo'&&!s.history.length)||(key==='shuffle'&&s.tray.length>=7)||s.won?'disabled':''}><span>${icon}</span><b>${label}</b><i>${count(key)||'GET'}</i></button>`).join('')}</div>
  ${action}</section>`);
  evRoot.querySelectorAll('[data-tile]').forEach(el=>el.onclick=()=>nwTripleChoose(+el.dataset.tile));
  evRoot.querySelectorAll('[data-booster]').forEach(el=>el.onclick=()=>nwTripleBooster(el.dataset.booster));
  if(s.won){evRoot.querySelector('#nwTripleNext').onclick=()=>nwTripleBegin(s.stage+1);evRoot.querySelector('#nwTripleBack').onclick=nwTripleHome;}
- if(s.lost){evRoot.querySelectorAll('[data-fail-booster]').forEach(el=>el.onclick=()=>nwTripleBooster(el.dataset.failBooster));evRoot.querySelector('#nwTripleRetry').onclick=()=>nwTripleBegin(s.stage);evRoot.querySelector('#nwTripleBack').onclick=()=>{const d=nwTripleSessionData();delete d.active;if(s.practice)nwWrite('nineweird-triple-practice-v2',d);else nwTripleSave(d);nwTripleHome();};}
+ if(s.lost){evRoot.querySelectorAll('[data-fail-booster]').forEach(el=>el.onclick=()=>nwTripleBooster(el.dataset.failBooster));evRoot.querySelector('#nwTripleRetry').onclick=()=>s.practice?nwTripleBegin(s.stage):nwTTAbandon(true);evRoot.querySelector('#nwTripleBack').onclick=()=>nwTTAbandon(false);}
+ if(economy)nwTTBind();
 }
 
 const nwGalaxyOrder=["classic", "dark", "weird", "ugly", "alien", "solarsick", "diner", "underthebed", "bodyparts", "halloween", "dontunwrap", "deepsea", "balloonwrong", "nineties", "cakefail", "baggagehell", "donttakewater", "patissserie", "unpreparedchristmas", "christmas", "fairy", "olympus"];
