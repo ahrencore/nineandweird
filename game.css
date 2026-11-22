@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Pangolin&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Chelsea+Market&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap");
@@ -3941,4 +3942,18 @@ html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:n
 #game.nw-lobby-v37 .nw-lobby-money .nw-diamond-amount {
   font-family: 'Chelsea Market', 'Finger Paint', cursive;
   font-weight: 400;
+}
+
+/* V39 — Pangolin trial: signed-in player profile (including guest profile,
+   editor and frame picker) and Trophy Case, not shared account screens. */
+#game.nw-account-theme:has(#nwOpenAvatars),
+#game.nw-trophy-theme {
+  font-family: 'Pangolin', system-ui, sans-serif;
+}
+#game.nw-account-theme:has(#nwOpenAvatars) :is(.ev-head,.nw-new-panel),
+#game.nw-account-theme:has(#nwOpenAvatars) :is(.ev-head,.nw-new-panel) :not(svg,svg *),
+#game.nw-trophy-theme :is(.ev-head,.nw-trophy-panel),
+#game.nw-trophy-theme :is(.ev-head,.nw-trophy-panel) :not(svg,svg *),
+#game.nw-trophy-theme>.ev-head :is(strong,button) {
+  font-family: 'Pangolin', system-ui, sans-serif !important;
 }
