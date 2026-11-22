@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Chelsea+Market&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Finger+Paint&display=swap");
@@ -3928,3 +3929,16 @@ html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:n
 #game.nw-lobby-v37>.nw-lobby-top{box-sizing:border-box;width:min(100%,470px);}
 #game.nw-lobby-v37>.nw-lobby{box-sizing:border-box;}
 @media(max-height:680px){#game.nw-lobby-v37 #nwWorlds{max-height:clamp(85px,30dvh,190px)}#game.nw-lobby-v37>.nw-lobby{justify-content:space-evenly}}
+
+/* V38 — Chelsea Market trial, main menu typography only.
+   Preserve individual event title fonts and every existing animation. */
+#game.nw-lobby-v37 .nw-lobby-title,
+#game.nw-lobby-v37 .nw-lobby-profile>strong,
+#game.nw-lobby-v37 .nw-lobby-nav strong,
+#game.nw-lobby-v37 .nw-event-heading,
+#game.nw-lobby-v37 .nw-lobby-event-orbit,
+#game.nw-lobby-v37 .nw-event-controls>button,
+#game.nw-lobby-v37 .nw-lobby-money .nw-diamond-amount {
+  font-family: 'Chelsea Market', 'Finger Paint', cursive;
+  font-weight: 400;
+}
