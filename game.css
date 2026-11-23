@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Creepster&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Eater&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Rubik+Wet+Paint&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Pangolin&display=swap");
@@ -4212,3 +4213,26 @@ html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:n
 #game .nw-growing-event strong,#game .nw-growing-planet-title{color:#F7EEF5;text-shadow:0 0 7px #B9F25A55}
 #game .nw-growing-planet{background:radial-gradient(circle at 34% 19%,#36213D,#24152C 58%,#0F0912);border-color:#7B5D87;box-shadow:0 0 9px #7B5D8733}
 #game .nw-growing-ring{border-color:#B9F25A;box-shadow:0 0 5px #B9F25A55}
+
+
+/* Growing-specific finishing pass: right-aligned header, luminous planet. */
+#game.nw-growing-live-shell>.ev-head{display:flex!important;align-items:center!important;justify-content:space-between!important;width:100%!important}
+#game.nw-growing-live-shell>.ev-head>.nw-shared-utilities{display:flex!important;margin-left:auto!important;justify-content:flex-end!important;flex:0 0 auto!important;align-items:center!important;position:static!important;float:none!important}
+#game.nw-growing-live-shell>.ev-head>[data-back]{margin-right:auto!important;flex:0 0 auto!important}
+#game .nw-lobby-portal.growing{--portal-accent:#B9F25A;--portal-panel:#33203D;--portal-bg:#120B19}
+#game .nw-lobby-portal.growing .nw-lobby-portal-disc,
+#game .nw-lobby-portal.growing:not(.is-live) .nw-lobby-portal-disc{
+ border:2px solid #A687BB;
+ background:radial-gradient(ellipse at 43% 18%,#46264E 0%,#29182F 52%,#130C1C 100%);
+ box-shadow:0 0 20px #B9F25A4D,0 0 31px #BA9AC03A,inset 0 0 16px #B9F25A22!important;
+}
+#game .nw-lobby-portal.growing strong{
+ color:#FFF6EA;font-family:'Eater',Georgia,serif;
+ text-shadow:0 0 5px #F8F0EB,0 0 11px #B9F25AB8,0 0 19px #B9F25A73;
+}
+#game .nw-lobby-portal.growing .nw-lobby-portal-decor{color:#CEFF7A;text-shadow:0 0 6px #C3FF68,0 0 14px #C3FF6899}
+#game .nw-lobby-portal.growing:before{box-shadow:0 0 10px #B9F25A40}
+
+/* Updated Growing-only planet display font */
+#game .nw-lobby-portal.growing strong{font-family:'Creepster','Eater',Georgia,serif!important;font-size:clamp(15px,3.5vw,19px)!important;letter-spacing:.015em!important;line-height:1.05!important}
+
