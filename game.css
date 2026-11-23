@@ -4328,3 +4328,12 @@ html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:n
  50%{text-shadow:0 0 12px #FFE0FF,0 0 24px #D692FF}
 }
 @media(prefers-reduced-motion:reduce){#game.nw-triple-theme .nw-tt-days .is-current{animation:none}}
+
+
+/* Triple Trouble: keep Diamond balance and purchase icons inline in dialogs. */
+#game.nw-triple-theme .nw43-dialog .nw-diamond-amount{
+ display:inline-flex;align-items:center;vertical-align:middle;gap:4px;white-space:nowrap;
+}
+#game.nw-triple-theme .nw43-dialog .nw-diamond-amount>.nw-diamond-icon{
+ display:block;width:18px;height:18px;min-width:18px;max-width:18px;min-height:18px;max-height:18px;object-fit:contain;flex:none;
+}
