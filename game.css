@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Creepster&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Eater&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Rubik+Wet+Paint&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Pangolin&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Chelsea+Market&display=swap");
@@ -4113,164 +4111,29 @@ html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:n
 #game.nw-triple-theme .nw433-scroll .nw431-stop.earned{opacity:1}
 #game.nw-triple-theme .nw433-scroll:focus-visible{outline:1px solid #C5B2FF;outline-offset:2px}
 
-/* V43.3 scoped staging changes: shared wallet/settings + Growing event portal. */
-.ev-head{gap:6px}.ev-head>.nw-shared-utilities{margin-left:auto;flex-shrink:0}
-.nw-shared-floating{display:flex;justify-content:flex-end;padding:8px 13px 0;position:relative;z-index:2}
-.nw-shared-utilities{display:flex;align-items:center;gap:6px;min-width:0}
-.nw-shared-wallet{display:inline-flex;align-items:center;gap:3px;border:1px solid currentColor;border-radius:20px;padding:4px 7px;font-size:12px;background:color-mix(in srgb,currentColor 7%,transparent);color:inherit;white-space:nowrap}
-.nw-shared-wallet .nw-diamond-amount{font-size:inherit;display:inline-flex;align-items:center;gap:4px}
-.nw-shared-wallet .nw-diamond-icon{width:17px;height:17px;object-fit:contain}
-.nw-shared-settings{display:grid;place-items:center;width:32px;height:32px;min-width:32px;border:1px solid currentColor;border-radius:50%;background:transparent;color:inherit;cursor:pointer}
-.nw-shared-settings svg{width:18px;height:18px;fill:none;stroke:currentColor}
-.nw-growing-planet{display:grid;place-items:center;flex-shrink:0;position:relative;width:65px;height:65px;border-radius:50%;background:radial-gradient(circle at 30% 23%,#7e4b8b,#392747 65%,#23172d);border:1px solid #b17bbd;box-shadow:0 0 12px #b879db66;isolation:isolate}
-.nw-growing-ring{position:absolute;width:114%;height:45%;border:2px solid #b9e973;border-radius:50%;transform:rotate(-25deg);box-shadow:0 0 7px #b9e97380;pointer-events:none}
-.nw-growing-planet-title{font-family:'Eater',Georgia,serif;font-size:9px;text-align:center;color:#e5a6ff;line-height:1.35;text-shadow:0 0 7px #e5a6ff}
-.nw-growing-event strong{color:#e5a6ff}.nw-growing-event em{color:#b9e973}
-.nw-growing-preview{max-width:430px;margin:auto;text-align:center;color:#e5a6ff;padding:20px 18px 38px;background:radial-gradient(ellipse at top,#392747,#23172d)}
-.nw-growing-preview h2{font:clamp(20px,6vw,31px) 'Eater',Georgia,serif;text-shadow:0 0 13px #d06cdd;animation:nwGrowingPulse 4s infinite}
-.nw-growing-preview p{font-family:'Pangolin',cursive;color:#d5b9e0}
-.nw-growing-planet.big{width:170px;height:170px;margin:22px auto}.nw-growing-planet.big .nw-growing-planet-title{font-size:19px}
-@keyframes nwGrowingPulse{50%{transform:scale(1.04,1.08);text-shadow:0 0 22px #d580ef,0 3px #638c39}}
-@media(max-width:370px){.ev-head>.nw-shared-utilities{gap:3px}.nw-shared-wallet{font-size:10px;padding:3px 4px}.nw-shared-settings{width:27px;height:27px;min-width:27px}.nw-shared-wallet .nw-diamond-icon{width:14px;height:14px}}
-@media(prefers-reduced-motion:reduce){.nw-growing-preview h2{animation:none}}
-
-/* V43.5: Fully playable Growing event embedded without altering other gameplay screens. */
-.nw-growing-frame-container{width:100%;margin:0 auto;padding:0;background:#23172d;min-height:calc(100dvh - 57px)}
-.nw-growing-frame-container iframe{display:block;width:100%;height:calc(100dvh - 57px);min-height:650px;border:0;background:#23172d}
-#game.nw-growing-live-shell{background:#23172d}
-#game.nw-growing-live-shell>.ev-head{background:#23172d;color:#e5a6ff}
-.nw-lobby-portal.growing .nw-lobby-portal-disc{background:radial-gradient(circle at 28% 20%,#7c4a94 0%,#432650 50%,#23172d 100%);border-color:#b9e973;box-shadow:0 0 20px #b9e97350,inset 0 0 20px #e5a6ff22}
-.nw-lobby-portal.growing strong{color:#e5a6ff;text-shadow:0 0 10px #e5a6ff}
-.nw-lobby-portal.growing .nw-lobby-event-orbit{color:#b9e973}
-@media(max-width:480px){.nw-growing-frame-container iframe{min-height:calc(100dvh - 57px)}}
-
-.nw-shared-settings-shade{position:fixed;inset:0;z-index:9999;background:#090610cc;display:grid;place-items:center;padding:18px}
-.nw-shared-settings-dialog{display:grid;gap:14px;width:min(100%,340px);padding:24px;border-radius:18px;background:var(--panel,#392747);color:inherit;border:1px solid currentColor;box-shadow:0 12px 36px #0009;text-align:center}
-.nw-shared-settings-dialog h2{margin:0;font-size:22px}
-.nw-shared-settings-dialog button,.nw-shared-settings-dialog a{display:block;color:inherit;background:transparent;border:1px solid currentColor;border-radius:10px;padding:12px;font:inherit;text-decoration:none;cursor:pointer}
-
-/* Growing only: approved Dark Plum header + single page scrollbar. */
-#game.nw-growing-live-shell{background:#0F0912!important;color:#F7EEF5}
-#game.nw-growing-live-shell>.ev-head{background:#0F0912!important;border-color:#7B5D8744!important;color:#F7EEF5!important;box-shadow:none!important}
-#game.nw-growing-live-shell>.ev-head>strong{display:none!important}
-#game.nw-growing-live-shell>.ev-head .ev-btn,#game.nw-growing-live-shell>.ev-head .ev-btn-alt{background:#24152C!important;border:1px solid #7B5D87!important;color:#F7EEF5!important;box-shadow:0 0 9px #B9F25A1F!important;text-shadow:none!important}
-#game.nw-growing-live-shell>.ev-head .nw-shared-wallet,#game.nw-growing-live-shell>.ev-head .nw-shared-settings{background:#24152C!important;border-color:#7B5D87!important;color:#F7EEF5!important;box-shadow:none!important}
-#game.nw-growing-live-shell .nw-growing-frame-container{background:#0F0912!important;min-height:0!important}
-#game.nw-growing-live-shell .nw-growing-frame-container iframe{height:auto;min-height:0!important;background:#0F0912!important;overflow:hidden;scrollbar-width:none}
-#game.nw-growing-live-shell{scrollbar-color:#7B5D87 #1A0F1F;scrollbar-width:thin}
-#game.nw-growing-live-shell::-webkit-scrollbar{width:8px}
-#game.nw-growing-live-shell::-webkit-scrollbar-thumb{background:#7B5D87;border-radius:12px}
-
-/* They're Growing! — Dark Plum lobby planet only. Leave other event planets untouched. */
-#game .nw-lobby-portal.growing{
-  --portal-accent:#7B5D87;
-  --portal-panel:#2B1833;
-  --portal-bg:#0F0912;
-  color:#F7EEF5;
-}
-#game .nw-lobby-portal.growing .nw-lobby-portal-disc{
-  background:radial-gradient(circle at 37% 21%,#36213D 0%,#24152C 51%,#0F0912 100%);
-  border:2px solid #7B5D87;
-  box-shadow:inset 0 0 12px #B9F25A0D,0 0 10px #7B5D8733;
-  padding:6px 4px;
-  gap:7px;
-  justify-content:center;
-}
-#game .nw-lobby-portal.growing:not(.is-live) .nw-lobby-portal-disc{
-  border-color:#7B5D87;
-  box-shadow:inset 0 0 12px #B9F25A0D,0 0 7px #7B5D8733;
-}
-#game .nw-lobby-portal.growing .nw-lobby-portal-decor{
-  display:block;
-  height:auto;
-  width:100%;
-  color:#B9F25A;
-  font-size:clamp(10px,2.6vw,13px);
-  line-height:1;
-  letter-spacing:2px;
-  text-shadow:0 0 8px #B9F25A7A;
-}
-#game .nw-lobby-portal.growing strong{
-  font-family:'Eater',Georgia,serif;
-  font-weight:400;
-  font-size:clamp(11px,3.2vw,15px);
-  letter-spacing:-0.04em;
-  line-height:1.28;
-  text-align:center;
-  color:#F7EEF5;
-  text-shadow:0 0 7px #B9F25A55;
-  animation:nwGrowingPlanetMutation 4s ease-in-out infinite;
-}
-#game .nw-lobby-portal.growing .nw-lobby-event-orbit{color:#B9F25A}
-#game .nw-lobby-portal.growing.is-live .nw-lobby-portal-disc{
-  border-color:#B9F25A;
-  box-shadow:0 0 15px #B9F25A65,inset 0 0 12px #B9F25A18;
-}
-#game .nw-lobby-portal.growing.is-live strong{color:#F7EEF5}
-@keyframes nwGrowingPlanetMutation{0%,100%{transform:scale(1)}50%{transform:scale(1.035,1.055)}}
-@media(prefers-reduced-motion:reduce){#game .nw-lobby-portal.growing strong{animation:none}}
-/* Related Events-list thumbnail: same approved Dark Plum identity. */
-#game .nw-growing-event strong,#game .nw-growing-planet-title{color:#F7EEF5;text-shadow:0 0 7px #B9F25A55}
-#game .nw-growing-planet{background:radial-gradient(circle at 34% 19%,#36213D,#24152C 58%,#0F0912);border-color:#7B5D87;box-shadow:0 0 9px #7B5D8733}
-#game .nw-growing-ring{border-color:#B9F25A;box-shadow:0 0 5px #B9F25A55}
-
-
-/* Growing-specific finishing pass: right-aligned header, luminous planet. */
-#game.nw-growing-live-shell>.ev-head{display:flex!important;align-items:center!important;justify-content:space-between!important;width:100%!important}
-#game.nw-growing-live-shell>.ev-head>.nw-shared-utilities{display:flex!important;margin-left:auto!important;justify-content:flex-end!important;flex:0 0 auto!important;align-items:center!important;position:static!important;float:none!important}
-#game.nw-growing-live-shell>.ev-head>[data-back]{margin-right:auto!important;flex:0 0 auto!important}
-#game .nw-lobby-portal.growing{--portal-accent:#B9F25A;--portal-panel:#33203D;--portal-bg:#120B19}
-#game .nw-lobby-portal.growing .nw-lobby-portal-disc,
-#game .nw-lobby-portal.growing:not(.is-live) .nw-lobby-portal-disc{
- border:2px solid #A687BB;
- background:radial-gradient(ellipse at 43% 18%,#46264E 0%,#29182F 52%,#130C1C 100%);
- box-shadow:0 0 20px #B9F25A4D,0 0 31px #BA9AC03A,inset 0 0 16px #B9F25A22!important;
-}
-#game .nw-lobby-portal.growing strong{
- color:#FFF6EA;font-family:'Eater',Georgia,serif;
- text-shadow:0 0 5px #F8F0EB,0 0 11px #B9F25AB8,0 0 19px #B9F25A73;
-}
-#game .nw-lobby-portal.growing .nw-lobby-portal-decor{color:#CEFF7A;text-shadow:0 0 6px #C3FF68,0 0 14px #C3FF6899}
-#game .nw-lobby-portal.growing:before{box-shadow:0 0 10px #B9F25A40}
-
-/* Updated Growing-only planet display font */
-#game .nw-lobby-portal.growing strong{font-family:'Creepster','Eater',Georgia,serif!important;font-size:clamp(15px,3.5vw,19px)!important;letter-spacing:.015em!important;line-height:1.05!important}
-
-
-/* They're Growing! — preserve native Back and shared balance in the event header */
-#game.nw-growing-live-shell>.ev-head{display:flex!important;align-items:center!important;width:100%!important;justify-content:space-between!important}
-#game.nw-growing-live-shell>.ev-head>.nw-shared-utilities{margin-left:auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important}
-#game.nw-growing-live-shell>.ev-head [data-back]{margin-right:auto!important;background:#24152C!important;color:#F7EEF5!important;border-color:#7B5D87!important}
-
-/* They're Growing! — finished radioactive-green Events planet (other planets unchanged) */
-#game .nw-lobby-portal.growing strong{
- color:#CDFF66!important;font-family:'Eater',Georgia,serif!important;
- font-size:clamp(12px,2.8vw,16px)!important;line-height:1.18!important;
- letter-spacing:-.02em!important;
- text-shadow:0 0 4px #DFFF8A,0 0 9px #B9F25AE8,0 0 18px #A1EF4E9C!important;
- animation:nwGrowingPlanetGlow 3.3s ease-in-out infinite!important;
-}
-#game .nw-lobby-portal.growing .nw-lobby-portal-disc,
-#game .nw-lobby-portal.growing:not(.is-live) .nw-lobby-portal-disc{
- background:radial-gradient(circle at 50% 28%,#41294A 0%,#29192F 52%,#130D1A 100%)!important;
- border:2px solid #ABCB75!important;
- box-shadow:0 0 9px #C9F77476,0 0 22px #B9F25A4F,inset 0 0 18px #B9F25A16!important;
-}
-#game .nw-lobby-portal.growing .nw-lobby-portal-decor{color:#D6FF85!important;text-shadow:0 0 9px #B9F25A!important}
-#game .nw-lobby-portal.growing .nw-lobby-event-orbit{color:#B9F25A!important}
-@keyframes nwGrowingPlanetGlow{0%,100%{filter:brightness(.95)}50%{filter:brightness(1.2)}}
-@media(prefers-reduced-motion:reduce){#game .nw-lobby-portal.growing strong{animation:none!important}}
-
-/* Growing only: retain animated lettering without a luminous background wash behind the Events planet. */
-#game .nw-lobby-portal.growing .nw-lobby-portal-disc,
-#game .nw-lobby-portal.growing:not(.is-live) .nw-lobby-portal-disc{
- background:linear-gradient(160deg,#302038 0%,#1E1425 64%,#130D1A 100%)!important;
- box-shadow:none!important;
-}
-/* The original Diamond art keeps its white-sparkle detail; the header now shimmers just like the lobby and reward views. */
-#game .nw-shared-wallet .nw-diamond-icon,
-#game .nw-shared-floating .nw-diamond-icon,
-#game .ev-head .nw-diamond-icon{
- animation:nwDiamondShimmer 5s ease-in-out infinite;
-}
-@media(prefers-reduced-motion:reduce){#game .nw-shared-wallet .nw-diamond-icon,#game .nw-shared-floating .nw-diamond-icon,#game .ev-head .nw-diamond-icon{animation:none}}
+/* Triple Trouble official ticket, compact event strip, and daily missions */
+#game.nw-triple-theme .nw-tt-ticket-icon{width:1.45em;height:1.1em;object-fit:contain;display:inline-block;vertical-align:-.16em;filter:drop-shadow(0 1px 2px #9E6BD166)}
+#game.nw-triple-theme .nw431-reward .nw-tt-ticket-icon{width:30px;height:26px}
+#game.nw-triple-theme .nw432-icon .nw-tt-ticket-icon{width:100%;height:100%;max-width:none;object-fit:contain}
+#game.nw-triple-theme .nw-tt-schedule{width:min(100%,340px);margin:2px auto 10px;display:flex;align-items:center;justify-content:center;gap:10px;padding:7px 12px;background:#252440;border:1px solid #8B71AF80;border-radius:30px;color:#EAD2FF;font:400 12px/1.15 'Pangolin',sans-serif;letter-spacing:.07em}
+#game.nw-triple-theme .nw-tt-schedule strong{font:inherit;white-space:nowrap}
+#game.nw-triple-theme .nw-tt-schedule small{font-size:9px;color:#B8A3D5}
+#game.nw-triple-theme .nw-tt-live-dot{width:7px;height:7px;border-radius:100%;background:#BA91F2;box-shadow:0 0 8px #B58AF0}
+#game.nw-triple-theme .nw-tt-days{display:flex;gap:3px}
+#game.nw-triple-theme .nw-tt-days i{font:inherit;font-style:normal;font-size:10px;display:grid;place-items:center;width:19px;height:19px;border:1px solid #896BA4;border-radius:50%;background:#423056}
+#game.nw-triple-theme .nw-tt-rank-actions{display:flex;align-items:center;gap:6px}
+#game.nw-triple-theme #nwTTMissionsBtn{font:400 11px/1.2 'Pangolin',sans-serif;letter-spacing:.04em;border:1px solid #8C84B9;border-radius:20px;background:#242849;color:#E7D5FF;padding:6px 11px;min-height:29px}
+#game.nw-triple-theme .nw-tt-claim-ready{position:relative;isolation:isolate;animation:nwTTClaimPulse 1.7s ease-in-out infinite}
+#game.nw-triple-theme .nw-tt-claim-ready:after{content:'';pointer-events:none;position:absolute;inset:-4px;border:2px solid #D8A8FF;border-radius:25px;animation:nwTTOrbit 3s linear infinite}
+@keyframes nwTTClaimPulse{0%,100%{box-shadow:0 0 2px #B682D4}50%{box-shadow:0 0 15px 3px #C87AF1}}
+@keyframes nwTTOrbit{0%{clip-path:inset(0 52% 0 0);filter:brightness(1.2)}25%{clip-path:inset(0 0 52% 0)}50%{clip-path:inset(0 0 0 52%)}75%{clip-path:inset(52% 0 0 0)}100%{clip-path:inset(0 52% 0 0)}}
+#game.nw-triple-theme .nw-tt-missions-intro{font-size:12px;margin:0 0 9px;color:#E2CDF5;text-align:center}
+#game.nw-triple-theme .nw-tt-mission-list{display:grid;gap:7px;max-height:min(58vh,480px);overflow-y:auto;padding:3px 2px}
+#game.nw-triple-theme .nw-tt-mission{display:flex;align-items:center;justify-content:space-between;gap:9px;text-align:left;padding:10px 9px;background:#252641;border:1px solid #5D587E;border-radius:10px}
+#game.nw-triple-theme .nw-tt-mission>div{min-width:0;flex:1}
+#game.nw-triple-theme .nw-tt-mission strong{display:block;font-size:12px;line-height:1.3;color:#F8E7FF}
+#game.nw-triple-theme .nw-tt-mission small{display:block;font-size:11px;color:#C9B5E8;margin-top:4px}
+#game.nw-triple-theme .nw-tt-mission button{border:1px solid #D9A8FF;border-radius:9px;background:#694295;color:#FFF3FF;padding:8px 9px;font:400 11px/1 'Pangolin',sans-serif;white-space:nowrap}
+#game.nw-triple-theme .nw-tt-mission.is-ready{border-color:#C18BE5}
+#game.nw-triple-theme .nw-tt-mission-locked,#game.nw-triple-theme .nw-tt-mission-complete{font-size:9px;color:#B5A7D3;white-space:nowrap}
+@media(prefers-reduced-motion:reduce){#game.nw-triple-theme .nw-tt-claim-ready,#game.nw-triple-theme .nw-tt-claim-ready:after{animation:none}}
