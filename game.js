@@ -787,6 +787,22 @@ function nwTTRewardIcon(k){return k==='diamonds'?'<img class="nw-diamond-icon" s
 function nwTTPackArt(p,i){return `<div class="nw431-pack tier-${i}"><div class="nw431-pack-top"><span class="nw431-pack-art" aria-hidden="true">${Array.from({length:i+2},(_,j)=>`<i style="--n:${j}">✦</i>`).join('')}</span><div><strong>${p.tickets} Tickets</strong><small>${nwDiamondAmount(p.diamonds)} Diamonds</small></div><b class="nw431-price">RM${p.price}</b></div><div class="nw431-bonuses"><span>${nwTTRewardIcon('shuffle')} ${p.shuffle} Shuffle</span>${p.magic?`<span>${nwTTRewardIcon('magic')} ${p.magic} Magic Clear</span>`:''}</div></div>`;}
 function nwTTShop(){const d=nwTripleData();nwTTModal('More tickets',`<p>${nwTTCount(d)} available</p><p>Premium packs · coming soon</p>`,[{label:'Get a ticket · Diamonds or Watch Ad',run:()=>nwTTBuy('ticket')},...nwTTPacks.map((p,i)=>({label:`RM${p.price} pack`,html:nwTTPackArt(p,i),run:()=>nw433ComingSoon(nwTTShop)})),{label:'Close'}]);}
 function nwTTRank(){const d=nwTripleData();nwTTModal('Leaderboard',`<div class="nw431-rank-result"><small>YOUR HIGHEST STAGE</small><strong>${d.best}</strong><span>Online rankings · coming soon</span></div><p>Progress in this version is saved on this device.</p>`,[{label:'Close'}]);}
+function nwTTDaysMarkup(){
+ const current=new Date(nwTTNow()).getUTCDay();
+ return ['MON','TUE','WED'].map((name,i)=>{
+  const day=i+1;
+  const state=current===day?'is-current':current>day?'is-past':'is-upcoming';
+  return `${i?'<i aria-hidden="true"></i>':''}<span data-tt-weekday="${day}" class="${state}" ${state==='is-current'?'aria-current="date"':''}>${name}</span>`;
+ }).join('');
+}
+function nwTTRefreshDays(){
+ const current=new Date(nwTTNow()).getUTCDay();
+ evRoot.querySelectorAll('.nw-tt-days [data-tt-weekday]').forEach(el=>{
+  const day=Number(el.dataset.ttWeekday),state=current===day?'is-current':current>day?'is-past':'is-upcoming';
+  el.classList.remove('is-current','is-past','is-upcoming');el.classList.add(state);
+  if(state==='is-current')el.setAttribute('aria-current','date');else el.removeAttribute('aria-current');
+ });
+}
 function nwTTTime(ms){const n=Math.max(0,Math.ceil(ms/1000));return `${String(Math.floor(n/60)).padStart(2,'0')}:${String(n%60).padStart(2,'0')}`}
 function nwTTTicketMarkup(d){return `<div class="nw43-tickets"><span>${nwTTRewardIcon('ticket')} <strong data-tt-total>${nwTTCount(d)}</strong> tickets</span><small data-tt-timer>${d.natural===10?'Free tickets full':'Next free ticket '+nwTTTime(d.next-nwTTNow())} · ${d.natural}/10 free · ${d.extra} extra</small><button type="button" data-tt-buy-ticket>+ TICKETS</button></div>`}
 
@@ -880,7 +896,7 @@ function nwTTBind(){evRoot.querySelectorAll('[data-tt-buy-ticket]').forEach(b=>b
 function nwTTAbandon(retry){const s=nwTriple;if(!s||s.won){nwTripleHome();return;}if(s.practice){if(s.lost){const d=nwTriplePracticeData();delete d.active;nwWrite('nineweird-triple-practice-v2',d);}nwTriple=null;nwTripleHome();return;}const finish=()=>{const d=nwTripleData();if(d.active){nwTTSpendTicket(d);delete d.active;nwTripleSave(d);}nwTriple=null;if(retry&&nwTTCount(d)>0)nwTripleBegin(d.stage);else nwTripleHome();};if(s.lost)finish();else nwTTModal('Leave this attempt?',`<p>Abandoning the stage uses one ticket. Your boosters already used will not return.</p>`,[{label:'Leave · lose 1 ticket',run:finish},{label:'Keep playing'}]);}
 // A reopened browser forfeits an unfinished event attempt once, not on routine redraw.
 function nwTTRecoverInterrupted(){if(!nwTripleInEvent())return;const d=nwTripleData();if(d.active){nwTTSpendTicket(d);delete d.active;nwTripleSave(d);}}
-setInterval(()=>{if(!evRoot.querySelector('[data-tt-total]'))return;if(!nwTripleInEvent()){nwTripleHome();return;}const d=nwTripleData();evRoot.querySelectorAll('[data-tt-total]').forEach(e=>e.textContent=nwTTCount(d));evRoot.querySelectorAll('[data-tt-timer]').forEach(e=>e.textContent=(d.natural===10?'Free tickets full':'Next free ticket '+nwTTTime(d.next-nwTTNow()))+` · ${d.natural}/10 free · ${d.extra} extra`);},1000);
+setInterval(()=>{nwTTRefreshDays();if(!evRoot.querySelector('[data-tt-total]'))return;if(!nwTripleInEvent()){nwTripleHome();return;}const d=nwTripleData();evRoot.querySelectorAll('[data-tt-total]').forEach(e=>e.textContent=nwTTCount(d));evRoot.querySelectorAll('[data-tt-timer]').forEach(e=>e.textContent=(d.natural===10?'Free tickets full':'Next free ticket '+nwTTTime(d.next-nwTTNow()))+` · ${d.natural}/10 free · ${d.extra} extra`);},1000);
 function nwTripleIsHard(n){return n>=7&&[0,4,7].includes(n%10)}
 function nwTripleTileSrc(type){const room=nwTripleArtRooms[Math.floor(type/9)%nwTripleArtRooms.length];const dir=nwTripleArtFiles[room];return dir[0]+dir[1][type%9]}
 function nwTripleRng(seed){let n=seed>>>0;return()=>{n=(Math.imul(n,1664525)+1013904223)>>>0;return n/4294967296}}
@@ -1102,7 +1118,7 @@ function nwTripleHome(){
  evSudokuLeave();nwTriple=null;applyTheme('hub');evRoot.classList.add('nw-triple-theme');const d=nwTripleSessionData(),event=nwTripleInEvent();
  evDisplay(`${evHeader('EVENTS',showCategories)}<section class="nw-triple nw-triple-home">
  <div class="nw-triple-sparks" aria-hidden="true">⋆˚<span class="nw-triple-spiral"></span>｡</div><div class="nw-triple-mascots">${nwTripleMascots()}</div>
- <h2 class="nw-triple-logo">TRIPLE<br><span>TROUBLE</span></h2><div class="nw-triple-ribbon nw-tt-days"><span>MON</span><i></i><span>TUE</span><i></i><span>WED</span></div>
+ <h2 class="nw-triple-logo">TRIPLE<br><span>TROUBLE</span></h2><div class="nw-triple-ribbon nw-tt-days">${nwTTDaysMarkup()}</div>
  ${event?`${nwTTTicketMarkup(d)}${nwTTProgress(d)}<div class="nw431-ranking"><span>Highest stage: ${d.best}</span><div class="nw-tt-rank-actions"><button id="nw431Rank" type="button">♜ RANK</button><button id="nwTTMissionsBtn" type="button" class="${nwTTMissionReady()?'nw-tt-claim-ready':''}">✦ MISSIONS</button></div></div>`:`<p>Practice mode · no event rewards or ticket cost</p>`}
  <button id="nwTripleStart" class="nw-triple-main-btn"><span class="nw-triple-play-symbol" aria-hidden="true">▹</span><span>${d.active?'CONTINUE STAGE '+d.stage:'PLAY STAGE '+d.stage}</span></button>
  </section>`);

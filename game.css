@@ -4300,3 +4300,31 @@ html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:n
 #game.nw-triple-theme .nw-tt-mission>span{flex:none;font:400 10px/1.1 'Pangolin',sans-serif;color:#AFA5C7}
 @media(prefers-reduced-motion:reduce){#game.nw-triple-theme .nw-tt-claim-ready,#game.nw-triple-theme .nw-tt-claim-ready:after{animation:none}}
 
+
+
+/* Triple Trouble-only: matched compact Rank / Missions buttons and UTC day state. */
+#game.nw-triple-theme .nw-tt-rank-actions #nw431Rank,
+#game.nw-triple-theme .nw-tt-rank-actions #nwTTMissionsBtn{
+ width:104px;max-width:104px;height:34px;min-height:34px;box-sizing:border-box;
+ display:inline-flex;align-items:center;justify-content:center;flex:none;
+ font:400 11px/1.2 'Pangolin',sans-serif;letter-spacing:.08em;
+ padding:6px 8px;border:1px solid #8C84B9;border-radius:20px;
+ background:#242849;color:#E7D5FF;
+ box-shadow:none;
+}
+#game.nw-triple-theme .nw-tt-days [data-tt-weekday]{
+ display:inline-flex;align-items:center;justify-content:center;
+ padding:3px 5px;border-radius:8px;transition:color .25s,opacity .25s,text-shadow .25s,background .25s;
+}
+#game.nw-triple-theme .nw-tt-days .is-upcoming{color:#E9D8F8;opacity:.85}
+#game.nw-triple-theme .nw-tt-days .is-past{color:#928CA7;opacity:.58;text-decoration:line-through;text-decoration-thickness:1px}
+#game.nw-triple-theme .nw-tt-days .is-current{
+ color:#FFF8FF;background:#6A427D55;
+ text-shadow:0 0 7px #EAB6FF,0 0 17px #C06EF9;
+ animation:nwTTDayGlow 2.4s ease-in-out infinite;
+}
+@keyframes nwTTDayGlow{
+ 0%,100%{text-shadow:0 0 6px #DCACFF,0 0 13px #BD77F2}
+ 50%{text-shadow:0 0 12px #FFE0FF,0 0 24px #D692FF}
+}
+@media(prefers-reduced-motion:reduce){#game.nw-triple-theme .nw-tt-days .is-current{animation:none}}
