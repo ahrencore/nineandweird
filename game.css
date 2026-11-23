@@ -4241,3 +4241,22 @@ html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:n
 #game.nw-growing-live-shell>.ev-head{display:flex!important;align-items:center!important;width:100%!important;justify-content:space-between!important}
 #game.nw-growing-live-shell>.ev-head>.nw-shared-utilities{margin-left:auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important}
 #game.nw-growing-live-shell>.ev-head [data-back]{margin-right:auto!important;background:#24152C!important;color:#F7EEF5!important;border-color:#7B5D87!important}
+
+/* They're Growing! — finished radioactive-green Events planet (other planets unchanged) */
+#game .nw-lobby-portal.growing strong{
+ color:#CDFF66!important;font-family:'Eater',Georgia,serif!important;
+ font-size:clamp(12px,2.8vw,16px)!important;line-height:1.18!important;
+ letter-spacing:-.02em!important;
+ text-shadow:0 0 4px #DFFF8A,0 0 9px #B9F25AE8,0 0 18px #A1EF4E9C!important;
+ animation:nwGrowingPlanetGlow 3.3s ease-in-out infinite!important;
+}
+#game .nw-lobby-portal.growing .nw-lobby-portal-disc,
+#game .nw-lobby-portal.growing:not(.is-live) .nw-lobby-portal-disc{
+ background:radial-gradient(circle at 50% 28%,#41294A 0%,#29192F 52%,#130D1A 100%)!important;
+ border:2px solid #ABCB75!important;
+ box-shadow:0 0 9px #C9F77476,0 0 22px #B9F25A4F,inset 0 0 18px #B9F25A16!important;
+}
+#game .nw-lobby-portal.growing .nw-lobby-portal-decor{color:#D6FF85!important;text-shadow:0 0 9px #B9F25A!important}
+#game .nw-lobby-portal.growing .nw-lobby-event-orbit{color:#B9F25A!important}
+@keyframes nwGrowingPlanetGlow{0%,100%{filter:brightness(.95)}50%{filter:brightness(1.2)}}
+@media(prefers-reduced-motion:reduce){#game .nw-lobby-portal.growing strong{animation:none!important}}

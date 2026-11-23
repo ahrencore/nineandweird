@@ -186,6 +186,47 @@ html,body,#app{font-family:'Bubblegum Sans','Trebuchet MS',sans-serif}
 @keyframes growingBtnGlow{0%,100%{filter:drop-shadow(0 0 4px #B9F25A33)}50%{filter:drop-shadow(0 0 12px #B9F25A77)}}
 @media(prefers-reduced-motion:reduce){.growing-smoke i,.growing-hero:before,.growing-hero .title,.btn.growing-start{animation:none!important}}
 @media(max-width:540px){.growing-hero .title{font-size:clamp(17px,4.3vw,27px)!important}.milestone-stop{width:72px!important;flex-basis:72px!important}.growing-class-photo{width:100%}}
+
+/* Growing — final visual corrections only */
+.growing-hero .growing-arched-title,.growing-hero .growing-arched-title svg{color:#C7FF58!important}
+.growing-hero .growing-arched-title text{fill:#C7FF58!important;stroke:#A2E23966!important;stroke-width:1.3px!important;filter:drop-shadow(0 0 6px #B9F25A9E) drop-shadow(0 0 13px #8EC93155)!important}
+.growing-hero .growing-arched-title svg{filter:drop-shadow(0 0 9px #B9F25A65)!important}
+.growing-class-photo{filter:drop-shadow(0 5px 6px #04020799)!important}
+.btn.growing-start{
+ width:96%!important;max-width:850px!important;height:clamp(86px,12vw,125px)!important;min-height:0!important;
+ padding:11px 24px 23px!important;margin:14px auto 25px!important;
+ background: url('assets/slime_button.svg') center / 100% 100% no-repeat!important;
+ color:#1B2B0A!important;font:normal clamp(24px,4.7vw,45px)/1.1 'Bubblegum Sans',sans-serif!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+ text-shadow:0 2px 0 #F3FFADAA!important;
+ filter:drop-shadow(0 3px 10px #AEEA4D5A)!important;
+ transition:transform .14s ease,filter .14s ease!important;animation:growingBtnGlow 3.5s ease-in-out infinite!important;
+}
+.btn.growing-start:before,.btn.growing-start:after{content:none!important;display:none!important}
+.btn.growing-start:hover{transform:translateY(-2px) scale(1.012)!important;filter:drop-shadow(0 5px 15px #B9F25A8A)!important}
+.btn.growing-start:active{transform:translateY(4px) scale(.992)!important;filter:drop-shadow(0 1px 6px #B9F25A75)!important}
+/* Compact Triple Trouble-inspired milestones — icon, connected line, checks, points */
+.milestone-card{padding:11px 12px 9px!important;border-radius:18px!important;margin:11px 0 14px!important}
+.milestone-title{padding:0 2px 8px!important;line-height:1.3!important}
+.milestone-scroll{overflow-x:auto!important;overflow-y:hidden!important}
+.milestone-journey{display:flex!important;align-items:start!important;padding:8px 5px 7px!important;gap:0!important}
+.milestone-stop{position:relative!important;width:76px!important;min-width:76px!important;flex:0 0 76px!important;gap:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important}
+.milestone-prize,.milestone-stop.earned .milestone-prize,.milestone-stop.next .milestone-prize{
+ width:76px!important;height:31px!important;min-height:31px!important;max-height:31px!important;
+ padding:0!important;margin:0 0 9px!important;border:0!important;box-shadow:none!important;
+ background:none!important;flex-direction:row!important;gap:4px!important;display:flex!important;
+ align-items:center!important;justify-content:center!important;
+}
+.milestone-prize .item-icon{width:22px!important;height:22px!important;object-fit:contain!important}
+.milestone-prize .energy-symbol{font-size:24px!important;line-height:1!important;color:#B9F25A!important}
+.milestone-prize strong{font-family:'Bubblegum Sans',sans-serif!important;font-size:14px!important;line-height:1!important;font-weight:normal!important;color:#EEE6EE!important;white-space:nowrap!important}
+.milestone-rail{position:absolute!important;top:55px!important;left:43px!important;right:43px!important;height:3px!important;z-index:0!important;background:#6B5874!important;overflow:visible!important}
+.milestone-rail i{box-shadow:0 0 7px #B9F25A66!important}
+.milestone-node{box-sizing:border-box!important;margin:0!important;width:17px!important;height:17px!important;min-height:17px!important;z-index:2!important;border-width:2px!important;border-radius:100%!important;line-height:13px!important}
+.milestone-stop.earned .milestone-node{color:#273A10!important;font-size:11px!important}
+.milestone-stop small{font-family:'Bubblegum Sans',sans-serif!important;font-size:12px!important;line-height:1.25!important;margin-top:7px!important;white-space:nowrap!important}
+.milestone-foot{padding:6px 0 2px!important;margin:0!important;font-size:12px!important;line-height:1.35!important}
+@media(max-width:540px){.milestone-stop{width:70px!important;min-width:70px!important;flex-basis:70px!important}.milestone-prize{width:70px!important}}
 </style><link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Eater&display=swap" rel="stylesheet"></head><body><main id="app" class="shell"></main><script src="engine.js"></script><script src="app.js"></script><script>
 (function(){
   if(window.parent===window)return;
