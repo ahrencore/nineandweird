@@ -4110,3 +4110,24 @@ html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:n
 #game.nw-triple-theme .nw433-item small{font-size:10px;align-self:center;margin:0}
 #game.nw-triple-theme .nw433-scroll .nw431-stop.earned{opacity:1}
 #game.nw-triple-theme .nw433-scroll:focus-visible{outline:1px solid #C5B2FF;outline-offset:2px}
+
+/* V43.3 scoped staging changes: shared wallet/settings + Growing event portal. */
+.ev-head{gap:6px}.ev-head>.nw-shared-utilities{margin-left:auto;flex-shrink:0}
+.nw-shared-floating{display:flex;justify-content:flex-end;padding:8px 13px 0;position:relative;z-index:2}
+.nw-shared-utilities{display:flex;align-items:center;gap:6px;min-width:0}
+.nw-shared-wallet{display:inline-flex;align-items:center;gap:3px;border:1px solid currentColor;border-radius:20px;padding:4px 7px;font-size:12px;background:color-mix(in srgb,currentColor 7%,transparent);color:inherit;white-space:nowrap}
+.nw-shared-wallet .nw-diamond-amount{font-size:inherit;display:inline-flex;align-items:center;gap:4px}
+.nw-shared-wallet .nw-diamond-icon{width:17px;height:17px;object-fit:contain}
+.nw-shared-settings{display:grid;place-items:center;width:32px;height:32px;min-width:32px;border:1px solid currentColor;border-radius:50%;background:transparent;color:inherit;cursor:pointer}
+.nw-shared-settings svg{width:18px;height:18px;fill:none;stroke:currentColor}
+.nw-growing-planet{display:grid;place-items:center;flex-shrink:0;position:relative;width:65px;height:65px;border-radius:50%;background:radial-gradient(circle at 30% 23%,#7e4b8b,#392747 65%,#23172d);border:1px solid #b17bbd;box-shadow:0 0 12px #b879db66;isolation:isolate}
+.nw-growing-ring{position:absolute;width:114%;height:45%;border:2px solid #b9e973;border-radius:50%;transform:rotate(-25deg);box-shadow:0 0 7px #b9e97380;pointer-events:none}
+.nw-growing-planet-title{font-family:'Eater',Georgia,serif;font-size:9px;text-align:center;color:#e5a6ff;line-height:1.35;text-shadow:0 0 7px #e5a6ff}
+.nw-growing-event strong{color:#e5a6ff}.nw-growing-event em{color:#b9e973}
+.nw-growing-preview{max-width:430px;margin:auto;text-align:center;color:#e5a6ff;padding:20px 18px 38px;background:radial-gradient(ellipse at top,#392747,#23172d)}
+.nw-growing-preview h2{font:clamp(20px,6vw,31px) 'Eater',Georgia,serif;text-shadow:0 0 13px #d06cdd;animation:nwGrowingPulse 4s infinite}
+.nw-growing-preview p{font-family:'Pangolin',cursive;color:#d5b9e0}
+.nw-growing-planet.big{width:170px;height:170px;margin:22px auto}.nw-growing-planet.big .nw-growing-planet-title{font-size:19px}
+@keyframes nwGrowingPulse{50%{transform:scale(1.04,1.08);text-shadow:0 0 22px #d580ef,0 3px #638c39}}
+@media(max-width:370px){.ev-head>.nw-shared-utilities{gap:3px}.nw-shared-wallet{font-size:10px;padding:3px 4px}.nw-shared-settings{width:27px;height:27px;min-width:27px}.nw-shared-wallet .nw-diamond-icon{width:14px;height:14px}}
+@media(prefers-reduced-motion:reduce){.nw-growing-preview h2{animation:none}}

@@ -1,6 +1,13 @@
 const evRoot=document.getElementById('game');
-function evDisplay(html){window.nwCloud?.clearCaptcha?.();evRoot.hidden=false;evRoot.innerHTML=html;queueMicrotask(nwRefreshNotificationOrbits);}
-function evHeader(title,back){queueMicrotask(()=>{const b=evRoot.querySelector('[data-back]');if(b)b.onclick=()=>back();});return `<header class="ev-head"><button class="ev-btn ev-btn-alt" data-back aria-label="Back">‹ BACK</button><strong>${title}</strong><span></span></header>`;}
+function evDisplay(html){window.nwCloud?.clearCaptcha?.();evRoot.hidden=false;evRoot.innerHTML=html;
+ // Keep the existing lobby controls; add a compact utility bar only to modes lacking a header.
+ if(!evRoot.querySelector('.ev-head,.nw-lobby-top')&&!evRoot.querySelector('.nw-shared-floating')){
+  const bar=document.createElement('div');bar.className='nw-shared-floating';bar.innerHTML=nwSharedUtilityMarkup();evRoot.prepend(bar);
+ }
+ queueMicrotask(()=>{nwRefreshNotificationOrbits();nwBindSharedUtilities();});}
+function nwSharedUtilityMarkup(){return `<div class="nw-shared-utilities"><span class="nw-shared-wallet" title="Diamond balance">${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</span><button type="button" class="nw-shared-settings" data-nw-settings aria-label="Settings">${nwLobbyIcon('settings')}</button></div>`;}
+function nwBindSharedUtilities(){evRoot.querySelectorAll('[data-nw-settings]').forEach(b=>b.onclick=()=>nwLobbyUtility('settings'));}
+function evHeader(title,back){queueMicrotask(()=>{const b=evRoot.querySelector('[data-back]');if(b)b.onclick=()=>back();nwBindSharedUtilities();});return `<header class="ev-head"><button class="ev-btn ev-btn-alt" data-back aria-label="Back">‹ BACK</button><strong>${title}</strong>${nwSharedUtilityMarkup()}</header>`;}
 const worlds={classic:{name:'CLASSIC',label:'Classic',theme:'classic'},dark:{name:'CLASSIC DARK',label:'Classic Dark',theme:'dark'},halloween:{name:'HALLOWEEN',label:'Halloween',theme:'halloween'},patissserie:{name:'PÂTISSERIE',label:'Pâtisserie',theme:'patissserie'},christmas:{name:'CHRISTMAS',label:'Christmas',theme:'christmas'},fairy:{name:'FAIRY WORLD',label:'Fairy World',theme:'fairy'},olympus:{name:'OLYMPUS',label:'Olympus',theme:'olympus'},nineties:{name:'90s THROWBACK',label:'90s Throwback',theme:'nineties'},weird:{name:'WHAT AM I LOOKING AT?',label:'What Am I Looking At?',theme:'weird'},ugly:{name:'UGLY LITTLE THINGS',label:'Ugly Little Things',theme:'ugly'},alien:{name:'ALIEN SUPERMARKET',label:'Alien Supermarket',theme:'alien'},diner:{name:'DO NOT EAT THAT',label:'Do Not Eat That',theme:'diner'},bodyparts:{name:'BODY PARTS DEPARTMENT',label:'Body Parts Department',theme:'bodyparts'},deepsea:{name:'DEEP SEA MISFITS',label:'Deep Sea Misfits',theme:'deepsea'},solarsick:{name:'THE SOLAR SYSTEM IS SICK',label:'The Solar System Is Sick',theme:'solarsick'},dontunwrap:{name:"PLEASE DON'T UNWRAP THAT",label:"Please Don't Unwrap That",theme:'dontunwrap'},unpreparedchristmas:{name:'UNPREPARED CHRISTMAS',label:'Unprepared Christmas',theme:'unpreparedchristmas'},underthebed:{name:'SOMETHING UNDER THE BED',label:'Something Under the Bed',theme:'underthebed'},balloonwrong:{name:'BALLOON ANIMALS GONE WRONG',label:'Balloon Animals Gone Wrong',theme:'balloonwrong'},donttakewater:{name:'DO NOT TAKE WITH WATER',label:'Do Not Take With Water',theme:'donttakewater'},baggagehell:{name:'BAGGAGE CLAIM FROM HELL',label:'Baggage Claim from Hell',theme:'baggagehell'},cakefail:{name:'CAKE DECORATING WAS A MISTAKE',label:'Cake Decorating Was a Mistake',theme:'cakefail'}};
 let currentWorld='halloween',roomPage=0,roomCollection='all';
 const difficulties={easy:{fill:.60,points:350,hints:1},medium:{fill:.50,points:650,hints:1},hard:{fill:.40,points:1000,hints:1},expert:{fill:.35,points:1350,hints:2},extreme:{fill:.30,points:1750,hints:3}};
@@ -602,11 +609,20 @@ function nwShowEvents(){
     <p class="nw-events-intro">A little Sudoku. A little chaos. Something for every day.</p>
     <div class="nw-event-schedule"><span>MON–WED <b>TRIPLE TROUBLE</b></span><span>THU <b>TEAM UP</b></span><span>FRI–SUN <b>DOUBLE TROUBLE</b></span></div>
     <button class="nw-event-tile" id="nwEventShelf"><span class="nw-event-symbol nw-triple-event-icon" aria-hidden="true"><img src="assets/ugly/02_chomps.png" alt=""></span><span><strong>TRIPLE TROUBLE</strong><small>Three-day tile matching · Clear triples, climb stages.</small><em>${nwEventStatus('shelf')}</em></span><span class="nw-event-arrow" aria-hidden="true">›</span></button>
+    <button class="nw-event-tile nw-growing-event" id="nwEventGrowing"><span class="nw-growing-planet" aria-hidden="true"><span class="nw-growing-ring"></span><span class="nw-growing-planet-title">THEY’RE<br>GROWING!</span></span><span><strong>THEY'RE GROWING!</strong><small>Tuesday–Thursday · 37-hex creature evolution.</small><em>COMING SOON: TUE – THU</em></span><span class="nw-event-arrow" aria-hidden="true">›</span></button>
     <button class="nw-event-tile" id="nwEventDouble"><span class="nw-event-symbol" aria-hidden="true">⚔️</span><span><strong>DOUBLE TROUBLE</strong><small>Friday–Sunday · 2v2 team Sudoku. Thursday is partner day.</small><em>${nwEventStatus('double')}</em></span><span class="nw-event-arrow" aria-hidden="true">›</span></button>
 
   </section>`);
   evRoot.querySelector('#nwEventShelf').onclick=nwTripleHome;
   evRoot.querySelector('#nwEventDouble').onclick=()=>nwShowEventDetail('double');
+  evRoot.querySelector('#nwEventGrowing').onclick=()=>nwGrowingComingSoon();
+}
+
+
+function nwGrowingComingSoon(){
+ evSudokuLeave();applyTheme('hub');
+ evDisplay(`${evHeader('THEY\'RE GROWING!',nwShowEvents)}<section class="nw-growing-preview"><h2>THEY'RE GROWING!</h2><p>TUESDAY — THURSDAY UTC</p><div class="nw-growing-planet big"><span class="nw-growing-ring"></span><span class="nw-growing-planet-title">COMING<br>SOON</span></div><p>The new creature-evolution event is being prepared for live play.</p><button class="ev-btn" id="nwGrowingBack">BACK TO EVENTS</button></section>`);
+ evRoot.querySelector('#nwGrowingBack').onclick=nwShowEvents;
 }
 
 // Double Trouble — After Hours. Local recorded-match edition; no cloud invitations or prizes.
@@ -962,7 +978,7 @@ function nwTripleHome(){
  evDisplay(`${evHeader('EVENTS',showCategories)}<section class="nw-triple nw-triple-home">
  <div class="nw-triple-sparks" aria-hidden="true">⋆˚<span class="nw-triple-spiral"></span>｡</div><div class="nw-triple-mascots">${nwTripleMascots()}</div>
  <h2 class="nw-triple-logo">TRIPLE<br><span>TROUBLE</span></h2><div class="nw-triple-ribbon">MONDAY – WEDNESDAY</div>
- ${event?`<div class="nw43-wallet">YOUR DIAMONDS ${nwDiamondAmount(d.diamonds)}</div>${nwTTTicketMarkup(d)}${nwTTProgress(d)}<div class="nw431-ranking"><span>Highest stage: ${d.best}</span><button id="nw431Rank" type="button">♜ RANK</button></div>`:`<p>Practice mode · no event rewards or ticket cost</p>`}
+ ${event?`${nwTTTicketMarkup(d)}${nwTTProgress(d)}<div class="nw431-ranking"><span>Highest stage: ${d.best}</span><button id="nw431Rank" type="button">♜ RANK</button></div>`:`<p>Practice mode · no event rewards or ticket cost</p>`}
  <button id="nwTripleStart" class="nw-triple-main-btn"><span class="nw-triple-play-symbol" aria-hidden="true">▹</span><span>${d.active?'CONTINUE STAGE '+d.stage:'PLAY STAGE '+d.stage}</span></button>
  </section>`);
  evRoot.querySelector('#nwTripleStart').onclick=()=>nwTripleBegin(d.stage,true);
