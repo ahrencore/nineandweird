@@ -495,7 +495,6 @@ function nwBattleStart(){
   if(!opponent)return;
   nwLastBattleProfile=profile.id;nwLastBattleRun=opponent.recording_id;
   nwGrowingActivity('battles');
-  nwTTMissionEvent('battles',1);
   const previousWorld=currentWorld;
   // Fixed skill tier per profile; playback timing is chosen before play.
   const tier=[3,2,3,1,0,0,1,0,1,2,1,0,2,1,0,1,2,0,2,3][profile.id];
@@ -764,18 +763,18 @@ function nwTripleWeek(now=nwTTNow()){const t=new Date(now);const mon=Date.UTC(t.
 function nwTripleInEvent(){return [1,2,3].includes(new Date(nwTTNow()).getUTCDay())}
 function nwTTDay(now){return new Date(now).toISOString().slice(0,10)}
 function nwTTNew(week,day,now,delta=0){return {week,day,stage:1,best:0,diamondDelta:delta,diamonds:nwBattleDiamondTotal()+delta,natural:10,extra:0,next:0,ads:0,spent:0,boosters:{undo:0,shuffle:0,magic:0},welcomed:false,claimed:[],packs:[],notices:[]}}
-function nwTTSync(old,now){const week=nwTripleWeek(now),day=nwTTDay(now);const delta=Number.isSafeInteger(old?.diamondDelta)?old.diamondDelta:0;if(!old||old.week!==week){const fresh=nwTTNew(week,day,now,delta);if(old&&old.week!==week){fresh.missionTickets=Math.max(0,Math.min(old.missionTickets||0,old.extra||0));fresh.extra=fresh.missionTickets;}return fresh;}const d=old;d.diamonds=Math.max(0,nwBattleDiamondTotal()+delta);if(d.day!==day){d.day=day;d.natural=10;d.next=0;d.ads=0;}if(d.natural<10&&d.next>0&&now>=d.next){const n=Math.min(10-d.natural,1+Math.floor((now-d.next)/3600000));d.natural+=n;d.next=d.natural===10?0:d.next+n*3600000;}return d}
+function nwTTSync(old,now){const week=nwTripleWeek(now),day=nwTTDay(now);const delta=Number.isSafeInteger(old?.diamondDelta)?old.diamondDelta:0;if(!old||old.week!==week)return nwTTNew(week,day,now,delta);const d=old;d.diamonds=Math.max(0,nwBattleDiamondTotal()+delta);if(d.day!==day){d.day=day;d.natural=10;d.next=0;d.ads=0;}if(d.natural<10&&d.next>0&&now>=d.next){const n=Math.min(10-d.natural,1+Math.floor((now-d.next)/3600000));d.natural+=n;d.next=d.natural===10?0:d.next+n*3600000;}return d}
 function nwTripleData(){const old=nwRead(nwTripleKey,null),d=nwTTSync(old,nwTTNow());if(!old){const legacy=nwRead(nwTTOldKey,null);if(legacy?.week===d.week&&Number.isSafeInteger(legacy.best)&&legacy.best>=0){d.best=legacy.best;d.stage=d.best+1;}}nwTripleSave(d);return d}
 function nwTripleSave(obj){nwWrite(nwTripleKey,obj)}
 function nwTTCount(d){return d.natural+d.extra}
-function nwTTSpendTicket(d,now=nwTTNow()){if(d.natural>0){if(d.natural===10||!d.next)d.next=now+3600000;d.natural--;return true;}if(d.extra>0){d.extra--;if(d.missionTickets>0)d.missionTickets--;return true;}return false}
+function nwTTSpendTicket(d,now=nwTTNow()){if(d.natural>0){if(d.natural===10||!d.next)d.next=now+3600000;d.natural--;return true;}if(d.extra>0){d.extra--;return true;}return false}
 function nwTTGrant(d,kind,n){if(kind==='diamonds'){d.diamondDelta+=n;d.diamonds+=n;}else if(kind==='ticket')d.extra+=n;else d.boosters[kind]+=n;}
 function nwTTNotice(d,title,items){d.notices.push({title,items});}
 function nwTTClear(d,stage){d.best=Math.max(d.best,stage);d.stage=Math.max(d.stage,stage+1);for(const [m,items] of nwTTMilestones){if(d.best>=m&&!d.claimed.includes(m)){d.claimed.push(m);for(const [k,n] of items)nwTTGrant(d,k,n);nwTTNotice(d,'Stage '+m+' cleared!',items);}}delete d.active;}
 function nwTTWelcome(d){if(d.welcomed||!nwTripleInEvent())return false;d.welcomed=true;for(const k of ['undo','shuffle','magic'])nwTTGrant(d,k,1);nwTTNotice(d,'Welcome gifts claimed!',[['undo',1],['shuffle',1],['magic',1]]);if(d.best>0)nwTTClear(d,d.best);return true;}
 function nwTTPurchase(d,kind,source){if(!nwTripleInEvent()||source!=='diamonds')return 'Coming soon.';const cost=nwTTPrices[kind];if(!cost||d.diamonds<cost)return 'Not enough Diamonds.';if(kind==='ticket'&&d.spent+cost>10000)return 'Event ticket exchange limit reached.';d.diamonds-=cost;d.diamondDelta-=cost;if(kind==='ticket')d.spent+=cost;nwTTGrant(d,kind,1);nwTTNotice(d,'Purchase successful!',[[kind,1]]);return null;}
 
-function nwTTItem(k,n){return k==='diamonds'?nwDiamondAmount(n):`<span>${nwTTRewardIcon(k)} ${n} × ${nwTTNames[k]}</span>`}
+function nwTTItem(k,n){return k==='diamonds'?nwDiamondAmount(n):`<span>${{ticket:'🎟',undo:'↶',shuffle:'⤨',magic:'꩜'}[k]} ${n} × ${nwTTNames[k]}</span>`}
 function nwTTModal(title,html,actions){const o=document.createElement('div');o.className='nw43-overlay';o.innerHTML=`<section role="dialog" aria-modal="true" aria-label="${nwEscape(title)}" class="nw43-dialog"><h2>${nwEscape(title)}</h2>${html}<div class="nw43-actions">${actions.map((a,i)=>`<button type="button" data-tt-modal="${i}" ${a.disabled?'disabled':''}>${a.html??nwEscape(a.label)}</button>`).join('')}</div></section>`;evRoot.appendChild(o);o.querySelectorAll('[data-tt-modal]').forEach(b=>b.onclick=()=>{const a=actions[+b.dataset.ttModal];o.remove();a.run?.()});o.querySelector('button:not([disabled])')?.focus();}
 // V43.2: reward presentation only.
 function nw432Rewards(items){return `<div class="nw432-rewards ${items.length===1?'single':''}">${items.map(([k,n],i)=>{const booster=['undo','shuffle','magic'].includes(k);const icon=k==='shuffle'?'<svg viewBox="0 0 64 64"><path d="M7 17h8c15 0 18 30 34 30h7m-9-9 9 9-9 9M7 47h8c15 0 18-30 34-30h7m-9-9 9 9-9 9" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>':k==='undo'?'<svg viewBox="0 0 64 64"><path d="M25 12 9 28l16 16M10 28h25a15 15 0 0 1 0 30H23" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>':nwTTRewardIcon(k);return `<div class="nw432-prize ${booster?'is-booster':'is-currency'} prize-${k}" style="--delay:${i*70}ms" role="group" aria-label="${n} ${nwTTNames[k]}"><span class="nw432-category">${booster?'BOOSTER':k==='ticket'?'EVENT TICKET':'DIAMONDS'}</span><span class="nw432-icon" aria-hidden="true">${icon}</span><strong>${nwTTNames[k]}</strong><b>${booster?'×':'+'}${n.toLocaleString()}</b></div>`}).join('')}</div>`;}
@@ -783,88 +782,16 @@ function nw432Destination(items){const k=new Set(items.map(([x])=>x));return k.s
 function nwTTShowNotices(){if(evRoot.querySelector('.nw43-overlay')||!nwTripleInEvent())return;const d=nwTripleData(),n=d.notices[0];if(!n)return;nwTTModal('Congratulations!',`<p>${nwEscape(n.title)}</p>${nw432Rewards(n.items)}<p>${nw432Destination(n.items)}</p>`,[{label:'AWESOME!',run:()=>{const latest=nwTripleData();latest.notices.shift();nwTripleSave(latest);nwTTShowNotices()}}]);}
 function nwTTWelcomePopup(){const d=nwTripleData();if(d.welcomed){nwTTShowNotices();return;}nwTTModal('Welcome to Triple Trouble!',`<p>Here are your gifts for this event. Use them wisely!</p>${nw432Rewards([['undo',1],['shuffle',1],['magic',1]])}`,[{label:'CLAIM MY GIFTS',run:()=>{const latest=nwTripleData();nwTTWelcome(latest);nwTripleSave(latest);nwTripleHome()}}]);}
 function nwTTBuy(kind){if(!nwTripleInEvent())return;const d=nwTripleData();const redraw=()=>{if(nwTriple)nwTripleDraw();else nwTripleHome()};const account=nwPlayerStorageKey(nwTripleKey);const buy=()=>{if(!account||account!==nwPlayerStorageKey(nwTripleKey))return;const state=nwTripleData(),error=nwTTPurchase(state,kind,'diamonds');if(error){nwTTModal('Not available',`<p>${nwEscape(error)}</p>`,[{label:'OK'}]);return;}nwTripleSave(state);redraw();};nwTTModal('Get '+nwTTNames[kind],`<p>Diamond balance: ${nwDiamondAmount(d.diamonds)}</p>${kind==='ticket'?`<p>${d.spent}/10,000 Diamonds spent on tickets</p>`:''}<p>Rewarded ads are coming soon.</p>`,[{label:'Buy for '+nwTTPrices[kind]+' Diamonds',disabled:d.diamonds<nwTTPrices[kind]||(kind==='ticket'&&d.spent+100>10000),run:buy},{label:'Watch Ad',run:()=>nw433ComingSoon(()=>nwTTBuy(kind))},{label:'Cancel'}]);}
-function nwTTRewardIcon(k){return k==='diamonds'?'<img class="nw-diamond-icon" src="assets/currency/diamond.png" alt="">':k==='ticket'?'<img class="nw-tt-ticket-icon" src="assets/triple/triple_ticket.png" alt="">':k==='magic'?'<span class="nw-triple-spiral" aria-hidden="true"></span>':`<span aria-hidden="true">${{shuffle:'⤨',undo:'↶'}[k]}</span>`;}
+function nwTTRewardIcon(k){return k==='diamonds'?'<img class="nw-diamond-icon" src="assets/currency/diamond.png" alt="">':k==='magic'?'<span class="nw-triple-spiral" aria-hidden="true"></span>':`<span aria-hidden="true">${{ticket:'🎟',shuffle:'⤨',undo:'↶'}[k]}</span>`;}
 function nwTTPackArt(p,i){return `<div class="nw431-pack tier-${i}"><div class="nw431-pack-top"><span class="nw431-pack-art" aria-hidden="true">${Array.from({length:i+2},(_,j)=>`<i style="--n:${j}">✦</i>`).join('')}</span><div><strong>${p.tickets} Tickets</strong><small>${nwDiamondAmount(p.diamonds)} Diamonds</small></div><b class="nw431-price">RM${p.price}</b></div><div class="nw431-bonuses"><span>${nwTTRewardIcon('shuffle')} ${p.shuffle} Shuffle</span>${p.magic?`<span>${nwTTRewardIcon('magic')} ${p.magic} Magic Clear</span>`:''}</div></div>`;}
 function nwTTShop(){const d=nwTripleData();nwTTModal('More tickets',`<p>${nwTTCount(d)} available</p><p>Premium packs · coming soon</p>`,[{label:'Get a ticket · Diamonds or Watch Ad',run:()=>nwTTBuy('ticket')},...nwTTPacks.map((p,i)=>({label:`RM${p.price} pack`,html:nwTTPackArt(p,i),run:()=>nw433ComingSoon(nwTTShop)})),{label:'Close'}]);}
 function nwTTRank(){const d=nwTripleData();nwTTModal('Leaderboard',`<div class="nw431-rank-result"><small>YOUR HIGHEST STAGE</small><strong>${d.best}</strong><span>Online rankings · coming soon</span></div><p>Progress in this version is saved on this device.</p>`,[{label:'Close'}]);}
 function nwTTTime(ms){const n=Math.max(0,Math.ceil(ms/1000));return `${String(Math.floor(n/60)).padStart(2,'0')}:${String(n%60).padStart(2,'0')}`}
-function nwTTTicketMarkup(d){return `<div class="nw43-tickets"><span>${nwTTRewardIcon('ticket')} <strong data-tt-total>${nwTTCount(d)}</strong> tickets</span><small data-tt-timer>${d.natural===10?'Free tickets full':'Next free ticket '+nwTTTime(d.next-nwTTNow())} · ${d.natural}/10 free · ${d.extra} extra</small><button type="button" data-tt-buy-ticket>+ TICKETS</button></div>`}
-// Triple Trouble daily missions: player-scoped, UTC-bound, with durable unclaimed archive.
-const nwTTMissionKey='nineweird-triple-daily-missions-v1';
-const nwTTMissionDefs=[
- ['plays',1,1,'Play 1 Triple Trouble stage'],
- ['matches',10,2,'Match 10 sets of 3 tiles'],
- ['matches',25,2,'Match 25 sets of 3 tiles'],
- ['matches',50,3,'Match 50 sets of 3 tiles'],
- ['undo',1,1,'Use Undo once'],
- ['shuffle',1,1,'Use Shuffle once'],
- ['magic',1,1,'Use Magic Clear once'],
- ['worlds',1,1,'Complete 1 Worlds Sudoku puzzle'],
- ['worlds',2,2,'Complete 2 Worlds Sudoku puzzles'],
- ['battles',1,1,'Play 1 Battle match']
-];
-function nwTTMissionRead(){
- const today=nwTTDay(nwTTNow());
- const raw=nwRead(nwTTMissionKey,null);
- const d=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{day:today,counts:{},claimed:[],pending:[]};
- if(!Array.isArray(d.claimed))d.claimed=[];
- if(!Array.isArray(d.pending))d.pending=[];
- if(!d.counts||typeof d.counts!=='object')d.counts={};
- if(d.day!==today){
-  // A finished task is banked even if the player never opened the Missions screen.
-  if(d.day){
-   nwTTMissionDefs.forEach(([type,need,prize],i)=>{
-    if((d.counts[type]||0)>=need&&!d.claimed.includes(i)&&!d.pending.some(x=>x.id===d.day+':'+i))d.pending.push({id:d.day+':'+i,amount:prize});
-   });
-  }
-  d.day=today;d.counts={};d.claimed=[];
- }
- nwWrite(nwTTMissionKey,d);return d;
-}
-function nwTTMissionEvent(type,n=1){
- if(!nwTripleInEvent()||!nwPlayerStorageKey(nwTTMissionKey))return;
- const d=nwTTMissionRead();d.counts[type]=Math.min(999999,(d.counts[type]||0)+n);nwWrite(nwTTMissionKey,d);
-}
-function nwTTUnclaimedCount(){const d=nwTTMissionRead();return d.pending.length+nwTTMissionDefs.filter(([type,need],i)=>(d.counts[type]||0)>=need&&!d.claimed.includes(i)).length;}
-function nwTTMissionClaim(id){
- const account=nwPlayerStorageKey(nwTTMissionKey);if(!account)return false;
- const m=nwTTMissionRead();let prize=0;
- if(id.startsWith('old:')){
-  const index=m.pending.findIndex(x=>x.id===id.slice(4));if(index<0)return false;
-  prize=m.pending[index].amount;m.pending.splice(index,1);
- }else{
-  const i=Number(id),def=nwTTMissionDefs[i];if(!def||m.claimed.includes(i)||(m.counts[def[0]]||0)<def[1])return false;
-  prize=def[2];m.claimed.push(i);
- }
- if(!prize)return false;
- const d=nwTripleData();d.extra+=prize;
- // Keep these rewards transferable across the weekly ticket reset.
- d.missionTickets=(d.missionTickets||0)+prize;
- nwTripleSave(d);nwWrite(nwTTMissionKey,m);return true;
-}
-function nwTTMissionsScreen(){
- if(!nwTripleInEvent()){nwTripleHome();return;}
- const d=nwTTMissionRead();
- const items=nwTTMissionDefs.map(([type,target,prize,label],i)=>{
-  const progress=Math.min(target,d.counts[type]||0),done=d.claimed.includes(i),ready=progress===target&&!done;
-  return {i,label,target,progress,prize,done,ready};
- }).sort((a,b)=>Number(b.ready)-Number(a.ready)||Number(a.done)-Number(b.done)||a.i-b.i);
- nwTTModal('DAILY MISSIONS',`<div class="nw-tt-missions-intro">Resets at 00:00 UTC · Up to 15 tickets per day</div><div class="nw-tt-mission-list">${d.pending.map(x=>`<div class="nw-tt-mission is-ready"><div><strong>Previous day's reward</strong><small>Already earned · ${x.amount} tickets</small></div><button type="button" data-tt-claim="old:${nwEscape(x.id)}">CLAIM ${x.amount}</button></div>`).join('')}${items.map(x=>`<div class="nw-tt-mission ${x.ready?'is-ready':''} ${x.done?'is-done':''}"><div><strong>${nwEscape(x.label)}</strong><small>${x.progress} / ${x.target} · ${x.prize} ${nwTTRewardIcon('ticket')}</small></div>${x.done?'<span class="nw-tt-mission-complete">CLAIMED</span>':x.ready?`<button type="button" data-tt-claim="${x.i}">CLAIM</button>`:'<span class="nw-tt-mission-locked">IN PROGRESS</span>'}</div>`).join('')}</div>`,[{label:'BACK TO EVENT'}]);
- const modal=evRoot.querySelector('.nw43-overlay:last-child');
- modal?.querySelectorAll('[data-tt-claim]').forEach(b=>b.onclick=()=>{if(nwTTMissionClaim(b.dataset.ttClaim)){modal.remove();const btn=evRoot.querySelector('#nwTTMissionsBtn');btn?.classList.toggle('nw-tt-claim-ready',!!nwTTUnclaimedCount());nwTTMissionsScreen();}});
-}
-function nwTTShowPendingMissionPopup(){
- if(evRoot.querySelector('.nw43-overlay'))return;
- const d=nwTTMissionRead();if(!d.pending.length)return;
- const qty=d.pending.reduce((s,x)=>s+x.amount,0);
- nwTTModal('You have unclaimed rewards!',`<p>Daily missions from a previous reset</p>${nw432Rewards([['ticket',qty]])}`,[{label:'CLAIM ALL',run:()=>{
-  const fresh=nwTTMissionRead();const ids=fresh.pending.map(x=>'old:'+x.id);ids.forEach(nwTTMissionClaim);nwTripleHome();
- }}]);
-}
+function nwTTTicketMarkup(d){return `<div class="nw43-tickets"><span>🎟 <strong data-tt-total>${nwTTCount(d)}</strong> tickets</span><small data-tt-timer>${d.natural===10?'Free tickets full':'Next free ticket '+nwTTTime(d.next-nwTTNow())} · ${d.natural}/10 free · ${d.extra} extra</small><button type="button" data-tt-buy-ticket>+ TICKETS</button></div>`}
 function nwTTProgress(d){const reached=Math.min(d.best,30),next=nwTTMilestones.find(x=>x[0]>reached),fill=Math.max(0,Math.min(100,(reached-2)/28*100));return `<section class="nw431-track" aria-label="Milestone rewards"><div class="nw43-progress-label"><strong>MILESTONE REWARDS</strong><b>${reached} / 30</b></div><div class="nw433-scroll" tabindex="0" aria-label="Swipe to explore the reward milestones"><div class="nw431-journey" style="--fill:${fill}%"><div class="nw431-rail"><i></i></div>${nwTTMilestones.map(([m,items])=>`<div data-tt-milestone="${m}" class="nw431-stop ${d.claimed.includes(m)?'earned':''} ${next?.[0]===m?'next':''}" aria-label="Stage ${m}: ${items.map(([k,n])=>n+' '+nwTTNames[k]).join(', ')}, ${d.claimed.includes(m)?'claimed':'locked'}"><div class="nw431-reward">${items.map(([k,n])=>`<span class="nw433-item">${nwTTRewardIcon(k)}<small>${n}</small></span>`).join('')}</div><i class="nw431-node">${d.claimed.includes(m)?'✓':''}</i><small>${m}</small></div>`).join('')}</div></div><p>${next?`Next: Stage ${next[0]} · ${next[1].map(([k,n])=>nwTTItem(k,n)).join(' + ')}`:'All milestones completed!'}</p></section>`;}
 function nw433FocusTrack(){const sc=evRoot.querySelector('.nw433-scroll');if(!sc)return;const node=sc.querySelector('.nw431-stop.next')||sc.querySelector('.nw431-stop:last-child');if(node)sc.scrollLeft=Math.max(0,node.offsetLeft-(sc.clientWidth-node.offsetWidth)/2);}
 
-function nwTTBind(){evRoot.querySelectorAll('[data-tt-buy-ticket]').forEach(b=>b.onclick=nwTTShop);if(!nwTriple)nwTTShowPendingMissionPopup();nwTTShowNotices()}
+function nwTTBind(){evRoot.querySelectorAll('[data-tt-buy-ticket]').forEach(b=>b.onclick=nwTTShop);nwTTShowNotices()}
 function nwTTAbandon(retry){const s=nwTriple;if(!s||s.won){nwTripleHome();return;}if(s.practice){if(s.lost){const d=nwTriplePracticeData();delete d.active;nwWrite('nineweird-triple-practice-v2',d);}nwTriple=null;nwTripleHome();return;}const finish=()=>{const d=nwTripleData();if(d.active){nwTTSpendTicket(d);delete d.active;nwTripleSave(d);}nwTriple=null;if(retry&&nwTTCount(d)>0)nwTripleBegin(d.stage);else nwTripleHome();};if(s.lost)finish();else nwTTModal('Leave this attempt?',`<p>Abandoning the stage uses one ticket. Your boosters already used will not return.</p>`,[{label:'Leave · lose 1 ticket',run:finish},{label:'Keep playing'}]);}
 // A reopened browser forfeits an unfinished event attempt once, not on routine redraw.
 function nwTTRecoverInterrupted(){if(!nwTripleInEvent())return;const d=nwTripleData();if(d.active){nwTTSpendTicket(d);delete d.active;nwTripleSave(d);}}
@@ -1026,7 +953,6 @@ function nwTripleChoose(id){
  const i=s.tiles.findIndex(t=>t.id===id);if(i<0||!nwTripleAvailable(s.tiles[i]))return;
  nwTripleRemember();const [tile]=s.tiles.splice(i,1);s.tray.push(tile);
  const count=s.tray.filter(t=>t.symbol===tile.symbol);
- if(count.length===3&&!s.practice)nwTTMissionEvent('matches',1);
  if(count.length===3){let removed=0;s.tray=s.tray.filter(t=>{if(t.symbol===tile.symbol&&removed<3){removed++;return false}return true})}
  if(!s.tiles.length&&!s.tray.length){s.won=true}
  else if(s.tray.length>=7)s.lost=true;
@@ -1083,7 +1009,7 @@ function nwTripleBooster(kind){
  if(s.practice?s.used[kind]:!nwTripleData().boosters[kind]){if(!s.practice)nwTTBuy(kind);return;}
  const result=nw431BoosterPlan(s,kind);
  if(!result){if(!s.practice)nwTTModal('Booster not used','<p>No valid change was possible. Your booster has not been consumed.</p>',[{label:'OK'}]);return;}
- nwTriple=result.state;nwTriplePersist(kind);if(!s.practice)nwTTMissionEvent(kind,1);nwTripleDraw();if(result.cleared!==null)nw431ClearEffect(result.cleared);
+ nwTriple=result.state;nwTriplePersist(kind);nwTripleDraw();if(result.cleared!==null)nw431ClearEffect(result.cleared);
 }
 const nwTTRecovered=new Set();
 function nwTripleHome(){
@@ -1091,15 +1017,15 @@ function nwTripleHome(){
  evSudokuLeave();nwTriple=null;applyTheme('hub');evRoot.classList.add('nw-triple-theme');const d=nwTripleSessionData(),event=nwTripleInEvent();
  evDisplay(`${evHeader('EVENTS',showCategories)}<section class="nw-triple nw-triple-home">
  <div class="nw-triple-sparks" aria-hidden="true">⋆˚<span class="nw-triple-spiral"></span>｡</div><div class="nw-triple-mascots">${nwTripleMascots()}</div>
- <h2 class="nw-triple-logo">TRIPLE<br><span>TROUBLE</span></h2><div class="nw-tt-schedule" aria-label="Triple Trouble: Monday through Wednesday UTC"><span class="nw-tt-live-dot" aria-hidden="true"></span><strong>MON — WED</strong><span class="nw-tt-days"><i>M</i><i>T</i><i>W</i></span><small>UTC</small></div>
- ${event?`${nwTTTicketMarkup(d)}${nwTTProgress(d)}<div class="nw431-ranking"><span>Highest stage: ${d.best}</span><div class="nw-tt-rank-actions"><button id="nw431Rank" type="button">♜ RANK</button><button id="nwTTMissionsBtn" type="button" class="${nwTTUnclaimedCount() ? 'nw-tt-claim-ready' : ''}">✦ MISSIONS</button></div></div>`:`<p>Practice mode · no event rewards or ticket cost</p>`}
+ <h2 class="nw-triple-logo">TRIPLE<br><span>TROUBLE</span></h2><div class="nw-triple-ribbon">MONDAY – WEDNESDAY</div>
+ ${event?`${nwTTTicketMarkup(d)}${nwTTProgress(d)}<div class="nw431-ranking"><span>Highest stage: ${d.best}</span><button id="nw431Rank" type="button">♜ RANK</button></div>`:`<p>Practice mode · no event rewards or ticket cost</p>`}
  <button id="nwTripleStart" class="nw-triple-main-btn"><span class="nw-triple-play-symbol" aria-hidden="true">▹</span><span>${d.active?'CONTINUE STAGE '+d.stage:'PLAY STAGE '+d.stage}</span></button>
  </section>`);
  evRoot.querySelector('#nwTripleStart').onclick=()=>nwTripleBegin(d.stage,true);
  nw433FocusTrack();
- if(event){evRoot.querySelector('#nw431Rank').onclick=nwTTRank;evRoot.querySelector('#nwTTMissionsBtn').onclick=nwTTMissionsScreen;if(!d.welcomed)nwTTWelcomePopup();else nwTTBind()}else nwTTShowPendingMissionPopup();
+ if(event){evRoot.querySelector('#nw431Rank').onclick=nwTTRank;if(!d.welcomed)nwTTWelcomePopup();else nwTTBind()}
 }
-function nwTripleBegin(stage,resume=false){const d=nwTripleSessionData();if(nwTripleInEvent()){if(!d.welcomed){nwTTWelcomePopup();return;}if(nwTTCount(d)<=0){nwTTShop();return;}stage=d.stage;}const a=d.active;if(nwTripleInEvent()&&!(resume&&a?.version>=2&&a.stage===stage&&!a.won))nwTTMissionEvent('plays',1);nwTriple=resume&&a?.version>=2&&a.stage===stage&&!a.won&&a.week===nwTripleWeek()&&a.practice===!nwTripleInEvent()?a:nwTripleCreate(stage);nwTripleDraw()}
+function nwTripleBegin(stage,resume=false){const d=nwTripleSessionData();if(nwTripleInEvent()){if(!d.welcomed){nwTTWelcomePopup();return;}if(nwTTCount(d)<=0){nwTTShop();return;}stage=d.stage;}const a=d.active;nwTriple=resume&&a?.version>=2&&a.stage===stage&&!a.won&&a.week===nwTripleWeek()&&a.practice===!nwTripleInEvent()?a:nwTripleCreate(stage);nwTripleDraw()}
 function nwTripleStackArt(symbol,depth){
  return Array.from({length:Math.max(0,depth-1)},(_,i)=>`<span class="nw-triple-hidden-back" style="--tt-back:${depth-1-i}" aria-hidden="true"></span>`).join('')+`<span class="nw-triple-stack-face">${nwTripleArt(symbol)}</span>`;
 }
@@ -1422,7 +1348,7 @@ function evSudokuPlace(n){
   s.wrong.delete(i);evSudokuPaint();evSudokuCheck();
 }
 function sudokuSymbol(n){return (currentWorld==='halloween'||currentWorld==='patissserie'||currentWorld==='christmas'||currentWorld==='fairy'||currentWorld==='olympus'||currentWorld==='nineties'||currentWorld==='weird'||currentWorld==='ugly'||currentWorld==='alien'||currentWorld==='diner'||currentWorld==='bodyparts'||currentWorld==='deepsea'||currentWorld==='solarsick'||currentWorld==='dontunwrap'||currentWorld==='unpreparedchristmas'||currentWorld==='underthebed'||currentWorld==='balloonwrong'||currentWorld==='donttakewater'||currentWorld==='baggagehell'||currentWorld==='cakefail')?`<img src="${sudokuSrc(n)}" alt="${n}">`:`<span class="number-symbol">${n}</span>`;}
-function evSudokuEnd(won){const s=sudoku;if(!s)return;if(!s.practiceOpponent)nwSaveResult(s,won);applyTheme(worlds[currentWorld].theme);const elapsed=Math.floor((Date.now()-s.start)/1000);const duration=`${Math.floor(elapsed/60)}:${String(elapsed%60).padStart(2,'0')}`;const pts=won?difficulties[s.difficulty].points+([100,70,30][s.mistakes]||0):0;if(s.practiceOpponent){nwBattleFinish(s,won,pts,elapsed);return;}if(won&&!s.pointsCredited){nwAwardPoints(pts);s.pointsCredited=true;}if(won)nwCaptureRun(s,pts);if(won&&!s.doublePractice)nwTTMissionEvent('worlds',1);if(s.doublePractice){nwDoublePracticeAfterSudoku(s,won,pts);return;}evDisplay(`${evHeader(worlds[currentWorld].name,showRooms)}<section class="result-panel"><div class="result-mark">${won?'✦':'×'}</div><h2>${won?'Puzzle Completed!':'Puzzle Not Completed'}</h2>${won?`<div class="result-score"><small>TOTAL POINTS</small><strong>${pts.toLocaleString()}</strong></div>`:'<p>Three mistakes. Try again!</p>'}<div class="result-stats"><div>DIFFICULTY<strong>${s.difficulty.toUpperCase()}</strong></div><div>TIME<strong>${duration}</strong></div><div>MISTAKES<strong>${s.mistakes} / 3</strong></div></div><div class="result-actions"><button class="theme-button" id="evSudoAgain">${won?'PLAY AGAIN':'RETRY'}</button><button class="theme-button" id="evSudoBack">BACK TO ROOMS</button></div>${nwRecordingControls()}</section>`);nwBindRecordingControls();evRoot.querySelector('#evSudoAgain').onclick=()=>evSudokuStart(s.difficulty);evRoot.querySelector('#evSudoBack').onclick=()=>showRooms();}
+function evSudokuEnd(won){const s=sudoku;if(!s)return;if(!s.practiceOpponent)nwSaveResult(s,won);applyTheme(worlds[currentWorld].theme);const elapsed=Math.floor((Date.now()-s.start)/1000);const duration=`${Math.floor(elapsed/60)}:${String(elapsed%60).padStart(2,'0')}`;const pts=won?difficulties[s.difficulty].points+([100,70,30][s.mistakes]||0):0;if(s.practiceOpponent){nwBattleFinish(s,won,pts,elapsed);return;}if(won&&!s.pointsCredited){nwAwardPoints(pts);s.pointsCredited=true;}if(won)nwCaptureRun(s,pts);if(s.doublePractice){nwDoublePracticeAfterSudoku(s,won,pts);return;}evDisplay(`${evHeader(worlds[currentWorld].name,showRooms)}<section class="result-panel"><div class="result-mark">${won?'✦':'×'}</div><h2>${won?'Puzzle Completed!':'Puzzle Not Completed'}</h2>${won?`<div class="result-score"><small>TOTAL POINTS</small><strong>${pts.toLocaleString()}</strong></div>`:'<p>Three mistakes. Try again!</p>'}<div class="result-stats"><div>DIFFICULTY<strong>${s.difficulty.toUpperCase()}</strong></div><div>TIME<strong>${duration}</strong></div><div>MISTAKES<strong>${s.mistakes} / 3</strong></div></div><div class="result-actions"><button class="theme-button" id="evSudoAgain">${won?'PLAY AGAIN':'RETRY'}</button><button class="theme-button" id="evSudoBack">BACK TO ROOMS</button></div>${nwRecordingControls()}</section>`);nwBindRecordingControls();evRoot.querySelector('#evSudoAgain').onclick=()=>evSudokuStart(s.difficulty);evRoot.querySelector('#evSudoBack').onclick=()=>showRooms();}
 
 function evSudokuCheck(){
   const s=sudoku;if(!s||s.done||!s.values.every((v,i)=>v===s.answer[i]))return;
