@@ -829,7 +829,7 @@ function nwTTMissionReady(){
  return d.pending.length+nwTTMissionDefs.filter(([kind,target],i)=>(d.counts[kind]||0)>=target&&!d.claimed.includes(i)).length;
 }
 function nwTTMissionClaim(id){
- const account=nwPlayerStorageKey(nwTTMissionKey);if(!account||account!==nwPlayerStorageKey(nwTripleKey))return false;
+ const account=nwPlayerStorageKey(nwTTMissionKey);if(!account)return false;
  const m=nwTTMissionRead();let reward=0;
  if(id.startsWith('old:')){
   const i=m.pending.findIndex(p=>p.id===id.slice(4));if(i<0)return false;
@@ -858,7 +858,7 @@ function nwTTMissionsScreen(){
  dlg?.querySelectorAll('[data-tt-claim]').forEach(button=>button.onclick=()=>{
   button.disabled=true;
   if(nwTTMissionClaim(button.dataset.ttClaim)){
-   dlg.remove();nwTripleHome();nwTTMissionsScreen();
+   dlg.remove();const count=evRoot.querySelector('[data-tt-total]');if(count)count.textContent=nwTTCount(nwTripleData());const btn=evRoot.querySelector('#nwTTMissionsBtn');if(btn)btn.classList.toggle('nw-tt-claim-ready',!!nwTTMissionReady());nwTTMissionsScreen();
   }else button.disabled=false;
  });
 }
