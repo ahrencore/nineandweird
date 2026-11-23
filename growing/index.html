@@ -62,4 +62,64 @@
 @keyframes floaty{0%,100%{translate:0 0}50%{translate:0 -7px}}
 @media(max-width:370px){.g-creature-left{width:112px;left:0}.g-creature-right{width:120px;right:0}.g-creature-center{width:150px}.growing-hero{height:320px}.growing-creatures{height:155px}.growing-lobby-nav .btn span{font-size:8px}}
 @media(prefers-reduced-motion:reduce){.g-creature{animation:none}}
-</style></head><body><main id="app" class="shell"></main><script src="engine.js"></script><script src="app.js"></script></body></html>
+
+/* Dark Plum — approved palette; scoped only to They're Growing! */
+:root{--bg:#1A0F1F;--panel:#24152C;--rim:#7B5D87;--pink:#F7EEF5;--lime:#B9F25A;--text:#F7EEF5;--muted:#CDBFD0}
+html,body{background:#0F0912}
+.shell{min-height:0;width:100%;max-width:100%;padding:12px 20px 35px;overflow:visible;background:radial-gradient(ellipse at 50% 8%,#2A1932 0%,#1A0F1F 48%,#0F0912 100%);box-shadow:none}
+/* Parent game owns the Back/Diamonds/Settings header. */
+.growing-hero{height:auto;min-height:0;margin:0 -8px 6px;padding:20px 6px 14px;overflow:visible;background:radial-gradient(ellipse at 50% 46%,#3B274347,transparent 62%)}
+.growing-hero:before{inset:0;background:radial-gradient(ellipse at 50% 50%,#B9F25A0B,transparent 60%);filter:blur(12px)}
+.growing-hero:after{display:none}
+.growing-hero-heading{padding-top:2px}
+.growing-eyebrow{font-size:26px;line-height:1.2;letter-spacing:7px;color:#D6C5DB;font-family:Georgia,serif;font-weight:400}
+.growing-hero .title{color:#F7EEF5;-webkit-text-stroke:0;text-shadow:0 0 13px #B9F25A4D,0 3px 3px #0F0912;margin:11px 0 15px}
+.growing-event-pill{background:#211626;border-color:#7B5D87;color:#DFFF7A}
+.growing-creatures,.g-creature{display:none!important}
+.growing-motes i{background:#B9F25A;box-shadow:0 0 8px #B9F25A66;opacity:.6}
+.growing-dashboard{margin:9px 0 12px}
+.growing-score-block,.growing-energy-block{background:linear-gradient(155deg,#2B1C33,#211428);border-color:#7B5D87;box-shadow:inset 0 1px #F7EEF510,0 8px 24px #09060E30}
+.growing-dashboard strong{color:#F7EEF5;text-shadow:0 0 10px #B9F25A29}
+.growing-energy-block strong{color:#B9F25A}
+.g-label{color:#CDBFD0}
+.growing-actions .btn{background:linear-gradient(155deg,#2B1C33,#211428);border-color:#7B5D87;color:#F7EEF5}
+.btn.growing-start{background:linear-gradient(180deg,#DFFF7A,#A7D74F);color:#17200E;border-color:#E7FFA4;border-bottom-color:#607D2D}
+.growing-lobby-nav .btn,.btn,.milestone-card,.milestone-prize,.mission-row,.item,.stat,.mini,.panel{background:#24152C;border-color:#7B5D87;color:#F7EEF5}
+.btn{color:#F7EEF5}
+.milestone-title,.panel h3,.modal h2{color:#F7EEF5}
+.milestone-prize strong,.milestone-stop small,.milestone-foot,.mission-main small{color:#CDBFD0}
+.milestone-rail{background:#57415D}
+.milestone-node{background:#24152C;border-color:#7B5D87}
+.modal{background:radial-gradient(ellipse at 50% 0%,#35243C,#1A0F1F 75%,#0F0912);border-color:#7B5D87;box-shadow:0 0 34px #08060B99}
+.modal-shade{background:#0F0912DD}
+.prize-card{background:radial-gradient(circle at 50% 15%,#3B2A43,#24152C 70%)}
+.mini b{background:#1A0F1F;border-color:#7B5D87}
+.hex polygon{fill:#24152C;stroke:#7B5D87}
+.hex.selected polygon{fill:#35432B;stroke:#B9F25A}
+.hex text{stroke:#0F0912}
+*{scrollbar-color:#7B5D87 #1A0F1F;scrollbar-width:thin}
+::-webkit-scrollbar-track{background:#1A0F1F}
+::-webkit-scrollbar-thumb{background:#7B5D87;border-color:#24152C}
+::-webkit-scrollbar-thumb:hover{background:#B9F25A}
+/* Full height in the parent removes the second vertical scrollbar. */
+body.nw-growing-embedded,body.nw-growing-embedded .shell{min-height:0!important;height:auto!important}
+body.nw-growing-embedded{overflow-y:hidden}
+@media(max-width:480px){.shell{padding:12px 12px 30px}.growing-hero .title{font-size:clamp(28px,8vw,43px)}}
+</style></head><body><main id="app" class="shell"></main><script src="engine.js"></script><script src="app.js"></script><script>
+(function(){
+  if(window.parent===window)return;
+  document.body.classList.add('nw-growing-embedded');
+  var frame=window.frameElement;
+  if(!frame)return;
+  var scheduled=false;
+  function fit(){scheduled=false;var app=document.getElementById('app');if(!app)return;
+    var height=Math.ceil(app.getBoundingClientRect().height+4);
+    if(height>0&&Math.abs(frame.offsetHeight-height)>2)frame.style.height=height+'px';
+  }
+  function queueFit(){if(!scheduled){scheduled=true;requestAnimationFrame(fit)}}
+  new ResizeObserver(queueFit).observe(document.getElementById('app'));
+  window.addEventListener('load',queueFit);
+  window.addEventListener('resize',queueFit);
+  queueFit();
+})();
+</script></body></html>

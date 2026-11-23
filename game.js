@@ -1106,7 +1106,7 @@ function showCategories(){
     <section class="nw-event-carousel" aria-label="Events"><div class="nw-event-heading">EVENTS</div><div class="nw-event-viewport"><div class="nw-event-track">
     ${portal('nwTriplePortal','triple','TRIPLE<br>TROUBLE','⋆˚꩜｡')}
     ${portal('nwDoublePortal','double','DOUBLE<br>TROUBLE','⋆ ☁︎ ☾ ⋆')}
-    ${portal('nwGrowingPortal','growing','THEY\'RE<br>GROWING!','<span class="nw-growing-lobby-mascots"><img src="growing/assets/10_crab.png" alt=""><img src="growing/assets/13_bat.png" alt=""><img src="growing/assets/20_tentacles.png" alt=""></span>')}
+    ${portal('nwGrowingPortal','growing','THEY\'RE<br>GROWING!','･ ༝ ･')}
     ${portal('nwBattle','battle','BATTLE','ϟ ☢ ϟ')}
     </div></div><div class="nw-event-controls"><button type="button" class="nw-event-prev" aria-label="Previous event">‹</button><div class="nw-event-dots"></div><button type="button" class="nw-event-next" aria-label="Next event">›</button></div></section>
     <div class="nw-lobby-bottom">${nav('nwFavorites','FAVORITES',`<span class="nw-lobby-nav-art nw-lobby-heart" aria-hidden="true"></span>`)}${nav('nwTrophy','TROPHY CASE',`<span class="nw-lobby-nav-art nw-lobby-trophy"><svg viewBox="0 0 80 70" aria-hidden="true"><path d="M24 11H56V29Q56 44 40 47Q24 44 24 29Z M24 16H11V25Q11 39 29 39 M56 16H69V25Q69 39 51 39 M40 47V58 M27 62H53" fill="none" stroke="#ffcf9a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 16l3 8 8 3-8 3-3 8-3-8-8-3 8-3Z" fill="#ffe6bb"/></svg></span>`)}${nav('nwLobbyShop','SHOP',`<span class="nw-lobby-nav-art">${nwLobbyIcon('shop')}</span>`)}</div></section>`);

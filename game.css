@@ -4148,61 +4148,67 @@ html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:n
 .nw-shared-settings-dialog h2{margin:0;font-size:22px}
 .nw-shared-settings-dialog button,.nw-shared-settings-dialog a{display:block;color:inherit;background:transparent;border:1px solid currentColor;border-radius:10px;padding:12px;font:inherit;text-decoration:none;cursor:pointer}
 
-/* V43.5 focused fix: They're Growing! lobby event planet only. */
+/* Growing only: approved Dark Plum header + single page scrollbar. */
+#game.nw-growing-live-shell{background:#0F0912!important;color:#F7EEF5}
+#game.nw-growing-live-shell>.ev-head{background:#0F0912!important;border-color:#7B5D8744!important;color:#F7EEF5!important;box-shadow:none!important}
+#game.nw-growing-live-shell>.ev-head>strong{display:none!important}
+#game.nw-growing-live-shell>.ev-head .ev-btn,#game.nw-growing-live-shell>.ev-head .ev-btn-alt{background:#24152C!important;border:1px solid #7B5D87!important;color:#F7EEF5!important;box-shadow:0 0 9px #B9F25A1F!important;text-shadow:none!important}
+#game.nw-growing-live-shell>.ev-head .nw-shared-wallet,#game.nw-growing-live-shell>.ev-head .nw-shared-settings{background:#24152C!important;border-color:#7B5D87!important;color:#F7EEF5!important;box-shadow:none!important}
+#game.nw-growing-live-shell .nw-growing-frame-container{background:#0F0912!important;min-height:0!important}
+#game.nw-growing-live-shell .nw-growing-frame-container iframe{height:auto;min-height:0!important;background:#0F0912!important;overflow:hidden;scrollbar-width:none}
+#game.nw-growing-live-shell{scrollbar-color:#7B5D87 #1A0F1F;scrollbar-width:thin}
+#game.nw-growing-live-shell::-webkit-scrollbar{width:8px}
+#game.nw-growing-live-shell::-webkit-scrollbar-thumb{background:#7B5D87;border-radius:12px}
+
+/* They're Growing! — Dark Plum lobby planet only. Leave other event planets untouched. */
 #game .nw-lobby-portal.growing{
- --portal-accent:#c8eb75;
- --portal-panel:#563165;
- --portal-bg:#21132c;
- color:#c8eb75;
+  --portal-accent:#7B5D87;
+  --portal-panel:#2B1833;
+  --portal-bg:#0F0912;
+  color:#F7EEF5;
 }
 #game .nw-lobby-portal.growing .nw-lobby-portal-disc{
- background:radial-gradient(circle at 36% 22%,#754186 0%,#442653 40%,#23172d 81%);
- border:2px solid #b9e973;
- box-shadow:inset 0 0 20px #e5a6ff15,0 0 11px #d589e54a;
- gap:1px;
- padding:9px 4px;
+  background:radial-gradient(circle at 37% 21%,#36213D 0%,#24152C 51%,#0F0912 100%);
+  border:2px solid #7B5D87;
+  box-shadow:inset 0 0 12px #B9F25A0D,0 0 10px #7B5D8733;
+  padding:6px 4px;
+  gap:7px;
+  justify-content:center;
 }
 #game .nw-lobby-portal.growing:not(.is-live) .nw-lobby-portal-disc{
- border-color:#986baf;
- box-shadow:inset 0 0 12px #e5a6ff15,0 0 7px #bb77cf39;
-}
-#game .nw-lobby-portal.growing strong{
- font-family:'Eater',Georgia,serif;
- font-size:clamp(10px,2.9vw,14px);
- font-weight:400;
- line-height:1.32;
- letter-spacing:-.045em;
- color:#f2b6ff;
- text-shadow:0 0 8px #e5a6ffae,0 0 15px #a444a999;
- animation:nwGrowingPulse 4s ease-in-out infinite;
+  border-color:#7B5D87;
+  box-shadow:inset 0 0 12px #B9F25A0D,0 0 7px #7B5D8733;
 }
 #game .nw-lobby-portal.growing .nw-lobby-portal-decor{
- display:flex;
- align-items:center;
- justify-content:center;
- width:100%;
- height:clamp(32px,8vw,45px);
- line-height:1;
+  display:block;
+  height:auto;
+  width:100%;
+  color:#B9F25A;
+  font-size:clamp(10px,2.6vw,13px);
+  line-height:1;
+  letter-spacing:2px;
+  text-shadow:0 0 8px #B9F25A7A;
 }
-#game .nw-lobby-portal.growing .nw-growing-lobby-mascots{
- display:flex;
- justify-content:center;
- align-items:center;
- width:100%;
- height:100%;
- gap:0;
+#game .nw-lobby-portal.growing strong{
+  font-family:'Eater',Georgia,serif;
+  font-weight:400;
+  font-size:clamp(11px,3.2vw,15px);
+  letter-spacing:-0.04em;
+  line-height:1.28;
+  text-align:center;
+  color:#F7EEF5;
+  text-shadow:0 0 7px #B9F25A55;
+  animation:nwGrowingPlanetMutation 4s ease-in-out infinite;
 }
-#game .nw-lobby-portal.growing .nw-growing-lobby-mascots img{
- display:block;
- height:100%;
- width:29%;
- object-fit:contain;
- filter:drop-shadow(0 2px 3px #090210c9);
-}
-#game .nw-lobby-portal.growing .nw-growing-lobby-mascots img:nth-child(2){transform:translateY(-4px) scale(1.05)}
-#game .nw-lobby-portal.growing .nw-lobby-event-orbit{color:#b9e973}
+#game .nw-lobby-portal.growing .nw-lobby-event-orbit{color:#B9F25A}
 #game .nw-lobby-portal.growing.is-live .nw-lobby-portal-disc{
- border-color:#bbf37d;
- box-shadow:0 0 18px #b9e9738a,inset 0 0 17px #b9e97328;
+  border-color:#B9F25A;
+  box-shadow:0 0 15px #B9F25A65,inset 0 0 12px #B9F25A18;
 }
+#game .nw-lobby-portal.growing.is-live strong{color:#F7EEF5}
+@keyframes nwGrowingPlanetMutation{0%,100%{transform:scale(1)}50%{transform:scale(1.035,1.055)}}
 @media(prefers-reduced-motion:reduce){#game .nw-lobby-portal.growing strong{animation:none}}
+/* Related Events-list thumbnail: same approved Dark Plum identity. */
+#game .nw-growing-event strong,#game .nw-growing-planet-title{color:#F7EEF5;text-shadow:0 0 7px #B9F25A55}
+#game .nw-growing-planet{background:radial-gradient(circle at 34% 19%,#36213D,#24152C 58%,#0F0912);border-color:#7B5D87;box-shadow:0 0 9px #7B5D8733}
+#game .nw-growing-ring{border-color:#B9F25A;box-shadow:0 0 5px #B9F25A55}
