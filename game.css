@@ -4236,3 +4236,8 @@ html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:n
 /* Updated Growing-only planet display font */
 #game .nw-lobby-portal.growing strong{font-family:'Creepster','Eater',Georgia,serif!important;font-size:clamp(15px,3.5vw,19px)!important;letter-spacing:.015em!important;line-height:1.05!important}
 
+
+/* They're Growing! — preserve native Back and shared balance in the event header */
+#game.nw-growing-live-shell>.ev-head{display:flex!important;align-items:center!important;width:100%!important;justify-content:space-between!important}
+#game.nw-growing-live-shell>.ev-head>.nw-shared-utilities{margin-left:auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important}
+#game.nw-growing-live-shell>.ev-head [data-back]{margin-right:auto!important;background:#24152C!important;color:#F7EEF5!important;border-color:#7B5D87!important}
