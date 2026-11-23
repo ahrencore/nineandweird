@@ -227,6 +227,11 @@ html,body,#app{font-family:'Bubblegum Sans','Trebuchet MS',sans-serif}
 .milestone-stop small{font-family:'Bubblegum Sans',sans-serif!important;font-size:12px!important;line-height:1.25!important;margin-top:7px!important;white-space:nowrap!important}
 .milestone-foot{padding:6px 0 2px!important;margin:0!important;font-size:12px!important;line-height:1.35!important}
 @media(max-width:540px){.milestone-stop{width:70px!important;min-width:70px!important;flex-basis:70px!important}.milestone-prize{width:70px!important}}
+
+/* Let the title glow on its own; remove only the wide backdrop glow. The class-photo stink clouds stay. */
+.growing-hero{background:transparent!important}
+.growing-hero:before{content:none!important;display:none!important;animation:none!important}
+.growing-hero-heading{background:transparent!important;box-shadow:none!important}
 </style><link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Eater&display=swap" rel="stylesheet"></head><body><main id="app" class="shell"></main><script src="engine.js"></script><script src="app.js"></script><script>
 (function(){
   if(window.parent===window)return;

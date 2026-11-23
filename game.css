@@ -4260,3 +4260,17 @@ html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:n
 #game .nw-lobby-portal.growing .nw-lobby-event-orbit{color:#B9F25A!important}
 @keyframes nwGrowingPlanetGlow{0%,100%{filter:brightness(.95)}50%{filter:brightness(1.2)}}
 @media(prefers-reduced-motion:reduce){#game .nw-lobby-portal.growing strong{animation:none!important}}
+
+/* Growing only: retain animated lettering without a luminous background wash behind the Events planet. */
+#game .nw-lobby-portal.growing .nw-lobby-portal-disc,
+#game .nw-lobby-portal.growing:not(.is-live) .nw-lobby-portal-disc{
+ background:linear-gradient(160deg,#302038 0%,#1E1425 64%,#130D1A 100%)!important;
+ box-shadow:none!important;
+}
+/* The original Diamond art keeps its white-sparkle detail; the header now shimmers just like the lobby and reward views. */
+#game .nw-shared-wallet .nw-diamond-icon,
+#game .nw-shared-floating .nw-diamond-icon,
+#game .ev-head .nw-diamond-icon{
+ animation:nwDiamondShimmer 5s ease-in-out infinite;
+}
+@media(prefers-reduced-motion:reduce){#game .nw-shared-wallet .nw-diamond-icon,#game .nw-shared-floating .nw-diamond-icon,#game .ev-head .nw-diamond-icon{animation:none}}

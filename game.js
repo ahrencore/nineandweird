@@ -650,10 +650,16 @@ function nwGrowingActivity(type){
  if(type==='battles'||type==='worlds')o[type]=Math.min(1000,Math.max(0,Number(o[type])||0)+1);
  o.played=1;nwWrite(k,o);
 }
+// Keep visible Diamond counters in sync when the embedded Growing game awards or spends Diamonds.
+// Update only live counter text; do not rebuild screens, interrupt gameplay or restart animations.
+function nwRefreshVisibleDiamondBalances(){
+ const amount=nwDiamondBalance().toLocaleString();
+ evRoot.querySelectorAll('.nw-shared-wallet .nw-diamond-amount > span, .nw-lobby-money .nw-diamond-amount > span, .nw-lobby-top-right .nw-diamond-amount > span').forEach(label=>{label.textContent=amount;});
+}
 function nwGrowingAdjustDiamonds(delta){
  if(!Number.isSafeInteger(delta)||Math.abs(delta)>5000)return false;
  const d=nwTripleData();if(delta<0&&d.diamonds < -delta)return false;
- d.diamondDelta+=delta;d.diamonds+=delta;nwTripleSave(d);return true;
+ d.diamondDelta+=delta;d.diamonds+=delta;nwTripleSave(d);nwRefreshVisibleDiamondBalances();return true;
 }
 
 
