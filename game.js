@@ -6,7 +6,17 @@ function evDisplay(html){window.nwCloud?.clearCaptcha?.();evRoot.hidden=false;ev
  }
  queueMicrotask(()=>{nwRefreshNotificationOrbits();nwBindSharedUtilities();});}
 function nwSharedUtilityMarkup(){return `<div class="nw-shared-utilities"><span class="nw-shared-wallet" title="Diamond balance">${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</span><button type="button" class="nw-shared-settings" data-nw-settings aria-label="Settings">${nwLobbyIcon('settings')}</button></div>`;}
-function nwBindSharedUtilities(){evRoot.querySelectorAll('[data-nw-settings]').forEach(b=>b.onclick=()=>nwLobbyUtility('settings'));}
+function nwOpenSharedSettings(){
+ const o=document.createElement('div');o.className='nw-shared-settings-shade';
+ o.innerHTML='<section role="dialog" aria-modal="true" aria-label="Settings" class="nw-shared-settings-dialog"><h2>SETTINGS</h2><button type="button" data-profile>PROFILE / ACCOUNT</button><a href="privacy.html">PRIVACY POLICY</a><button type="button" data-close>CLOSE</button></section>';
+ evRoot.appendChild(o);
+ o.querySelector('[data-close]').onclick=()=>o.remove();
+ o.querySelector('[data-profile]').onclick=()=>{o.remove();nwShowProfile();};
+ o.addEventListener('click',e=>{if(e.target===o)o.remove()});
+ o.querySelector('[data-close]').focus();
+}
+function nwBindSharedUtilities(){evRoot.querySelectorAll('[data-nw-settings]').forEach(b=>b.onclick=nwOpenSharedSettings);}
+
 function evHeader(title,back){queueMicrotask(()=>{const b=evRoot.querySelector('[data-back]');if(b)b.onclick=()=>back();nwBindSharedUtilities();});return `<header class="ev-head"><button class="ev-btn ev-btn-alt" data-back aria-label="Back">‹ BACK</button><strong>${title}</strong>${nwSharedUtilityMarkup()}</header>`;}
 const worlds={classic:{name:'CLASSIC',label:'Classic',theme:'classic'},dark:{name:'CLASSIC DARK',label:'Classic Dark',theme:'dark'},halloween:{name:'HALLOWEEN',label:'Halloween',theme:'halloween'},patissserie:{name:'PÂTISSERIE',label:'Pâtisserie',theme:'patissserie'},christmas:{name:'CHRISTMAS',label:'Christmas',theme:'christmas'},fairy:{name:'FAIRY WORLD',label:'Fairy World',theme:'fairy'},olympus:{name:'OLYMPUS',label:'Olympus',theme:'olympus'},nineties:{name:'90s THROWBACK',label:'90s Throwback',theme:'nineties'},weird:{name:'WHAT AM I LOOKING AT?',label:'What Am I Looking At?',theme:'weird'},ugly:{name:'UGLY LITTLE THINGS',label:'Ugly Little Things',theme:'ugly'},alien:{name:'ALIEN SUPERMARKET',label:'Alien Supermarket',theme:'alien'},diner:{name:'DO NOT EAT THAT',label:'Do Not Eat That',theme:'diner'},bodyparts:{name:'BODY PARTS DEPARTMENT',label:'Body Parts Department',theme:'bodyparts'},deepsea:{name:'DEEP SEA MISFITS',label:'Deep Sea Misfits',theme:'deepsea'},solarsick:{name:'THE SOLAR SYSTEM IS SICK',label:'The Solar System Is Sick',theme:'solarsick'},dontunwrap:{name:"PLEASE DON'T UNWRAP THAT",label:"Please Don't Unwrap That",theme:'dontunwrap'},unpreparedchristmas:{name:'UNPREPARED CHRISTMAS',label:'Unprepared Christmas',theme:'unpreparedchristmas'},underthebed:{name:'SOMETHING UNDER THE BED',label:'Something Under the Bed',theme:'underthebed'},balloonwrong:{name:'BALLOON ANIMALS GONE WRONG',label:'Balloon Animals Gone Wrong',theme:'balloonwrong'},donttakewater:{name:'DO NOT TAKE WITH WATER',label:'Do Not Take With Water',theme:'donttakewater'},baggagehell:{name:'BAGGAGE CLAIM FROM HELL',label:'Baggage Claim from Hell',theme:'baggagehell'},cakefail:{name:'CAKE DECORATING WAS A MISTAKE',label:'Cake Decorating Was a Mistake',theme:'cakefail'}};
 let currentWorld='halloween',roomPage=0,roomCollection='all';
@@ -97,6 +107,7 @@ function nwSaveResult(s,won){
   if(!s||s.reportSaved)return;s.reportSaved=true;
   const a=nwResults();a.push({started:s.start,ended:Date.now(),world:currentWorld,difficulty:s.difficulty,won:!!won,seconds:Math.max(1,Math.round((Date.now()-s.start)/1000)),attempts:s.reportAttempts||0,correct:s.reportCorrect||0,hints:s.reportHints||0,mistakes:s.mistakes});
   nwWrite(nwResultsKey,a.slice(-2500));
+  if(won&&!s.practiceOpponent&&!s.doublePractice)nwGrowingActivity('worlds');
 }
 function nwWeekStart(t){const d=new Date(t);d.setHours(0,0,0,0);const dow=(d.getDay()+6)%7;d.setDate(d.getDate()-dow);return d.getTime()}
 const nwWeights={easy:1,medium:1.4,hard:1.8,expert:2.2,extreme:2.6};
@@ -483,6 +494,7 @@ function nwBattleStart(){
   const opponent=available[Math.floor(Math.random()*available.length)];
   if(!opponent)return;
   nwLastBattleProfile=profile.id;nwLastBattleRun=opponent.recording_id;
+  nwGrowingActivity('battles');
   const previousWorld=currentWorld;
   // Fixed skill tier per profile; playback timing is chosen before play.
   const tier=[3,2,3,1,0,0,1,0,1,2,1,0,2,1,0,1,2,0,2,3][profile.id];
@@ -607,23 +619,38 @@ function nwShowEvents(){
   evSudokuLeave();applyTheme('hub');
   evDisplay(`${evHeader('EVENTS',showCategories)}<section class="nw-events-panel">
     <p class="nw-events-intro">A little Sudoku. A little chaos. Something for every day.</p>
-    <div class="nw-event-schedule"><span>MON–WED <b>TRIPLE TROUBLE</b></span><span>THU <b>TEAM UP</b></span><span>FRI–SUN <b>DOUBLE TROUBLE</b></span></div>
+    <div class="nw-event-schedule"><span>MON–WED <b>TRIPLE TROUBLE</b></span><span>TUE–THU <b>THEY'RE GROWING!</b></span><span>THU <b>TEAM UP</b></span><span>FRI–SUN <b>DOUBLE TROUBLE</b></span></div>
     <button class="nw-event-tile" id="nwEventShelf"><span class="nw-event-symbol nw-triple-event-icon" aria-hidden="true"><img src="assets/ugly/02_chomps.png" alt=""></span><span><strong>TRIPLE TROUBLE</strong><small>Three-day tile matching · Clear triples, climb stages.</small><em>${nwEventStatus('shelf')}</em></span><span class="nw-event-arrow" aria-hidden="true">›</span></button>
-    <button class="nw-event-tile nw-growing-event" id="nwEventGrowing"><span class="nw-growing-planet" aria-hidden="true"><span class="nw-growing-ring"></span><span class="nw-growing-planet-title">THEY’RE<br>GROWING!</span></span><span><strong>THEY'RE GROWING!</strong><small>Tuesday–Thursday · 37-hex creature evolution.</small><em>COMING SOON: TUE – THU</em></span><span class="nw-event-arrow" aria-hidden="true">›</span></button>
+    <button class="nw-event-tile nw-growing-event" id="nwEventGrowing"><span class="nw-growing-planet" aria-hidden="true"><span class="nw-growing-ring"></span><span class="nw-growing-planet-title">THEY’RE<br>GROWING!</span></span><span><strong>THEY'RE GROWING!</strong><small>Tuesday–Thursday · 37-hex creature evolution.</small><em>${nwLobbyEventStatus('growing').label}</em></span><span class="nw-event-arrow" aria-hidden="true">›</span></button>
     <button class="nw-event-tile" id="nwEventDouble"><span class="nw-event-symbol" aria-hidden="true">⚔️</span><span><strong>DOUBLE TROUBLE</strong><small>Friday–Sunday · 2v2 team Sudoku. Thursday is partner day.</small><em>${nwEventStatus('double')}</em></span><span class="nw-event-arrow" aria-hidden="true">›</span></button>
 
   </section>`);
   evRoot.querySelector('#nwEventShelf').onclick=nwTripleHome;
   evRoot.querySelector('#nwEventDouble').onclick=()=>nwShowEventDetail('double');
-  evRoot.querySelector('#nwEventGrowing').onclick=()=>nwGrowingComingSoon();
+  evRoot.querySelector('#nwEventGrowing').onclick=nwGrowingOpen;
 }
 
 
-function nwGrowingComingSoon(){
- evSudokuLeave();applyTheme('hub');
- evDisplay(`${evHeader('THEY\'RE GROWING!',nwShowEvents)}<section class="nw-growing-preview"><h2>THEY'RE GROWING!</h2><p>TUESDAY — THURSDAY UTC</p><div class="nw-growing-planet big"><span class="nw-growing-ring"></span><span class="nw-growing-planet-title">COMING<br>SOON</span></div><p>The new creature-evolution event is being prepared for live play.</p><button class="ev-btn" id="nwGrowingBack">BACK TO EVENTS</button></section>`);
- evRoot.querySelector('#nwGrowingBack').onclick=nwShowEvents;
+function nwGrowingOpen(){
+ evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-growing-live-shell');
+ evDisplay(`${evHeader("THEY'RE GROWING!",showCategories)}<section class="nw-growing-frame-container"><iframe id="nwGrowingFrame" title="They're Growing! — playable hex evolution event" src="growing/index.html" loading="eager" allow="fullscreen"></iframe></section>`);
+ nwResetViewToTop();
 }
+// This version is local-first for the game owner's beta: NO Supabase claim/payment sync.
+function nwGrowingUserId(){return window.nwCloud?.user()?.id || 'guest';}
+function nwGrowingActivityKey(){return 'nw-growing-activity-v1:'+nwGrowingUserId()+':'+new Date().toISOString().slice(0,10);}
+function nwGrowingActivity(type){
+ if(!['battles','worlds','played'].includes(type))return;
+ const k=nwGrowingActivityKey(),o=nwRead(k,{battles:0,worlds:0,played:0});
+ if(type==='battles'||type==='worlds')o[type]=Math.min(1000,Math.max(0,Number(o[type])||0)+1);
+ o.played=1;nwWrite(k,o);
+}
+function nwGrowingAdjustDiamonds(delta){
+ if(!Number.isSafeInteger(delta)||Math.abs(delta)>5000)return false;
+ const d=nwTripleData();if(delta<0&&d.diamonds < -delta)return false;
+ d.diamondDelta+=delta;d.diamonds+=delta;nwTripleSave(d);return true;
+}
+
 
 // Double Trouble — After Hours. Local recorded-match edition; no cloud invitations or prizes.
 const nwDoublePracticeKey='nineweird-double-practice-v2';
@@ -1026,6 +1053,7 @@ function nwLobbyIcon(kind){const p={shop:'<path d="M4 9h16l-1 12H5L4 9Z M8 9V6a4
 function nwLobbyUtility(kind){evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-lobby-theme');evDisplay(`${evHeader(kind==='shop'?'SHOP':'SETTINGS',showCategories)}<section class="nw-lobby-utility">${kind==='shop'?`<div class="nw-lobby-money">${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</div><h2>COMING SOON</h2>`:`<button id="nwSettingsProfile" class="nw-lobby-nav">PROFILE / ACCOUNT</button><a href="privacy.html">Privacy Policy</a>`}</section>`);const b=evRoot.querySelector('#nwSettingsProfile');if(b)b.onclick=nwShowProfile;nwResetViewToTop();}
 function nwLobbyEventStatus(kind,now=new Date()){
   const day=now.getUTCDay();
+  if(kind==='growing'){const live=[2,3,4].includes(day);return {live,label:(live?'NOW LIVE: ':'COMING SOON: ')+'TUE – THU'};}
   if(kind==='battle')return {live:true,label:'NOW LIVE: '+now.toLocaleString('en-US',{month:'long',timeZone:'UTC'}).toUpperCase()};
   if(kind==='triple'){const live=[1,2,3].includes(day);return {live,label:(live?'NOW LIVE: ':'COMING SOON: ')+'MON – WED'};}
   if(day===4)return {live:true,label:'NOW LIVE: MATCHING DAY'};
@@ -1078,11 +1106,12 @@ function showCategories(){
     <section class="nw-event-carousel" aria-label="Events"><div class="nw-event-heading">EVENTS</div><div class="nw-event-viewport"><div class="nw-event-track">
     ${portal('nwTriplePortal','triple','TRIPLE<br>TROUBLE','⋆˚꩜｡')}
     ${portal('nwDoublePortal','double','DOUBLE<br>TROUBLE','⋆ ☁︎ ☾ ⋆')}
+    ${portal('nwGrowingPortal','growing','THEY\'RE<br>GROWING!','✧ ☢ ✧')}
     ${portal('nwBattle','battle','BATTLE','ϟ ☢ ϟ')}
     </div></div><div class="nw-event-controls"><button type="button" class="nw-event-prev" aria-label="Previous event">‹</button><div class="nw-event-dots"></div><button type="button" class="nw-event-next" aria-label="Next event">›</button></div></section>
     <div class="nw-lobby-bottom">${nav('nwFavorites','FAVORITES',`<span class="nw-lobby-nav-art nw-lobby-heart" aria-hidden="true"></span>`)}${nav('nwTrophy','TROPHY CASE',`<span class="nw-lobby-nav-art nw-lobby-trophy"><svg viewBox="0 0 80 70" aria-hidden="true"><path d="M24 11H56V29Q56 44 40 47Q24 44 24 29Z M24 16H11V25Q11 39 29 39 M56 16H69V25Q69 39 51 39 M40 47V58 M27 62H53" fill="none" stroke="#ffcf9a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 16l3 8 8 3-8 3-3 8-3-8-8-3 8-3Z" fill="#ffe6bb"/></svg></span>`)}${nav('nwLobbyShop','SHOP',`<span class="nw-lobby-nav-art">${nwLobbyIcon('shop')}</span>`)}</div></section>`);
   const by=id=>evRoot.querySelector('#'+id);const openRooms=collection=>{roomCollection=collection;nwScroll[collection]=0;nwRoomPages[collection]=0;showRooms(0)};
-  by('nwWorlds').onclick=()=>openRooms('all');by('nwFavorites').onclick=()=>openRooms('fav');by('nwTriplePortal').onclick=nwTripleHome;by('nwDoublePortal').onclick=nwDoublePracticeScreen;by('nwBattle').onclick=showBattle;by('nwTrophy').onclick=()=>nwShowTrophy();by('nwProfileButton').onclick=nwShowProfile;by('nwLobbyShop').onclick=()=>nwLobbyUtility('shop');by('nwLobbySettings').onclick=()=>nwLobbyUtility('settings');if(nwLobbyClock===null)nwLobbyClock=setInterval(()=>{if(evRoot.hidden||!evRoot.querySelector('[data-lobby-event]')){clearInterval(nwLobbyClock);nwLobbyClock=null;return;}nwLobbyUpdateEventStatus();},1000);nwBindEventCarousel();nwResetViewToTop();
+  by('nwWorlds').onclick=()=>openRooms('all');by('nwFavorites').onclick=()=>openRooms('fav');by('nwTriplePortal').onclick=nwTripleHome;by('nwDoublePortal').onclick=nwDoublePracticeScreen;by('nwGrowingPortal').onclick=nwGrowingOpen;by('nwBattle').onclick=showBattle;by('nwTrophy').onclick=()=>nwShowTrophy();by('nwProfileButton').onclick=nwShowProfile;by('nwLobbyShop').onclick=()=>nwLobbyUtility('shop');by('nwLobbySettings').onclick=()=>nwLobbyUtility('settings');if(nwLobbyClock===null)nwLobbyClock=setInterval(()=>{if(evRoot.hidden||!evRoot.querySelector('[data-lobby-event]')){clearInterval(nwLobbyClock);nwLobbyClock=null;return;}nwLobbyUpdateEventStatus();},1000);nwBindEventCarousel();nwResetViewToTop();
 }
 function showRooms(page=0){
   const ids=roomCollection==='fav'?nwFavs():nwGalaxyOrder;
