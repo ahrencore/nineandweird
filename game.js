@@ -171,7 +171,9 @@ function nwGrowingLoadSave(accountId){
 function nwGrowingQueueSave(value,accountId){
  const s=nwCloudSaveState;
  if(!accountId||accountId!==s.id||!s.ready||s.id!==nwCloud?.user()?.id||s.conflicts.has('nw-growing-live-v1'))return;
- s.values['nw-growing-live-v1']=JSON.stringify(value);
+ const raw=JSON.stringify(value);
+ if(raw===s.values['nw-growing-live-v1'])return;
+ s.values['nw-growing-live-v1']=raw;
  nwCloudSaveQueue('nw-growing-live-v1');
 }
 function nwPlayerStorageKey(key){
@@ -188,7 +190,9 @@ function nwWrite(key,value){
  if(!s.ready||s.id!==nwCloud?.user()?.id)return;
  if(!nwCloudSaveKeys.includes(key)){console.warn('Unregistered Supabase progress key:',key);return}
  if(s.conflicts.has(key)){nwCloudSaveStatusUpdate();return}
- s.values[key]=JSON.stringify(value);
+ const raw=JSON.stringify(value);
+ if(raw===s.values[key])return;
+ s.values[key]=raw;
  nwCloudSaveQueue(key);
 }
 function nwFavs(){const a=nwRead(nwFavKey,[]);return Array.isArray(a)?a.filter((id,i)=>worlds[id]&&a.indexOf(id)===i):[]}
