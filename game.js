@@ -1352,6 +1352,22 @@ function nwTripleChallengeScore(tiles){
  return score;
 }
 const nwTTVerificationPendingKey='nineweird-tt-verification-pending-v1';
+const nwTTVerificationStarting=new Set();
+async function nwTTStartAttempt(stage){
+ const uid=nwCloud?.user()?.id,week=nwTripleWeek(),id=uid+':'+week+':'+stage;
+ if(!uid||!nwTripleInEvent()||nwTTVerificationStarting.has(id))return;
+ nwTTVerificationStarting.add(id);
+ try{
+  const c=await nwCloud.get();
+  if(nwCloud?.user()?.id!==uid)return;
+  const {data,error}=await c.rpc('nw_anticheat_tt_begin',{p_stage:stage});
+  if(error)throw Error(error.message);
+  if(data?.period!==week||data.stage!==stage)throw Error('Verification period mismatch');
+  void nwTTFlushProofs();
+ }catch(e){console.warn('Triple Trouble verification start:',e.message)}
+ finally{nwTTVerificationStarting.delete(id)}
+}
+
 const nwTTVerificationActive=new Set();
 function nwTTQueueProof(stage,period,audit){
  if(!nwCloud?.user()?.id||!Array.isArray(audit)||!audit.length)return;
@@ -1486,7 +1502,7 @@ function nwTripleHome(){
  nw433FocusTrack();
  if(event){void nwTTFlushProofs();evRoot.querySelector('#nw431Rank').onclick=nwTTRank;evRoot.querySelector('#nwTTMissionsBtn').onclick=nwTTMissionsScreen;if(!d.welcomed)nwTTWelcomePopup();else nwTTBind()}else nwTTShowPendingMissionPopup()
 }
-function nwTripleBegin(stage,resume=false){const d=nwTripleSessionData();if(nwTripleInEvent()){if(!d.welcomed){nwTTWelcomePopup();return;}if(nwTTCount(d)<=0){nwTTShop();return;}stage=d.stage;}const a=d.active;const resumed=resume&&a?.version>=2&&a.stage===stage&&!a.won&&a.week===nwTripleWeek()&&a.practice===!nwTripleInEvent();if(nwTripleInEvent()&&!resumed)nwTTMissionEvent('plays');nwTriple=resumed?a:nwTripleCreate(stage);nwTripleDraw()}
+function nwTripleBegin(stage,resume=false){const d=nwTripleSessionData();if(nwTripleInEvent()){if(!d.welcomed){nwTTWelcomePopup();return;}if(nwTTCount(d)<=0){nwTTShop();return;}stage=d.stage;}const a=d.active;const resumed=resume&&a?.version>=2&&a.stage===stage&&!a.won&&a.week===nwTripleWeek()&&a.practice===!nwTripleInEvent();if(nwTripleInEvent()&&!resumed)nwTTMissionEvent('plays');nwTriple=resumed?a:nwTripleCreate(stage);if(nwTripleInEvent())void nwTTStartAttempt(stage);nwTripleDraw()}
 function nwTripleStackArt(symbol,depth){
  return Array.from({length:Math.max(0,depth-1)},(_,i)=>`<span class="nw-triple-hidden-back" style="--tt-back:${depth-1-i}" aria-hidden="true"></span>`).join('')+`<span class="nw-triple-stack-face">${nwTripleArt(symbol)}</span>`;
 }
