@@ -1115,7 +1115,7 @@ function nwTTRank(){
  const d=nwTripleData();
  if(d.best<1){nwTTModal('RANKINGS LOCKED','<p>Complete Stage 1 to unlock the leaderboard!</p>',[{label:'CLOSE'}]);return;}
  nwTTModal('LEADERBOARD','<div id="nwLbTT">Connecting to rankings…</div>',[{label:'CLOSE'}]);
- (async()=>{if(nwTripleInEvent())await nwLbSubmit('tt',d.best);const rows=await nwLbRank('tt'),el=document.getElementById('nwLbTT');if(el)el.innerHTML=nwLbMarkup(rows,'tt');})().catch(e=>{const el=document.getElementById('nwLbTT');if(el)el.textContent='Leaderboard unavailable: '+e.message;});
+ (async()=>{if(nwTripleInEvent())void nwLbSubmit('tt',d.best).catch(e=>console.warn('Leaderboard submission:',e.message));const rows=await nwLbRank('tt'),el=document.getElementById('nwLbTT');if(el)el.innerHTML=nwLbMarkup(rows,'tt');})().catch(e=>{const el=document.getElementById('nwLbTT');if(el)el.textContent='Leaderboard unavailable: '+e.message;});
 }
 function nwTTDaysMarkup(){
  const current=new Date(nwTTNow()).getUTCDay();
@@ -1414,7 +1414,7 @@ function nwTriplePersist(spentKind){
  const s=nwTriple;if(!s||s.week!==nwTripleWeek()||s.practice===nwTripleInEvent())return;
  const d=nwTripleSessionData();
  if(spentKind&&!s.practice){if(d.boosters[spentKind]<=0)throw Error('No booster available');d.boosters[spentKind]--;}
- if(s.won){if(s.practice){d.best=Math.max(d.best,s.stage);d.stage=Math.max(d.stage,s.stage+1);delete d.active;}else {const audit=Array.isArray(s.audit)?s.audit.slice():[];nwTTClear(d,s.stage);if(audit.length)nwTTQueueProof(s.stage,s.week,audit);void nwLbSubmit('tt',d.best).catch(e=>console.warn('Leaderboard sync:',e.message));}}
+ if(s.won){if(s.practice){d.best=Math.max(d.best,s.stage);d.stage=Math.max(d.stage,s.stage+1);delete d.active;}else {const audit=Array.isArray(s.audit)?s.audit.slice():[];nwTTClear(d,s.stage);if(audit.length&&!s.proofQueued){s.proofQueued=true;nwTTQueueProof(s.stage,s.week,audit);}void nwLbSubmit('tt',d.best).catch(e=>console.warn('Leaderboard sync:',e.message));}}
  else {d.active=s;d.stage=s.stage;}
  if(s.practice)nwWrite('nineweird-triple-practice-v2',d);else nwTripleSave(d);
 }
