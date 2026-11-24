@@ -4738,3 +4738,12 @@ body:has(#game.nw-cosmic-mail-theme:not([hidden])){background:#0B1020!important;
 #game.nw-account-theme .nw-social-panel .nw-challenge-difficulties{display:grid;gap:8px;margin-top:15px}
 #game.nw-account-theme .nw-social-panel #nwFriendSearch{width:100%;min-width:0;box-sizing:border-box;margin:7px 0 10px}
 @media(max-width:360px){#game.nw-account-theme .nw-social-panel .nw-friend-row{gap:7px}#game.nw-account-theme .nw-social-panel .nw-friend-actions{width:100%;justify-content:flex-start}}
+
+
+#game.nw-account-theme .nw-social-panel .nw-friend-public-card{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;margin:18px 0}
+#game.nw-account-theme .nw-social-panel .nw-friend-public-card .nw-friend-avatar{width:82px;height:82px;flex:0 0 82px}
+#game.nw-account-theme .nw-social-panel .nw-friend-public-card h3{font-size:21px;color:#f5f0ff;margin:0}
+#game.nw-account-theme .nw-social-panel .nw-friend-profile-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:16px 0}
+#game.nw-account-theme .nw-social-panel .nw-friend-profile-stats>div{border:1px solid #aabfff66;background:#17192b;border-radius:11px;min-width:0;padding:12px 6px;text-align:center;display:grid;gap:5px}
+#game.nw-account-theme .nw-social-panel .nw-friend-profile-stats small{color:#c3c9e4;font:11px system-ui,sans-serif;overflow-wrap:anywhere}
+#game.nw-account-theme .nw-social-panel .nw-friend-profile-stats strong{color:#f5f0ff;font:700 21px 'Pixelify Sans',system-ui,sans-serif}
