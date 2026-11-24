@@ -4752,3 +4752,6 @@ body:has(#game.nw-cosmic-mail-theme:not([hidden])){background:#0B1020!important;
 #game.nw-account-theme .nw-social-panel .nw-challenge-world-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0;max-height:47vh;overflow-y:auto;overscroll-behavior:contain}
 #game.nw-account-theme .nw-social-panel .nw-challenge-world-picker button{min-width:0;white-space:normal;text-align:center;overflow-wrap:anywhere;min-height:48px}
 #game.nw-account-theme .nw-social-panel .nw-challenge-world-picker button.chosen{border:2px solid #81c8ff;background:#4c4674;color:#fff}
+
+
+#game.nw-account-theme .nw-social-panel .nw-friend-avatar.framed .nw-friend-avatar-img{position:absolute;top:15%;left:15%;width:70%;height:70%;border-radius:50%}
