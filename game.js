@@ -377,11 +377,11 @@ function nwRouteAccount(){
   })();nwRouteJob=job;job.finally(()=>{if(nwRouteJob===job)nwRouteJob=null;});return job;
 }
 async function nwStartV37(){
-  try{await nwCloud.ready;try{await nwPrizeSync()}catch(e){console.warn('Inventory startup sync:',e.message)}nwStartupDone=true;nwLastAuthKey=nwAuthKey();await nwRouteAccount();}
+  try{await nwCloud.ready;void nwPrizeSync().catch(e=>console.warn('Inventory startup sync:',e.message));nwStartupDone=true;nwLastAuthKey=nwAuthKey();await nwRouteAccount();}
   catch(e){nwStartupDone=true;nwShowAccountRetry(e);}
 }
 if(window.nwCloud){
-  nwCloud.onChange(()=>{if(!nwStartupDone)return;const key=nwAuthKey();if(key===nwLastAuthKey)return;nwLastAuthKey=key;nwVerifiedAccount=null;const serial=nwRouteSerial;
+  nwCloud.onChange(()=>{const uid=nwCloud.user()?.id||null;if(uid!==nwPrizeCacheOwner){nwPrizeCacheOwner=uid;nwPrizeCache={stock:{},claims:[],transfers:[]};}if(!nwStartupDone)return;const key=nwAuthKey();if(key===nwLastAuthKey)return;nwLastAuthKey=key;nwVerifiedAccount=null;const serial=nwRouteSerial;
     // Run outside Supabase's auth callback lock; token refresh for same identity is ignored.
     setTimeout(()=>{if(nwAuthKey()!==key||nwRouteSerial!==serial)return;evSudokuLeave();nwScroll.usual=nwScroll.weird=nwScroll.fav=0;nwRoomPages.usual=nwRoomPages.weird=nwRoomPages.fav=0;void nwRouteAccount();},0);
   });
@@ -390,6 +390,7 @@ if(window.nwCloud){
 
 /* Tournament prizes: account-scoped cloud inventory; existing local event gameplay remains unchanged. */
 let nwPrizeCache={stock:{},claims:[],transfers:[]};
+let nwPrizeCacheOwner=null;
 const nwPrizeAppliedKey='nineweird-prize-diamond-receipts-v1';
 const nwPrizeDefinitions=[
  {key:'tt_ticket',name:'Event Tickets',event:'tt',icon:'🎟'},
@@ -429,8 +430,9 @@ function nwPrizeMirrorDiamonds(){
  }
 }
 async function nwPrizeSync(){
- if(!nwCloud?.user()?.id)return nwPrizeCache;
- const account=nwCloud.user().id;
+ const account=nwCloud?.user()?.id;
+ if(account!==nwPrizeCacheOwner){nwPrizeCacheOwner=account||null;nwPrizeCache={stock:{},claims:[],transfers:[]};}
+ if(!account)return nwPrizeCache;
  const c=await nwCloud.get(),{data,error}=await c.rpc('nw_prize_snapshot');
  if(error)throw Error(error.message);
  if(nwCloud.user()?.id!==account)return nwPrizeCache;
