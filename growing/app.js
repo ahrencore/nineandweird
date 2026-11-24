@@ -117,7 +117,7 @@ const APP=(()=>{
  function milestonePage(){overlay('MILESTONE REWARDS',`<p>Weekly score: <b>${fmt(state.score)}</b></p>${rewardTrack()}`)}
  function rank(){
  overlay('RANKINGS','<div id="nwLbTG">Connecting to rankings…</div>');
- (async()=>{if(!EMBEDDED)throw Error('Online rankings require the main Nine & Weird game.');if(live()&&state.score>0)await window.parent.nwLbSubmit('tg',state.score);const rows=await window.parent.nwLbRank('tg'),el=document.getElementById('nwLbTG');if(el)el.innerHTML=window.parent.nwLbMarkup(rows,'tg');})().catch(e=>{const el=document.getElementById('nwLbTG');if(el)el.textContent='Leaderboard unavailable: '+e.message;});
+ (async()=>{if(!EMBEDDED)throw Error('Online rankings require the main Nine & Weird game.');if(live())await window.parent.nwLbSubmit('tg',state.score);const rows=await window.parent.nwLbRank('tg'),el=document.getElementById('nwLbTG');if(el)el.innerHTML=window.parent.nwLbMarkup(rows,'tg');})().catch(e=>{const el=document.getElementById('nwLbTG');if(el)el.textContent='Leaderboard unavailable: '+e.message;});
 }
  function missionScreen(){
   sync();const d=state.daily;
