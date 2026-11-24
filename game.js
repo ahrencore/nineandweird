@@ -392,6 +392,21 @@ if(window.nwCloud){
 let nwPrizeCache={stock:{},claims:[],transfers:[]};
 let nwPrizeCacheOwner=null;
 const nwPrizeAppliedKey='nineweird-prize-diamond-receipts-v1';
+const nwPrizeAckInflight=new Set();
+async function nwPrizeAck(kind,value){
+ const id=kind+':'+value,uid=nwCloud?.user()?.id;
+ if(!uid||nwPrizeAckInflight.has(id))return;
+ nwPrizeAckInflight.add(id);
+ try{
+  const c=await nwCloud.get();
+  const payload=kind==='transfer'?{p_id:Number(value)}:{p_event:value.split(':')[0],p_period:value.split(':')[1]};
+  const {error}=await c.rpc(kind==='transfer'?'nw_prize_ack_transfer':'nw_prize_ack_claim',payload);
+  if(error)throw Error(error.message);
+ }catch(e){console.warn('Inventory receipt acknowledgement:',e.message)}
+ finally{nwPrizeAckInflight.delete(id)}
+}
+function nwPrizeAckTransfer(id){void nwPrizeAck('transfer',id)}
+
 const nwPrizeDefinitions=[
  {key:'tt_ticket',name:'Event Tickets',event:'tt',icon:'🎟'},
  {key:'tt_undo',name:'Undo',event:'tt',icon:'↶'},
@@ -415,6 +430,7 @@ function nwPrizeApplyTTTransfers(){
   applied.add(t.id);changed=true;
  }
  if(changed){d.inventoryApplied=[...applied];nwTripleSave(d);}
+ for(const t of nwPrizeCache.transfers||[]){if(t.event==='tt'&&applied.has(t.id))nwPrizeAckTransfer(t.id);}
 }
 function nwPrizeMirrorDiamonds(){
  const applied=nwRead(nwPrizeAppliedKey,{});
@@ -428,6 +444,7 @@ function nwPrizeMirrorDiamonds(){
   const d=nwTripleData();d.diamondDelta+=change;d.diamonds+=change;
   nwTripleSave(d);nwWrite(nwPrizeAppliedKey,applied);nwRefreshVisibleDiamondBalances();
  }
+ for(const c of nwPrizeCache.claims||[]){if(applied[c.event+':'+c.period])void nwPrizeAck('claim',c.event+':'+c.period);}
 }
 async function nwPrizeSync(){
  const account=nwCloud?.user()?.id;
