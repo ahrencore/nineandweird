@@ -524,13 +524,13 @@ function nwRouteAccount(){
   })();nwRouteJob=job;job.finally(()=>{if(nwRouteJob===job)nwRouteJob=null;});return job;
 }
 async function nwStartV37(){
-  try{await nwCloud.ready;await nwCloudSaveInit();try{await nwWalletSync()}catch(e){console.warn('Wallet initialization:',e.message)}void nwPrizeSync().catch(e=>console.warn('Inventory startup sync:',e.message));nwStartupDone=true;nwLastAuthKey=nwAuthKey();await nwRouteAccount();}
+  try{await nwCloud.ready;await nwCloudSaveInit();await nwWalletSync();void nwPrizeSync().catch(e=>console.warn('Inventory startup sync:',e.message));nwStartupDone=true;nwLastAuthKey=nwAuthKey();await nwRouteAccount();}
   catch(e){nwStartupDone=true;nwShowAccountRetry(e);}
 }
 if(window.nwCloud){
   nwCloud.onChange(()=>{const uid=nwCloud.user()?.id||null;if(uid!==nwPrizeCacheOwner){nwPrizeCacheOwner=uid;nwPrizeCache={stock:{},claims:[],transfers:[]};nwWalletState={user:null,active:false,balance:0};}if(!nwStartupDone)return;const key=nwAuthKey();if(key===nwLastAuthKey)return;nwLastAuthKey=key;nwVerifiedAccount=null;const serial=nwRouteSerial;
     // Run outside Supabase's auth callback lock; token refresh for same identity is ignored.
-    setTimeout(()=>{if(nwAuthKey()!==key||nwRouteSerial!==serial)return;void(async()=>{try{await nwCloudSaveInit()}catch(e){if(nwAuthKey()===key)nwShowAccountRetry(e);return}if(nwAuthKey()!==key||nwRouteSerial!==serial)return;try{await nwWalletSync()}catch(e){console.warn('Wallet login sync:',e.message)}if(nwAuthKey()!==key||nwRouteSerial!==serial)return;try{await nwPrizeSync()}catch(e){console.warn('Inventory login sync:',e.message)}if(nwAuthKey()!==key||nwRouteSerial!==serial)return;evSudokuLeave();nwScroll.usual=nwScroll.weird=nwScroll.fav=0;nwRoomPages.usual=nwRoomPages.weird=nwRoomPages.fav=0;await nwRouteAccount();})();},0);
+    setTimeout(()=>{if(nwAuthKey()!==key||nwRouteSerial!==serial)return;void(async()=>{try{await nwCloudSaveInit()}catch(e){if(nwAuthKey()===key)nwShowAccountRetry(e);return}if(nwAuthKey()!==key||nwRouteSerial!==serial)return;try{await nwWalletSync()}catch(e){if(nwAuthKey()===key)nwShowAccountRetry(e);return}if(nwAuthKey()!==key||nwRouteSerial!==serial)return;try{await nwPrizeSync()}catch(e){console.warn('Inventory login sync:',e.message)}if(nwAuthKey()!==key||nwRouteSerial!==serial)return;evSudokuLeave();nwScroll.usual=nwScroll.weird=nwScroll.fav=0;nwRoomPages.usual=nwRoomPages.weird=nwRoomPages.fav=0;await nwRouteAccount();})();},0);
   });
 }
 
@@ -604,15 +604,17 @@ function nwPrizeApplyTTTransfers(){
 }
 function nwPrizeMirrorDiamonds(){
  const applied=nwRead(nwPrizeAppliedKey,{});
- let change=0;
+ let changed=false;
  for(const c of nwPrizeCache.claims||[]){
-  const key=c.event+':'+c.period,amount=Number(c.diamonds)||0;
-  if(applied[key]||!Number.isSafeInteger(amount)||amount<=0)continue;
-  applied[key]=amount;change+=amount;
+  const key=c.event+':'+c.period;
+  if(!applied[key]&&Number.isSafeInteger(Number(c.diamonds))&&Number(c.diamonds)>0){
+   applied[key]=Number(c.diamonds);changed=true;
+  }
  }
- if(change){
-  const d=nwTripleData();d.diamondDelta+=change;d.diamonds+=change;
-  nwTripleSave(d);nwWrite(nwPrizeAppliedKey,applied);nwRefreshVisibleDiamondBalances();
+ if(changed){
+  nwWrite(nwPrizeAppliedKey,applied);
+  // The prize claim transaction has already credited the server wallet.
+  void nwWalletSync().catch(e=>console.warn('Prize wallet refresh:',e.message));
  }
  nwPrizeFlushDurableReceipts();
 }
@@ -934,6 +936,26 @@ async function nwWalletSync(){
  }
  nwRefreshVisibleDiamondBalances();
 }
+const nwWalletMilestoneInflight=new Set();
+async function nwWalletClaimMilestones(event,period){
+ const uid=nwCloud?.user()?.id,key=uid+':'+event+':'+period;
+ if(!nwWalletCurrent()||nwWalletMilestoneInflight.has(key))return;
+ nwWalletMilestoneInflight.add(key);
+ try{
+  const c=await nwCloud.get();
+  if(nwCloud?.user()?.id!==uid)return;
+  const {data,error}=await c.rpc('nw_wallet_claim_milestones',{p_event:event,p_period:period});
+  if(error)throw Error(error.message);
+  if(nwCloud?.user()?.id!==uid)return;
+  if(Number.isSafeInteger(Number(data?.balance))){
+   nwWalletState.balance=Number(data.balance);
+   const d=nwRead(nwTripleKey,null);
+   if(d){d.diamonds=nwWalletState.balance;nwWrite(nwTripleKey,d)}
+   nwRefreshVisibleDiamondBalances();
+  }
+ }catch(e){console.warn('Verified milestone Diamonds:',e.message)}
+ finally{nwWalletMilestoneInflight.delete(key)}
+}
 async function nwWalletPurchase(item){
  if(!nwWalletCurrent())throw Error('Wallet not available');
  const uid=nwWalletState.user,c=await nwCloud.get();
@@ -961,7 +983,7 @@ async function nwWalletPurchase(item){
  try{localStorage.removeItem(pendingKey)}catch{}
  return data;
 }
-function nwDiamondBalance(){if(nwWalletCurrent())return nwWalletState.balance;const d=nwRead(nwTripleKey,null);return Math.max(0,nwBattleDiamondTotal()+(Number.isSafeInteger(d?.diamondDelta)?d.diamondDelta:0));}
+function nwDiamondBalance(){return nwWalletCurrent()?nwWalletState.balance:0;}
 function nwClaimBattleDiamond(wins,month){
  if(!nwPlayerStorageKey(nwBattleDiamondKey)||month!==nwSeasonId()||!nwSeasonFrameTiers.some(t=>t.wins===wins)||nwBattleMonthStats().wins<wins)return false;
  const claims=nwBattleDiamondClaims(),key=month+':'+wins;
@@ -1046,7 +1068,7 @@ async function nwGrowingVerifyScore(period,score,actions){
   const {data,error}=await c.functions.invoke('nw-verify-tournament',{body:{event:'tg',period,score,actions}});
   if(error||!data?.verified)throw Error(data?.error||error?.message||'Event verification unavailable');
   if(nwCloud?.user()?.id!==account)return;
-  nwGrowingLastVerified={account,period,score:data.score,actions:actions.length};
+  nwGrowingLastVerified={account,period,score:data.score,actions:actions.length};void nwWalletClaimMilestones('tg',period);
  }finally{nwGrowingVerifyBusy=false}
 }
 function nwGrowingUserId(){return window.nwCloud?.user()?.id || 'guest';}
@@ -1064,9 +1086,9 @@ function nwRefreshVisibleDiamondBalances(){
  evRoot.querySelectorAll('.nw-shared-wallet .nw-diamond-amount > span, .nw-lobby-money .nw-diamond-amount > span, .nw-lobby-top-right .nw-diamond-amount > span').forEach(label=>{label.textContent=amount;});
 }
 function nwGrowingAdjustDiamonds(delta){
- if(!Number.isSafeInteger(delta)||Math.abs(delta)>5000)return false;
- const d=nwTripleData();if(delta<0&&d.diamonds < -delta)return false;
- d.diamondDelta+=delta;d.diamonds+=delta;nwTripleSave(d);nwRefreshVisibleDiamondBalances();return true;
+ // Old browser-authorized Diamond modification is intentionally retired.
+ // Tournament prizes and verified score milestones credit Supabase instead.
+ return false;
 }
 
 
@@ -1173,7 +1195,7 @@ function nwTripleData(){const old=nwRead(nwTripleKey,null),d=nwTTSync(old,nwTTNo
 function nwTripleSave(obj){nwWrite(nwTripleKey,obj)}
 function nwTTCount(d){return d.natural+d.extra}
 function nwTTSpendTicket(d,now=nwTTNow()){if(d.natural>0){if(d.natural===10||!d.next)d.next=now+3600000;d.natural--;return true;}if(d.extra>0){d.extra--;return true;}return false}
-function nwTTGrant(d,kind,n){if(kind==='diamonds'){d.diamondDelta+=n;d.diamonds+=n;}else if(kind==='ticket')d.extra+=n;else d.boosters[kind]+=n;}
+function nwTTGrant(d,kind,n){if(kind==='diamonds'){/* Credited after server-verifiable stage completion. */}else if(kind==='ticket')d.extra+=n;else d.boosters[kind]+=n;}
 function nwTTNotice(d,title,items){d.notices.push({title,items});}
 function nwTTClear(d,stage){d.best=Math.max(d.best,stage);d.stage=Math.max(d.stage,stage+1);for(const [m,items] of nwTTMilestones){if(d.best>=m&&!d.claimed.includes(m)){d.claimed.push(m);for(const [k,n] of items)nwTTGrant(d,k,n);nwTTNotice(d,'Stage '+m+' cleared!',items);}}delete d.active;}
 function nwTTWelcome(d){if(d.welcomed||!nwTripleInEvent())return false;d.welcomed=true;for(const k of ['undo','shuffle','magic'])nwTTGrant(d,k,1);nwTTNotice(d,'Welcome gifts claimed!',[['undo',1],['shuffle',1],['magic',1]]);if(d.best>0)nwTTClear(d,d.best);return true;}
@@ -1199,9 +1221,7 @@ function nwTTBuy(kind){if(!nwTripleInEvent())return;const d=nwTripleData();const
   }catch(e){nwTTModal('Purchase unavailable',`<p>${nwEscape(e.message)}</p>`,[{label:'OK'}]);}
   return;
  }
- const state=nwTripleData(),error=nwTTPurchase(state,kind,'diamonds');
- if(error){nwTTModal('Not available',`<p>${nwEscape(error)}</p>`,[{label:'OK'}]);return;}
- nwTripleSave(state);redraw();};nwTTModal('Get '+nwTTNames[kind],`<p>Diamond balance: ${nwDiamondAmount(d.diamonds)}</p>${kind==='ticket'?`<p>${d.spent}/10,000 Diamonds spent on tickets</p>`:''}<p>Rewarded ads are coming soon.</p>`,[{label:'Buy for '+nwTTPrices[kind]+' Diamonds',disabled:d.diamonds<nwTTPrices[kind]||(kind==='ticket'&&d.spent+100>10000),run:buy},{label:'Watch Ad',run:()=>nw433ComingSoon(()=>nwTTBuy(kind))},{label:'Cancel'}]);}
+ nwTTModal('Purchase unavailable','<p>Connect to Supabase to buy with Diamonds.</p>',[{label:'OK'}]);return;};nwTTModal('Get '+nwTTNames[kind],`<p>Diamond balance: ${nwDiamondAmount(d.diamonds)}</p>${kind==='ticket'?`<p>${d.spent}/10,000 Diamonds spent on tickets</p>`:''}<p>Rewarded ads are coming soon.</p>`,[{label:'Buy for '+nwTTPrices[kind]+' Diamonds',disabled:d.diamonds<nwTTPrices[kind]||(kind==='ticket'&&d.spent+100>10000),run:buy},{label:'Watch Ad',run:()=>nw433ComingSoon(()=>nwTTBuy(kind))},{label:'Cancel'}]);}
 function nwTTRewardIcon(k){return k==='diamonds'?'<img class="nw-diamond-icon" src="assets/currency/diamond.png" alt="">':k==='ticket'?'<img class="nw-tt-ticket-icon" src="assets/triple/triple_ticket.png" alt="">':k==='magic'?'<span class="nw-triple-spiral" aria-hidden="true"></span>':`<span aria-hidden="true">${{shuffle:'⤨',undo:'↶'}[k]}</span>`;}
 function nwTTPackArt(p,i){return `<div class="nw431-pack tier-${i}"><div class="nw431-pack-top"><span class="nw431-pack-art" aria-hidden="true">${Array.from({length:i+2},(_,j)=>`<i style="--n:${j}">✦</i>`).join('')}</span><div><strong>${p.tickets} Tickets</strong><small>${nwDiamondAmount(p.diamonds)} Diamonds</small></div><b class="nw431-price">RM${p.price}</b></div><div class="nw431-bonuses"><span>${nwTTRewardIcon('shuffle')} ${p.shuffle} Shuffle</span>${p.magic?`<span>${nwTTRewardIcon('magic')} ${p.magic} Magic Clear</span>`:''}</div></div>`;}
 function nwTTShop(){const d=nwTripleData();nwTTModal('More tickets',`<p>${nwTTCount(d)} available</p><p>Premium packs · coming soon</p>`,[{label:'Get a ticket · Diamonds or Watch Ad',run:()=>nwTTBuy('ticket')},...nwTTPacks.map((p,i)=>({label:`RM${p.price} pack`,html:nwTTPackArt(p,i),run:()=>nw433ComingSoon(nwTTShop)})),{label:'Close'}]);}
@@ -1510,7 +1530,7 @@ async function nwTTFlushProofs(){
    if(nwCloud.user()?.id!==account)return;
    const latest=nwRead(nwTTVerificationPendingKey,{});
    if(latest[id]){delete latest[id];nwWrite(nwTTVerificationPendingKey,latest);}
-   console.info('Triple Trouble stage verified:',item.stage);
+   console.info('Triple Trouble stage verified:',item.stage);void nwWalletClaimMilestones('tt',item.period);
   }catch(e){console.warn('Triple Trouble stage verification:',e.message)}
   finally{nwTTVerificationActive.delete(key);}
  }
