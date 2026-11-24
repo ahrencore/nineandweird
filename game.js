@@ -2357,7 +2357,7 @@ async function nwChallengesDraw(back=nwShowProfile){
     const label=c.status==='pending'?'INVITATION':active?'ACTIVE':c.status.toUpperCase();
     const actions=finished?`<button class="nw-friend-mini" data-challenge-action="result" data-id="${c.id}">VIEW RESULT</button>`:incoming?`<button class="nw-friend-mini" data-challenge-action="accept" data-id="${c.id}">ACCEPT</button><button class="nw-friend-mini nw-friend-outline" data-challenge-action="decline" data-id="${c.id}">DECLINE</button>`:
       outgoing?`<button class="nw-friend-mini nw-friend-outline" data-challenge-action="cancel" data-id="${c.id}">CANCEL</button>`:
-      active&&c.mine==='not_started'?`<button class="nw-friend-mini" data-challenge-action="begin" data-id="${c.id}">PLAY</button>`:'';
+      active&&c.mine==='not_started'?`<button class="nw-friend-mini" data-challenge-action="begin" data-id="${c.id}">PLAY</button>`:active&&c.mine==='playing'?`<button class="nw-friend-mini nw-friend-outline" data-challenge-action="forfeit" data-id="${c.id}">FORFEIT</button>`:'';
     const subtitle=c.resolution==='invitation_expired'?'Invitation expired':active?`You: ${nwEscape(c.mine.replace('_',' '))} · Friend: ${nwEscape(c.theirs.replace('_',' '))}`:finished?`Result: ${c.winner===myId?'YOU WON':c.winner?'FRIEND WON':'NO WINNER'}`:(incoming?'Incoming request':'Waiting for friend');
     return `<article class="nw-challenge-card"><div class="nw-challenge-card-head"><strong>${nwEscape(c.difficulty.toUpperCase())}</strong><small>${nwEscape(label)}</small></div><div class="nw-friend-row">${nwFriendPhoto(c.opponent)}<div class="nw-friend-name"><strong>${nwEscape(c.opponent.name)}</strong><small>${subtitle}</small></div></div>${active&&c.deadline_at?'<p class="nw-muted">Deadline: '+new Date(c.deadline_at).toLocaleString()+'</p>':''}${finished&&c.winner!==undefined?'<p class="nw-muted">Your points: '+(c.my_points??'—')+' · Friend points: '+(c.their_points??'—')+'</p>':''}<div class="nw-friend-actions">${actions}</div></article>`;
   }).join(''):'<p class="nw-muted">No Friendly Challenges yet. Choose a friend to send one!</p>';
@@ -2367,6 +2367,7 @@ async function nwChallengesDraw(back=nwShowProfile){
       const id=b.dataset.id,action=b.dataset.challengeAction;
       if(action==='begin'){nwChallengeWorldPicker(id,back);return;}
       if(action==='result'){await nwChallengeResult(id,back);return;}
+      if(action==='forfeit'&&!confirm('Forfeit this one-attempt challenge? This counts as a loss.')){b.disabled=false;return;}
       await nwChallengeRpc(action,{p_id:id});void nwChallengesDraw(back);
     }catch(e){const status=evRoot.querySelector('#nwSocialStatus');if(status)status.textContent=e.message;b.disabled=false}
   });
