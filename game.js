@@ -479,15 +479,17 @@ let nwPrizeCache={stock:{},claims:[],transfers:[]};
 let nwPrizeCacheOwner=null;
 const nwPrizeAppliedKey='nineweird-prize-diamond-receipts-v1';
 const nwPrizeAckInflight=new Set();
+const nwPrizeAckedInSession=new Set();
 async function nwPrizeAck(kind,value){
- const id=kind+':'+value,uid=nwCloud?.user()?.id;
- if(!uid||nwPrizeAckInflight.has(id))return;
+ const uid=nwCloud?.user()?.id,id=uid+':'+kind+':'+value;
+ if(!uid||nwPrizeAckInflight.has(id)||nwPrizeAckedInSession.has(id))return;
  nwPrizeAckInflight.add(id);
  try{
   const c=await nwCloud.get();
   const payload=kind==='transfer'?{p_id:Number(value)}:{p_event:value.split(':')[0],p_period:value.split(':')[1]};
   const {error}=await c.rpc(kind==='transfer'?'nw_prize_ack_transfer':'nw_prize_ack_claim',payload);
   if(error)throw Error(error.message);
+  nwPrizeAckedInSession.add(id);
  }catch(e){console.warn('Inventory receipt acknowledgement:',e.message)}
  finally{nwPrizeAckInflight.delete(id)}
 }
@@ -503,8 +505,8 @@ function nwPrizeFlushDurableReceipts(){
   for(const t of nwPrizeCache.transfers||[])if(t.event==='tt'&&ids.has(t.id))nwPrizeAckTransfer(t.id);
  }
  if(durable('nw-growing-live-v1')){
-  const tg=JSON.parse(localStorage.getItem(nwCloudSaveLocalKey('nw-growing-live-v1',id))||'{}');
-  const ids=new Set(tg.inventoryApplied||[]);
+  let tg={};try{tg=JSON.parse(localStorage.getItem(nwCloudSaveLocalKey('nw-growing-live-v1',id))||'{}')}catch{}
+  const ids=new Set(Array.isArray(tg.inventoryApplied)?tg.inventoryApplied:[]);
   for(const t of nwPrizeCache.transfers||[])if(t.event==='tg'&&ids.has(t.id))nwPrizeAckTransfer(t.id);
  }
  if(durable('nineweird-triple-economy-beta-v1')&&durable('nineweird-prize-diamond-receipts-v1')){
