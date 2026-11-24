@@ -369,7 +369,7 @@ function nwRouteAccount(){
     if(!u){nwVerifiedAccount=null;nwShowProfile();return;}
     if(!u.is_anonymous&&nwSetupVerified()){showCategories();return;}
     nwAccountTheme();evDisplay(`<section class="nw-new-panel">${nwAccountHeading('LOADING PROFILE')}</section>`);
-    try{const data=await nwCloud.readProfile();if(nwAuthKey()!==key)return;await nwHydrateFrame(data);if(nwAuthKey()!==key)return;
+    try{const data=await nwCloud.readProfile();if(nwAuthKey()!==key)return;try{await nwHydrateFrame(data)}catch(e){console.warn('Frame sync:',e.message)}if(nwAuthKey()!==key)return;
       if(u.is_anonymous){const name=nwGuestName(u.id),avatar=nwAvatarValue(data?.avatar||nwRead(nwProfileKey,{}).avatar);nwWrite(nwProfileKey,{name,avatar});if(!data||data.display_name!==name){try{await nwCloud.saveProfile(name,avatar)}catch(e){console.warn('Guest profile sync:',e.message)}}if(nwAuthKey()===key)showCategories();return;}
       if(data)nwWrite(nwProfileKey,{name:data.display_name||'Guest Player',avatar:nwAvatarValue(data.avatar)});
       if(data?.profile_setup_complete===true&&nwUsernameValid(data.display_name)){nwVerifiedAccount=u.id;showCategories();}else nwShowSetup(data);
