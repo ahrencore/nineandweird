@@ -4711,3 +4711,30 @@ body:has(#game.nw-cosmic-mail-theme:not([hidden])){background:#0B1020!important;
 #game .nw-lobby-nav.nw-mail-unclaimed.nw-notification-orbit{--nw-notify:#F08BC2;animation:nwNotifyGlow 3s ease-in-out infinite!important;filter:none}
 #game .nw-lobby-nav.nw-mail-unclaimed.nw-notification-orbit:after{inset:3px;width:auto;height:auto;top:3px;right:3px;left:3px;bottom:3px;border:0;border-radius:14px;padding:2px;box-shadow:none;transform:none;background:conic-gradient(from var(--nw-notify-angle),transparent 0deg 275deg,var(--nw-notify) 330deg,#fff 353deg,transparent 360deg);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:nwNotifyOrbit 3s linear infinite}
 @media(prefers-reduced-motion:reduce){#game .nw-lobby-nav.nw-mail-unclaimed.nw-notification-orbit,#game .nw-lobby-nav.nw-mail-unclaimed.nw-notification-orbit:after{animation:none!important}}
+
+
+/* Social Friends V1 — scoped exclusively to the existing profile/Friends screens. */
+#game.nw-account-theme .nw-social-panel{max-width:600px;margin-left:auto;margin-right:auto;box-sizing:border-box}
+#game.nw-account-theme .nw-social-panel .nw-friend-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+#game.nw-account-theme .nw-social-panel .nw-friend-tabs button{font-size:clamp(9px,2.2vw,12px);overflow-wrap:anywhere;line-height:1.15;padding:11px 2px;min-width:0}
+#game.nw-account-theme .nw-social-panel .nw-friend-content{min-width:0;overflow-wrap:anywhere}
+#game.nw-account-theme .nw-social-panel .nw-friend-content h3{font:700 13px 'Pixelify Sans',system-ui,sans-serif;color:#c7d2ff;margin:17px 0 9px}
+#game.nw-account-theme .nw-social-panel .nw-friend-row{display:flex;align-items:center;gap:10px;padding:11px 8px;border:1px solid #AABFFF50;border-radius:11px;background:#17192b;margin:8px 0;min-width:0;flex-wrap:wrap}
+#game.nw-account-theme .nw-social-panel .nw-friend-avatar{display:inline-block;position:relative;flex:0 0 49px;width:49px;height:49px}
+#game.nw-account-theme .nw-social-panel .nw-friend-avatar-img{height:100%;width:100%;object-fit:cover;border-radius:50%}
+#game.nw-account-theme .nw-social-panel .nw-friend-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+#game.nw-account-theme .nw-social-panel .nw-friend-name{flex:1;min-width:85px;overflow-wrap:anywhere}
+#game.nw-account-theme .nw-social-panel .nw-friend-name strong{display:block;color:#f5f0ff}
+#game.nw-account-theme .nw-social-panel .nw-friend-name small{display:block;color:#c3c9e4;font-size:11px}
+#game.nw-account-theme .nw-social-panel .nw-friend-actions{display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end}
+#game.nw-account-theme .nw-social-panel .nw-friend-mini{border:1px solid #aabfff;background:#aabfff;color:#0a0d18;border-radius:7px;padding:8px;font:700 11px 'Pixelify Sans',system-ui,sans-serif;cursor:pointer}
+#game.nw-account-theme .nw-social-panel .nw-friend-mini.nw-friend-outline{background:transparent;color:#d8dfff}
+#game.nw-account-theme .nw-social-panel .nw-friend-mini:disabled{opacity:.5}
+#game.nw-account-theme .nw-social-panel .nw-friend-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#9296ac}
+#game.nw-account-theme .nw-social-panel .nw-friend-dot.on{background:#75d4a2;box-shadow:0 0 6px #75d4a2}
+#game.nw-account-theme .nw-social-panel .nw-friend-private{display:flex;gap:9px;align-items:center;font-size:12px;padding:13px 5px;color:#f5f0ff}
+#game.nw-account-theme .nw-social-panel .nw-challenge-card{border:1px solid #aabfff66;border-radius:12px;padding:10px;margin:10px 0;background:#17192b}
+#game.nw-account-theme .nw-social-panel .nw-challenge-card-head{display:flex;justify-content:space-between;color:#c7d2ff;font-size:12px}
+#game.nw-account-theme .nw-social-panel .nw-challenge-difficulties{display:grid;gap:8px;margin-top:15px}
+#game.nw-account-theme .nw-social-panel #nwFriendSearch{width:100%;min-width:0;box-sizing:border-box;margin:7px 0 10px}
+@media(max-width:360px){#game.nw-account-theme .nw-social-panel .nw-friend-row{gap:7px}#game.nw-account-theme .nw-social-panel .nw-friend-actions{width:100%;justify-content:flex-start}}
