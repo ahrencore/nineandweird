@@ -7,6 +7,10 @@ function evDisplay(html){window.nwCloud?.clearCaptcha?.();evRoot.hidden=false;ev
  queueMicrotask(()=>{nwRefreshNotificationOrbits();nwBindSharedUtilities();});}
 function nwSharedUtilityMarkup(){return `<div class="nw-shared-utilities"><span class="nw-shared-wallet" title="Diamond balance">${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</span><button type="button" class="nw-shared-settings" data-nw-settings aria-label="Settings">${nwLobbyIcon('settings')}</button></div>`;}
 function nwOpenSharedSettings(){
+ if(sudoku?.challenge&&!sudoku.done){
+  if(!confirm('Leave Challenge? Opening Settings will forfeit your attempt.'))return;
+  sudoku.done=true;void nwChallengeForfeit(sudoku.challenge.id);
+ }
  const o=document.createElement('div');o.className='nw-shared-settings-shade';
  o.innerHTML='<section role="dialog" aria-modal="true" aria-label="Settings" class="nw-shared-settings-dialog"><h2>SETTINGS</h2><button type="button" data-profile>PROFILE / ACCOUNT</button><a href="privacy.html">PRIVACY POLICY</a><button type="button" data-close>CLOSE</button></section>';
  evRoot.appendChild(o);
@@ -2353,12 +2357,12 @@ async function nwChallengesDraw(back=nwShowProfile){
     const incoming=c.status==='pending'&&c.recipient===myId;
     const outgoing=c.status==='pending'&&c.sender===myId;
     const active=c.status==='active';
-    const finished=c.status==='resolved'||c.status==='expired';
+    const finished=(c.status==='resolved'||c.status==='expired')&&c.resolution!=='invitation_expired';
     const label=c.status==='pending'?'INVITATION':active?'ACTIVE':c.status.toUpperCase();
     const actions=finished?`<button class="nw-friend-mini" data-challenge-action="result" data-id="${c.id}">VIEW RESULT</button>`:incoming?`<button class="nw-friend-mini" data-challenge-action="accept" data-id="${c.id}">ACCEPT</button><button class="nw-friend-mini nw-friend-outline" data-challenge-action="decline" data-id="${c.id}">DECLINE</button>`:
       outgoing?`<button class="nw-friend-mini nw-friend-outline" data-challenge-action="cancel" data-id="${c.id}">CANCEL</button>`:
       active&&c.mine==='not_started'?`<button class="nw-friend-mini" data-challenge-action="begin" data-id="${c.id}">PLAY</button>`:'';
-    const subtitle=active?`You: ${nwEscape(c.mine.replace('_',' '))} · Friend: ${nwEscape(c.theirs.replace('_',' '))}`:finished?`Result: ${c.winner===myId?'YOU WON':c.winner?'FRIEND WON':'NO WINNER'}`:(incoming?'Incoming request':'Waiting for friend');
+    const subtitle=c.resolution==='invitation_expired'?'Invitation expired':active?`You: ${nwEscape(c.mine.replace('_',' '))} · Friend: ${nwEscape(c.theirs.replace('_',' '))}`:finished?`Result: ${c.winner===myId?'YOU WON':c.winner?'FRIEND WON':'NO WINNER'}`:(incoming?'Incoming request':'Waiting for friend');
     return `<article class="nw-challenge-card"><div class="nw-challenge-card-head"><strong>${nwEscape(c.difficulty.toUpperCase())}</strong><small>${nwEscape(label)}</small></div><div class="nw-friend-row">${nwFriendPhoto(c.opponent)}<div class="nw-friend-name"><strong>${nwEscape(c.opponent.name)}</strong><small>${subtitle}</small></div></div>${active&&c.deadline_at?'<p class="nw-muted">Deadline: '+new Date(c.deadline_at).toLocaleString()+'</p>':''}${finished&&c.winner!==undefined?'<p class="nw-muted">Your points: '+(c.my_points??'—')+' · Friend points: '+(c.their_points??'—')+'</p>':''}<div class="nw-friend-actions">${actions}</div></article>`;
   }).join(''):'<p class="nw-muted">No Friendly Challenges yet. Choose a friend to send one!</p>';
   out.querySelectorAll('[data-challenge-action]').forEach(b=>b.onclick=async()=>{
@@ -2486,7 +2490,7 @@ async function nwFriendOpenProfile(id,back=nwShowProfile){
  try{
   const p=await nwFriendsRpc('nw_friend_profile',{p_target:id});
   if(!evRoot.querySelector('.nw-social-panel'))return;
-  const fields=[['PUZZLES COMPLETED',p.puzzles],['TOTAL POINTS',Number(p.points).toLocaleString()],['BATTLE WINS',p.battle_wins],['FRIENDLY WINS',p.challenge_wins]];
+  const fields=[['PUZZLES COMPLETED',p.puzzles],['TOTAL POINTS',Number(p.points).toLocaleString()],['BATTLE WINS',p.battle_wins],['BATTLE LOSSES',p.battle_losses],['BATTLE DRAWS',p.battle_draws],['FRIENDLY WINS',p.challenge_wins],['FRIENDLY LOSSES',p.challenge_losses],['FRIENDLY DRAWS',p.challenge_draws]];
   nwAccountTheme();
   evDisplay(`${evHeader('FRIEND PROFILE',()=>nwShowFriends('list',back))}<section class="nw-new-panel nw-social-panel">${nwAccountHeading('FRIEND PROFILE')}<div class="nw-friend-public-card">${nwFriendPhoto(p)}<h3>${nwEscape(p.name)}</h3></div><div class="nw-friend-profile-stats">${fields.map(([label,value])=>`<div><small>${label}</small><strong>${nwEscape(value)}</strong></div>`).join('')}</div><button class="nw-action" id="nwChallengeFriend">CHALLENGE TO SUDOKU</button><p class="nw-muted">Puzzle totals are based on saved history; verified Friendly Challenge results are tracked separately.</p></section>`);
   evRoot.querySelector('#nwChallengeFriend').onclick=()=>nwChallengeChoose(id,back);
@@ -2526,3 +2530,5 @@ window.addEventListener('pagehide',()=>{
   });
  }).catch(()=>{});
 });
+
+setTimeout(()=>{void nwFriendPresenceTick()},8000);
