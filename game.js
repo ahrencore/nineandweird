@@ -163,14 +163,14 @@ async function nwCloudSaveFlush(key){
   }
  }
 }
-function nwGrowingLoadSave(){
+function nwGrowingLoadSave(accountId){
  const s=nwCloudSaveState;
- if(!s.ready||s.id!==nwCloud?.user()?.id)return null;
+ if(!accountId||accountId!==s.id||!s.ready||s.id!==nwCloud?.user()?.id)return null;
  try{return s.values['nw-growing-live-v1']===undefined?null:JSON.parse(s.values['nw-growing-live-v1'])}catch{return null}
 }
-function nwGrowingQueueSave(value){
+function nwGrowingQueueSave(value,accountId){
  const s=nwCloudSaveState;
- if(!s.ready||s.id!==nwCloud?.user()?.id||s.conflicts.has('nw-growing-live-v1'))return;
+ if(!accountId||accountId!==s.id||!s.ready||s.id!==nwCloud?.user()?.id||s.conflicts.has('nw-growing-live-v1'))return;
  s.values['nw-growing-live-v1']=JSON.stringify(value);
  nwCloudSaveQueue('nw-growing-live-v1');
 }
