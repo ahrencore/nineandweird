@@ -381,7 +381,7 @@ async function nwStartV37(){
   catch(e){nwStartupDone=true;nwShowAccountRetry(e);}
 }
 if(window.nwCloud){
-  nwCloud.onChange(()=>{const uid=nwCloud.user()?.id||null;if(uid!==nwPrizeCacheOwner){nwPrizeCacheOwner=uid;nwPrizeCache={stock:{},claims:[],transfers:[]};}if(!nwStartupDone)return;const key=nwAuthKey();if(key===nwLastAuthKey)return;nwLastAuthKey=key;nwVerifiedAccount=null;const serial=nwRouteSerial;
+  nwCloud.onChange(()=>{const uid=nwCloud.user()?.id||null;if(uid!==nwPrizeCacheOwner){nwPrizeCacheOwner=uid;nwPrizeCache={stock:{},claims:[],transfers:[]};if(uid)void nwPrizeSync().catch(e=>console.warn('Inventory login sync:',e.message));}if(!nwStartupDone)return;const key=nwAuthKey();if(key===nwLastAuthKey)return;nwLastAuthKey=key;nwVerifiedAccount=null;const serial=nwRouteSerial;
     // Run outside Supabase's auth callback lock; token refresh for same identity is ignored.
     setTimeout(()=>{if(nwAuthKey()!==key||nwRouteSerial!==serial)return;evSudokuLeave();nwScroll.usual=nwScroll.weird=nwScroll.fav=0;nwRoomPages.usual=nwRoomPages.weird=nwRoomPages.fav=0;void nwRouteAccount();},0);
   });
