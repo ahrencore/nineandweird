@@ -99,6 +99,7 @@ async function nwCloudSaveFlush(key){
   const revision=Number(data);
   state.base[key]=revision;
   const latest=nwCloudSaveMetadata(id);latest[key]={revision,raw};nwCloudSaveStoreMeta(id,latest);
+  nwPrizeFlushDurableReceipts();
   if(localStorage.getItem(storageKey)!==raw)nwCloudSaveQueue(key);
  }catch(e){
   if(/conflict/i.test(e.message||''))state.conflicts.add(key);
@@ -486,6 +487,27 @@ async function nwPrizeAck(kind,value){
  finally{nwPrizeAckInflight.delete(id)}
 }
 function nwPrizeAckTransfer(id){void nwPrizeAck('transfer',id)}
+function nwPrizeFlushDurableReceipts(){
+ const id=nwCloud?.user()?.id;
+ if(!id||nwCloudSaveState.id!==id||!nwCloudSaveState.ready)return;
+ const meta=nwCloudSaveMetadata(id);
+ const durable=key=>meta[key]?.raw!=null&&meta[key].raw===localStorage.getItem(nwCloudSaveLocalKey(key,id));
+ if(durable('nineweird-triple-economy-beta-v1')){
+  const tt=nwRead(nwTripleKey,{});
+  const ids=new Set(tt.inventoryApplied||[]);
+  for(const t of nwPrizeCache.transfers||[])if(t.event==='tt'&&ids.has(t.id))nwPrizeAckTransfer(t.id);
+ }
+ if(durable('nw-growing-live-v1')){
+  const tg=JSON.parse(localStorage.getItem(nwCloudSaveLocalKey('nw-growing-live-v1',id))||'{}');
+  const ids=new Set(tg.inventoryApplied||[]);
+  for(const t of nwPrizeCache.transfers||[])if(t.event==='tg'&&ids.has(t.id))nwPrizeAckTransfer(t.id);
+ }
+ if(durable('nineweird-triple-economy-beta-v1')&&durable('nineweird-prize-diamond-receipts-v1')){
+  const applied=nwRead(nwPrizeAppliedKey,{});
+  for(const c of nwPrizeCache.claims||[])if(applied[c.event+':'+c.period])void nwPrizeAck('claim',c.event+':'+c.period);
+ }
+}
+
 
 const nwPrizeDefinitions=[
  {key:'tt_ticket',name:'Event Tickets',event:'tt',icon:'🎟'},
@@ -510,7 +532,7 @@ function nwPrizeApplyTTTransfers(){
   applied.add(t.id);changed=true;
  }
  if(changed){d.inventoryApplied=[...applied];nwTripleSave(d);}
- for(const t of nwPrizeCache.transfers||[]){if(t.event==='tt'&&applied.has(t.id))nwPrizeAckTransfer(t.id);}
+ nwPrizeFlushDurableReceipts();
 }
 function nwPrizeMirrorDiamonds(){
  const applied=nwRead(nwPrizeAppliedKey,{});
@@ -524,7 +546,7 @@ function nwPrizeMirrorDiamonds(){
   const d=nwTripleData();d.diamondDelta+=change;d.diamonds+=change;
   nwTripleSave(d);nwWrite(nwPrizeAppliedKey,applied);nwRefreshVisibleDiamondBalances();
  }
- for(const c of nwPrizeCache.claims||[]){if(applied[c.event+':'+c.period])void nwPrizeAck('claim',c.event+':'+c.period);}
+ nwPrizeFlushDurableReceipts();
 }
 async function nwPrizeSync(){
  const account=nwCloud?.user()?.id;
