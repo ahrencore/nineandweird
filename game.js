@@ -37,6 +37,8 @@ function nwCloudSaveLocalKey(key,id){
  return key==='nw-growing-live-v1'?'nw-growing-live-v1:'+id:'nineweird-player:'+id+':'+key;
 }
 function nwCloudSaveMetaKey(id){return 'nineweird-cloud-save-meta-v1:'+id;}
+function nwCloudSaveSignature(raw){let h=2166136261;for(let i=0;i<raw.length;i++)h=Math.imul(h^raw.charCodeAt(i),16777619);return raw.length+':'+(h>>>0).toString(36);}
+function nwCloudSaveSame(meta,raw){return !!meta&&(meta.raw===raw||meta.signature===nwCloudSaveSignature(raw));}
 function nwCloudSaveMetadata(id){try{return JSON.parse(localStorage.getItem(nwCloudSaveMetaKey(id))||'{}')}catch{return {};}}
 function nwCloudSaveStoreMeta(id,meta){try{localStorage.setItem(nwCloudSaveMetaKey(id),JSON.stringify(meta))}catch{}}
 async function nwCloudSaveInit(){
@@ -54,13 +56,13 @@ async function nwCloudSaveInit(){
   if(saved){
    const remoteRaw=JSON.stringify(saved.value),version=Number(saved.revision);
    const last=meta[key];
-   if(local===null||(last&&local===last.raw&&version>Number(last.revision||0))){
+   if(local===null||(last&&nwCloudSaveSame(last,local)&&version>Number(last.revision||0))){
     localStorage.setItem(storageKey,remoteRaw);
-    meta[key]={revision:version,raw:remoteRaw};
+    meta[key]={revision:version,signature:nwCloudSaveSignature(remoteRaw)};
    }else if(local===remoteRaw){
-    meta[key]={revision:version,raw:remoteRaw};
-   }else if(last&&last.raw===local){
-    meta[key]={revision:version,raw:remoteRaw};
+    meta[key]={revision:version,signature:nwCloudSaveSignature(remoteRaw)};
+   }else if(last&&nwCloudSaveSame(last,local)){
+    meta[key]={revision:version,signature:nwCloudSaveSignature(remoteRaw)};
     // The remote device has newer progress; restore it only if local is still unchanged.
     localStorage.setItem(storageKey,remoteRaw);
    }else{
@@ -88,7 +90,7 @@ async function nwCloudSaveFlush(key){
  const storageKey=nwCloudSaveLocalKey(key,id),raw=localStorage.getItem(storageKey);
  if(raw===null)return;
  const meta=nwCloudSaveMetadata(id),known=meta[key];
- if(known?.raw===raw)return;
+ if(nwCloudSaveSame(known,raw))return;
  state.active.add(key);
  try{
   const c=await nwCloud.get();
@@ -98,7 +100,7 @@ async function nwCloudSaveFlush(key){
   if(nwCloud?.user()?.id!==id||nwCloudSaveState!==state)return;
   const revision=Number(data);
   state.base[key]=revision;
-  const latest=nwCloudSaveMetadata(id);latest[key]={revision,raw};nwCloudSaveStoreMeta(id,latest);
+  const latest=nwCloudSaveMetadata(id);latest[key]={revision,signature:nwCloudSaveSignature(raw)};nwCloudSaveStoreMeta(id,latest);
   nwPrizeFlushDurableReceipts();
   if(localStorage.getItem(storageKey)!==raw)nwCloudSaveQueue(key);
  }catch(e){
@@ -491,7 +493,7 @@ function nwPrizeFlushDurableReceipts(){
  const id=nwCloud?.user()?.id;
  if(!id||nwCloudSaveState.id!==id||!nwCloudSaveState.ready)return;
  const meta=nwCloudSaveMetadata(id);
- const durable=key=>meta[key]?.raw!=null&&meta[key].raw===localStorage.getItem(nwCloudSaveLocalKey(key,id));
+ const durable=key=>nwCloudSaveSame(meta[key],localStorage.getItem(nwCloudSaveLocalKey(key,id)));
  if(durable('nineweird-triple-economy-beta-v1')){
   const tt=nwRead(nwTripleKey,{});
   const ids=new Set(tt.inventoryApplied||[]);
