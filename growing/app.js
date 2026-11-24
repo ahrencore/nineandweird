@@ -43,6 +43,9 @@ const APP=(()=>{
    applied.add(receipt.id);changed=true;
   }
   if(changed)state.inventoryApplied=[...applied];
+  for(const receipt of window.parent.nwPrizeTransferReceipts('tg')){
+   if(applied.has(receipt.id)&&typeof window.parent.nwPrizeAckTransfer==='function')window.parent.nwPrizeAckTransfer(receipt.id);
+  }
  }
  function sync(){const t=now();if(!state)state=fresh();if(!state.daily||state.daily.date!==todayUTC(t))state.daily={date:todayUTC(t),battles:0,worlds:0,merges:0,spent:0,played:0,claimed:[]};if(weekId(t)!==state.weekId||state.boardWeekId!==weekId(t)){
   const newWeek=weekId(t),board=E.initial();
