@@ -969,10 +969,32 @@ function nwBattleSeasonClock(){
  const d=new Date(),end=Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,1),hours=Math.max(0,Math.floor((end-d.getTime())/3600000));
  return Math.floor(hours/24)+'D '+hours%24+'H';
 }
-// Local-only milestone ledger. One entry per account, UTC month and tier.
+// Server-verified Battle tier rewards. Old progress remains available as history,
+// but only authenticated, validated match results qualify for Diamond payouts.
+let nwBattleRewardState={account:null,month:null,wins:0,claimed:[],loaded:false};
+let nwBattleRewardLoading=null,nwBattleRewardError='';
+async function nwBattleLoadRewards(force=false){
+ const account=nwCloud?.user()?.id,month=nwSeasonId();
+ if(!account)throw Error('Sign in to load Battle rewards');
+ if(!force&&nwBattleRewardState.loaded&&nwBattleRewardState.account===account&&nwBattleRewardState.month===month)return nwBattleRewardState;
+ if(nwBattleRewardLoading)return nwBattleRewardLoading;
+ const task=(async()=>{
+  const c=await nwCloud.get(),{data,error}=await c.rpc('nw_battle_reward_status');
+  if(error)throw Error(error.message);
+  if(account!==nwCloud?.user()?.id)return null;
+  if(data?.month!==month||!Number.isSafeInteger(Number(data.wins)))throw Error('Unable to confirm current Battle month');
+  nwBattleRewardState={account,month,wins:Number(data.wins),claimed:Array.isArray(data.claimed)?data.claimed.map(Number):[],loaded:true};
+  nwBattleRewardError='';
+  return nwBattleRewardState;
+ })();
+ nwBattleRewardLoading=task;
+ try{return await task}
+ catch(e){nwBattleRewardError=e.message;throw e}
+ finally{if(nwBattleRewardLoading===task)nwBattleRewardLoading=null}
+}
 const nwBattleDiamondKey='nineweird-battle-diamond-claims-v1';
 function nwBattleDiamondClaims(){const v=nwRead(nwBattleDiamondKey,{});return v&&typeof v==='object'&&!Array.isArray(v)?v:{};}
-function nwBattleDiamondClaimed(month,wins){const c=nwBattleDiamondClaims()[month+':'+wins];return c===wins||(c&&typeof c==='object'&&c.wins===wins);}
+function nwBattleDiamondClaimed(month,wins){return nwBattleRewardState.loaded&&nwBattleRewardState.account===nwCloud?.user()?.id&&nwBattleRewardState.month===month&&nwBattleRewardState.claimed.includes(wins);}
 function nwBattleDiamondTotal(){return Object.values(nwBattleDiamondClaims()).reduce((sum,n)=>sum+(Number.isSafeInteger(n?.amount)?n.amount:(nwSeasonFrameTiers.some(t=>t.wins===n)?n:0)),0);}
 let nwWalletState={user:null,active:false,balance:0};
 function nwWalletCurrent(){return nwWalletState.user===nwCloud?.user()?.id&&nwWalletState.active}
@@ -1039,11 +1061,8 @@ async function nwWalletPurchase(item){
 }
 function nwDiamondBalance(){return nwWalletCurrent()?nwWalletState.balance:0;}
 function nwClaimBattleDiamond(wins,month){
- if(!nwPlayerStorageKey(nwBattleDiamondKey)||month!==nwSeasonId()||!nwSeasonFrameTiers.some(t=>t.wins===wins)||nwBattleMonthStats().wins<wins)return false;
- const claims=nwBattleDiamondClaims(),key=month+':'+wins;
- if(nwBattleDiamondClaimed(month,wins))return false;
- claims[key]={wins,amount:nwBattleDiamondPrize(wins)};nwWrite(nwBattleDiamondKey,claims);
- return nwBattleDiamondClaimed(month,wins);
+ // Legacy local-only claim path is disabled; wallet credits require server verification.
+ return false;
 }
 const nwBattleDiamondPrizes={10:100,25:250,50:500,100:1000,150:1500,200:2000};
 function nwBattleDiamondPrize(wins){return nwBattleDiamondPrizes[wins]||0;}
