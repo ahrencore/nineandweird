@@ -346,11 +346,103 @@ function nwRefreshNotificationOrbits(){
  for(const el of buttons)el.classList.toggle('nw-notification-orbit',claim);
  // Event planet keeps its existing live animation; the reward button signals the claim.
 }
+
+let nwFriendsLoadSerial=0;
+let nwFriendsSnapshot=null;
+let nwFriendsLastTab='list';
+let nwFriendsBusy=false;
+function nwFriendPhoto(player){
+ const avatar=nwAvatarValue(player.avatar);
+ const f=player.frame;
+ const known=[...nwSeasonFrameTiers.map(t=>'monthly-'+t.wins),'usual','weird'];
+ const frame=known.includes(f)?(f==='usual'?'frames/nw-free-usual.png?v=42':f==='weird'?'frames/nw-free-weird.png?v=42':'frames/nw-monthly-'+f.slice(8)+'.png'):null;
+ return '<span class="nw-friend-avatar">'+nwAvatarImg(avatar,'nw-friend-avatar-img')+(frame?'<img class="nw-friend-frame" alt="" src="'+nwEscape(frame)+'">':'')+'</span>';
+}
+async function nwFriendsRpc(method,args={}){
+ const c=await nwCloud.get();
+ if(!nwCloud.user()||nwCloud.user().is_anonymous)throw Error('Registered account required');
+ const {data,error}=await c.rpc(method,args);
+ if(error)throw Error(error.message);
+ return data;
+}
+async function nwFriendsLoad(tab='list',back=nwShowProfile){
+ const serial=++nwFriendsLoadSerial;
+ nwFriendsLastTab=tab;
+ nwAccountTheme();
+ evDisplay(`${evHeader('FRIENDS',back)}<section class="nw-new-panel">${nwAccountHeading('FRIENDS','Find your fellow weirdos')}<p class="nw-muted">Loading your Friends...</p></section>`);
+ try{
+  const data=await nwFriendsRpc('nw_friend_snapshot');
+  if(serial!==nwFriendsLoadSerial||nwCloud.user()?.is_anonymous)return;
+  nwFriendsSnapshot=data;
+  nwFriendsDraw(tab,back);
+ }catch(e){
+  if(serial!==nwFriendsLoadSerial)return;
+  evDisplay(`${evHeader('FRIENDS',back)}<section class="nw-new-panel">${nwAccountHeading('FRIENDS')}<p class="nw-muted" role="alert">${nwEscape(e.message)}</p><button class="nw-action" id="nwFriendRetry">RETRY</button></section>`);
+  evRoot.querySelector('#nwFriendRetry').onclick=()=>nwFriendsLoad(tab,back);
+ }
+}
 function nwShowFriends(tab='list',back=nwShowProfile){
  clearInterval(nwDoubleTimer);evSudokuLeave();nwAccountTheme();
- const guest=!window.nwCloud?.user()||window.nwCloud.user().is_anonymous;
- evDisplay(`${evHeader('FRIENDS',back)}<section class="nw-new-panel">${nwAccountHeading('FRIENDS','Find your fellow weirdos')}<div class="nw-friend-tabs">${[['list','MY FRIENDS'],['requests','REQUESTS'],['add','ADD FRIEND']].map(([id,label])=>`<button type="button" data-friend-tab="${id}" class="${tab===id?'active':''}">${label}</button>`).join('')}</div><div class="nw-friend-content">${guest?'<p>Sign in with a registered account to use online friends when available.</p>':tab==='add'?'<label class="nw-new-label" for="nwFriendSearch">EXACT USERNAME</label><input id="nwFriendSearch" maxlength="20" placeholder="mort.mp3" disabled><button class="nw-action" disabled>SEARCH</button><p>Online username search is coming soon.</p>':tab==='requests'?'<p>Friend requests will be available when online friends are connected.</p>':'<p>Your friends list will be available when online friends are connected.</p>'}<p class="nw-muted">Online friends and invitations are not connected yet.</p></div></section>`);
- evRoot.querySelectorAll('[data-friend-tab]').forEach(b=>b.onclick=()=>nwShowFriends(b.dataset.friendTab,back));nwResetViewToTop();
+ const guest=!nwCloud?.user()||nwCloud.user().is_anonymous;
+ if(guest){
+  evDisplay(`${evHeader('FRIENDS',back)}<section class="nw-new-panel">${nwAccountHeading('FRIENDS','Find your fellow weirdos')}<p class="nw-muted">Register an account to add friends and play Friendly Challenges.</p></section>`);
+  return;
+ }
+ void nwFriendsLoad(tab,back);
+}
+function nwFriendsDraw(tab='list',back=nwShowProfile){
+ const d=nwFriendsSnapshot||{friends:[],incoming:[],outgoing:[],blocked:[],appear_offline:false};
+ const incoming=d.incoming||[],friends=d.friends||[],outgoing=d.outgoing||[];
+ const pill=(label,action,id,cls='')=>`<button class="nw-friend-mini ${cls}" data-social-action="${action}" data-social-id="${nwEscape(id)}">${label}</button>`;
+ const item=(p,actions='',sub='')=>`<div class="nw-friend-row">${nwFriendPhoto(p)}<div class="nw-friend-name"><strong>${nwEscape(p.name)}</strong>${sub?'<small>'+sub+'</small>':''}</div><div class="nw-friend-actions">${actions}</div></div>`;
+ let content='';
+ if(tab==='list'){
+  content=`<h3>MY FRIENDS (${friends.length})</h3><p class="nw-muted">${friends.filter(f=>f.online).length} online</p>`+
+   (friends.length?friends.map(f=>item(f,pill('CHALLENGE','challenge',f.id)+pill('REMOVE','remove',f.id,'nw-friend-outline')+pill('BLOCK','block',f.id,'nw-friend-outline'),'<span class="nw-friend-dot '+(f.online?'on':'')+'"></span> '+(f.online?'Online':'Offline'))).join(''):'<p class="nw-muted">Your friends list is empty. Find your first fellow weirdo!</p>')+
+   `<label class="nw-friend-private"><input type="checkbox" id="nwFriendInvisible" ${d.appear_offline?'checked':''}> Appear offline to friends</label>`+
+   ((d.blocked||[]).length?`<details class="nw-friend-blocked"><summary>Blocked players (${d.blocked.length})</summary>${d.blocked.map(p=>item(p,pill('UNBLOCK','unblock',p.id))).join('')}</details>`:'');
+ }else if(tab==='requests'){
+  content=`<h3>INCOMING REQUESTS (${incoming.length})</h3>`+(incoming.map(p=>item(p,pill('ACCEPT','accept',p.id)+pill('DECLINE','decline',p.id,'nw-friend-outline'))).join('')||'<p class="nw-muted">No pending requests.</p>')+
+   `<h3>SENT REQUESTS (${outgoing.length})</h3>`+(outgoing.map(p=>item(p,pill('CANCEL','cancel',p.id,'nw-friend-outline'))).join('')||'<p class="nw-muted">No sent requests.</p>');
+ }else if(tab==='add'){
+  content=`<label class="nw-new-label" for="nwFriendSearch">EXACT USERNAME</label><input id="nwFriendSearch" maxlength="20" autocomplete="off" placeholder="Enter username"><button class="nw-action" id="nwFriendSearchBtn">SEARCH</button><div id="nwFriendResult" aria-live="polite"></div>`;
+ }else{
+  content=`<h3>FRIENDLY CHALLENGES</h3><div id="nwFriendChallenges"><p class="nw-muted">Loading challenges...</p></div>`;
+ }
+ evDisplay(`${evHeader('FRIENDS',back)}<section class="nw-new-panel nw-social-panel">${nwAccountHeading('FRIENDS','Find your fellow weirdos')}<div class="nw-friend-tabs">${[['list','MY FRIENDS'],['requests','REQUESTS'],['add','ADD FRIEND'],['challenges','CHALLENGES']].map(([id,label])=>`<button type="button" data-friend-tab="${id}" class="${tab===id?'active':''}">${label}${id==='requests'&&incoming.length?' ('+incoming.length+')':''}</button>`).join('')}</div><div class="nw-friend-content">${content}<p id="nwSocialStatus" role="status" class="nw-muted"></p></div></section>`);
+ evRoot.querySelectorAll('[data-friend-tab]').forEach(b=>b.onclick=()=>nwFriendsDraw(b.dataset.friendTab,back));
+ evRoot.querySelectorAll('[data-social-action]').forEach(b=>b.onclick=()=>nwSocialAction(b.dataset.socialAction,b.dataset.socialId,tab,back));
+ const hidden=evRoot.querySelector('#nwFriendInvisible');
+ if(hidden)hidden.onchange=async()=>{hidden.disabled=true;try{await nwFriendsRpc('nw_friend_heartbeat',{p_appear_offline:hidden.checked});await nwFriendsLoad(tab,back)}catch(e){hidden.disabled=false;hidden.checked=!hidden.checked;const out=evRoot.querySelector('#nwSocialStatus');if(out)out.textContent=e.message}};
+ const search=evRoot.querySelector('#nwFriendSearch'),searchBtn=evRoot.querySelector('#nwFriendSearchBtn');
+ if(searchBtn){
+  search.onkeydown=e=>{if(e.key==='Enter')searchBtn.click()};
+  searchBtn.onclick=async()=>{
+   const name=search.value.trim(),out=evRoot.querySelector('#nwFriendResult');
+   if(!nwUsernameValid(name)){out.textContent='Enter a valid username (3–20 characters).';return}
+   searchBtn.disabled=true;out.textContent='Searching...';
+   try{
+    const match=await nwFriendsRpc('nw_friend_search',{p_name:name});
+    if(!match){out.textContent='No available player with that username.';return}
+    const related=friends.some(f=>f.id===match.id),sent=outgoing.some(f=>f.id===match.id),received=incoming.some(f=>f.id===match.id);
+    out.innerHTML=item(match,related?'FRIENDS':sent?'REQUEST SENT':received?'CHECK REQUESTS':pill('ADD FRIEND','send',match.id));
+    out.querySelectorAll('[data-social-action]').forEach(b=>b.onclick=()=>nwSocialAction('send',match.id,tab,back));
+   }catch(e){out.textContent=e.message}
+   finally{searchBtn.disabled=false}
+  };
+ }
+ if(tab==='challenges')void nwChallengesDraw(back);
+ nwResetViewToTop();
+}
+async function nwSocialAction(action,id,tab,back){
+ if(nwFriendsBusy)return;
+ if(action==='challenge'){nwChallengeChoose(id,back);return}
+ if(['remove','block'].includes(action)&&!confirm(action==='block'?'Block this player? Existing friendship and pending invitations will be removed.':'Remove this friend?'))return;
+ nwFriendsBusy=true;
+ const out=evRoot.querySelector('#nwSocialStatus');if(out)out.textContent='Syncing...';
+ try{await nwFriendsRpc('nw_friend_action',{p_action:action,p_target:id});await nwFriendsLoad(tab,back)}
+ catch(e){if(out)out.textContent=e.message}
+ finally{nwFriendsBusy=false}
 }
 function nwShowProfile(){
   if(nwCloud?.user()&&!nwCloud.user().is_anonymous&&!nwCloud.isRecovering()&&!nwSetupVerified()){void nwRouteAccount();return;}
