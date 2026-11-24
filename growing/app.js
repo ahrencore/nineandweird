@@ -175,7 +175,7 @@ const APP=(()=>{
  sync();sendVerifiedProof(true);
  if(state.score<2000){overlay('RANKINGS LOCKED','<p>Earn 2,000 points to unlock the leaderboard!</p>');return;}
  overlay('RANKINGS','<div id="nwLbTG">Connecting to rankings…</div>');
- (async()=>{if(!EMBEDDED)throw Error('Online rankings require the main Nine & Weird game.');if(live())void window.parent.nwLbSubmit('tg',state.score).catch(e=>console.warn('Growing leaderboard submission:',e.message));const rows=await window.parent.nwLbRank('tg'),el=document.getElementById('nwLbTG');if(el)el.innerHTML=window.parent.nwLbMarkup(rows,'tg');})().catch(e=>{const el=document.getElementById('nwLbTG');if(el)el.textContent='Leaderboard unavailable: '+e.message;});
+ (async()=>{if(!EMBEDDED)throw Error('Online rankings require the main Nine & Weird game.');if(live())void window.parent.nwLbSubmit('tg',state.score).catch(e=>console.warn('Growing leaderboard submission:',e.message));const rows=await window.parent.nwLbRank('tg'),el=document.getElementById('nwLbTG');if(el){el.innerHTML=window.parent.nwLbMarkup(rows,'tg');el.querySelector('[data-nw-lb-rewards]')?.addEventListener('click',()=>overlay('REWARDS',window.parent.nwLbRewardsMarkup('tg')));}})().catch(e=>{const el=document.getElementById('nwLbTG');if(el)el.textContent='Leaderboard unavailable: '+e.message;});
 }
  function missionScreen(){
   sync();const d=state.daily;
