@@ -762,7 +762,7 @@ async function nwPrizeMail(){
    <span class="nw-mail-star star-one">✦</span><span class="nw-mail-star star-two">✧</span>
    <span class="nw-mail-star star-three">✦</span><span class="nw-mail-star star-four">✧</span>
    <span class="nw-mail-orbit orbit-one"></span><span class="nw-mail-orbit orbit-two"></span>
-   <span class="nw-mail-envelope"><span class="nw-mail-seal">✦</span></span>
+   <span class="nw-mail-envelope"><span class="nw-mail-seal">×</span></span>
   </div>
   <div class="nw-mail-heading"><h2>MAILBOX</h2><p>✧ MESSAGES FROM THE COSMOS ✧</p></div>
   <div class="nw-mail-inbox-heading"><div><span class="nw-mail-indicator" aria-hidden="true"></span><strong>INBOX</strong><span id="nwMailCount">(…)</span></div><small>MOST RECENT FIRST ↓</small></div>
