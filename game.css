@@ -4337,3 +4337,7 @@ html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:n
 #game.nw-triple-theme .nw43-dialog .nw-diamond-amount>.nw-diamond-icon{
  display:block;width:18px;height:18px;min-width:18px;max-width:18px;min-height:18px;max-height:18px;object-fit:contain;flex:none;
 }
+
+/* Favorites planet: preserve the original handwritten lobby heart in the first Worlds slot. */
+#game .nw-planet-favorites .nw-planet-pieces{display:grid;place-items:center}
+#game .nw-planet-favorites .nw-planet-favorite-heart{display:block;grid-column:1/-1;grid-row:1/-1;color:#F08BC2;font:400 clamp(46px,14cqi,71px)/1 'Finger Paint',cursive;transform:rotate(-12deg);text-shadow:0 0 9px #F08BC233}
