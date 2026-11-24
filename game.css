@@ -4377,3 +4377,40 @@ html:has(#loading:not([hidden])),body:has(#loading:not([hidden])){background:#0B
 #game .nw-lb-item>strong{flex:none;white-space:nowrap;color:#f08bc2;font:800 15px 'Oxanium',sans-serif}
 #game .nw-lb-empty{text-align:center;color:#f8ebdd;font-family:'Bricolage Grotesque',sans-serif}
 @media(max-width:390px){#game .nw-lb-item{gap:7px;padding:7px 8px;font-size:12px}#game .nw-lb-item>b{flex-basis:30px;font-size:13px}#game .nw-lb-pfp{flex-basis:40px;width:40px;height:40px}#game .nw-lb-item>strong{font-size:13px}}
+
+/* Trophy Case Inventory and tournament reward mail — shared Trophy visual language. */
+#game.nw-trophy-theme .nw-prize-wallet{display:flex;flex-direction:column;align-items:center;gap:8px;margin:3px auto 17px;padding:19px 15px;background:#302B46;border:1px solid #DFCAFF;border-radius:17px;box-shadow:inset 0 1px #F9F2FF14}
+#game.nw-trophy-theme .nw-prize-wallet>small{color:#DFCAFF;font:700 17px 'Gaegu',cursive;letter-spacing:.4px}
+#game.nw-trophy-theme .nw-prize-wallet .nw-diamond-amount{display:flex;align-items:center;gap:8px;font:800 28px 'Gaegu',cursive;color:#F4ED91}
+#game.nw-trophy-theme .nw-prize-wallet .nw-diamond-icon{width:29px;height:29px;object-fit:contain}
+#game.nw-trophy-theme .nw-prize-hint{font:15px/1.4 'Gaegu',cursive;text-align:center;color:#DFCAFF;margin:8px 0 20px}
+#game.nw-trophy-theme .nw-trophy-panel>h3{margin:20px 0 10px;font:700 23px 'Gaegu',cursive;color:#F4ED91;letter-spacing:.3px;text-align:center}
+#game.nw-trophy-theme .nw-prize-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+#game.nw-trophy-theme .nw-prize-item{min-width:0;min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:14px 8px 12px;border:1px solid #DFCAFF88;border-radius:17px;background:#302B46;text-align:center;box-shadow:0 6px 15px #100d1c2e}
+#game.nw-trophy-theme .nw-prize-symbol{height:36px;display:flex;align-items:center;font:700 31px 'Gaegu',cursive;color:#F4ED91}
+#game.nw-trophy-theme .nw-prize-item>strong{font:700 18px/1.1 'Gaegu',cursive;color:#F9F2FF;overflow-wrap:anywhere}
+#game.nw-trophy-theme .nw-prize-item>b{font:700 25px 'Gaegu',cursive;color:#F4ED91}
+#game.nw-trophy-theme .nw-prize-item button,
+#game.nw-trophy-theme .nw-prize-letter button{display:block;min-height:32px;padding:6px 17px;border-radius:11px;border:1px solid #DFCAFF;background:#443A60;color:#F4ED91;font:700 16px 'Gaegu',cursive;box-shadow:none}
+#game.nw-trophy-theme .nw-prize-item button:disabled,
+#game.nw-trophy-theme .nw-prize-letter button:disabled{opacity:.42;cursor:default}
+#game.nw-trophy-theme .nw-prize-mail{display:grid;gap:12px}
+#game.nw-trophy-theme .nw-prize-letter{display:flex;flex-direction:column;align-items:flex-start;gap:9px;padding:18px 16px;background:#302B46;border:1px solid #DFCAFF99;border-radius:16px;color:#F9F2FF}
+#game.nw-trophy-theme .nw-prize-letter>small{font:700 15px 'Gaegu',cursive;color:#DFCAFF}
+#game.nw-trophy-theme .nw-prize-letter>strong{font:700 26px 'Gaegu',cursive;color:#F4ED91}
+#game.nw-trophy-theme .nw-prize-letter>span{display:flex;align-items:center;gap:9px;font:17px 'Gaegu',cursive}
+#game.nw-trophy-theme .nw-prize-letter .nw-diamond-icon{width:23px;height:23px}
+#game .nw-prize-overlay{position:fixed;inset:0;z-index:9999;background:#100D1CE0;display:flex;align-items:center;justify-content:center;padding:16px}
+#game .nw-prize-dialog{display:flex;flex-direction:column;gap:14px;width:min(100%,420px);padding:22px 18px;background:#302B46;border:2px solid #DFCAFF;border-radius:20px;box-shadow:0 14px 40px #100D1Caa;text-align:center;color:#F9F2FF}
+#game .nw-prize-dialog h2{margin:0;color:#F4ED91;font:700 27px 'Gaegu',cursive}
+#game .nw-prize-dialog p{margin:0;font:17px 'Gaegu',cursive}
+#game .nw-prize-quantity{display:flex;justify-content:center;align-items:center;gap:12px}
+#game .nw-prize-quantity button{flex:0 0 46px;width:46px;height:46px;border:1px solid #DFCAFF;border-radius:13px;background:#443A60;color:#F4ED91;font:700 28px 'Gaegu',cursive}
+#game .nw-prize-quantity input{flex:0 0 94px;width:94px;min-width:0;text-align:center;border:1px solid #DFCAFF;border-radius:13px;background:#191729;color:#F9F2FF;font:700 27px 'Gaegu',cursive;padding:7px 3px}
+#game .nw-prize-dialog .nw-prize-summary{color:#DFCAFF}
+#game .nw-prize-dialog .nw-prize-msg,#game.nw-trophy-theme .nw-prize-msg{color:#F4ED91;font:15px 'Gaegu',cursive}
+#game .nw-prize-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+#game .nw-prize-actions button{min-width:0;padding:11px 8px;border:1px solid #DFCAFF;border-radius:12px;background:#443A60;color:#F9F2FF;font:700 16px 'Gaegu',cursive}
+#game .nw-prize-actions #nwPrizeConfirm{background:#F4ED91;color:#302B46;border-color:#F4ED91}
+#game .nw-prize-actions button:disabled{opacity:.48}
+@media(max-width:350px){#game.nw-trophy-theme .nw-prize-grid{gap:7px}#game.nw-trophy-theme .nw-prize-item{padding:12px 4px}#game.nw-trophy-theme .nw-prize-item>strong{font-size:16px}}
