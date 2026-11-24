@@ -774,7 +774,10 @@ async function nwPrizeMail(){
   const c=await nwCloud.get(),{data,error}=await c.rpc('nw_prize_inbox');
   if(error)throw Error(error.message);
   if(!container.isConnected||nwCloud?.user()?.id!==account)return;
-  const rows=Array.isArray(data)?data:[];
+  const rows=(Array.isArray(data)?data:[]).slice().sort((a,b)=>{
+   if(!!a.claimed!==!!b.claimed)return a.claimed?1:-1;
+   return String(b.period||'').localeCompare(String(a.period||''));
+  });
   const count=evRoot.querySelector('#nwMailCount');
   if(count)count.textContent='('+rows.length+')';
   const indicator=evRoot.querySelector('.nw-mail-indicator');
