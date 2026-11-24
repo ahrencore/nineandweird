@@ -704,7 +704,8 @@ function nwRankRewardArt(event,rank){
  if(!items.length)return '<span class="nw-lb-no-prize">NO RANK REWARD</span>';
  return '<div class="nw-lb-reward-grid">'+items.map(([key,qty])=>{
   const def=nwPrizeDefinitions.find(d=>d.key===key);
-  const icon=key==='diamonds'?'<img src="assets/currency/diamond.png" alt="">':nwPrizeIcon(key);
+  const rawIcon=key==='diamonds'?'<img src="assets/currency/diamond.png" alt="">':nwPrizeIcon(key);
+  const icon=rawIcon.replace(/src="([^"]+)"/g,(_,path)=>'src="'+new URL(path,document.baseURI).href+'"');
   const name=key==='diamonds'?'Diamonds':def?.name||key;
   return '<span class="nw-lb-reward-entry"><span class="nw-lb-reward-icon" aria-hidden="true">'+icon+'</span><b>×'+qty.toLocaleString()+'</b><small>'+nwEscape(name)+'</small></span>';
  }).join('')+'</div>';
