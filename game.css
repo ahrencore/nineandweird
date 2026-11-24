@@ -4342,17 +4342,17 @@ html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:n
 #game .nw-planet-favorites .nw-planet-pieces{display:grid;place-items:center}
 #game .nw-planet-favorites .nw-planet-favorite-heart{display:block;grid-column:1/-1;grid-row:1/-1;color:#F08BC2;font:400 clamp(46px,14cqi,71px)/1 'Finger Paint',cursive;transform:rotate(-12deg);text-shadow:0 0 9px #F08BC233}
 
-/* Nine & Weird three-second mini Sudoku loading screen — isolated from gameplay. */
+/* Nine & Weird five-second mini Sudoku loading screen — isolated from gameplay. */
 html:has(#loading:not([hidden])),body:has(#loading:not([hidden])){background:#0B1020}
 #loading{position:relative;isolation:isolate;overflow:hidden;min-height:100dvh;min-height:100svh;box-sizing:border-box;display:flex;align-items:center;justify-content:center;padding:max(20px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));background:radial-gradient(ellipse at 48% 34%,#2A2148 0%,#191B35 40%,#0B1020 82%)!important}
-#loading .nw-loading-content{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:25px;animation:nwLoadingExit 3s ease-out both}
+#loading .nw-loading-content{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:25px;animation:nwLoadingExit 5s ease-out both}
 #loading .nw-loading-board{width:min(46vw,166px);min-width:132px;aspect-ratio:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:3px;transform:rotate(-3deg)}
-#loading .nw-loading-cell{display:grid;place-items:center;min-width:0;background:#27213E;border:1.5px solid #8E83BE;border-radius:5px;font:700 clamp(21px,6vw,27px)/1 'Finger Paint',system-ui,cursive;color:#F8EBDD;animation:nwLoadingTile 3s ease-out both;animation-delay:calc(var(--tile-index) * .11s)}
+#loading .nw-loading-cell{display:grid;place-items:center;min-width:0;background:#27213E;border:1.5px solid #8E83BE;border-radius:5px;font:700 clamp(21px,6vw,27px)/1 'Finger Paint',system-ui,cursive;color:#F8EBDD;animation:nwLoadingTile 4s ease-out both;animation-delay:calc(var(--tile-index) * .11s)}
 #loading .nw-loading-cell:nth-child(3n+1){color:#F08BC2}
 #loading .nw-loading-cell:nth-child(3n+2){color:#81C8FF}
 #loading .nw-loading-label{font:400 14px/1.4 'Finger Paint',system-ui,cursive;letter-spacing:.16em;color:#F8EBDD;white-space:nowrap}
 #loading .nw-loading-ellipsis{display:inline-block;color:#F08BC2;min-width:1.6em;letter-spacing:0;animation:nwLoadingDots 1s steps(3,end) infinite;overflow:hidden;vertical-align:bottom;white-space:nowrap}
 @keyframes nwLoadingTile{0%,4%{opacity:0;transform:translateY(11px) scale(.86)}17%{opacity:1;transform:translateY(-3px) scale(1.045)}25%,100%{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes nwLoadingExit{0%,84%{opacity:1}100%{opacity:0}}
+@keyframes nwLoadingExit{0%,90%{opacity:1}100%{opacity:0}}
 @keyframes nwLoadingDots{0%{max-width:0}100%{max-width:1.6em}}
 @media(prefers-reduced-motion:reduce){#loading .nw-loading-content,#loading .nw-loading-cell,#loading .nw-loading-ellipsis{animation:none!important;opacity:1!important;transform:none!important}}
