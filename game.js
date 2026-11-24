@@ -38,7 +38,7 @@ function nwCloudSaveLocalKey(key,id){
 }
 function nwCloudSaveMetaKey(id){return 'nineweird-cloud-save-meta-v1:'+id;}
 function nwCloudSaveSignature(raw){let h=2166136261;for(let i=0;i<raw.length;i++)h=Math.imul(h^raw.charCodeAt(i),16777619);return raw.length+':'+(h>>>0).toString(36);}
-function nwCloudSaveSame(meta,raw){return !!meta&&(meta.raw===raw||meta.signature===nwCloudSaveSignature(raw));}
+function nwCloudSaveSame(meta,raw){return !!meta&&raw!=null&&(meta.raw===raw||meta.signature===nwCloudSaveSignature(raw));}
 function nwCloudSaveMetadata(id){try{return JSON.parse(localStorage.getItem(nwCloudSaveMetaKey(id))||'{}')}catch{return {};}}
 function nwCloudSaveStoreMeta(id,meta){try{localStorage.setItem(nwCloudSaveMetaKey(id),JSON.stringify(meta))}catch{}}
 async function nwCloudSaveInit(){
