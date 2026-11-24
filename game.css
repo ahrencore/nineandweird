@@ -4558,3 +4558,25 @@ html:has(#loading:not([hidden])),body:has(#loading:not([hidden])){background:#0B
     height:30px!important;
   }
 }
+
+
+/* Tournament prize previews and Mail reward indicator */
+#game .nw-lb-reward-action{display:flex;justify-content:flex-end;padding:3px 7px 10px}
+#game .nw-lb-reward-action button{border:1px solid #e4c5ff;border-radius:9px;padding:5px 11px;background:#44365b;color:#fff0b4;font:700 12px/1.15 'Gaegu',sans-serif;cursor:pointer;box-shadow:0 0 9px #dbaaff44;letter-spacing:.04em}
+#game .nw-lb-prizes{max-height:min(64dvh,580px);overflow-y:auto;display:grid;gap:9px;padding:2px;min-width:0}
+#game .nw-lb-prizes h3{text-align:center;font:800 18px 'Gaegu',sans-serif;color:#fff0b4;margin:3px 0}
+#game .nw-lb-prize-tier{background:#352a48;border:1px solid #ac8cc5;border-radius:12px;padding:8px;display:grid;gap:5px;min-width:0}
+#game .nw-lb-prize-tier>strong{color:#fff0b4;font:800 16px 'Gaegu',sans-serif}
+#game .nw-lb-reward-grid{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;min-width:0}
+#game .nw-lb-reward-entry{min-width:55px;max-width:100px;flex:1 1 55px;display:flex;align-items:center;flex-direction:column;gap:2px;color:#fff;min-height:65px;text-align:center}
+#game .nw-lb-reward-entry b{font:800 16px 'Gaegu',sans-serif}
+#game .nw-lb-reward-entry small{font:700 11px 'Gaegu',sans-serif;line-height:1.15;overflow-wrap:anywhere}
+#game .nw-lb-reward-icon{height:26px;width:31px;display:flex;justify-content:center;align-items:center}
+#game .nw-lb-reward-icon svg,#game .nw-lb-reward-icon img{display:block;width:26px;height:26px;object-fit:contain}
+#game .nw-prize-mail-rewards{width:100%;max-width:100%}
+#game .nw-prize-mail-rewards .nw-lb-reward-entry{max-width:110px}
+#game .nw-lobby-nav.nw-mail-unclaimed{position:relative;isolation:isolate;animation:nwMailFlash 1.5s ease-in-out infinite}
+#game .nw-lobby-nav.nw-mail-unclaimed::after{content:"";position:absolute;width:9px;height:9px;top:13px;right:17px;border-radius:50%;background:#fff5a1;box-shadow:0 0 8px 3px #f18bcb;pointer-events:none;animation:nwMailOrbit 2.2s linear infinite}
+@keyframes nwMailFlash{0%,100%{filter:brightness(1)}50%{filter:brightness(1.33)}}
+@keyframes nwMailOrbit{0%{transform:translate(-12px,0) rotate(0deg) translateX(11px)}100%{transform:translate(-12px,0) rotate(360deg) translateX(11px)}}
+@media(prefers-reduced-motion:reduce){#game .nw-lobby-nav.nw-mail-unclaimed,#game .nw-lobby-nav.nw-mail-unclaimed::after{animation:none!important}}
