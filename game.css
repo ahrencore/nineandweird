@@ -4582,46 +4582,17 @@ html:has(#loading:not([hidden])),body:has(#loading:not([hidden])){background:#0B
 @media(prefers-reduced-motion:reduce){#game .nw-lobby-nav.nw-mail-unclaimed,#game .nw-lobby-nav.nw-mail-unclaimed::after{animation:none!important}}
 
 
-/* Ruby After Dark — reward Mail */
-html:has(#game.nw-mail-theme:not([hidden])),body:has(#game.nw-mail-theme:not([hidden])){background:#160B0E!important}
-#game.theme-hub.nw-mail-theme{--surface:#160B0E;--panel:#281419;--ink:#ffe2e8;--accent:#F36B78;background:radial-gradient(ellipse at 50% 13%,#441b2a 0%,#241018 43%,#160B0E 82%)!important;min-height:100dvh;color:#ffe4e8!important;padding-top:max(14px,env(safe-area-inset-top))}
-#game.nw-mail-theme .ev-head{background:#2b151d!important;border-color:#9d5363!important;color:#ffe0e5!important}
-#game.nw-mail-theme .ev-head strong{color:#ffe1e7!important;text-shadow:0 0 11px #f36b7850}
-#game.nw-mail-theme .ev-head .ev-btn{background:#3a1c27!important;color:#ffe0e5!important;border-color:#b35b70!important}
-#game.nw-mail-theme .nw-mail-panel{max-width:470px;margin:16px auto 30px;padding:18px 14px 25px;background:linear-gradient(155deg,#2a151e,#1d1017)!important;border:1px solid #a24f6888!important;border-radius:22px;box-shadow:0 12px 34px #10050970,0 0 25px #e9577220;color:#ffe8e9!important}
-#game.nw-mail-theme .nw-trophy-heading{display:flex;flex-direction:column;align-items:center;gap:5px}
-#game.nw-mail-theme .nw-trophy-heading h2{font:800 clamp(27px,7vw,35px)/1.08 'Bricolage Grotesque',system-ui,sans-serif!important;letter-spacing:.055em;color:#ffe1e7!important;text-shadow:0 0 15px #f36b7877;margin:0;text-align:center}
-#game.nw-mail-theme .nw-mail-ornament{color:#ffa2b0;font-size:17px;letter-spacing:.8em;animation:nwMailSparkle 3.6s ease-in-out infinite}
-#game.nw-mail-theme .nw-trophy-doodle{color:#fa859c!important;opacity:.72;font-size:14px}
-#game.nw-mail-theme .nw-prize-mail{gap:14px;margin-top:16px;min-width:0}
-#game.nw-mail-theme .nw-prize-letter{position:relative;overflow:hidden;align-items:stretch;gap:11px;padding:17px 14px 15px;border-radius:17px;background:linear-gradient(140deg,#43212d,#311822 62%,#28141e)!important;border:1px solid #c06b83a8!important;box-shadow:inset 0 1px #ffd0d022,0 8px 18px #12050b66;color:#ffe4e8!important;animation:nwMailArrival .38s ease-out both}
-#game.nw-mail-theme .nw-prize-letter.nw-mail-new{border-color:#f48da4!important;box-shadow:0 0 13px #f36b782e,inset 0 1px #ffd0d022}
-#game.nw-mail-theme .nw-prize-letter.nw-mail-read{opacity:.8}
-#game.nw-mail-theme .nw-mail-letter-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:7px}
-#game.nw-mail-theme .nw-mail-letter-top small{font:700 11px/1.3 'Bricolage Grotesque',system-ui,sans-serif;color:#ffb5c2;letter-spacing:.04em}
-#game.nw-mail-theme .nw-mail-status{font:800 10px 'Bricolage Grotesque',system-ui,sans-serif;color:#2a0d18;background:#ffc2d2;border-radius:99px;padding:4px 8px;animation:nwMailSparkle 2s ease-in-out infinite}
-#game.nw-mail-theme .nw-mail-status.is-claimed{background:#5e3946;color:#ffd9df;animation:none}
-#game.nw-mail-theme .nw-prize-letter>strong{font:800 21px/1.15 'Bricolage Grotesque',system-ui,sans-serif!important;color:#ffefef!important;letter-spacing:.025em}
-#game.nw-mail-theme .nw-prize-mail-rewards{background:#200f19b0;padding:12px 8px;border:1px solid #a9687a5c;border-radius:12px;box-sizing:border-box}
-#game.nw-mail-theme .nw-lb-reward-grid{gap:8px}
-#game.nw-mail-theme .nw-lb-reward-entry{color:#ffe5ea;min-width:56px}
-#game.nw-mail-theme .nw-lb-reward-entry b{font:800 14px 'Bricolage Grotesque',system-ui,sans-serif}
-#game.nw-mail-theme .nw-lb-reward-entry small{font:600 10px/1.25 'Bricolage Grotesque',system-ui,sans-serif;color:#ffc9d5}
-#game.nw-mail-theme .nw-prize-letter button{align-self:stretch;min-height:43px;background:linear-gradient(#ffa2af,#ed6c82)!important;border:1px solid #ffc4cb!important;color:#370e20!important;border-radius:12px;font:800 13px 'Bricolage Grotesque',system-ui,sans-serif!important;letter-spacing:.04em;box-shadow:0 0 13px #e85b7860!important;transition:transform .18s ease,filter .18s ease}
-#game.nw-mail-theme .nw-prize-letter button:not(:disabled):active{transform:scale(.98)}
-#game.nw-mail-theme .nw-prize-letter button:disabled{background:#573240!important;color:#f7bec8!important;border-color:#855165!important;box-shadow:none!important;opacity:.7}
-#game.nw-mail-theme .nw-mail-empty{min-height:210px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:#ffbac7;font:600 15px 'Bricolage Grotesque',system-ui,sans-serif;text-align:center}
-#game.nw-mail-theme .nw-mail-empty>span{font-size:57px;color:#ef849b;text-shadow:0 0 25px #f36b7880}
-#game .nw-mail-claim-overlay{position:fixed;inset:0;z-index:99999;background:#10070edb;display:flex;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(5px);animation:nwMailArrival .26s ease-out}
-#game .nw-mail-claim-dialog{width:min(100%,400px);max-height:88dvh;overflow-y:auto;box-sizing:border-box;border:1px solid #f3a0b4;border-radius:23px;padding:26px 16px 21px;background:radial-gradient(ellipse at top,#512333,#2d131e 62%,#1a0e14);box-shadow:0 0 35px #f36b7845,0 16px 45px #050207ad;color:#ffe5ec;display:flex;flex-direction:column;align-items:center;gap:15px;text-align:center}
-#game .nw-mail-claim-stars{font-size:24px;letter-spacing:.6em;color:#ff9cbb;animation:nwMailSparkle 1.8s ease-in-out infinite}
-#game .nw-mail-claim-dialog h2{margin:0;color:#fff0f0;font:800 25px 'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:.025em;text-shadow:0 0 13px #f36b787a}
-#game .nw-mail-claimed-items{width:100%;background:#211018b3;border:1px solid #ae637a66;border-radius:13px;padding:12px 7px;box-sizing:border-box}
-#game .nw-mail-claim-dialog .nw-lb-reward-entry{color:#ffe3e9}
-#game .nw-mail-claim-dialog .nw-lb-reward-entry small{color:#ffc9d5}
-#game .nw-mail-claim-dialog p{margin:0;font:600 15px/1.4 'Bricolage Grotesque',system-ui,sans-serif}
-#game .nw-mail-claim-directions{color:#ffc2ce}
-#game .nw-mail-claim-dialog button{width:100%;min-height:45px;border-radius:12px;border:1px solid #ffc4d4;background:#f47e92;color:#350d1a;font:800 15px 'Bricolage Grotesque',system-ui,sans-serif;cursor:pointer;box-shadow:0 0 16px #ef6a8970}
-@keyframes nwMailArrival{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes nwMailSparkle{0%,100%{opacity:.65;filter:brightness(1)}50%{opacity:1;filter:brightness(1.3)}}
-@media(prefers-reduced-motion:reduce){#game .nw-mail-claim-overlay,#game.nw-mail-theme .nw-prize-letter,#game.nw-mail-theme .nw-mail-ornament,#game.nw-mail-theme .nw-mail-status{animation:none!important}}
+
+/* Claim confirmation matches the current violet, cream and lemon Trophy styling. */
+#game .nw-mail-claim-overlay{position:fixed;inset:0;z-index:99999;background:#100D1CE0;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)}
+#game .nw-mail-claim-dialog{box-sizing:border-box;width:min(100%,420px);max-height:88dvh;overflow-y:auto;display:flex;align-items:center;flex-direction:column;gap:13px;padding:24px 18px;background:#302B46;border:2px solid #DFCAFF;border-radius:20px;box-shadow:0 14px 40px #100D1Caa;color:#F9F2FF;text-align:center}
+#game .nw-mail-claim-stars{font:700 23px 'Gaegu',cursive;color:#F4ED91;letter-spacing:.5em;animation:nwMailClaimSparkle 2.4s ease-in-out infinite}
+#game .nw-mail-claim-dialog h2{margin:0;font:700 29px 'Gaegu',cursive;color:#F4ED91}
+#game .nw-mail-claimed-items{box-sizing:border-box;width:100%;padding:12px 7px;background:#191729;border:1px solid #DFCAFF88;border-radius:13px}
+#game .nw-mail-claim-dialog .nw-lb-reward-entry{color:#F9F2FF}
+#game .nw-mail-claim-dialog .nw-lb-reward-entry small{color:#DFCAFF}
+#game .nw-mail-claim-dialog p{margin:0;font:700 18px/1.3 'Gaegu',cursive}
+#game .nw-mail-claim-directions{color:#DFCAFF}
+#game .nw-mail-claim-dialog button{width:100%;min-height:42px;background:#443A60;border:1px solid #DFCAFF;border-radius:12px;color:#F4ED91;font:700 19px 'Gaegu',cursive;cursor:pointer}
+@keyframes nwMailClaimSparkle{0%,100%{opacity:.7}50%{opacity:1;filter:brightness(1.25)}}
+@media(prefers-reduced-motion:reduce){#game .nw-mail-claim-stars{animation:none!important}}
