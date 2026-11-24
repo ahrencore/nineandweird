@@ -1049,7 +1049,7 @@ function nwGrowingBack(){
 }
 function nwGrowingOpen(){void nwPrizeSync().catch(e=>console.warn('Inventory sync:',e.message));
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-growing-live-shell');
- evDisplay(`${evHeader("THEY'RE GROWING!",nwGrowingBack)}<section class="nw-growing-frame-container"><iframe id="nwGrowingFrame" title="They're Growing! — playable hex evolution event" src="growing/index.html?v=50-test-wallet" loading="eager" allow="fullscreen"></iframe></section>`);
+ evDisplay(`${evHeader("THEY'RE GROWING!",nwGrowingBack)}<section class="nw-growing-frame-container"><iframe id="nwGrowingFrame" title="They're Growing! — playable hex evolution event" src="growing/index.html?v=51-supabase-progress" loading="eager" allow="fullscreen"></iframe></section>`);
  nwResetViewToTop();
 }
 // This version is local-first for the game owner's beta: NO Supabase claim/payment sync.
