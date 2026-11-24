@@ -342,9 +342,9 @@ function nwAccountHeading(title,sub=''){return `<div class="nw-account-heading">
 function nwHasBattleClaim(){return !!nwPlayerStorageKey(nwBattleDiamondKey)&&nwSeasonFrameTiers.some(t=>nwBattleMonthStats().wins>=t.wins&&!nwBattleDiamondClaimed(nwSeasonId(),t.wins));}
 function nwRefreshNotificationOrbits(){
  const buttons=evRoot.querySelectorAll('#nwRadioRewards,[data-diamond-claim]:not([disabled])');
+ if(evRoot.querySelector('#nwOpenFriends'))void nwFriendRefreshNotice();
  if(!buttons.length)return;const claim=nwHasBattleClaim();
  for(const el of buttons)el.classList.toggle('nw-notification-orbit',claim);
- if(evRoot.querySelector('#nwOpenFriends'))void nwFriendRefreshNotice();
  // Event planet keeps its existing live animation; the reward button signals the claim.
 }
 
@@ -389,6 +389,7 @@ function nwShowFriends(tab='list',back=nwShowProfile){
   evDisplay(`${evHeader('FRIENDS',back)}<section class="nw-new-panel">${nwAccountHeading('FRIENDS','Find your fellow weirdos')}<p class="nw-muted">Register an account to add friends and play Friendly Challenges.</p></section>`);
   return;
  }
+ void nwFriendPresenceTick();
  void nwFriendsLoad(tab,back);
 }
 function nwFriendsDraw(tab='list',back=nwShowProfile){
@@ -2364,12 +2365,26 @@ async function nwChallengesDraw(back=nwShowProfile){
     b.disabled=true;
     try{
       const id=b.dataset.id,action=b.dataset.challengeAction;
-      if(action==='begin'){await nwChallengeBegin(id,back);return;}
+      if(action==='begin'){nwChallengeWorldPicker(id,back);return;}
       if(action==='result'){await nwChallengeResult(id,back);return;}
       await nwChallengeRpc(action,{p_id:id});void nwChallengesDraw(back);
     }catch(e){const status=evRoot.querySelector('#nwSocialStatus');if(status)status.textContent=e.message;b.disabled=false}
   });
  }catch(e){if(out.isConnected)out.textContent='Could not load challenges: '+e.message}
+}
+
+function nwChallengeWorldPicker(id,back=nwShowProfile){
+ nwAccountTheme();
+ const ids=nwGalaxyOrder.filter(w=>!!worlds[w]);
+ if(!ids.includes(currentWorld)&&worlds[currentWorld])ids.unshift(currentWorld);
+ evDisplay(`${evHeader('CHOOSE YOUR WORLD',()=>nwShowFriends('challenges',back))}<section class="nw-new-panel nw-social-panel">${nwAccountHeading('YOUR WORLD','Pick your own Sudoku appearance')}<p class="nw-muted">Both players solve the same numbers and clues, even if they choose different Worlds.</p><div class="nw-challenge-world-picker">${ids.map(w=>`<button data-challenge-world="${w}" class="nw-friend-mini ${w===currentWorld?'chosen':''}">${nwEscape(worlds[w].name)}</button>`).join('')}</div><button id="nwChallengeWorldStart" class="nw-action">START CHALLENGE</button><p id="nwChallengeWorldError" class="nw-muted" role="status">One attempt only. Leaving after starting counts as a loss.</p></section>`);
+ let selected=currentWorld;
+ evRoot.querySelectorAll('[data-challenge-world]').forEach(b=>b.onclick=()=>{selected=b.dataset.challengeWorld;evRoot.querySelectorAll('[data-challenge-world]').forEach(x=>x.classList.toggle('chosen',x===b))});
+ evRoot.querySelector('#nwChallengeWorldStart').onclick=async()=>{
+  const button=evRoot.querySelector('#nwChallengeWorldStart');button.disabled=true;button.textContent='STARTING...';
+  try{currentWorld=selected;await nwChallengeBegin(id,back)}
+  catch(e){const out=evRoot.querySelector('#nwChallengeWorldError');if(out)out.textContent=e.message;button.disabled=false;button.textContent='START CHALLENGE'}
+ };
 }
 async function nwChallengeBegin(id,back=nwShowProfile){
  const started=await nwChallengeRpc('begin',{p_id:id});
