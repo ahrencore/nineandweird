@@ -4613,7 +4613,7 @@ body:has(#game.nw-cosmic-mail-theme:not([hidden])){background:#0B1020!important;
 #game.nw-cosmic-mail-theme .nw-mail-orbit.orbit-two{width:196px;height:139px;margin-left:-98px;top:7px;transform:rotate(34deg);border-color:#81C8FF55}
 #game.nw-cosmic-mail-theme .nw-mail-envelope{position:relative;display:block;width:91px;height:63px;flex:none;border:2px solid #81C8FF;border-radius:9px;background:linear-gradient(135deg,#424778,#222B50);box-shadow:0 0 20px #81C8FF55,0 10px 28px #050717;animation:nwCosmicEnvelopeFloat 4s ease-in-out infinite;overflow:hidden;transform-origin:50% 50%}
 #game.nw-cosmic-mail-theme .nw-mail-envelope:before{content:'';position:absolute;inset:0;background:#A7B5EE;clip-path:polygon(0 0,50% 52%,100% 0)}
-#game.nw-cosmic-mail-theme .nw-mail-seal{position:absolute;z-index:2;left:calc(50% - 12px);top:20px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#F08BC2;color:#0B1020;font-size:14px;box-shadow:0 0 13px #F08BC2}
+#game.nw-cosmic-mail-theme .nw-mail-seal{position:absolute;z-index:2;left:calc(50% - 12px);top:15px;width:24px;height:30px;border:0;border-radius:0;display:grid;place-items:center;background:transparent;color:#F08BC2;font:700 30px/1 'Chelsea Market',sans-serif;text-shadow:0 0 7px #F08BC2aa;box-shadow:none}
 #game.nw-cosmic-mail-theme .nw-mail-star{position:absolute;color:#81C8FF;animation:nwCosmicTwinkle 3s ease-in-out infinite;z-index:1}
 #game.nw-cosmic-mail-theme .star-one{left:10%;top:18px;font-size:13px}
 #game.nw-cosmic-mail-theme .star-two{right:13%;top:48px;font-size:18px;animation-delay:1s}
