@@ -811,6 +811,7 @@ function nwTTShop(){const d=nwTripleData();nwTTModal('More tickets',`<p>${nwTTCo
 
 async function nwLbSubmit(eventCode,score){
  if(!nwCloud?.user()?.id)throw Error('Sign in to participate.');
+ if((eventCode==='tg'&&score<2000)||(eventCode==='tt'&&score<1))return;
  const c=await nwCloud.get(),{error}=await c.rpc('nw_lb_submit',{p_event:eventCode,p_score:Math.max(0,Math.floor(score))});
  if(error)throw Error(error.message);
 }
@@ -833,7 +834,9 @@ function nwLbMarkup(rows,eventCode){
 }
 
 function nwTTRank(){
- const d=nwTripleData();nwTTModal('LEADERBOARD','<div id="nwLbTT">Connecting to rankings…</div>',[{label:'CLOSE'}]);
+ const d=nwTripleData();
+ if(d.best<1){nwTTModal('RANKINGS LOCKED','<p>Complete Stage 1 to unlock the leaderboard!</p>',[{label:'CLOSE'}]);return;}
+ nwTTModal('LEADERBOARD','<div id="nwLbTT">Connecting to rankings…</div>',[{label:'CLOSE'}]);
  (async()=>{if(nwTripleInEvent())await nwLbSubmit('tt',d.best);const rows=await nwLbRank('tt'),el=document.getElementById('nwLbTT');if(el)el.innerHTML=nwLbMarkup(rows,'tt');})().catch(e=>{const el=document.getElementById('nwLbTT');if(el)el.textContent='Leaderboard unavailable: '+e.message;});
 }
 function nwTTDaysMarkup(){
