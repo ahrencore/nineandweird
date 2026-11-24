@@ -827,7 +827,7 @@ function nwLbMarkup(rows,eventCode){
   const file=f==='usual'?'frames/nw-free-usual.png?v=42':f==='weird'?'frames/nw-free-weird.png?v=42':'frames/nw-'+f+'.png';
   const avatarUrl=new URL(avatar,document.baseURI).href,frameUrl=new URL(file,document.baseURI).href;
   const monthly=f.startsWith('monthly-')?' nw-monthly-art-frame':'';
-  return '<div class="nw-lb-item'+(r.is_me?' nw-lb-me':'')+'"><b>#'+Number(r.place)+'</b><span class="nw-lb-pfp"><span class="nw-equipped-frame'+monthly+'"><img class="nw-equipped-avatar" src="'+x(avatarUrl)+'" alt=""><img class="nw-equipped-art" src="'+x(frameUrl)+'" alt=""></span></span><span class="nw-lb-user">'+x(r.username)+(r.is_me?' (YOU)':'')+'</span><strong>'+Number(r.score).toLocaleString()+'</strong></div>';
+  return '<div class="nw-lb-item'+(r.is_me?' nw-lb-me':'')+'"><b>#'+Number(r.place)+'</b><span class="nw-lb-pfp"><span class="nw-equipped-frame'+monthly+'" data-frame="'+x(f)+'"><img class="nw-equipped-avatar" src="'+x(avatarUrl)+'" alt=""><img class="nw-equipped-art" src="'+x(frameUrl)+'" alt=""></span></span><span class="nw-lb-user">'+x(r.username)+(r.is_me?' (YOU)':'')+'</span><strong>'+Number(r.score).toLocaleString()+'</strong></div>';
  }).join('');
  return '<div class="nw-lb-scroll">'+items+'</div>';
 }
