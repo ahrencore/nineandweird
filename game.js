@@ -344,6 +344,7 @@ function nwRefreshNotificationOrbits(){
  const buttons=evRoot.querySelectorAll('#nwRadioRewards,[data-diamond-claim]:not([disabled])');
  if(!buttons.length)return;const claim=nwHasBattleClaim();
  for(const el of buttons)el.classList.toggle('nw-notification-orbit',claim);
+ if(evRoot.querySelector('#nwOpenFriends'))void nwFriendRefreshNotice();
  // Event planet keeps its existing live animation; the reward button signals the claim.
 }
 
@@ -398,7 +399,7 @@ function nwFriendsDraw(tab='list',back=nwShowProfile){
  let content='';
  if(tab==='list'){
   content=`<h3>MY FRIENDS (${friends.length})</h3><p class="nw-muted">${friends.filter(f=>f.online).length} online</p>`+
-   (friends.length?friends.map(f=>item(f,pill('CHALLENGE','challenge',f.id)+pill('REMOVE','remove',f.id,'nw-friend-outline')+pill('BLOCK','block',f.id,'nw-friend-outline'),'<span class="nw-friend-dot '+(f.online?'on':'')+'"></span> '+(f.online?'Online':'Offline'))).join(''):'<p class="nw-muted">Your friends list is empty. Find your first fellow weirdo!</p>')+
+   (friends.length?friends.map(f=>item(f,pill('PROFILE','profile',f.id)+pill('CHALLENGE','challenge',f.id)+pill('REMOVE','remove',f.id,'nw-friend-outline')+pill('BLOCK','block',f.id,'nw-friend-outline'),'<span class="nw-friend-dot '+(f.online?'on':'')+'"></span> '+(f.online?'Online':'Offline'))).join(''):'<p class="nw-muted">Your friends list is empty. Find your first fellow weirdo!</p>')+
    `<label class="nw-friend-private"><input type="checkbox" id="nwFriendInvisible" ${d.appear_offline?'checked':''}> Appear offline to friends</label>`+
    ((d.blocked||[]).length?`<details class="nw-friend-blocked"><summary>Blocked players (${d.blocked.length})</summary>${d.blocked.map(p=>item(p,pill('UNBLOCK','unblock',p.id))).join('')}</details>`:'');
  }else if(tab==='requests'){
@@ -432,11 +433,13 @@ function nwFriendsDraw(tab='list',back=nwShowProfile){
   };
  }
  if(tab==='challenges')void nwChallengesDraw(back);
+ if(tab==='requests')void nwFriendNoticeMark('requests');
  nwResetViewToTop();
 }
 async function nwSocialAction(action,id,tab,back){
  if(nwFriendsBusy)return;
  if(action==='challenge'){nwChallengeChoose(id,back);return}
+ if(action==='profile'){void nwFriendOpenProfile(id,back);return}
  if(['remove','block'].includes(action)&&!confirm(action==='block'?'Block this player? Existing friendship and pending invitations will be removed.':'Remove this friend?'))return;
  nwFriendsBusy=true;
  const out=evRoot.querySelector('#nwSocialStatus');if(out)out.textContent='Syncing...';
@@ -2340,6 +2343,7 @@ async function nwChallengeChoose(target,back=nwShowProfile){
  });
 }
 async function nwChallengesDraw(back=nwShowProfile){
+ void nwFriendNoticeMark('invitations');
  const out=evRoot.querySelector('#nwFriendChallenges');if(!out)return;
  try{
   const challenges=await nwFriendsRpc('nw_friend_challenge_list'),myId=nwCloud.user()?.id;
@@ -2350,7 +2354,7 @@ async function nwChallengesDraw(back=nwShowProfile){
     const active=c.status==='active';
     const finished=c.status==='resolved'||c.status==='expired';
     const label=c.status==='pending'?'INVITATION':active?'ACTIVE':c.status.toUpperCase();
-    const actions=incoming?`<button class="nw-friend-mini" data-challenge-action="accept" data-id="${c.id}">ACCEPT</button><button class="nw-friend-mini nw-friend-outline" data-challenge-action="decline" data-id="${c.id}">DECLINE</button>`:
+    const actions=finished?`<button class="nw-friend-mini" data-challenge-action="result" data-id="${c.id}">VIEW RESULT</button>`:incoming?`<button class="nw-friend-mini" data-challenge-action="accept" data-id="${c.id}">ACCEPT</button><button class="nw-friend-mini nw-friend-outline" data-challenge-action="decline" data-id="${c.id}">DECLINE</button>`:
       outgoing?`<button class="nw-friend-mini nw-friend-outline" data-challenge-action="cancel" data-id="${c.id}">CANCEL</button>`:
       active&&c.mine==='not_started'?`<button class="nw-friend-mini" data-challenge-action="begin" data-id="${c.id}">PLAY</button>`:'';
     const subtitle=active?`You: ${nwEscape(c.mine.replace('_',' '))} · Friend: ${nwEscape(c.theirs.replace('_',' '))}`:finished?`Result: ${c.winner===myId?'YOU WON':c.winner?'FRIEND WON':'NO WINNER'}`:(incoming?'Incoming request':'Waiting for friend');
@@ -2361,6 +2365,7 @@ async function nwChallengesDraw(back=nwShowProfile){
     try{
       const id=b.dataset.id,action=b.dataset.challengeAction;
       if(action==='begin'){await nwChallengeBegin(id,back);return;}
+      if(action==='result'){await nwChallengeResult(id,back);return;}
       await nwChallengeRpc(action,{p_id:id});void nwChallengesDraw(back);
     }catch(e){const status=evRoot.querySelector('#nwSocialStatus');if(status)status.textContent=e.message;b.disabled=false}
   });
@@ -2415,8 +2420,8 @@ function nwChallengeFinishScreen(s,res){
  if(!s?.challenge)return;
  clearInterval(sudokuTimer);clearInterval(nwChallengeHeartbeat);nwChallengeHeartbeat=null;
  s.done=true;
- applyTheme('hub');
- evDisplay(`${evHeader('FRIENDLY CHALLENGE',()=>nwShowFriends('challenges',s.challenge.back))}<section class="nw-new-panel nw-social-panel">${nwAccountHeading(res.status==='completed'?'PUZZLE COMPLETED!':'PUZZLE NOT COMPLETED',res.status==='completed'?'Your verified result is saved.':'This attempt counts as a loss.')}${res.status==='completed'?'<p class="nw-muted">Your score: '+Number(res.points||0).toLocaleString()+'</p>':''}<p class="nw-muted">Your friend’s results stay hidden until the challenge is settled.</p><button class="nw-action" id="nwChallengeBackToList">BACK TO CHALLENGES</button></section>`);
+ nwAccountTheme();
+ evDisplay(`${evHeader('FRIENDLY CHALLENGE',()=>nwShowFriends('challenges',s.challenge.back))}<section class="nw-new-panel nw-social-panel">${nwAccountHeading(res.status==='completed'?'PUZZLE COMPLETED!':'PUZZLE NOT COMPLETED',res.status==='completed'?'Your verified result is saved.':'This attempt counts as a loss.')}<p class="nw-muted">Your friend’s results stay hidden until the challenge is settled.</p><button class="nw-action" id="nwChallengeBackToList">BACK TO CHALLENGES</button></section>`);
  evRoot.querySelector('#nwChallengeBackToList').onclick=()=>nwShowFriends('challenges',s.challenge.back);
 }
 function nwChallengeBack(){
@@ -2436,7 +2441,73 @@ async function nwChallengeForfeit(id){
 }
 document.addEventListener('visibilitychange',()=>{
  if(document.hidden&&sudoku?.challenge&&!sudoku.done){
-  const s=sudoku;s.done=true;clearInterval(nwChallengeHeartbeat);nwChallengeHeartbeat=null;
+  const s=sudoku;s.done=true;s.challengeLocalForfeited=true;clearInterval(nwChallengeHeartbeat);nwChallengeHeartbeat=null;
   void nwChallengeForfeit(s.challenge.id);
+ }else if(!document.hidden&&sudoku?.challengeLocalForfeited){
+  nwChallengeFinishScreen(sudoku,{status:'failed'});
  }
+});
+
+/* Friends-only notifications, presence and private profile views. */
+let nwFriendNoticePending=false;
+async function nwFriendRefreshNotice(){
+ const b=evRoot.querySelector('#nwOpenFriends');
+ if(!b||nwFriendNoticePending||!nwCloud?.user()||nwCloud.user().is_anonymous)return;
+ nwFriendNoticePending=true;
+ try{
+  const n=await nwFriendsRpc('nw_friend_notice',{p_action:'count'});
+  if(!b.isConnected)return;
+  b.classList.toggle('nw-notification-orbit',Number(n.requests)+Number(n.invitations)+Number(n.results)>0);
+ }catch(e){console.warn('Friend notice:',e.message)}
+ finally{nwFriendNoticePending=false}
+}
+async function nwFriendNoticeMark(kind,id=null){
+ try{await nwFriendsRpc('nw_friend_notice',{p_action:kind,p_item:id});void nwFriendRefreshNotice();}
+ catch(e){console.warn('Friend notice:',e.message)}
+}
+async function nwFriendOpenProfile(id,back=nwShowProfile){
+ nwAccountTheme();
+ evDisplay(`${evHeader('FRIEND PROFILE',()=>nwShowFriends('list',back))}<section class="nw-new-panel nw-social-panel"><p class="nw-muted">Loading player profile...</p></section>`);
+ try{
+  const p=await nwFriendsRpc('nw_friend_profile',{p_target:id});
+  if(!evRoot.querySelector('.nw-social-panel'))return;
+  const fields=[['PUZZLES COMPLETED',p.puzzles],['TOTAL POINTS',Number(p.points).toLocaleString()],['BATTLE WINS',p.battle_wins],['FRIENDLY WINS',p.challenge_wins]];
+  nwAccountTheme();
+  evDisplay(`${evHeader('FRIEND PROFILE',()=>nwShowFriends('list',back))}<section class="nw-new-panel nw-social-panel">${nwAccountHeading('FRIEND PROFILE')}<div class="nw-friend-public-card">${nwFriendPhoto(p)}<h3>${nwEscape(p.name)}</h3></div><div class="nw-friend-profile-stats">${fields.map(([label,value])=>`<div><small>${label}</small><strong>${nwEscape(value)}</strong></div>`).join('')}</div><button class="nw-action" id="nwChallengeFriend">CHALLENGE TO SUDOKU</button><p class="nw-muted">Puzzle totals are based on saved history; verified Friendly Challenge results are tracked separately.</p></section>`);
+  evRoot.querySelector('#nwChallengeFriend').onclick=()=>nwChallengeChoose(id,back);
+ }catch(e){
+  nwAccountTheme();evDisplay(`${evHeader('FRIEND PROFILE',()=>nwShowFriends('list',back))}<section class="nw-new-panel nw-social-panel"><p role="alert">${nwEscape(e.message)}</p></section>`);
+ }
+}
+async function nwChallengeResult(id,back=nwShowProfile){
+ const rows=await nwFriendsRpc('nw_friend_challenge_list');
+ const row=rows.find(c=>c.id===id&&['resolved','expired'].includes(c.status));
+ if(!row)throw Error('Challenge result unavailable');
+ await nwFriendNoticeMark('result',id);
+ const me=nwCloud.user()?.id,won=row.winner===me,draw=!row.winner;
+ nwAccountTheme();
+ evDisplay(`${evHeader('CHALLENGE RESULT',()=>nwShowFriends('challenges',back))}<section class="nw-new-panel nw-social-panel">${nwAccountHeading(draw?'NO WINNER':won?'YOU WON!':'CHALLENGE FINISHED',row.difficulty.toUpperCase())}<div class="nw-friend-profile-stats"><div><small>YOU</small><strong>${row.my_points??'—'}</strong><small>${row.my_seconds==null?'No finish time':nwFormatTime(row.my_seconds)}</small></div><div><small>${nwEscape(row.opponent.name)}</small><strong>${row.their_points??'—'}</strong><small>${row.their_seconds==null?'No finish time':nwFormatTime(row.their_seconds)}</small></div></div><p class="nw-muted">${draw?'The challenge ended without a winner.':won?'You won this Friendly Challenge!':'Your friend won this Friendly Challenge.'}</p><button class="nw-action" id="nwChallengeResultsBack">BACK TO CHALLENGES</button></section>`);
+ evRoot.querySelector('#nwChallengeResultsBack').onclick=()=>nwShowFriends('challenges',back);
+}
+let nwFriendPresenceInFlight=false;
+async function nwFriendPresenceTick(){
+ if(document.hidden||nwFriendPresenceInFlight||!nwCloud?.user()||nwCloud.user().is_anonymous)return;
+ nwFriendPresenceInFlight=true;
+ try{await nwFriendsRpc('nw_friend_heartbeat')}catch(e){console.warn('Friend presence:',e.message)}
+ finally{nwFriendPresenceInFlight=false}
+}
+setInterval(()=>{void nwFriendPresenceTick()},45000);
+window.addEventListener('focus',()=>{void nwFriendPresenceTick()});
+window.addEventListener('pagehide',()=>{
+ const s=sudoku;if(!s?.challenge||s.done)return;
+ // Best-effort immediate forfeit; server also expires absent heartbeats.
+ const id=s.challenge.id;
+ void nwCloud.get().then(async c=>{
+  const {data}=await c.auth.getSession(),token=data.session?.access_token;
+  if(!token)return;
+  return fetch(c.supabaseUrl+'/rest/v1/rpc/nw_friend_challenge',{
+   method:'POST',keepalive:true,headers:{apikey:c.supabaseKey,Authorization:'Bearer '+token,'Content-Type':'application/json'},
+   body:JSON.stringify({p_action:'forfeit',p_id:id})
+  });
+ }).catch(()=>{});
 });
