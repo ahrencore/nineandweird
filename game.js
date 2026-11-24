@@ -429,8 +429,9 @@ let nwBattleSearchSerial=0, nwLastBattleProfile=-1, nwLastBattleRun=null;
 function nwBattleProfileArt(profile,cls=''){
   const id=profile.profile_id??profile.id;
   const wins=nwRecordedFrameWins[id];
-  if(!nwSeasonFrameTiers.some(t=>t.wins===wins))return nwAvatarImg(profile.avatar,cls);
-  return `<span class="nw-equipped-frame nw-monthly-art-frame nw-recorded-frame ${cls}">${nwAvatarImg(profile.avatar,'nw-equipped-avatar')}<img src="frames/nw-monthly-${wins}.png" class="nw-equipped-art" alt=""></span>`;
+  const avatar=nwBattleProfiles[id]?.avatar||profile.avatar;
+  if(!nwSeasonFrameTiers.some(t=>t.wins===wins))return nwAvatarImg(avatar,cls);
+  return `<span class="nw-equipped-frame nw-monthly-art-frame nw-recorded-frame ${cls}">${nwAvatarImg(avatar,'nw-equipped-avatar')}<img src="frames/nw-monthly-${wins}.png" class="nw-equipped-art" alt=""></span>`;
 }
 function nwBattleSelectProfile(){
   const pool=nwBattleProfiles.map((_,i)=>i).filter(i=>i!==nwLastBattleProfile);
