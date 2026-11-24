@@ -446,13 +446,25 @@ async function nwPrizeTransfer(key,amount){
  if(!nwPrizeDefinitions.some(d=>d.key===key)||!Number.isSafeInteger(amount)||amount<1)throw Error('Invalid transfer');
  const c=await nwCloud.get(),{data,error}=await c.rpc('nw_prize_transfer',{p_item:key,p_quantity:amount});
  if(error)throw Error(error.message);
- await nwPrizeSync();
+ try{await nwPrizeSync()}catch(e){console.warn('Transfer saved; inventory refresh pending:',e.message);nwPrizeCache.stock={...nwPrizeCache.stock,[key]:Math.max(0,nwPrizeAvailable(key)-amount)};nwPrizeCache.transfers=[...(nwPrizeCache.transfers||[]),data];nwPrizeApplyTTTransfers();}
  return data;
+}
+function nwPrizeIcon(key){
+ if(key==='tt_ticket')return '<img src="assets/triple/triple_ticket.png" alt="">';
+ if(key==='tg_juice')return '<img src="growing/assets/mutation_juice.png" alt="">';
+ if(key==='tg_ray')return '<img src="growing/assets/shrink_ray.png" alt="">';
+ const paths={
+  tt_undo:'<path d="M20 10L8 22l12 12M9 22h23c10 0 14 16 2 19"/>',
+  tt_shuffle:'<path d="M5 13h7c11 0 13 22 27 22h4m-8-8 8 8-8 8M5 38h7c11 0 13-22 27-22h4m-8-8 8 8-8 8"/>',
+  tt_magic:'<path d="M24 6c-21 1-24 36-4 39 22 3 25-24 10-27-13-3-19 12-10 17 8 5 14-3 9-8"/>',
+  tg_energy:'<path d="M28 4 9 28h15l-5 16 20-25H24Z"/>'
+ };
+ return '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(paths[key]||'')+'</svg>';
 }
 function nwPrizeInventoryArt(){
  const cards=event=>nwPrizeDefinitions.filter(d=>d.event===event).map(d=>{
   const n=nwPrizeAvailable(d.key);
-  return `<article class="nw-prize-item"><span class="nw-prize-symbol" aria-hidden="true">${d.icon}</span><strong>${nwEscape(d.name)}</strong><b>× ${n.toLocaleString()}</b><button type="button" data-prize-use="${d.key}" ${n?'':'disabled'}>USE</button></article>`;
+  return `<article class="nw-prize-item"><span class="nw-prize-symbol" aria-hidden="true">${nwPrizeIcon(d.key)}</span><strong>${nwEscape(d.name)}</strong><b>× ${n.toLocaleString()}</b><button type="button" data-prize-use="${d.key}" ${n?'':'disabled'}>USE</button></article>`;
  }).join('');
  return `<div class="nw-prize-wallet"><small>AVAILABLE DIAMONDS</small>${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</div>
  <p class="nw-prize-hint">Choose how many supplies to move into a live tournament. Unused items stay here for later.</p>
