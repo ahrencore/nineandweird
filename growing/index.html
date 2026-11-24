@@ -248,46 +248,46 @@ html,body,#app{font-family:'Bubblegum Sans','Trebuchet MS',sans-serif}
 @media(prefers-reduced-motion:reduce){.growing-smoke i,.growing-smoke:before,.growing-smoke:after{animation:none!important;opacity:.2}}
 
 /* Shared leaderboard frames and animations from main Nine & Weird */
-#app .nw-equipped-frame{position:relative;display:grid;place-items:center;width:100%;height:100%;isolation:isolate;overflow:visible}
-#app .nw-equipped-avatar{position:absolute;inset:16%;width:68%;height:68%;object-fit:cover;border-radius:50%;z-index:0}
-#app .nw-equipped-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1;pointer-events:none}
+.modal-shade .nw-equipped-frame{position:relative;display:grid;place-items:center;width:100%;height:100%;isolation:isolate;overflow:visible}
+.modal-shade .nw-equipped-avatar{position:absolute;inset:16%;width:68%;height:68%;object-fit:cover;border-radius:50%;z-index:0}
+.modal-shade .nw-equipped-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1;pointer-events:none}
 /* Shared profile geometry for both event leaderboards: Triple Trouble & They're Growing! */
-#app .nw-lb-scroll{display:grid;gap:7px;max-height:52vh;overflow-y:auto;overflow-x:hidden;padding:3px 5px}
-#app .nw-lb-item{display:flex;align-items:center;gap:10px;min-width:0;min-height:54px;padding:8px 11px;background:#29203d;color:#f8ebdd;border:1px solid #625576;border-radius:12px;font:600 14px 'Bricolage Grotesque',sans-serif}
-#app .nw-lb-item.nw-lb-me{border-color:#f08bc2}
-#app .nw-lb-item>b{flex:0 0 36px;color:#81c8ff;font:800 15px 'Oxanium',sans-serif}
-#app .nw-lb-pfp{display:block;position:relative;flex:0 0 46px;width:46px;height:46px;min-width:46px;overflow:visible}
-#app .nw-lb-pfp>.nw-equipped-frame{width:100%;height:100%;position:relative;overflow:visible;isolation:isolate}
-#app .nw-lb-pfp .nw-equipped-avatar{position:absolute;left:16%;top:16%;width:68%;height:68%;object-fit:cover;border-radius:50%;z-index:0;max-width:none;max-height:none}
-#app .nw-lb-pfp .nw-equipped-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1;max-width:none;max-height:none;pointer-events:none}
-#app .nw-lb-user{min-width:0;flex:1;overflow-wrap:anywhere;line-height:1.25}
-#app .nw-lb-item>strong{flex:none;white-space:nowrap;color:#f08bc2;font:800 15px 'Oxanium',sans-serif}
-#app .nw-lb-empty{text-align:center;color:#f8ebdd;font-family:'Bricolage Grotesque',sans-serif}
-@media(max-width:390px){#app .nw-lb-item{gap:7px;padding:7px 8px;font-size:12px}#app .nw-lb-item>b{flex-basis:30px;font-size:13px}#app .nw-lb-pfp{flex-basis:40px;width:40px;height:40px}#app .nw-lb-item>strong{font-size:13px}}
+.modal-shade .nw-lb-scroll{display:grid;gap:7px;max-height:52vh;overflow-y:auto;overflow-x:hidden;padding:3px 5px}
+.modal-shade .nw-lb-item{display:flex;align-items:center;gap:10px;min-width:0;min-height:54px;padding:8px 11px;background:#29203d;color:#f8ebdd;border:1px solid #625576;border-radius:12px;font:600 14px 'Bricolage Grotesque',sans-serif}
+.modal-shade .nw-lb-item.nw-lb-me{border-color:#f08bc2}
+.modal-shade .nw-lb-item>b{flex:0 0 36px;color:#81c8ff;font:800 15px 'Oxanium',sans-serif}
+.modal-shade .nw-lb-pfp{display:block;position:relative;flex:0 0 46px;width:46px;height:46px;min-width:46px;overflow:visible}
+.modal-shade .nw-lb-pfp>.nw-equipped-frame{width:100%;height:100%;position:relative;overflow:visible;isolation:isolate}
+.modal-shade .nw-lb-pfp .nw-equipped-avatar{position:absolute;left:16%;top:16%;width:68%;height:68%;object-fit:cover;border-radius:50%;z-index:0;max-width:none;max-height:none}
+.modal-shade .nw-lb-pfp .nw-equipped-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1;max-width:none;max-height:none;pointer-events:none}
+.modal-shade .nw-lb-user{min-width:0;flex:1;overflow-wrap:anywhere;line-height:1.25}
+.modal-shade .nw-lb-item>strong{flex:none;white-space:nowrap;color:#f08bc2;font:800 15px 'Oxanium',sans-serif}
+.modal-shade .nw-lb-empty{text-align:center;color:#f8ebdd;font-family:'Bricolage Grotesque',sans-serif}
+@media(max-width:390px){.modal-shade .nw-lb-item{gap:7px;padding:7px 8px;font-size:12px}.modal-shade .nw-lb-item>b{flex-basis:30px;font-size:13px}.modal-shade .nw-lb-pfp{flex-basis:40px;width:40px;height:40px}.modal-shade .nw-lb-item>strong{font-size:13px}}
 
 /* V31 — orbital accents for the six V30 monthly battle frames only.
    Existing PNGs, avatars and frame geometry remain unchanged. */
-#app .nw-lb-pfp .nw-monthly-art-frame,
+.modal-shade .nw-lb-pfp .nw-monthly-art-frame,
 .nw-radio-frame-preview:has(>img[src^="frames/nw-monthly-"]){--nw-orbit-size:12%;--nw-orbit-inset:6%;--nw-orbit-time:6s;--nw-orbit-delay:0s;--nw-orbit-glow:#f8ebdd;--nw-orbit-image:none}
-#app .nw-lb-pfp .nw-monthly-art-frame::before,
+.modal-shade .nw-lb-pfp .nw-monthly-art-frame::before,
 .nw-radio-frame-preview:has(>img[src^="frames/nw-monthly-"])::before{content:"";position:absolute;inset:var(--nw-orbit-inset);z-index:3;pointer-events:none;background:var(--nw-orbit-image) center top/var(--nw-orbit-size) auto no-repeat;transform-origin:50% 50%;animation:nwFrameAccentOrbit var(--nw-orbit-time) linear infinite;animation-delay:var(--nw-orbit-delay);filter:drop-shadow(0 0 3px var(--nw-orbit-glow));opacity:.9}
 @keyframes nwFrameAccentOrbit{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-#app .nw-lb-pfp .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-10.png"]),
+.modal-shade .nw-lb-pfp .nw-monthly-art-frame[data-frame="monthly-10"],
 .nw-radio-frame-preview:has(>img[src="frames/nw-monthly-10.png"]){--nw-orbit-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20d%3D%22M16%202Q18%2013%2030%2016Q18%2018%2016%2030Q14%2018%202%2016Q14%2014%2016%202Z%22%20fill%3D%22%23ffb3cf%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.2%22%2F%3E%3C%2Fsvg%3E");--nw-orbit-glow:#ffb3cf;--nw-orbit-time:7s;--nw-orbit-delay:0s;--nw-orbit-inset:9%}
-#app .nw-lb-pfp .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-25.png"]),
+.modal-shade .nw-lb-pfp .nw-monthly-art-frame[data-frame="monthly-25"],
 .nw-radio-frame-preview:has(>img[src="frames/nw-monthly-25.png"]){--nw-orbit-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cellipse%20cx%3D%2216%22%20cy%3D%2216%22%20rx%3D%228%22%20ry%3D%2212%22%20fill%3D%22%23a8e9ff%22%20stroke%3D%22%23fff6df%22%20stroke-width%3D%222%22%2F%3E%3Ccircle%20cx%3D%2213%22%20cy%3D%2213%22%20r%3D%222.5%22%20fill%3D%22%23bda7ff%22%2F%3E%3Ccircle%20cx%3D%2218%22%20cy%3D%2220%22%20r%3D%222.8%22%20fill%3D%22%23bda7ff%22%2F%3E%3C%2Fsvg%3E");--nw-orbit-glow:#a8e9ff;--nw-orbit-time:6.7s;--nw-orbit-delay:-1s;--nw-orbit-inset:9%}
-#app .nw-lb-pfp .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-50.png"]),
+.modal-shade .nw-lb-pfp .nw-monthly-art-frame[data-frame="monthly-50"],
 .nw-radio-frame-preview:has(>img[src="frames/nw-monthly-50.png"]){--nw-orbit-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20d%3D%22M16%202Q18%2013%2030%2016Q18%2018%2016%2030Q14%2018%202%2016Q14%2014%2016%202Z%22%20fill%3D%22%2380f6ff%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.2%22%2F%3E%3C%2Fsvg%3E");--nw-orbit-glow:#80f6ff;--nw-orbit-time:5.8s;--nw-orbit-delay:-2s;--nw-orbit-inset:8%}
-#app .nw-lb-pfp .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-100.png"]),
+.modal-shade .nw-lb-pfp .nw-monthly-art-frame[data-frame="monthly-100"],
 .nw-radio-frame-preview:has(>img[src="frames/nw-monthly-100.png"]){--nw-orbit-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20d%3D%22M2%2016Q16%202%2030%2016Q16%2030%202%2016Z%22%20fill%3D%22%23c6f64e%22%20stroke%3D%22%23efffcb%22%20stroke-width%3D%221.5%22%2F%3E%3Cellipse%20cx%3D%2216%22%20cy%3D%2216%22%20rx%3D%223.5%22%20ry%3D%227%22%20fill%3D%22%23163b36%22%2F%3E%3C%2Fsvg%3E");--nw-orbit-glow:#c6f64e;--nw-orbit-time:6.2s;--nw-orbit-delay:-3s;--nw-orbit-inset:6%}
-#app .nw-lb-pfp .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-150.png"]),
+.modal-shade .nw-lb-pfp .nw-monthly-art-frame[data-frame="monthly-150"],
 .nw-radio-frame-preview:has(>img[src="frames/nw-monthly-150.png"]){--nw-orbit-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20d%3D%22M4%2026L17%2010L28%204L23%2017Z%22%20fill%3D%22%23ff65aa%22%2F%3E%3Cpath%20d%3D%22M12%2028L23%2019%22%20stroke%3D%22%23ffcd80%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%228%22%20r%3D%224%22%20fill%3D%22%23fff4dc%22%2F%3E%3C%2Fsvg%3E");--nw-orbit-glow:#ff65aa;--nw-orbit-time:5s;--nw-orbit-delay:-1s;--nw-orbit-inset:6%}
-#app .nw-lb-pfp .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-200.png"]),
+.modal-shade .nw-lb-pfp .nw-monthly-art-frame[data-frame="monthly-200"],
 .nw-radio-frame-preview:has(>img[src="frames/nw-monthly-200.png"]){--nw-orbit-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20d%3D%22M16%202Q18%2013%2030%2016Q18%2018%2016%2030Q14%2018%202%2016Q14%2014%2016%202Z%22%20fill%3D%22%23a7eaff%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.2%22%2F%3E%3C%2Fsvg%3E");--nw-orbit-glow:#a7eaff;--nw-orbit-time:5.6s;--nw-orbit-delay:-2s;--nw-orbit-inset:7%}
-#app .nw-lb-pfp .nw-monthly-art-frame:has(>img.nw-equipped-art[src="frames/nw-monthly-200.png"])::after,
+.modal-shade .nw-lb-pfp .nw-monthly-art-frame[data-frame="monthly-200"]::after,
 .nw-radio-frame-preview:has(>img[src="frames/nw-monthly-200.png"])::after{content:"";position:absolute;inset:11%;z-index:3;pointer-events:none;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20d%3D%22M16%202Q18%2013%2030%2016Q18%2018%2016%2030Q14%2018%202%2016Q14%2014%2016%202Z%22%20fill%3D%22%23ff9adf%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.2%22%2F%3E%3C%2Fsvg%3E") center top/9% auto no-repeat;transform-origin:50% 50%;animation:nwFrameAccentOrbit 7s linear infinite reverse;animation-delay:-3s;filter:drop-shadow(0 0 3px #ff9adf);opacity:.85}
-@media(prefers-reduced-motion:reduce){#app .nw-lb-pfp .nw-monthly-art-frame::before,
-#app .nw-lb-pfp .nw-monthly-art-frame::after,
+@media(prefers-reduced-motion:reduce){.modal-shade .nw-lb-pfp .nw-monthly-art-frame::before,
+.modal-shade .nw-lb-pfp .nw-monthly-art-frame::after,
 .nw-radio-frame-preview:has(>img[src^="frames/nw-monthly-"])::before,
 .nw-radio-frame-preview:has(>img[src^="frames/nw-monthly-"])::after{animation:none!important;display:none!important}}
 
