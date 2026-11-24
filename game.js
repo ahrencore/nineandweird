@@ -698,13 +698,20 @@ async function nwPrizeMail(){
   const rows=Array.isArray(data)?data:[];
   container.innerHTML=rows.length?rows.map(r=>`<article class="nw-prize-letter"><small>${r.event==='tt'?'TRIPLE TROUBLE':"THEY'RE GROWING!"} · ${nwEscape(r.period)}</small><strong>FINISHED #${Number(r.rank)}</strong><span>${nwDiamondAmount(Number(r.diamonds).toLocaleString())} + Event supplies</span><button type="button" data-prize-claim="${r.event}:${r.period}" ${r.claimed?'disabled':''}>${r.claimed?'CLAIMED':'CLAIM REWARDS'}</button></article>`).join(''):'<p class="nw-prize-hint">No tournament rewards waiting. Finish in the Top 10 to receive a prize!</p>';
   container.querySelectorAll('[data-prize-claim]:not([disabled])').forEach(b=>b.onclick=async()=>{
-   b.disabled=true;
+   b.disabled=true;b.textContent='CLAIMING…';
    const [event,period]=b.dataset.prizeClaim.split(':');
+   let confirmed=false;
    try{
     const c=await nwCloud.get(),{error}=await c.rpc('nw_prize_claim',{p_event:event,p_period:period});
     if(error)throw Error(error.message);
-    await nwPrizeSync();nwPrizeMail();
-   }catch(e){b.disabled=false;const p=document.createElement('p');p.className='nw-prize-msg';p.textContent=e.message;b.after(p);}
+    confirmed=true;b.textContent='CLAIMED';
+    try{await nwWalletSync();await nwPrizeSync()}catch(e){console.warn('Claim confirmed; display sync pending:',e.message)}
+    void nwPrizeMail();
+   }catch(e){
+    if(confirmed){b.textContent='CLAIMED';return}
+    b.disabled=false;b.textContent='CLAIM REWARDS';
+    const p=document.createElement('p');p.className='nw-prize-msg';p.textContent=e.message;b.after(p);
+   }
   });
  }catch(e){if(container.isConnected)container.textContent='Could not load reward mail: '+e.message;}
 }
