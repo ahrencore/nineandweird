@@ -923,6 +923,28 @@ function nwGrowingOpen(){void nwPrizeSync().catch(e=>console.warn('Inventory syn
  nwResetViewToTop();
 }
 // This version is local-first for the game owner's beta: NO Supabase claim/payment sync.
+/* Tournament verifier bridge. Player-facing gameplay remains unchanged. */
+let nwGrowingVerifyBusy=false;
+let nwGrowingLastVerified={account:null,period:null,score:0,actions:0};
+async function nwGrowingSeed(){
+ const c=await nwCloud.get(),{data,error}=await c.rpc('nw_anticheat_tg_seed');
+ if(error)throw Error(error.message);
+ return data;
+}
+async function nwGrowingVerifyScore(period,score,actions){
+ const account=nwCloud?.user()?.id;
+ if(!account||nwGrowingVerifyBusy||!Array.isArray(actions)||!actions.length)return;
+ if(nwGrowingLastVerified.account===account&&nwGrowingLastVerified.period===period&&nwGrowingLastVerified.actions>=actions.length&&nwGrowingLastVerified.score>=score)return;
+ nwGrowingVerifyBusy=true;
+ try{
+  const c=await nwCloud.get();
+  if(nwCloud?.user()?.id!==account)return;
+  const {data,error}=await c.functions.invoke('nw-verify-tournament',{body:{event:'tg',period,score,actions}});
+  if(error||!data?.verified)throw Error(data?.error||error?.message||'Event verification unavailable');
+  if(nwCloud?.user()?.id!==account)return;
+  nwGrowingLastVerified={account,period,score:data.score,actions:actions.length};
+ }finally{nwGrowingVerifyBusy=false}
+}
 function nwGrowingUserId(){return window.nwCloud?.user()?.id || 'guest';}
 function nwGrowingActivityKey(){return 'nw-growing-activity-v1:'+nwGrowingUserId()+':'+new Date().toISOString().slice(0,10);}
 function nwGrowingActivity(type){
