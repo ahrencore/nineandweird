@@ -84,7 +84,7 @@ const APP=(()=>{
    if(!energy()){turnNote='No Energy left; visit Get Energy.';game();return}
    const result=E.move(state.board,state.queue,from,to);
    if(!result.ok){turnNote='No unobstructed path to that hex. Zero Energy spent.';game();return}
-   locked=true;spend();state.board=result.board;state.queue=result.queue;state.gameOver=result.gameOver;points(result.merges);state.daily.merges+=result.merges.length;
+   locked=true;spend();state.board=result.board;state.queue=result.queue;state.gameOver=result.gameOver;points(result.merges);state.daily.merges+=result.merges.length;if(EMBEDDED&&live()&&state.score>0)void window.parent.nwLbSubmit('tg',state.score).catch(e=>console.warn('Growing rank sync:',e.message));
    selected=-1;route=result.path;save();
    const frames=result.frames||[];let step=0;
    function nextFrame(){
@@ -115,7 +115,10 @@ const APP=(()=>{
  function boosterShop(){shop('boost')}
 
  function milestonePage(){overlay('MILESTONE REWARDS',`<p>Weekly score: <b>${fmt(state.score)}</b></p>${rewardTrack()}`)}
- function rank(){overlay('RANKINGS',`<div class="rank-coming"><span>♛</span><strong>COMING SOON</strong></div>`)}
+ function rank(){
+ overlay('RANKINGS','<div id="nwLbTG">Connecting to rankings…</div>');
+ (async()=>{if(!EMBEDDED)throw Error('Online rankings require the main Nine & Weird game.');if(live()&&state.score>0)await window.parent.nwLbSubmit('tg',state.score);const rows=await window.parent.nwLbRank('tg'),el=document.getElementById('nwLbTG');if(el)el.innerHTML=window.parent.nwLbMarkup(rows,'tg');})().catch(e=>{const el=document.getElementById('nwLbTG');if(el)el.textContent='Leaderboard unavailable: '+e.message;});
+}
  function missionScreen(){
   sync();const d=state.daily;
   const ordered=[...dailyMissions].sort((a,b)=>{const rank=m=>d.claimed.includes(m.id)?2:(d[m.kind]||0)>=m.goal?0:1;return rank(a)-rank(b)||dailyMissions.indexOf(a)-dailyMissions.indexOf(b)});

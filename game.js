@@ -788,7 +788,31 @@ function nwTTBuy(kind){if(!nwTripleInEvent())return;const d=nwTripleData();const
 function nwTTRewardIcon(k){return k==='diamonds'?'<img class="nw-diamond-icon" src="assets/currency/diamond.png" alt="">':k==='ticket'?'<img class="nw-tt-ticket-icon" src="assets/triple/triple_ticket.png" alt="">':k==='magic'?'<span class="nw-triple-spiral" aria-hidden="true"></span>':`<span aria-hidden="true">${{shuffle:'⤨',undo:'↶'}[k]}</span>`;}
 function nwTTPackArt(p,i){return `<div class="nw431-pack tier-${i}"><div class="nw431-pack-top"><span class="nw431-pack-art" aria-hidden="true">${Array.from({length:i+2},(_,j)=>`<i style="--n:${j}">✦</i>`).join('')}</span><div><strong>${p.tickets} Tickets</strong><small>${nwDiamondAmount(p.diamonds)} Diamonds</small></div><b class="nw431-price">RM${p.price}</b></div><div class="nw431-bonuses"><span>${nwTTRewardIcon('shuffle')} ${p.shuffle} Shuffle</span>${p.magic?`<span>${nwTTRewardIcon('magic')} ${p.magic} Magic Clear</span>`:''}</div></div>`;}
 function nwTTShop(){const d=nwTripleData();nwTTModal('More tickets',`<p>${nwTTCount(d)} available</p><p>Premium packs · coming soon</p>`,[{label:'Get a ticket · Diamonds or Watch Ad',run:()=>nwTTBuy('ticket')},...nwTTPacks.map((p,i)=>({label:`RM${p.price} pack`,html:nwTTPackArt(p,i),run:()=>nw433ComingSoon(nwTTShop)})),{label:'Close'}]);}
-function nwTTRank(){const d=nwTripleData();nwTTModal('Leaderboard',`<div class="nw431-rank-result"><small>YOUR HIGHEST STAGE</small><strong>${d.best}</strong><span>Online rankings · coming soon</span></div><p>Progress in this version is saved on this device.</p>`,[{label:'Close'}]);}
+
+async function nwLbSubmit(eventCode,score){
+ if(!nwCloud?.user()?.id)throw Error('Sign in to participate.');
+ const c=await nwCloud.get(),{error}=await c.rpc('nw_lb_submit',{p_event:eventCode,p_score:Math.max(0,Math.floor(score))});
+ if(error)throw Error(error.message);
+}
+async function nwLbRank(eventCode){
+ const c=await nwCloud.get(),{data,error}=await c.rpc('nw_lb_rank',{p_event:eventCode});
+ if(error)throw Error(error.message);return data||[];
+}
+function nwLbMarkup(rows,eventCode){
+ if(!rows.length)return '<p>Play the event to join a competition group.</p>';
+ const x=nwEscape;
+ const items=rows.map(r=>{
+ const avatar=nwAvatarValue(r.avatar),f=/^(usual|weird|monthly-(10|25|50|100|150|200))$/.test(r.frame)?r.frame:'usual';
+ const file=f==='usual'?'frames/nw-free-usual.png':f==='weird'?'frames/nw-free-weird.png':'frames/nw-'+f+'.png';
+ return '<div class="nw-lb-item'+(r.is_me?' nw-lb-me':'')+'"><b>#'+r.place+'</b><span class="nw-lb-pfp"><img src="'+x(avatar)+'" alt=""><img src="'+file+'" alt=""></span><span class="nw-lb-user">'+x(r.username)+(r.is_me?' (YOU)':'')+'</span><strong>'+Number(r.score).toLocaleString()+'</strong></div>';
+ }).join('');
+ return '<style>.nw-lb-scroll{display:grid;gap:5px;max-height:52vh;overflow-y:auto}.nw-lb-item{display:flex;align-items:center;gap:7px;padding:5px 7px;background:#29203d;color:#f8ebdd;border-radius:9px;border:1px solid #625576;font:12px system-ui}.nw-lb-item.nw-lb-me{border-color:#f08bc2}.nw-lb-item>b{color:#81c8ff;width:27px}.nw-lb-pfp{position:relative;display:inline-block;flex:none;width:38px;height:38px}.nw-lb-pfp img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}.nw-lb-user{min-width:0;flex:1;overflow-wrap:anywhere}.nw-lb-item>strong{white-space:nowrap;color:#f08bc2}.nw-lb-note{font-size:11px;text-align:center;color:#bcadd9}</style><p class="nw-lb-note">GROUP '+rows[0].group_number+' · '+(eventCode==='tt'?'HIGHEST STAGE':'EVENT SCORE')+'</p><div class="nw-lb-scroll">'+items+'</div><p class="nw-lb-note">Only eligible real players can receive Diamond prizes.</p>';
+}
+
+function nwTTRank(){
+ const d=nwTripleData();nwTTModal('LEADERBOARD','<div id="nwLbTT">Connecting to rankings…</div>',[{label:'CLOSE'}]);
+ (async()=>{if(nwTripleInEvent()&&d.best>0)await nwLbSubmit('tt',d.best);const rows=await nwLbRank('tt'),el=document.getElementById('nwLbTT');if(el)el.innerHTML=nwLbMarkup(rows,'tt');})().catch(e=>{const el=document.getElementById('nwLbTT');if(el)el.textContent='Leaderboard unavailable: '+e.message;});
+}
 function nwTTDaysMarkup(){
  const current=new Date(nwTTNow()).getUTCDay();
  return ['MON','TUE','WED'].map((name,i)=>{
@@ -1041,7 +1065,7 @@ function nwTriplePersist(spentKind){
  const s=nwTriple;if(!s||s.week!==nwTripleWeek()||s.practice===nwTripleInEvent())return;
  const d=nwTripleSessionData();
  if(spentKind&&!s.practice){if(d.boosters[spentKind]<=0)throw Error('No booster available');d.boosters[spentKind]--;}
- if(s.won){if(s.practice){d.best=Math.max(d.best,s.stage);d.stage=Math.max(d.stage,s.stage+1);delete d.active;}else nwTTClear(d,s.stage);}
+ if(s.won){if(s.practice){d.best=Math.max(d.best,s.stage);d.stage=Math.max(d.stage,s.stage+1);delete d.active;}else {nwTTClear(d,s.stage);void nwLbSubmit('tt',d.best).catch(e=>console.warn('Leaderboard sync:',e.message));}}
  else {d.active=s;d.stage=s.stage;}
  if(s.practice)nwWrite('nineweird-triple-practice-v2',d);else nwTripleSave(d);
 }
