@@ -23,7 +23,7 @@ let currentWorld='halloween',roomPage=0,roomCollection='all';
 const difficulties={easy:{fill:.60,points:350,hints:1},medium:{fill:.50,points:650,hints:1},hard:{fill:.40,points:1000,hints:1},expert:{fill:.35,points:1350,hints:2},extreme:{fill:.30,points:1750,hints:3}};
 function applyTheme(world){evRoot.className='ev-root theme-'+(world||'hub');}
 
-const nwGroups={usual:['classic','dark','halloween','patissserie','christmas','fairy','olympus','nineties'],weird:['weird','ugly','alien','diner','bodyparts','deepsea','solarsick','dontunwrap','unpreparedchristmas','underthebed','balloonwrong','donttakewater','baggagehell','cakefail']};
+const nwGroups={usual:['classic','dark','halloween','patissserie','christmas','olympus','nineties'],weird:['weird','ugly','alien','diner','bodyparts','deepsea','solarsick','dontunwrap','unpreparedchristmas','underthebed','balloonwrong','donttakewater','baggagehell','cakefail']};
 const nwFavKey='nineweird-favourites-v1',nwPointsKey='nineweird-points-v1';
 const nwScroll={usual:0,weird:0,fav:0,all:0};
 const nwRoomPages={usual:0,weird:0,fav:0,all:0};
@@ -195,7 +195,7 @@ function nwWrite(key,value){
  s.values[key]=raw;
  nwCloudSaveQueue(key);
 }
-function nwFavs(){const a=nwRead(nwFavKey,[]);return Array.isArray(a)?a.filter((id,i)=>worlds[id]&&a.indexOf(id)===i):[]}
+function nwFavs(){const a=nwRead(nwFavKey,[]);return Array.isArray(a)?a.filter((id,i)=>id!=='fairy'&&worlds[id]&&a.indexOf(id)===i):[]}
 function nwIsFav(id){return nwFavs().includes(id)}
 function nwToggleFav(id){const a=nwFavs(),b=a.includes(id)?a.filter(x=>x!==id):[...a,id];nwWrite(nwFavKey,b);return b.includes(id)}
 function nwPoints(){const n=Number(nwRead(nwPointsKey,0));return Number.isFinite(n)&&n>0?Math.floor(n):0}
@@ -1795,7 +1795,7 @@ function nwTripleDraw(){
  if(economy)nwTTBind();
 }
 
-const nwGalaxyOrder=["classic", "dark", "weird", "ugly", "alien", "solarsick", "diner", "underthebed", "bodyparts", "halloween", "dontunwrap", "deepsea", "balloonwrong", "nineties", "cakefail", "baggagehell", "donttakewater", "patissserie", "unpreparedchristmas", "christmas", "fairy", "olympus"];
+const nwGalaxyOrder=["classic", "dark", "weird", "ugly", "alien", "solarsick", "diner", "underthebed", "bodyparts", "halloween", "dontunwrap", "deepsea", "balloonwrong", "nineties", "cakefail", "baggagehell", "donttakewater", "patissserie", "unpreparedchristmas", "christmas", "olympus"];
 const nwGalaxyColors={"classic": ["#fff", "#e3d3c7", "#111"], "dark": ["#050505", "#bbbbd0", "#fff"], "weird": ["#30284F", "#EFFF4F", "#F7F3FF"], "ugly": ["#343139", "#A8E64D", "#FAF3E8"], "alien": ["#182332", "#5BFFD8", "#EAFBFF"], "solarsick": ["#170B24", "#FF4FD2", "#FFE9FF"], "diner": ["#163F47", "#D9363D", "#FFF0D5"], "underthebed": ["#292237", "#F7D892", "#FFF1D9"], "bodyparts": ["#E1F0EC", "#9471B4", "#443B56"], "halloween": ["#270f36", "#f28cd5", "#ffe9f8"], "dontunwrap": ["#372B23", "#C47A3B", "#FFF4DB"], "deepsea": ["#071018", "#5AF2E3", "#EAFBFF"], "balloonwrong": ["#FFF2F8", "#E84AA8", "#5B2A63"], "nineties": ["#24294d", "#36e0dc", "#f6f4ff"], "cakefail": ["#F4D5DC", "#A95570", "#633B46"], "baggagehell": ["#F8DFC1", "#C46434", "#4C281A"], "donttakewater": ["#241431", "#F2AE9A", "#FFEDE6"], "patissserie": ["#F5E8D3", "#A87542", "#493021"], "unpreparedchristmas": ["#EAF7FF", "#579CC5", "#245D83"], "christmas": ["#EAF7FF", "#579CC5", "#245D83"], "fairy": ["#e9d9fa", "#9959d9", "#3c255f"], "olympus": ["#e8d8bc", "#347daa", "#203b60"]};
 function nwLobbyIcon(kind){const p={shop:'<path d="M4 9h16l-1 12H5L4 9Z M8 9V6a4 4 0 0 1 8 0v3"/>',settings:'<path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/>'};return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p[kind]}</svg>`;}
 function nwLobbyUtility(kind){if(kind==='mail'){void nwPrizeMail();return;}evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-lobby-theme');evDisplay(`${evHeader(kind==='shop'?'SHOP':kind==='mail'?'MAIL':'SETTINGS',showCategories)}<section class="nw-lobby-utility">${kind==='mail'?'<h2>MAIL COMING SOON</h2>':kind==='shop'?`<div class="nw-lobby-money">${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</div><h2>COMING SOON</h2>`:`<button id="nwSettingsProfile" class="nw-lobby-nav">PROFILE / ACCOUNT</button><a href="privacy.html">Privacy Policy</a>`}</section>`);const b=evRoot.querySelector('#nwSettingsProfile');if(b)b.onclick=nwShowProfile;nwResetViewToTop();}
