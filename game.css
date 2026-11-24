@@ -4687,3 +4687,27 @@ body:has(#game.nw-cosmic-mail-theme:not([hidden])){background:#0B1020!important;
 #game.nw-cosmic-mail-theme .nw-mail-gift-prizes .nw-lb-reward-icon{height:29px;width:29px;flex:none}
 #game.nw-cosmic-mail-theme .nw-mail-gift-prizes .nw-lb-reward-entry small{color:#C5B8E8;min-width:0;font:700 11px 'Pangolin',system-ui}
 #game.nw-cosmic-mail-theme .nw-mail-gift-prizes .nw-lb-reward-entry b{color:#F8EBDD;font:700 15px 'Pangolin',system-ui}
+
+
+/* Mail inbox: compact previews first, open individual letters on tap. */
+#game.nw-cosmic-mail-theme .nw-cosmic-mail-list{gap:11px}
+#game.nw-cosmic-mail-theme .nw-mail-inbox-item{box-sizing:border-box;width:100%;min-width:0;display:flex;align-items:center;gap:12px;padding:13px 12px;text-align:left;border-radius:13px;border:1px solid #8E83BE;background:linear-gradient(115deg,#2A2447,#171D36);color:#F8EBDD;box-shadow:0 3px 0 #070C1B;cursor:pointer;animation:nwCosmicLetterAppear .36s ease-out both;animation-delay:calc(var(--mail-index,0)*35ms)}
+#game.nw-cosmic-mail-theme .nw-mail-inbox-item.is-new{border-color:#81C8FF;box-shadow:0 3px 0 #070C1B,0 0 13px #81C8FF22}
+#game.nw-cosmic-mail-theme .nw-mail-inbox-item.is-claimed{opacity:.74}
+#game.nw-cosmic-mail-theme .nw-mail-inbox-icon{flex:none;width:39px;height:39px;display:grid;place-items:center;background:#222B50;border:1px solid #8E83BE;border-radius:10px;color:#F08BC2;font-size:25px}
+#game.nw-cosmic-mail-theme .nw-mail-inbox-item.is-claimed .nw-mail-inbox-icon{color:#C5B8E8;font-size:23px}
+#game.nw-cosmic-mail-theme .nw-mail-inbox-copy{display:flex;min-width:0;flex:1;flex-direction:column;gap:4px;overflow:hidden}
+#game.nw-cosmic-mail-theme .nw-mail-inbox-sender{font:700 10px 'Pangolin',sans-serif;letter-spacing:.06em;color:#81C8FF}
+#game.nw-cosmic-mail-theme .nw-mail-inbox-copy strong{font:400 13px/1.25 'Chelsea Market','Finger Paint',cursive;color:#F8EBDD;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#game.nw-cosmic-mail-theme .nw-mail-inbox-snippet{font:700 12px/1.35 'Pangolin',sans-serif;color:#C5B8E8;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#game.nw-cosmic-mail-theme .nw-mail-inbox-side{display:flex;align-items:center;flex:none;align-self:stretch;flex-direction:column;justify-content:space-between;gap:8px}
+#game.nw-cosmic-mail-theme .nw-mail-inbox-side .nw-mail-postal-stamp{font-size:8px;transform:none;padding:4px 5px}
+#game.nw-cosmic-mail-theme .nw-mail-open-arrow{font:26px/1 'Pangolin',sans-serif;color:#81C8FF}
+#game.nw-cosmic-mail-theme .nw-mail-back-inbox{align-self:flex-start;width:max-content;max-width:100%;border:1px solid #8E83BE;border-radius:9px;padding:7px 13px;background:#25223f;color:#F8EBDD;font:400 12px 'Chelsea Market',cursive;cursor:pointer}
+#game.nw-cosmic-mail-theme .nw-mail-open-letter{animation:nwCosmicLetterAppear .22s ease-out both}
+#game.nw-cosmic-mail-theme .nw-mail-collected{display:block;text-align:center;padding:9px 10px;border:1px solid #8E83BE;border-radius:9px;background:#292541;color:#C5B8E8;font:400 12px 'Chelsea Market',cursive}
+#game.nw-cosmic-mail-theme .nw-mail-inbox-item:focus-visible,#game.nw-cosmic-mail-theme .nw-mail-back-inbox:focus-visible{outline:2px solid #81C8FF;outline-offset:2px}
+/* Exactly the existing Battle Rewards rotating notification border, in Main Menu pink. */
+#game .nw-lobby-nav.nw-mail-unclaimed.nw-notification-orbit{--nw-notify:#F08BC2;animation:nwNotifyGlow 3s ease-in-out infinite!important;filter:none}
+#game .nw-lobby-nav.nw-mail-unclaimed.nw-notification-orbit:after{inset:3px;width:auto;height:auto;top:3px;right:3px;left:3px;bottom:3px;border:0;border-radius:14px;padding:2px;box-shadow:none;transform:none;background:conic-gradient(from var(--nw-notify-angle),transparent 0deg 275deg,var(--nw-notify) 330deg,#fff 353deg,transparent 360deg);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:nwNotifyOrbit 3s linear infinite}
+@media(prefers-reduced-motion:reduce){#game .nw-lobby-nav.nw-mail-unclaimed.nw-notification-orbit,#game .nw-lobby-nav.nw-mail-unclaimed.nw-notification-orbit:after{animation:none!important}}
