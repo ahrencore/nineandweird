@@ -807,7 +807,27 @@ function nwBattleReveal(opponent,profile,previousWorld){
       evRoot.querySelector('#nwMatchDots').hidden=true;
       evRoot.querySelector('#nwMatchSub').textContent=opponent.difficulty.toUpperCase()+' · '+worlds[currentWorld].name;
       const go=evRoot.querySelector('#nwMatchGo');go.hidden=false;
-      go.onclick=()=>{if(serial!==nwBattleSearchSerial)return;evSudokuStart(opponent.difficulty,opponent)};
+      go.onclick=async()=>{if(serial!==nwBattleSearchSerial||go.disabled)return;
+       go.disabled=true;go.textContent='CONNECTING…';
+       try{
+         const uid=nwCloud?.user()?.id;
+         if(!uid)throw Error('Sign in to play Battle.');
+         const c=await nwCloud.get();
+         const {data,error}=await c.rpc('nw_battle_begin',{p_recording:opponent.recording_id});
+         if(error)throw Error(error.message);
+         if(serial!==nwBattleSearchSerial||nwCloud?.user()?.id!==uid)return;
+         if(!data?.attempt_id||!Number.isInteger(Number(data.playback_seconds)))throw Error('Battle session unavailable');
+         opponent.battleAttemptId=data.attempt_id;
+         opponent.playback_seconds=Number(data.playback_seconds);
+         if(nwBattleActive)nwBattleActive.opponent=opponent;
+         evSudokuStart(opponent.difficulty,opponent);
+       }catch(e){
+         if(serial!==nwBattleSearchSerial)return;
+         go.disabled=false;go.textContent='START MATCH';
+         const sub=evRoot.querySelector('#nwMatchSub');
+         if(sub)sub.textContent='Unable to connect: '+e.message;
+       }
+      };
     }
   },105);
   evRoot.querySelector('#nwMatchCancel').onclick=()=>{++nwBattleSearchSerial;clearInterval(shuffleTimer);nwBattleReturn()};
