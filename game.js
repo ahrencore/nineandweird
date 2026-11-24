@@ -147,6 +147,20 @@ function nwSelectedFrame(){
   const id=saved?.month&&saved.month!==nwSeasonId()?'usual':saved?.id||'usual';
   return nwAvailableFrames().find(f=>f.id===id)||nwAvailableFrames()[0];
 }
+async function nwHydrateFrame(data){
+ if(!data)return;
+ const cloudId=data.equipped_frame,cloudMonth=data.equipped_frame_month;
+ if(cloudId){
+  const currentMonth=nwSeasonId();
+  const expired=cloudId.startsWith('monthly-')&&cloudMonth!==currentMonth;
+  const id=expired?'usual':cloudId;
+  nwWrite(nwFrameKey,{id,month:!expired&&id.startsWith('monthly-')?cloudMonth:null});
+  if(expired)await nwCloud.saveFrame('usual');
+ }else{
+  const frame=nwSelectedFrame();
+  await nwCloud.saveFrame(frame.id,frame.monthly?nwSeasonId():null);
+ }
+}
 function nwFrameArt(avatar,extraClass=''){
   const f=nwSelectedFrame();
   return `<span class="nw-equipped-frame ${f.monthly?'nw-monthly-art-frame':''} ${extraClass}">${nwAvatarImg(avatar,'nw-equipped-avatar')}${f.src?`<img src="${f.src}" class="nw-equipped-art" alt="">`:`<span class="nw-season-frame-ring">✧</span><strong class="nw-season-frame-title">${nwEscape(f.title)}</strong>`}</span>`;
@@ -156,13 +170,19 @@ function nwFramePicker(){
  const equipped=nwSelectedFrame();
  return `<div class="nw-frame-selector"><h3>PROFILE FRAMES</h3><div class="nw-frame-options">${nwAvailableFrames().map(f=>`<button type="button" class="nw-frame-choice ${f.id===equipped.id?'active':''}" aria-pressed="${f.id===equipped.id}" data-frame="${f.id}">${f.src?`<img src="${f.src}" alt="">`:'<span class="nw-frame-tier-icon">♛</span>'}<small>${nwEscape(f.title)}</small><small class="nw-frame-kind">${f.monthly?'Monthly':'Permanent'}</small></button>`).join('')}</div><p class="nw-frame-remark" role="status">${nwFrameRemark(equipped)}</p></div>`;
 }
-function nwBindFramePicker(){evRoot.querySelectorAll('[data-frame]').forEach(b=>b.onclick=()=>{
+function nwBindFramePicker(){evRoot.querySelectorAll('[data-frame]').forEach(b=>b.onclick=async()=>{
  const frame=nwAvailableFrames().find(f=>f.id===b.dataset.frame);if(!frame)return;
- nwWrite(nwFrameKey,{id:frame.id,month:frame.monthly?nwSeasonId():null});
- const selected=nwSelectedFrame();
- const preview=evRoot.querySelector('.nw-profile-with-frame');if(preview)preview.innerHTML=nwFrameArt(nwProfile().avatar);
- evRoot.querySelectorAll('[data-frame]').forEach(choice=>{const active=choice.dataset.frame===selected.id;choice.classList.toggle('active',active);choice.setAttribute('aria-pressed',String(active));});
- const remark=evRoot.querySelector('.nw-frame-remark');if(remark)remark.textContent=nwFrameRemark(selected);
+ const buttons=[...evRoot.querySelectorAll('[data-frame]')];
+ buttons.forEach(button=>button.disabled=true);
+ try{
+  await nwCloud.saveFrame(frame.id,frame.monthly?nwSeasonId():null);
+  nwWrite(nwFrameKey,{id:frame.id,month:frame.monthly?nwSeasonId():null});
+  const selected=nwSelectedFrame();
+  const preview=evRoot.querySelector('.nw-profile-with-frame');if(preview)preview.innerHTML=nwFrameArt(nwProfile().avatar);
+  buttons.forEach(choice=>{const active=choice.dataset.frame===selected.id;choice.classList.toggle('active',active);choice.setAttribute('aria-pressed',String(active));});
+  const remark=evRoot.querySelector('.nw-frame-remark');if(remark)remark.textContent=nwFrameRemark(selected);
+ }catch(e){const remark=evRoot.querySelector('.nw-frame-remark');if(remark)remark.textContent='Could not save frame: '+e.message;}
+ finally{buttons.forEach(button=>button.disabled=false);}
 });}
 // V35 account UI: real requests require a future cloud service, never simulate them.
 function nwUsernameValid(name){return /^[A-Za-z0-9._]{3,20}$/.test(name)&&!/^guest_/i.test(name)&&!nwBattleProfiles.some(p=>p.name.toLowerCase()===name.toLowerCase());}
@@ -349,7 +369,7 @@ function nwRouteAccount(){
     if(!u){nwVerifiedAccount=null;nwShowProfile();return;}
     if(!u.is_anonymous&&nwSetupVerified()){showCategories();return;}
     nwAccountTheme();evDisplay(`<section class="nw-new-panel">${nwAccountHeading('LOADING PROFILE')}</section>`);
-    try{const data=await nwCloud.readProfile();if(nwAuthKey()!==key)return;
+    try{const data=await nwCloud.readProfile();if(nwAuthKey()!==key)return;await nwHydrateFrame(data);if(nwAuthKey()!==key)return;
       if(u.is_anonymous){const name=nwGuestName(u.id),avatar=nwAvatarValue(data?.avatar||nwRead(nwProfileKey,{}).avatar);nwWrite(nwProfileKey,{name,avatar});if(!data||data.display_name!==name){try{await nwCloud.saveProfile(name,avatar)}catch(e){console.warn('Guest profile sync:',e.message)}}if(nwAuthKey()===key)showCategories();return;}
       if(data)nwWrite(nwProfileKey,{name:data.display_name||'Guest Player',avatar:nwAvatarValue(data.avatar)});
       if(data?.profile_setup_complete===true&&nwUsernameValid(data.display_name)){nwVerifiedAccount=u.id;showCategories();}else nwShowSetup(data);
@@ -799,15 +819,17 @@ async function nwLbRank(eventCode){
  if(error)throw Error(error.message);return data||[];
 }
 function nwLbMarkup(rows,eventCode){
- if(!rows.length)return '<p>Play the event to join a competition group.</p>';
+ if(!rows.length)return '<p class="nw-lb-empty">No rankings yet.</p>';
  const x=nwEscape;
  const items=rows.map(r=>{
- const avatar=nwAvatarValue(r.avatar),f=/^(usual|weird|monthly-(10|25|50|100|150|200))$/.test(r.frame)?r.frame:'usual';
- const file=f==='usual'?'frames/nw-free-usual.png':f==='weird'?'frames/nw-free-weird.png':'frames/nw-'+f+'.png';
- const avatarUrl=new URL(avatar,document.baseURI).href,frameUrl=new URL(file,document.baseURI).href;
- return '<div class="nw-lb-item'+(r.is_me?' nw-lb-me':'')+'"><b>#'+r.place+'</b><span class="nw-lb-pfp"><img src="'+x(avatarUrl)+'" alt=""><img src="'+x(frameUrl)+'" alt=""></span><span class="nw-lb-user">'+x(r.username)+(r.is_me?' (YOU)':'')+'</span><strong>'+Number(r.score).toLocaleString()+'</strong></div>';
+  const avatar=nwAvatarValue(r.avatar);
+  const f=/^(usual|weird|monthly-(10|25|50|100|150|200))$/.test(r.frame)?r.frame:'usual';
+  const file=f==='usual'?'frames/nw-free-usual.png?v=42':f==='weird'?'frames/nw-free-weird.png?v=42':'frames/nw-'+f+'.png';
+  const avatarUrl=new URL(avatar,document.baseURI).href,frameUrl=new URL(file,document.baseURI).href;
+  const monthly=f.startsWith('monthly-')?' nw-monthly-art-frame':'';
+  return '<div class="nw-lb-item'+(r.is_me?' nw-lb-me':'')+'"><b>#'+Number(r.place)+'</b><span class="nw-lb-pfp"><span class="nw-equipped-frame'+monthly+'"><img class="nw-equipped-avatar" src="'+x(avatarUrl)+'" alt=""><img class="nw-equipped-art" src="'+x(frameUrl)+'" alt=""></span></span><span class="nw-lb-user">'+x(r.username)+(r.is_me?' (YOU)':'')+'</span><strong>'+Number(r.score).toLocaleString()+'</strong></div>';
  }).join('');
- return '<style>.nw-lb-scroll{display:grid;gap:5px;max-height:52vh;overflow-y:auto}.nw-lb-item{display:flex;align-items:center;gap:7px;padding:5px 7px;background:#29203d;color:#f8ebdd;border-radius:9px;border:1px solid #625576;font:12px system-ui}.nw-lb-item.nw-lb-me{border-color:#f08bc2}.nw-lb-item>b{color:#81c8ff;width:27px}.nw-lb-pfp{position:relative;display:inline-block;flex:none;width:38px;height:38px}.nw-lb-pfp img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}.nw-lb-user{min-width:0;flex:1;overflow-wrap:anywhere}.nw-lb-item>strong{white-space:nowrap;color:#f08bc2}.nw-lb-note{font-size:11px;text-align:center;color:#bcadd9}</style><p class="nw-lb-note">GROUP '+rows[0].group_number+' · '+(eventCode==='tt'?'HIGHEST STAGE':'EVENT SCORE')+'</p><div class="nw-lb-scroll">'+items+'</div><p class="nw-lb-note">This board includes simulated opponents. Leaderboard Diamond prizes are not active yet.</p>';
+ return '<div class="nw-lb-scroll">'+items+'</div>';
 }
 
 function nwTTRank(){
