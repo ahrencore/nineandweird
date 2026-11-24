@@ -885,16 +885,39 @@ function nwBattleReturn(){
   if(previous&&worlds[previous])currentWorld=previous;
   showBattle();
 }
-function nwBattleFinish(s,won,points,elapsed){
+async function nwBattleFinish(s,won,points,elapsed){
   if(s.battleResultSaved)return;
   s.battleResultSaved=true;
-  const opponent=s.practiceOpponent;
-  const playerScore=won?points:0;
-  const outcome=won?(elapsed<(opponent.playback_seconds??opponent.elapsed_seconds)+2?'WIN':elapsed===(opponent.playback_seconds??opponent.elapsed_seconds)+2?'DRAW':'LOSS'):'LOSS';
-  const history=nwBattlePracticeHistory();
-  history.push({at:Date.now(),difficulty:s.difficulty,outcome,playerScore,opponentScore:opponent.points,seconds:elapsed,opponent:opponent.display_name,opponentId:opponent.profile_id});
-  nwWrite(nwBattlePracticeKey,history.slice(-1000));
   clearInterval(sudokuTimer);
+  const opponent=s.practiceOpponent,account=nwCloud?.user()?.id;
+  evSudokuLeave();
+  applyTheme('hub');evRoot.classList.add('nw-battle-theme');
+  evDisplay(`${evHeader('BATTLE',nwBattleReturn)}<section class="nw-battle nw-battle-ready nw-battle-finish"><h2 class="nw-victory-title">VERIFYING RESULT…</h2><p>Your Battle result is syncing.</p></section>`);
+  let verified;
+  try{
+    if(!account||!opponent?.battleAttemptId)throw Error('Missing registered Battle match');
+    const c=await nwCloud.get();
+    const {data,error}=await c.rpc('nw_battle_finish',{p_attempt:opponent.battleAttemptId,p_solved:won?s.values.join(''):'',p_won:!!won});
+    if(error)throw Error(error.message);
+    if(nwCloud?.user()?.id!==account)return;
+    if(!data||!['WIN','LOSS','DRAW'].includes(data.outcome))throw Error('Invalid verified result');
+    verified=data;
+  }catch(e){
+    s.battleResultSaved=false;
+    if(nwCloud?.user()?.id!==account)return;
+    evDisplay(`${evHeader('BATTLE',nwBattleReturn)}<section class="nw-battle nw-battle-ready nw-battle-finish"><h2 class="nw-victory-title">SYNCING FAILED</h2><p class="nw-battle-claim-error">${nwEscape(e.message)}</p><div class="nw-battle-result-actions"><button class="nw-battle-start-button" id="nwBattleRetry">RETRY SYNC</button><button class="nw-battle-fine-button" id="nwBattleReturn">BATTLE MENU</button></div></section>`);
+    evRoot.querySelector('#nwBattleRetry').onclick=()=>nwBattleFinish(s,won,points,elapsed);
+    evRoot.querySelector('#nwBattleReturn').onclick=nwBattleReturn;
+    return;
+  }
+  elapsed=Number(verified.elapsed_seconds);
+  const playerScore=won?points:0;
+  const outcome=verified.outcome;
+  const history=nwBattlePracticeHistory();
+  history.push({at:Date.now(),difficulty:s.difficulty,outcome,verified:true,attemptId:opponent.battleAttemptId,playerScore,opponentScore:opponent.points,seconds:elapsed,opponent:opponent.display_name,opponentId:opponent.profile_id});
+  nwWrite(nwBattlePracticeKey,history.slice(-1000));
+  nwBattleRewardState={account,month:verified.month,wins:Number(verified.wins)||0,claimed:nwBattleRewardState?.account===account&&nwBattleRewardState.month===verified.month?nwBattleRewardState.claimed:[],loaded:!!(nwBattleRewardState?.account===account&&nwBattleRewardState.month===verified.month&&nwBattleRewardState.loaded)};
+  void nwBattleLoadRewards(true).catch(e=>console.warn('Battle reward status:',e.message));
   const isWin=outcome==='WIN',isDraw=outcome==='DRAW';
   const resultTitle=isWin?'YOU WON!':isDraw?'IT’S A DRAW!':'OPPONENT WON!';
   const stats=nwBattleMonthStats();
