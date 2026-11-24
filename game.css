@@ -4596,3 +4596,71 @@ html:has(#loading:not([hidden])),body:has(#loading:not([hidden])){background:#0B
 #game .nw-mail-claim-dialog button{width:100%;min-height:42px;background:#443A60;border:1px solid #DFCAFF;border-radius:12px;color:#F4ED91;font:700 19px 'Gaegu',cursive;cursor:pointer}
 @keyframes nwMailClaimSparkle{0%,100%{opacity:.7}50%{opacity:1;filter:brightness(1.25)}}
 @media(prefers-reduced-motion:reduce){#game .nw-mail-claim-stars{animation:none!important}}
+
+
+/* Approved Midnight Post Office — Mail only. Main lobby, Galaxy, gameplay and Inventory unchanged. */
+html:has(#game.nw-cosmic-mail-theme:not([hidden])),
+body:has(#game.nw-cosmic-mail-theme:not([hidden])){background:#0B1020!important;color:#F8EBDD!important}
+#game.theme-hub.nw-cosmic-mail-theme{--surface:#0B1020;--panel:#141A33;--ink:#F8EBDD;--accent:#81C8FF;--line:#8E83BE;box-sizing:border-box;min-height:100dvh;padding-top:max(12px,env(safe-area-inset-top));background:radial-gradient(ellipse at 20% 12%,#2A1F44 0%,transparent 46%),radial-gradient(ellipse at 95% 75%,#1C3454 0%,transparent 54%),linear-gradient(#0B1020,#141A33 65%,#0B1020)!important;color:#F8EBDD!important}
+#game.nw-cosmic-mail-theme>.ev-head{box-sizing:border-box;background:#141A33!important;border-color:#8E83BE!important;box-shadow:none!important;max-width:470px;margin:0 auto}
+#game.nw-cosmic-mail-theme>.ev-head strong{color:#F8EBDD!important;text-shadow:none!important;font-family:'Chelsea Market',cursive!important;font-size:clamp(13px,3.5vw,18px)}
+#game.nw-cosmic-mail-theme>.ev-head button{background:#222743!important;color:#F8EBDD!important;border:1px solid #8E83BE!important;box-shadow:none!important}
+#game.nw-cosmic-mail-theme .nw-cosmic-mail{width:min(100%,470px);min-width:0;margin:0 auto;padding:15px 14px 30px;box-sizing:border-box;position:relative;isolation:isolate;color:#F8EBDD;font-family:'Pangolin',system-ui,sans-serif}
+#game.nw-cosmic-mail-theme .nw-cosmic-postmark{text-align:right;color:#8E83BE;font:400 10px 'Chelsea Market',cursive;letter-spacing:.13em;padding-right:3px}
+#game.nw-cosmic-mail-theme .nw-cosmic-postmark span{color:#81C8FF;font-size:17px;padding-left:10px}
+#game.nw-cosmic-mail-theme .nw-mail-sky{position:relative;width:100%;height:152px;display:flex;align-items:center;justify-content:center;isolation:isolate;pointer-events:none}
+#game.nw-cosmic-mail-theme .nw-mail-orbit{width:232px;height:95px;border:1px solid #8E83BE65;border-radius:50%;transform:rotate(-18deg);position:absolute;left:50%;top:29px;margin-left:-116px;z-index:-1}
+#game.nw-cosmic-mail-theme .nw-mail-orbit.orbit-two{width:196px;height:139px;margin-left:-98px;top:7px;transform:rotate(34deg);border-color:#81C8FF55}
+#game.nw-cosmic-mail-theme .nw-mail-envelope{position:relative;display:block;width:91px;height:63px;flex:none;border:2px solid #81C8FF;border-radius:9px;background:linear-gradient(135deg,#424778,#222B50);box-shadow:0 0 20px #81C8FF55,0 10px 28px #050717;animation:nwCosmicEnvelopeFloat 4s ease-in-out infinite;overflow:hidden;transform-origin:50% 50%}
+#game.nw-cosmic-mail-theme .nw-mail-envelope:before{content:'';position:absolute;inset:0;background:#A7B5EE;clip-path:polygon(0 0,50% 52%,100% 0)}
+#game.nw-cosmic-mail-theme .nw-mail-seal{position:absolute;z-index:2;left:calc(50% - 12px);top:20px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#F08BC2;color:#0B1020;font-size:14px;box-shadow:0 0 13px #F08BC2}
+#game.nw-cosmic-mail-theme .nw-mail-star{position:absolute;color:#81C8FF;animation:nwCosmicTwinkle 3s ease-in-out infinite;z-index:1}
+#game.nw-cosmic-mail-theme .star-one{left:10%;top:18px;font-size:13px}
+#game.nw-cosmic-mail-theme .star-two{right:13%;top:48px;font-size:18px;animation-delay:1s}
+#game.nw-cosmic-mail-theme .star-three{left:18%;bottom:18px;font-size:10px;animation-delay:2s}
+#game.nw-cosmic-mail-theme .star-four{right:22%;bottom:5px;font-size:12px;color:#F08BC2;animation-delay:.7s}
+#game.nw-cosmic-mail-theme .nw-mail-heading{text-align:center;margin:0 auto 23px}
+#game.nw-cosmic-mail-theme .nw-mail-heading h2{font:400 clamp(26px,7vw,34px)/1.14 'Chelsea Market','Finger Paint',cursive;color:#F8EBDD;letter-spacing:.07em;margin:0;text-shadow:0 0 12px #8E83BE88}
+#game.nw-cosmic-mail-theme .nw-mail-heading p{font:700 11px/1.3 'Pangolin',system-ui,sans-serif;color:#81C8FF;letter-spacing:.16em;margin:8px 0 0}
+#game.nw-cosmic-mail-theme .nw-mail-inbox-heading{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:7px;padding:0 3px;margin-bottom:12px}
+#game.nw-cosmic-mail-theme .nw-mail-inbox-heading>div{display:flex;align-items:center;gap:8px;min-width:0}
+#game.nw-cosmic-mail-theme .nw-mail-inbox-heading strong{font:400 14px 'Chelsea Market',cursive;letter-spacing:.035em;color:#F8EBDD}
+#game.nw-cosmic-mail-theme #nwMailCount{font:700 13px 'Pangolin',system-ui;color:#C5B8E8}
+#game.nw-cosmic-mail-theme .nw-mail-inbox-heading>small{font:700 10px 'Pangolin',system-ui;color:#AAB6D8;letter-spacing:.02em}
+#game.nw-cosmic-mail-theme .nw-mail-indicator{width:8px;height:8px;border-radius:50%;background:#8E83BE;flex:none}
+#game.nw-cosmic-mail-theme .nw-mail-indicator.has-unclaimed{background:#F08BC2;box-shadow:0 0 8px #F08BC2;animation:nwCosmicDotGlow 2s ease-in-out infinite}
+#game.nw-cosmic-mail-theme .nw-cosmic-mail-list{display:grid;gap:17px;min-width:0}
+#game.nw-cosmic-mail-theme .nw-cosmic-letter{min-width:0;position:relative;display:flex;flex-direction:column;align-items:stretch;gap:10px;border:1px solid #8E83BE;border-radius:15px;padding:16px 13px 14px;background:linear-gradient(115deg,#2A2447,#171D36);color:#F8EBDD;box-shadow:0 5px 0 #070C1B,0 0 18px #81C8FF12;animation:nwCosmicLetterAppear .36s ease-out both;animation-delay:calc(var(--mail-index,0)*35ms)}
+#game.nw-cosmic-mail-theme .nw-cosmic-letter.is-new{border-color:#81C8FF;box-shadow:0 5px 0 #070C1B,0 0 19px #81C8FF30}
+#game.nw-cosmic-mail-theme .nw-cosmic-letter.is-claimed{opacity:.78}
+#game.nw-cosmic-mail-theme .nw-mail-letter-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;min-width:0}
+#game.nw-cosmic-mail-theme .nw-mail-letter-top>div{display:flex;flex-direction:column;gap:5px;min-width:0}
+#game.nw-cosmic-mail-theme .nw-mail-letter-event{font:400 12px/1.3 'Chelsea Market',cursive;color:#81C8FF;overflow-wrap:anywhere}
+#game.nw-cosmic-mail-theme .nw-mail-letter-top small{font:700 11px/1.3 'Pangolin',sans-serif;color:#AAB6D8}
+#game.nw-cosmic-mail-theme .nw-mail-postal-stamp{flex:none;border:1.5px dashed #F08BC2;border-radius:3px;padding:5px 7px;color:#F08BC2;transform:rotate(6deg);letter-spacing:.07em;font:400 10px 'Chelsea Market',cursive}
+#game.nw-cosmic-mail-theme .nw-mail-postal-stamp.stamp-claimed{border-color:#8E83BE;color:#C5B8E8;transform:none}
+#game.nw-cosmic-mail-theme .nw-mail-finish{font:400 clamp(17px,5vw,21px)/1.2 'Chelsea Market',cursive;color:#F8EBDD}
+#game.nw-cosmic-mail-theme .nw-mail-letter-subtitle{margin:0;font:700 13px/1.35 'Pangolin',system-ui;color:#C5B8E8}
+#game.nw-cosmic-mail-theme .nw-cosmic-prizes{min-width:0}
+#game.nw-cosmic-mail-theme .nw-cosmic-prizes[hidden]{display:none!important}
+#game.nw-cosmic-mail-theme .nw-cosmic-prizes .nw-lb-reward-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#game.nw-cosmic-mail-theme .nw-cosmic-prizes .nw-lb-reward-entry{box-sizing:border-box;min-width:0;max-width:none;min-height:58px;display:flex;flex-direction:row;align-items:center;gap:8px;padding:8px;border:1px solid #8E83BE55;border-radius:9px;background:#10162B99;color:#F8EBDD;text-align:left;flex-wrap:wrap}
+#game.nw-cosmic-mail-theme .nw-cosmic-prizes .nw-lb-reward-icon{width:30px;height:30px;flex:none}
+#game.nw-cosmic-mail-theme .nw-cosmic-prizes .nw-lb-reward-icon img,#game.nw-cosmic-mail-theme .nw-cosmic-prizes .nw-lb-reward-icon svg{width:29px;height:29px;object-fit:contain}
+#game.nw-cosmic-mail-theme .nw-cosmic-prizes .nw-lb-reward-entry b{font:700 15px 'Pangolin',sans-serif;white-space:nowrap;color:#F8EBDD}
+#game.nw-cosmic-mail-theme .nw-cosmic-prizes .nw-lb-reward-entry small{font:700 11px 'Pangolin',sans-serif;color:#C5B8E8;flex:1 1 55px;overflow-wrap:anywhere}
+#game.nw-cosmic-mail-theme .nw-mail-claim-button{box-sizing:border-box;min-height:44px;max-width:100%;width:100%;border:1px solid #B0E0FF;border-radius:10px;background:#81C8FF;color:#10182D;font:400 13px 'Chelsea Market',cursive;letter-spacing:.01em;padding:10px;box-shadow:0 0 13px #81C8FF50;cursor:pointer;transition:transform .17s,filter .17s}
+#game.nw-cosmic-mail-theme .nw-mail-claim-button:not(:disabled):active{transform:scale(.985)}
+#game.nw-cosmic-mail-theme .nw-mail-claim-button:disabled{opacity:.7;cursor:wait}
+#game.nw-cosmic-mail-theme .nw-mail-detail-button{box-sizing:border-box;min-height:39px;max-width:100%;align-self:flex-end;border:1px solid #8E83BE;border-radius:10px;padding:8px 14px;background:#292541;color:#C5B8E8;font:400 12px 'Chelsea Market',cursive;cursor:pointer}
+#game.nw-cosmic-mail-theme .nw-mail-empty{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;padding:28px 10px 40px;color:#C5B8E8}
+#game.nw-cosmic-mail-theme .nw-mail-empty-envelope{font-size:60px;color:#81C8FF;text-shadow:0 0 18px #81C8FF55}
+#game.nw-cosmic-mail-theme .nw-mail-empty p{font:700 16px 'Pangolin',system-ui;margin:0}
+#game.nw-cosmic-mail-theme .nw-mail-end{color:#8276A4;text-align:center;margin-top:27px;font:700 11px 'Pangolin',sans-serif;letter-spacing:.15em}
+#game.nw-cosmic-mail-theme .nw-prize-msg{font:700 13px 'Pangolin',sans-serif;color:#F08BC2;margin:0}
+@keyframes nwCosmicEnvelopeFloat{0%,100%{transform:translateY(0) rotate(-7deg)}50%{transform:translateY(-7px) rotate(-4deg)}}
+@keyframes nwCosmicTwinkle{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.22)}}
+@keyframes nwCosmicDotGlow{0%,100%{box-shadow:0 0 5px #F08BC255}50%{box-shadow:0 0 18px #F08BC2}}
+@keyframes nwCosmicLetterAppear{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:350px){#game.nw-cosmic-mail-theme .nw-cosmic-mail{padding-inline:8px}#game.nw-cosmic-mail-theme .nw-cosmic-letter{padding:13px 9px}#game.nw-cosmic-mail-theme .nw-cosmic-prizes .nw-lb-reward-entry{padding:5px;gap:5px}#game.nw-cosmic-mail-theme .nw-cosmic-prizes .nw-lb-reward-entry small{font-size:10px}}
+@media(prefers-reduced-motion:reduce){#game.nw-cosmic-mail-theme .nw-mail-envelope,#game.nw-cosmic-mail-theme .nw-mail-star,#game.nw-cosmic-mail-theme .nw-mail-indicator,#game.nw-cosmic-mail-theme .nw-cosmic-letter{animation:none!important}}
