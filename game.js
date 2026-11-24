@@ -65,9 +65,12 @@ async function nwCloudSaveInit(){
     meta[key]={revision:version,signature:nwCloudSaveSignature(remoteRaw)};
     // The remote device has newer progress; restore it only if local is still unchanged.
     localStorage.setItem(storageKey,remoteRaw);
+   }else if(last&&Number(last.revision)===version){
+    // Local progress changed after its last acknowledged save; safely retry it.
+    toUpload.push(key);
    }else{
     nwCloudSaveState.conflicts.add(key);
-    // Keep local game progress untouched and retain the remote version.
+    // Preserve both divergent device states rather than overwriting either.
    }
    nwCloudSaveState.base[key]=version;
   }else if(local!==null){
