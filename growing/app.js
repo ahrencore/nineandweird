@@ -23,12 +23,20 @@ const APP=(()=>{
  const fmt=n=>Number(n||0).toLocaleString('en-US');
  function load(){try{return JSON.parse(localStorage.getItem(KEY))}catch{return null}}
  function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){console.warn('Offline save unavailable',e)}}
- function fresh(){const b=E.initial();return{board:b,queue:E.nextQueue(b),natural:100,bonus:0,nextRegen:0,diamonds:EMBEDDED?window.parent.nwDiamondBalance():0,juice:1,ray:1,score:0,total:0,claimed:[],notices:[],highest:Math.max(...b),discovered:[...new Set(b.filter(Boolean))],lastAt:Date.now(),gameOver:false,testOffset:0,weekId:weekId(Date.now()),packs:[],started:false,daily:{date:todayUTC(Date.now()),battles:0,worlds:0,merges:0,spent:0,played:0,claimed:[]}}}
+ function fresh(){const b=E.initial();return{board:b,queue:E.nextQueue(b),natural:100,bonus:0,nextRegen:0,diamonds:EMBEDDED?window.parent.nwDiamondBalance():0,juice:1,ray:1,score:0,total:0,claimed:[],notices:[],highest:Math.max(...b),discovered:[...new Set(b.filter(Boolean))],lastAt:Date.now(),gameOver:false,testOffset:0,weekId:weekId(Date.now()),boardWeekId:weekId(Date.now()),packs:[],started:false,daily:{date:todayUTC(Date.now()),battles:0,worlds:0,merges:0,spent:0,played:0,claimed:[]}}}
  function weekId(now){const d=new Date(now),day=d.getUTCDay(),toTue=(day+5)%7;return new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())-toTue*86400000).toISOString().slice(0,10)}
  function now(){return Date.now()+(state?.testOffset||0)}
  function live(){return [2,3,4].includes(new Date(now()).getUTCDay())}
  function countdown(){const t=now(),start=Date.parse(weekId(t)+'T00:00:00Z'),end=start+(live()?3:7)*86400000;const diff=Math.max(0,end-t);return `${Math.floor(diff/86400000)}d ${Math.floor(diff/3600000)%24}h ${Math.floor(diff/60000)%60}m ${live()?'remaining':'until next event'}`}
- function sync(){const t=now();if(!state)state=fresh();if(!state.daily||state.daily.date!==todayUTC(t))state.daily={date:todayUTC(t),battles:0,worlds:0,merges:0,spent:0,played:0,claimed:[]};if(weekId(t)!==state.weekId){state.weekId=weekId(t);state.score=0;state.claimed=[];state.packs=[]}if(EMBEDDED){const o=window.parent.nwRead(window.parent.nwGrowingActivityKey(),{});state.daily.battles=Math.max(state.daily.battles||0,Number(o.battles)||0);state.daily.worlds=Math.max(state.daily.worlds||0,Number(o.worlds)||0);state.daily.played=Math.max(state.daily.played||0,Number(o.played)||0);state.diamonds=window.parent.nwDiamondBalance();}if(state.natural<100&&state.nextRegen&&t>=state.nextRegen){const count=Math.min(100-state.natural,1+Math.floor((t-state.nextRegen)/300000));state.natural+=count;state.nextRegen=state.natural===100?0:state.nextRegen+count*300000}save()}
+ function sync(){const t=now();if(!state)state=fresh();if(!state.daily||state.daily.date!==todayUTC(t))state.daily={date:todayUTC(t),battles:0,worlds:0,merges:0,spent:0,played:0,claimed:[]};if(weekId(t)!==state.weekId||state.boardWeekId!==weekId(t)){
+  const newWeek=weekId(t),board=E.initial();
+  state.weekId=newWeek;state.boardWeekId=newWeek;
+  state.board=board;state.queue=E.nextQueue(board);
+  state.score=0;state.claimed=[];state.packs=[];
+  state.highest=Math.max(...board);state.discovered=[...new Set(board.filter(Boolean))];
+  state.gameOver=false;state.started=false;
+  selected=-1;route=[];hover=-1;previewBoard=null;mergeGlow=[];locked=false;turnNote='';
+ }if(EMBEDDED){const o=window.parent.nwRead(window.parent.nwGrowingActivityKey(),{});state.daily.battles=Math.max(state.daily.battles||0,Number(o.battles)||0);state.daily.worlds=Math.max(state.daily.worlds||0,Number(o.worlds)||0);state.daily.played=Math.max(state.daily.played||0,Number(o.played)||0);state.diamonds=window.parent.nwDiamondBalance();}if(state.natural<100&&state.nextRegen&&t>=state.nextRegen){const count=Math.min(100-state.natural,1+Math.floor((t-state.nextRegen)/300000));state.natural+=count;state.nextRegen=state.natural===100?0:state.nextRegen+count*300000}save()}
  function energy(){return state.natural+state.bonus}
  function spend(){state.daily.spent++;state.daily.played=1;if(state.natural){if(state.natural===100||!state.nextRegen)state.nextRegen=now()+300000;state.natural--}else if(state.bonus)state.bonus--}
  function grant(type,count){if(type==='energy')state.bonus+=count;else if(type==='diamonds'&&EMBEDDED){if(window.parent.nwGrowingAdjustDiamonds(count))state.diamonds=window.parent.nwDiamondBalance();}else state[type]+=count}
