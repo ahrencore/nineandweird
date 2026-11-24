@@ -292,6 +292,21 @@ html,body,#app{font-family:'Bubblegum Sans','Trebuchet MS',sans-serif}
 .nw-radio-frame-preview:has(>img[src^="frames/nw-monthly-"])::after{animation:none!important;display:none!important}}
 
 
+
+/* Compact leaderboard prize controls, shared with the main game */
+#nwLbTG .nw-lb-reward-action{display:flex;justify-content:flex-end;padding:3px 6px 8px}
+#nwLbTG .nw-lb-reward-action button{font:700 12px 'Bricolage Grotesque',sans-serif;border-radius:8px;border:1px solid #8bdaea;background:#153e50;color:#effaff;padding:5px 10px;cursor:pointer}
+.modal-shade .nw-lb-prizes{display:grid;gap:8px;max-height:62dvh;overflow-y:auto;min-width:0}
+.modal-shade .nw-lb-prizes h3{font:800 16px 'Bricolage Grotesque',sans-serif;text-align:center;margin:0}
+.modal-shade .nw-lb-prize-tier{display:grid;gap:4px;border:1px solid #9acbd3;background:#e8faf5;border-radius:10px;padding:8px;min-width:0}
+.modal-shade .nw-lb-prize-tier>strong{font:800 14px 'Bricolage Grotesque',sans-serif;color:#17535c}
+.modal-shade .nw-lb-reward-grid{display:flex;flex-wrap:wrap;gap:8px}
+.modal-shade .nw-lb-reward-entry{display:flex;flex:1 1 52px;max-width:90px;min-width:52px;min-height:64px;flex-direction:column;align-items:center;text-align:center;gap:2px;color:#214b50}
+.modal-shade .nw-lb-reward-entry b{font-size:14px}
+.modal-shade .nw-lb-reward-entry small{font-size:10px;line-height:1.1;overflow-wrap:anywhere}
+.modal-shade .nw-lb-reward-icon{height:26px;width:28px;display:flex;align-items:center;justify-content:center}
+.modal-shade .nw-lb-reward-icon img,.modal-shade .nw-lb-reward-icon svg{width:26px;height:26px;display:block;object-fit:contain}
+
 </style><link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Eater&family=Bricolage+Grotesque:wght@400;600;700;800&family=Oxanium:wght@400;600;700;800&display=swap" rel="stylesheet"></head><body><main id="app" class="shell"></main><script src="engine.js"></script><script src="app.js?v=51-supabase-progress"></script><script>
 (function(){
   if(window.parent===window)return;
