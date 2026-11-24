@@ -19,11 +19,31 @@ const APP=(()=>{
  ];
  const todayUTC=t=>new Date(t).toISOString().slice(0,10);
  const app=document.getElementById('app');let state,view='home',selected=-1,route=[],hover=-1,locked=false,turnNote='',modalActive=false,uiTimer=null,previewBoard=null,mergeGlow=[];
+ let verificationSeed=null;
+ async function fetchVerificationSeed(){
+  if(!EMBEDDED||typeof window.parent.nwGrowingSeed!=='function')return;
+  try{const data=await window.parent.nwGrowingSeed();if(data&&Number.isSafeInteger(Number(data.seed)))verificationSeed={period:data.period,seed:Number(data.seed)};}
+  catch(e){console.warn('Growing verification initialization:',e.message)}
+ }
+ function nextVerifiedRandom(v){v.rngState=(Math.imul(v.rngState,1664525)+1013904223)>>>0;return v.rngState/4294967296}
+ function newVerifiedBoard(week){
+  const v=verificationSeed?.period===week?{period:week,seed:verificationSeed.seed,rngState:verificationSeed.seed>>>0,actions:[]}:null;
+  const rng=v?()=>nextVerifiedRandom(v):Math.random;
+  const board=E.initial(rng),queue=E.nextQueue(board,rng);
+  return {board,queue,verifier:v};
+ }
+ function sendVerifiedProof(force=false){
+  const v=state?.verifier;
+  if(!EMBEDDED||!v||!live()||v.period!==state.weekId||!Array.isArray(v.actions)||!v.actions.length)return;
+  if(!force&&v.actions.length%8!==0)return;
+  if(typeof window.parent.nwGrowingVerifyScore==='function')void window.parent.nwGrowingVerifyScore(v.period,state.score,v.actions).catch(e=>console.warn('Growing verification:',e.message));
+ }
+
  const img=(lvl)=>`<img src="assets/${artFiles[lvl-1]}.png" alt="${names[lvl-1]}">`;
  const fmt=n=>Number(n||0).toLocaleString('en-US');
  function load(){try{return JSON.parse(localStorage.getItem(KEY))}catch{return null}}
  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));if(EMBEDDED&&typeof window.parent.nwGrowingQueueSave==='function')window.parent.nwGrowingQueueSave(state)}catch(e){console.warn('Offline save unavailable',e)}}
- function fresh(){const b=E.initial();return{board:b,queue:E.nextQueue(b),natural:100,bonus:0,nextRegen:0,diamonds:EMBEDDED?window.parent.nwDiamondBalance():0,juice:1,ray:1,score:0,total:0,claimed:[],notices:[],highest:Math.max(...b),discovered:[...new Set(b.filter(Boolean))],lastAt:Date.now(),gameOver:false,testOffset:0,weekId:weekId(Date.now()),boardWeekId:weekId(Date.now()),packs:[],started:false,daily:{date:todayUTC(Date.now()),battles:0,worlds:0,merges:0,spent:0,played:0,claimed:[]}}}
+ function fresh(){const n=newVerifiedBoard(weekId(Date.now()));return{board:n.board,queue:n.queue,verifier:n.verifier,natural:100,bonus:0,nextRegen:0,diamonds:EMBEDDED?window.parent.nwDiamondBalance():0,juice:1,ray:1,score:0,total:0,claimed:[],notices:[],highest:Math.max(...b),discovered:[...new Set(b.filter(Boolean))],lastAt:Date.now(),gameOver:false,testOffset:0,weekId:weekId(Date.now()),boardWeekId:weekId(Date.now()),packs:[],started:false,daily:{date:todayUTC(Date.now()),battles:0,worlds:0,merges:0,spent:0,played:0,claimed:[]}}}
  function weekId(now){const d=new Date(now),day=d.getUTCDay(),toTue=(day+5)%7;return new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())-toTue*86400000).toISOString().slice(0,10)}
  function now(){return Date.now()+(state?.testOffset||0)}
  function live(){return [2,3,4].includes(new Date(now()).getUTCDay())}
@@ -46,9 +66,9 @@ const APP=(()=>{
 
  }
  function sync(){const t=now();if(!state)state=fresh();if(!state.daily||state.daily.date!==todayUTC(t))state.daily={date:todayUTC(t),battles:0,worlds:0,merges:0,spent:0,played:0,claimed:[]};if(weekId(t)!==state.weekId||state.boardWeekId!==weekId(t)){
-  const newWeek=weekId(t),board=E.initial();
+  const newWeek=weekId(t),b=newVerifiedBoard(newWeek),board=b.board;
   state.weekId=newWeek;state.boardWeekId=newWeek;
-  state.board=board;state.queue=E.nextQueue(board);
+  state.board=board;state.queue=b.queue;state.verifier=b.verifier;
   state.score=0;state.claimed=[];state.packs=[];
   state.highest=Math.max(...board);state.discovered=[...new Set(board.filter(Boolean))];
   state.gameOver=false;state.started=false;
@@ -99,9 +119,9 @@ const APP=(()=>{
    sync();
    if(state.gameOver){turnNote='Use a booster or restart to continue.';game();return}
    if(!energy()){turnNote='No Energy left; visit Get Energy.';game();return}
-   const result=E.move(state.board,state.queue,from,to);
+   const result=E.move(state.board,state.queue,from,to,state.verifier?()=>nextVerifiedRandom(state.verifier):Math.random);
    if(!result.ok){turnNote='No unobstructed path to that hex. Zero Energy spent.';game();return}
-   locked=true;spend();state.board=result.board;state.queue=result.queue;state.gameOver=result.gameOver;points(result.merges);state.daily.merges+=result.merges.length;if(EMBEDDED&&live()&&state.score>0)void window.parent.nwLbSubmit('tg',state.score).catch(e=>console.warn('Growing rank sync:',e.message));
+   locked=true;spend();state.board=result.board;state.queue=result.queue;state.gameOver=result.gameOver;points(result.merges);if(state.verifier&&state.verifier.period===state.weekId)state.verifier.actions.push({type:'move',from,to});state.daily.merges+=result.merges.length;sendVerifiedProof();if(EMBEDDED&&live()&&state.score>0)void window.parent.nwLbSubmit('tg',state.score).catch(e=>console.warn('Growing rank sync:',e.message));
    selected=-1;route=result.path;save();
    const frames=result.frames||[];let step=0;
    function nextFrame(){
@@ -125,15 +145,15 @@ const APP=(()=>{
  function showNotices(){if(modalActive||!state.notices.length)return;const notice=state.notices.shift(),items=notice&&typeof notice==='object'?notice.items:null;save();const art=items?`<div class="prize-gallery">${items.map(([type,n])=>`<div class="prize-card">${itemIcon(type)}<strong>${n===1?'×1':'+'+n}</strong><span>${type==='diamonds'?'DIAMONDS':type==='energy'?'ENERGY':type==='juice'?'MUTATION JUICE':'SHRINK RAY'}</span></div>`).join('')}</div>`:`<p class="hint">${String(notice)}</p>`;overlay('CONGRATULATIONS!',art,[['AWESOME!',showNotices]])}
  function how(){overlay('HOW TO GROW',`<p>Drag ONE creature to an empty hex. Any unblocked route is valid, including winding paths around obstacles. Valid moves cost exactly <b>1 Energy</b>.</p><p>Connect <b>4 or more</b> creatures of the same level. The whole connected group becomes <b>one</b> upgraded creature at the destination, with no new spawns.</p><p>When a move does not merge, the <b>exact next four</b> previewed creatures spawn randomly. New groups merge automatically, lowest levels first and then reading order.</p><p>If fewer than four hexes remain free for that spawn, the turn ends in a recoverable Game Over: use a booster or restart. Board persists if you close the tab.</p>`)}
  function guide(){overlay('EVOLUTION GUIDE',`<div class="roster">${names.map((n,i)=>`<div class="${state.discovered.includes(i+1)?'':'locked'}">${img(i+1)}<br><b>${i+1}</b> ${n}</div>`).join('')}</div>`)}
- function useBooster(kind){sync();if(!state[kind]){overlay('NO BOOSTERS',`<p>You have no ${kind==='juice'?'Mutation Juice':'Shrink Ray'} left.</p>`,[['SHOP',()=>shop('boost')],['CLOSE',()=>{}]]);return}const result=kind==='juice'?E.juice(state.board):E.shrink(state.board);if(!result||((kind==='juice')&&!result.merges.length)){overlay('NO EFFECT',`<p>${kind==='juice'?'You need at least four creatures of one level anywhere on the board.':'You must have at least four creatures on the board.'} The item was not consumed.</p>`);return}overlay(kind==='juice'?'MUTATION JUICE':'SHRINK RAY',`<p>${kind==='juice'?`Merge same-level creatures anywhere. ${result.merges.length} merge(s) available.`:'Remove exactly the three lowest-level creatures for ZERO points.'}</p>`,[['USE BOOSTER',()=>{const fresh=kind==='juice'?E.juice(state.board):E.shrink(state.board);if(!fresh)return;state.board=fresh.board;state[kind]--;if(kind==='juice')points(fresh.merges);state.gameOver=false;turnNote='Booster used. Keep growing!';save();game();showNotices()}],['CANCEL',()=>{}]])}
- function restart(){overlay('RESTART BOARD?',`<p>The current 37-hex arrangement will be replaced. Your earned score, Diamonds, Energy, discoveries and milestones remain untouched.</p>`,[['RESTART',()=>{state.board=E.initial();state.queue=E.nextQueue(state.board);state.gameOver=false;selected=-1;turnNote='Fresh board!';save();game()}],['CANCEL',()=>{}]])}
+ function useBooster(kind){sync();if(!state[kind]){overlay('NO BOOSTERS',`<p>You have no ${kind==='juice'?'Mutation Juice':'Shrink Ray'} left.</p>`,[['SHOP',()=>shop('boost')],['CLOSE',()=>{}]]);return}const result=kind==='juice'?E.juice(state.board):E.shrink(state.board);if(!result||((kind==='juice')&&!result.merges.length)){overlay('NO EFFECT',`<p>${kind==='juice'?'You need at least four creatures of one level anywhere on the board.':'You must have at least four creatures on the board.'} The item was not consumed.</p>`);return}overlay(kind==='juice'?'MUTATION JUICE':'SHRINK RAY',`<p>${kind==='juice'?`Merge same-level creatures anywhere. ${result.merges.length} merge(s) available.`:'Remove exactly the three lowest-level creatures for ZERO points.'}</p>`,[['USE BOOSTER',()=>{const fresh=kind==='juice'?E.juice(state.board):E.shrink(state.board);if(!fresh)return;state.board=fresh.board;state[kind]--;if(kind==='juice')points(fresh.merges);if(state.verifier&&state.verifier.period===state.weekId)state.verifier.actions.push({type:kind});state.gameOver=false;sendVerifiedProof();turnNote='Booster used. Keep growing!';save();game();showNotices()}],['CANCEL',()=>{}]])}
+ function restart(){overlay('RESTART BOARD?',`<p>The current 37-hex arrangement will be replaced. Your earned score, Diamonds, Energy, discoveries and milestones remain untouched.</p>`,[['RESTART',()=>{if(state.verifier&&state.verifier.period===state.weekId){const rng=()=>nextVerifiedRandom(state.verifier);state.board=E.initial(rng);state.queue=E.nextQueue(state.board,rng);state.verifier.actions.push({type:'restart'});}else{state.board=E.initial();state.queue=E.nextQueue(state.board);}state.gameOver=false;sendVerifiedProof();selected=-1;turnNote='Fresh board!';save();game()}],['CANCEL',()=>{}]])}
  function shop(kind='energy'){sync();const list=kind==='energy'?[['energy',10,100],['juice',1,100],['ray',1,80]]:[['juice',1,100],['ray',1,80],['energy',10,100]];overlay(kind==='boost'?'BOOSTER SHOP':'GET ENERGY',`<p class="hint">💎 ${fmt(state.diamonds)}</p>${list.map(([k,n,c])=>`<div class="item"><div><strong>${itemIcon(k)} ${n} ${k}</strong><small></small></div><button class="btn" data-buy="${k}" data-count="${n}" data-cost="${c}">💎 ${c}</button></div>`).join('')}<h3 style="color:#e5a6ff">PREMIUM PACKS</h3><div class="hint"></div>`,[['VIEW PACKS',packsScreen],['CLOSE',()=>{}]]);const m=document.querySelector('.modal-shade');m.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{const type=b.dataset.buy,n=+b.dataset.count,c=+b.dataset.cost;if(state.diamonds<c){m.remove();modalActive=false;overlay('NOT ENOUGH DIAMONDS','<p>Not enough Diamonds.</p>');return}if(EMBEDDED){if(!window.parent.nwGrowingAdjustDiamonds(-c))return;state.diamonds=window.parent.nwDiamondBalance();}else state.diamonds-=c;grant(type,n);announce(`PURCHASE RECEIVED`,[[type,n]]);save();m.remove();modalActive=false;if(view==='game')game();else home();showNotices()})}
  function packsScreen(){overlay('PREMIUM PACKS',`<div class="pack-grid">${packs.map((p,i)=>`<div class="pack-card"><span class="pack-tag">PACK ${i+1}</span><strong>${p.items.map(([k,n])=>`<span>${itemIcon(k)} ×${n}</span>`).join('')}</strong><button class="btn" disabled>${p.price}</button><small>COMING SOON</small></div>`).join('')}</div>`)}
  function boosterShop(){shop('boost')}
 
  function milestonePage(){overlay('MILESTONE REWARDS',`<p>Weekly score: <b>${fmt(state.score)}</b></p>${rewardTrack()}`)}
  function rank(){
- sync();
+ sync();sendVerifiedProof(true);
  if(state.score<2000){overlay('RANKINGS LOCKED','<p>Earn 2,000 points to unlock the leaderboard!</p>');return;}
  overlay('RANKINGS','<div id="nwLbTG">Connecting to rankings…</div>');
  (async()=>{if(!EMBEDDED)throw Error('Online rankings require the main Nine & Weird game.');if(live())await window.parent.nwLbSubmit('tg',state.score);const rows=await window.parent.nwLbRank('tg'),el=document.getElementById('nwLbTG');if(el)el.innerHTML=window.parent.nwLbMarkup(rows,'tg');})().catch(e=>{const el=document.getElementById('nwLbTG');if(el)el.textContent='Leaderboard unavailable: '+e.message;});
@@ -149,7 +169,7 @@ const APP=(()=>{
  function planet(){view='planet';app.innerHTML=top()+`<h1 class="title">EVENT GALAXY</h1><div class="planet"><span>THEY'RE<br>GROWING!</span></div><p class="center" style="color:var(--lime)">${live()?'NOW LIVE: TUE – THU':'COMING SOON: TUE – THU'}</p><p class="muted">The orbit glows for the live period. Your event planet is also available in the main game's Events carousel.</p>${btn('OPEN EVENT','home','main')}`;wire()}
  function testTool(which){if(which==='test-points'){state.score+=5000;for(const [at,k,n] of rewards)if(state.score>=at&&!state.claimed.includes(at)){state.claimed.push(at);grant(k,n);announce(`MILESTONE ${fmt(at)}!`,[[k,n]])}}if(which==='test-energy')grant('energy',50);if(which==='test-energy500')grant('energy',500);if(which==='test-week'){state.testOffset+=7*86400000;sync()}if(which==='test-merge'){state.board=Array(37).fill(0);[16,17,18].forEach(i=>state.board[i]=2);state.board[12]=2;state.board[24]=3;state.queue=[1,1,2,2];state.gameOver=false;turnNote='Test setup: move Level 2 into a connected cluster to merge.'}if(which==='test-path'){state.board=Array(37).fill(0);state.board[3]=1;[4,10,11,12,17,18,24,25,26].forEach(i=>state.board[i]=3);state.queue=[1,1,1,2];state.gameOver=false;turnNote='Test setup: try winding an unblocked path around obstacles.'}if(which==='test-full'){state.board=Array(37).fill(0);for(let i=0;i<34;i++)state.board[i]=i%3+1;state.board[0]=4;state.board[1]=0;state.board[34]=2;state.board[35]=0;state.board[36]=0;state.queue=[1,2,3,1];state.gameOver=false;turnNote='Test setup: fewer than four spawning spaces should cause recoverable Game Over.'}if(which==='reset'){overlay('RESET OFFLINE DATA?',`<p>Delete only They're Growing! local beta progress for this account?</p>`,[['RESET',()=>{localStorage.removeItem(KEY);state=fresh();selected=-1;home()}],['CANCEL',()=>{}]]);return}save();home();showNotices()}
  function wire(){app.querySelectorAll('[data-action]').forEach(el=>el.addEventListener('click',()=>{const action=el.dataset.action;if(action==='back'){if(view==='game'||view==='planet')home();else if(EMBEDDED)window.parent.showCategories();else planet()}else if(action==='exit'&&EMBEDDED)window.parent.showCategories();else if(action==='home')home();else if(action==='play'){state.started=true;save();game();}else if(action==='shop')shop();else if(action==='boosters')boosterShop();else if(action==='help')how();else if(action==='roster')guide();else if(action==='packs')packsScreen();else if(action==='planet')planet();else if(action==='rank')rank();else if(action==='missions')missionScreen();else if(action==='milestones')milestonePage();else if(action==='juice'||action==='ray')useBooster(action);else if(action==='restart')restart();else if(action.startsWith('test-')||action==='reset')testTool(action)}))}
- function start(){state=load()||fresh();if(!Array.isArray(state.board)||state.board.length!==37)state=fresh();sync();home();uiTimer=setInterval(()=>{sync();if(document.querySelector('.modal-shade'))return;const old=view;if(old==='home')home();else if(old==='planet')planet()},30000)}
+ async function start(){state=load();await fetchVerificationSeed();if(!state||!Array.isArray(state.board)||state.board.length!==37)state=fresh();sync();home();uiTimer=setInterval(()=>{sync();if(document.querySelector('.modal-shade'))return;const old=view;if(old==='home')home();else if(old==='planet')planet()},30000)}
  window.nwGrowingApplyInventory=()=>{if(!state)return;sync();if(view==='game')game();else if(view==='home')home();};
  window.nwGrowingNavigateBack=()=>{if(view==='game'||view!=='home'){if(modalActive){document.querySelector('.modal-shade')?.remove();modalActive=false;}home();return true;}return false;};
  return{start,getState:()=>structuredClone(state),engine:E};
