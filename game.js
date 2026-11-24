@@ -465,12 +465,13 @@ function nwShowProfile(){
     authBlock=`<div class="nw-auth-card"><h3>ACCOUNT</h3><button class="nw-action nw-auth-secondary" id="nwSignOut">SIGN OUT</button><p id="nwAuthNotice" hidden></p></div>`;
   }
 
-  evDisplay(`${u?evHeader('PLAYER PROFILE',showCategories):'<header class="ev-head"><span></span><strong>WELCOME</strong><span></span></header>'}<section class="nw-new-panel ${u?'':'nw-account-welcome'}">${u?nwAccountHeading('MY PROFILE'): ''}<div class="nw-profile-avatar nw-profile-with-frame">${nwFrameArt(p.avatar)}</div><h2>${nwEscape(p.name)}</h2><p class="nw-muted" id="nwAccountStatus">${anon?'Guest':u?'Signed in: '+nwEscape(u.email||'Account'):'Guest'}</p>${u?`<div class="nw-account-nav"><button id="nwOpenAvatars" class="nw-action nw-auth-secondary">EDIT PROFILE</button><button id="nwOpenFrames" class="nw-action nw-auth-secondary">FRAMES</button></div><button id="nwOpenFriends" class="nw-action nw-auth-secondary nw-friends-entry">FRIENDS <span>›</span></button>`:''}<div id="nwProfileFrames" ${u?'hidden':''}>${nwFramePicker()}</div><div id="nwProfileEdit" ${u?'hidden':''}>${lockedEditor}</div>${authBlock}${!u?'<p class="nw-auth-switch"><a href="privacy.html">Privacy Policy</a></p>':''}</section>`);nwBindFramePicker();
+  evDisplay(`${u?evHeader('PLAYER PROFILE',showCategories):'<header class="ev-head"><span></span><strong>WELCOME</strong><span></span></header>'}<section class="nw-new-panel ${u?'':'nw-account-welcome'}">${u?nwAccountHeading('MY PROFILE'): ''}<div class="nw-profile-avatar nw-profile-with-frame">${nwFrameArt(p.avatar)}</div><h2>${nwEscape(p.name)}</h2><p class="nw-muted" id="nwAccountStatus">${anon?'Guest':u?'Signed in: '+nwEscape(u.email||'Account'):'Guest'}</p>${u?`<div class="nw-account-nav"><button id="nwViewOwnProfile" class="nw-action nw-auth-secondary" ${anon?'disabled':''}>VIEW MY PROFILE</button><button id="nwOpenAvatars" class="nw-action nw-auth-secondary">EDIT PROFILE</button><button id="nwOpenFrames" class="nw-action nw-auth-secondary">FRAMES</button></div><button id="nwOpenFriends" class="nw-action nw-auth-secondary nw-friends-entry">FRIENDS <span>›</span></button>`:''}<div id="nwProfileFrames" ${u?'hidden':''}>${nwFramePicker()}</div><div id="nwProfileEdit" ${u?'hidden':''}>${lockedEditor}</div>${authBlock}${!u?'<p class="nw-auth-switch"><a href="privacy.html">Privacy Policy</a></p>':''}</section>`);nwBindFramePicker();
   const on=(id,fn)=>{const b=evRoot.querySelector('#'+id);if(b)b.onclick=fn;};
   if(u&&!anon&&p.name==='Guest Player'){evRoot.querySelector('#nwProfileEdit').hidden=false;}
   on('nwOpenAvatars',()=>{evRoot.querySelector('#nwProfileEdit').hidden=false;evRoot.querySelector('#nwProfileFrames').hidden=true;});
   on('nwOpenFrames',()=>{evRoot.querySelector('#nwProfileFrames').hidden=false;evRoot.querySelector('#nwProfileEdit').hidden=true;});
   on('nwOpenFriends',()=>nwShowFriends());
+  on('nwViewOwnProfile',()=>void nwFriendOpenProfile(u.id,nwShowProfile));
   on('nwEmailEntry',()=>{evRoot.querySelector('#nwEmailFields').hidden=false;evRoot.querySelector('#nwEmail').focus();});
 
   if(!u && window.nwCloud){const captcha=evRoot.querySelector('.nw-captcha');if(captcha)nwCloud.mountCaptcha(captcha)}
@@ -2482,17 +2483,20 @@ async function nwFriendNoticeMark(kind,id=null){
  catch(e){console.warn('Friend notice:',e.message)}
 }
 async function nwFriendOpenProfile(id,back=nwShowProfile){
+ const own=id===nwCloud?.user()?.id;
+ const returnTo=own?nwShowProfile:()=>nwShowFriends('list',back);
+ const heading=own?'MY PROFILE':'FRIEND PROFILE';
  nwAccountTheme();
- evDisplay(`${evHeader('FRIEND PROFILE',()=>nwShowFriends('list',back))}<section class="nw-new-panel nw-social-panel"><p class="nw-muted">Loading player profile...</p></section>`);
+ evDisplay(`${evHeader(heading,returnTo)}<section class="nw-new-panel nw-social-panel"><p class="nw-muted">Loading player profile...</p></section>`);
  try{
   const p=await nwFriendsRpc('nw_friend_profile',{p_target:id});
-  if(!evRoot.querySelector('.nw-social-panel'))return;
+  if(!evRoot.querySelector('.nw-social-panel')||nwCloud?.user()?.id==null)return;
   const fields=[['PUZZLES COMPLETED',p.puzzles],['TOTAL POINTS',Number(p.points).toLocaleString()],['BATTLE WINS',p.battle_wins],['BATTLE LOSSES',p.battle_losses],['BATTLE DRAWS',p.battle_draws],['FRIENDLY WINS',p.challenge_wins],['FRIENDLY LOSSES',p.challenge_losses],['FRIENDLY DRAWS',p.challenge_draws]];
   nwAccountTheme();
-  evDisplay(`${evHeader('FRIEND PROFILE',()=>nwShowFriends('list',back))}<section class="nw-new-panel nw-social-panel">${nwAccountHeading('FRIEND PROFILE')}<div class="nw-friend-public-card">${nwFriendPhoto(p)}<h3>${nwEscape(p.name)}</h3></div><div class="nw-friend-profile-stats">${fields.map(([label,value])=>`<div><small>${label}</small><strong>${nwEscape(value)}</strong></div>`).join('')}</div><button class="nw-action" id="nwChallengeFriend">CHALLENGE TO SUDOKU</button><p class="nw-muted">Puzzle totals are based on saved history; verified Friendly Challenge results are tracked separately.</p></section>`);
-  evRoot.querySelector('#nwChallengeFriend').onclick=()=>nwChallengeChoose(id,back);
+  evDisplay(`${evHeader(heading,returnTo)}<section class="nw-new-panel nw-social-panel">${nwAccountHeading(heading)}<div class="nw-friend-public-card">${nwFriendPhoto(p)}<h3>${nwEscape(p.name)}</h3></div><div class="nw-friend-profile-stats">${fields.map(([label,value])=>`<div><small>${label}</small><strong>${nwEscape(value)}</strong></div>`).join('')}</div><button class="nw-action" id="nwProfileSocialAction">${own?'EDIT PROFILE':'CHALLENGE TO SUDOKU'}</button><p class="nw-muted">Puzzle totals are based on saved history; verified Friendly Challenge results are tracked separately.</p></section>`);
+  evRoot.querySelector('#nwProfileSocialAction').onclick=()=>own?nwShowProfile():nwChallengeChoose(id,back);
  }catch(e){
-  nwAccountTheme();evDisplay(`${evHeader('FRIEND PROFILE',()=>nwShowFriends('list',back))}<section class="nw-new-panel nw-social-panel"><p role="alert">${nwEscape(e.message)}</p></section>`);
+  nwAccountTheme();evDisplay(`${evHeader(heading,returnTo)}<section class="nw-new-panel nw-social-panel"><p role="alert">${nwEscape(e.message)}</p></section>`);
  }
 }
 async function nwChallengeResult(id,back=nwShowProfile){
