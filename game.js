@@ -730,26 +730,49 @@ async function nwPrizeRefreshMailNotice(){
  }catch(e){console.warn('Mail rewards status:',e.message)}
 }
 
+
+function nwPrizeClaimArt(data){
+ const supplies=data?.supplies||data?.reward?.supplies||{};
+ const diamonds=Number(data?.diamonds??data?.reward?.diamonds)||0;
+ const items=[['diamonds',diamonds],...nwPrizeDefinitions.map(d=>[d.key,Number(supplies[d.key])||0])].filter(([,qty])=>Number.isFinite(qty)&&qty>0);
+ return '<div class="nw-lb-reward-grid nw-mail-claimed-items">'+items.map(([key,qty])=>{
+  const def=nwPrizeDefinitions.find(d=>d.key===key);
+  const raw=key==='diamonds'?'<img src="assets/currency/diamond.png" alt="">':nwPrizeIcon(key);
+  const art=raw.replace(/src="([^"]+)"/g,(_,path)=>'src="'+new URL(path,document.baseURI).href+'"');
+  return '<span class="nw-lb-reward-entry"><span class="nw-lb-reward-icon" aria-hidden="true">'+art+'</span><b>×'+qty.toLocaleString()+'</b><small>'+nwEscape(key==='diamonds'?'Diamonds':def?.name||key)+'</small></span>';
+ }).join('')+'</div>';
+}
+function nwPrizeClaimConfirmation(data){
+ const overlay=document.createElement('div');
+ overlay.className='nw-mail-claim-overlay';
+ overlay.innerHTML='<section class="nw-mail-claim-dialog" role="dialog" aria-modal="true" aria-label="Rewards claimed"><span class="nw-mail-claim-stars" aria-hidden="true">✦ ✧ ✦</span><h2>REWARDS CLAIMED!</h2>'+nwPrizeClaimArt(data)+'<p>Your rewards are now in Inventory!</p><p class="nw-mail-claim-directions">To check, go to <strong>TROPHY → INVENTORY</strong>.</p><button type="button" class="nw-mail-claim-ok">AWESOME!</button></section>';
+ evRoot.appendChild(overlay);
+ const close=()=>overlay.remove();
+ overlay.querySelector('.nw-mail-claim-ok').onclick=close;
+ overlay.querySelector('.nw-mail-claim-ok').focus();
+}
+
 async function nwPrizeMail(){
- evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-trophy-theme');
- evDisplay(`${evHeader('MAIL',showCategories)}<section class="nw-new-panel nw-trophy-panel"><div class="nw-trophy-heading"><h2>REWARD MAIL</h2><div class="nw-trophy-doodle">✧ ── ☆ ── ✧</div></div><div id="nwPrizeMailBody" class="nw-prize-mail">Checking tournament results…</div></section>`);
+ evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-trophy-theme','nw-mail-theme');
+ evDisplay(`${evHeader('MAIL',showCategories)}<section class="nw-new-panel nw-trophy-panel nw-mail-panel"><div class="nw-trophy-heading"><span class="nw-mail-ornament" aria-hidden="true">✧ ✦ ✧</span><h2>YOUR MAIL</h2><div class="nw-trophy-doodle">✦ ── ♡ ── ✦</div></div><div id="nwPrizeMailBody" class="nw-prize-mail" aria-live="polite">Checking tournament results…</div></section>`);
  const container=evRoot.querySelector('#nwPrizeMailBody');
  try{
   const c=await nwCloud.get(),{data,error}=await c.rpc('nw_prize_inbox');if(error)throw Error(error.message);
   if(!container.isConnected)return;
   const rows=Array.isArray(data)?data:[];
-  container.innerHTML=rows.length?rows.map(r=>`<article class="nw-prize-letter"><small>${r.event==='tt'?'TRIPLE TROUBLE':"THEY'RE GROWING!"} · ${nwEscape(r.period)}</small><strong>FINISHED #${Number(r.rank)}</strong><div class="nw-prize-mail-rewards">${nwRankRewardArt(r.event,r.rank)}</div><button type="button" data-prize-claim="${r.event}:${r.period}" ${r.claimed?'disabled':''}>${r.claimed?'CLAIMED':'CLAIM REWARDS'}</button></article>`).join(''):'<p class="nw-prize-hint">No tournament rewards waiting. Finish in the Top 10 to receive a prize!</p>';
+  container.innerHTML=rows.length?rows.map(r=>`<article class="nw-prize-letter ${r.claimed?'nw-mail-read':'nw-mail-new'}"><div class="nw-mail-letter-top"><small>${r.event==='tt'?'TRIPLE TROUBLE':"THEY'RE GROWING!"} · ${nwEscape(r.period)}</small>${r.claimed?'<span class="nw-mail-status is-claimed">CLAIMED</span>':'<span class="nw-mail-status">NEW ✦</span>'}</div><strong>FINISHED #${Number(r.rank)}</strong><div class="nw-prize-mail-rewards">${nwRankRewardArt(r.event,r.rank)}</div><button type="button" data-prize-claim="${r.event}:${r.period}" ${r.claimed?'disabled':''}>${r.claimed?'CLAIMED':'CLAIM REWARDS'}</button></article>`).join(''):'<div class="nw-mail-empty"><span aria-hidden="true">✉</span><p>Nothing in your mailbox yet.</p></div>';
   nwPrizeSetMailNotice(rows.some(r=>!r.claimed));
   container.querySelectorAll('[data-prize-claim]:not([disabled])').forEach(b=>b.onclick=async()=>{
    b.disabled=true;b.textContent='CLAIMING…';
    const [event,period]=b.dataset.prizeClaim.split(':');
    let confirmed=false;
    try{
-    const c=await nwCloud.get(),{error}=await c.rpc('nw_prize_claim',{p_event:event,p_period:period});
+    const c=await nwCloud.get(),{data,error}=await c.rpc('nw_prize_claim',{p_event:event,p_period:period});
     if(error)throw Error(error.message);
     confirmed=true;b.textContent='CLAIMED';
     try{await Promise.all([nwWalletSync(),nwPrizeSync()])}catch(e){console.warn('Claim confirmed; display sync pending:',e.message)}
-    void nwPrizeMail();
+    await nwPrizeMail();
+    if(evRoot.querySelector('.nw-mail-panel'))nwPrizeClaimConfirmation(data);
    }catch(e){
     if(confirmed){b.textContent='CLAIMED';return}
     b.disabled=false;b.textContent='CLAIM REWARDS';
@@ -1887,6 +1910,7 @@ function nwBindEventCarousel(){
  const clock=setInterval(()=>{if(!root.isConnected){clearInterval(clock);return;}refresh();},1000);
  const auto=setInterval(()=>{if(!root.isConnected){clearInterval(auto);return;}if(document.hidden||gesture||reduced.matches||Date.now()<pauseUntil||(root.contains(document.activeElement)&&document.activeElement.matches(':focus-visible')))return;step(1);},5000);
 }
+let nwLastMailNoticeCheck=0;
 function showCategories(){
   if(!nwCloud.user()||(!nwCloud.user().is_anonymous&&!nwSetupVerified())||nwCloud.isRecovering()){void nwRouteAccount();return;}
   evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-lobby-theme');const p=nwProfile();
@@ -1903,8 +1927,8 @@ function showCategories(){
     </div></div><div class="nw-event-controls"><button type="button" class="nw-event-prev" aria-label="Previous event">‹</button><div class="nw-event-dots"></div><button type="button" class="nw-event-next" aria-label="Next event">›</button></div></section>
     <div class="nw-lobby-bottom">${nav('nwMail','MAIL',`<span class="nw-lobby-nav-art nw-lobby-mail" aria-hidden="true"><svg viewBox="0 0 80 70" aria-hidden="true"><g fill="none" stroke="#F08BC2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 19Q12 16 17 16H63Q68 16 68 21V51Q68 55 63 55H17Q12 55 12 50V21Q12 20 13 19Z"/><path d="M15 20Q27 31 39 40Q41 42 43 40L65 20"/></g></svg></span>`)}${nav('nwTrophy','TROPHY CASE',`<span class="nw-lobby-nav-art nw-lobby-trophy"><svg viewBox="0 0 80 70" aria-hidden="true"><path d="M24 11H56V29Q56 44 40 47Q24 44 24 29Z M24 16H11V25Q11 39 29 39 M56 16H69V25Q69 39 51 39 M40 47V58 M27 62H53" fill="none" stroke="#ffcf9a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 16l3 8 8 3-8 3-3 8-3-8-8-3 8-3Z" fill="#ffe6bb"/></svg></span>`)}${nav('nwLobbyShop','SHOP',`<span class="nw-lobby-nav-art nw-lobby-shop"><svg viewBox="0 0 80 70" aria-hidden="true"><g fill="none" stroke="#F8EBDD" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 27Q15 27 15 31L17 56Q17 59 21 59H59Q63 59 63 55L65 31Q65 27 61 27H17Z"/><path d="M30 29V18Q30 9 40 9Q50 9 50 18V29"/></g></svg></span>`)}</div></section>`);
   const by=id=>evRoot.querySelector('#'+id);const openRooms=collection=>{roomCollection=collection;nwScroll[collection]=0;nwRoomPages[collection]=0;showRooms(0)};
-  void nwPrizeRefreshMailNotice();
-  by('nwWorlds').onclick=()=>openRooms('all');by('nwMail').onclick=()=>nwLobbyUtility('mail');by('nwTriplePortal').onclick=nwTripleHome;by('nwDoublePortal').onclick=nwDoublePracticeScreen;by('nwGrowingPortal').onclick=nwGrowingOpen;by('nwBattle').onclick=showBattle;by('nwTrophy').onclick=()=>nwShowTrophy();by('nwProfileButton').onclick=nwShowProfile;by('nwLobbyShop').onclick=()=>nwLobbyUtility('shop');by('nwLobbySettings').onclick=()=>nwLobbyUtility('settings');if(nwLobbyClock===null)nwLobbyClock=setInterval(()=>{if(evRoot.hidden||!evRoot.querySelector('[data-lobby-event]')){clearInterval(nwLobbyClock);nwLobbyClock=null;return;}nwLobbyUpdateEventStatus();},1000);nwBindEventCarousel();nwResetViewToTop();
+  nwLastMailNoticeCheck=Date.now();void nwPrizeRefreshMailNotice();
+  by('nwWorlds').onclick=()=>openRooms('all');by('nwMail').onclick=()=>nwLobbyUtility('mail');by('nwTriplePortal').onclick=nwTripleHome;by('nwDoublePortal').onclick=nwDoublePracticeScreen;by('nwGrowingPortal').onclick=nwGrowingOpen;by('nwBattle').onclick=showBattle;by('nwTrophy').onclick=()=>nwShowTrophy();by('nwProfileButton').onclick=nwShowProfile;by('nwLobbyShop').onclick=()=>nwLobbyUtility('shop');by('nwLobbySettings').onclick=()=>nwLobbyUtility('settings');if(nwLobbyClock===null)nwLobbyClock=setInterval(()=>{if(evRoot.hidden||!evRoot.querySelector('[data-lobby-event]')){clearInterval(nwLobbyClock);nwLobbyClock=null;return;}nwLobbyUpdateEventStatus();if(Date.now()-nwLastMailNoticeCheck>=30000){nwLastMailNoticeCheck=Date.now();void nwPrizeRefreshMailNotice();}},1000);nwBindEventCarousel();nwResetViewToTop();
 }
 function showRooms(page=0){
   const ids=roomCollection==='fav'?nwFavs():['favorites',...nwGalaxyOrder];
