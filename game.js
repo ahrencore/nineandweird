@@ -875,9 +875,13 @@ async function nwWalletSync(){
 }
 async function nwWalletPurchase(item){
  if(!nwWalletCurrent())throw Error('Wallet not available');
- const uid=nwWalletState.user;
- const c=await nwCloud.get();
- const request=crypto.randomUUID();
+ const uid=nwWalletState.user,c=await nwCloud.get();
+ const pendingKey='nineweird-wallet-pending-v1:'+uid;
+ let pending=null;
+ try{pending=JSON.parse(localStorage.getItem(pendingKey)||'null')}catch{}
+ if(pending&&pending.item!==item)throw Error('Previous purchase still needs confirmation. Please try it again first.');
+ const request=pending?.request||crypto.randomUUID();
+ try{localStorage.setItem(pendingKey,JSON.stringify({item,request}))}catch{}
  const {data,error}=await c.rpc('nw_wallet_purchase',{p_item:item,p_request:request});
  if(error)throw Error(error.message);
  if(uid!==nwCloud?.user()?.id)throw Error('Account changed during purchase');
@@ -885,7 +889,15 @@ async function nwWalletPurchase(item){
  const d=nwRead(nwTripleKey,null);
  if(d){d.diamonds=nwWalletState.balance;nwWrite(nwTripleKey,d)}
  nwRefreshVisibleDiamondBalances();
- await nwPrizeSync();
+ try{await nwPrizeSync()}catch(e){
+  console.warn('Purchased supplies pending refresh:',e.message);
+  const event=item.startsWith('tt_')?'tt':'tg';
+  const receipt={id:data.transfer_id,event,period:nwPrizeTransferPeriod(event),item,quantity:data.quantity};
+  nwPrizeCache.transfers=[...(nwPrizeCache.transfers||[]),receipt];
+  if(event==='tt')nwPrizeApplyTTTransfers();
+  else try{document.getElementById('nwGrowingFrame')?.contentWindow?.nwGrowingApplyInventory?.()}catch{}
+ }
+ try{localStorage.removeItem(pendingKey)}catch{}
  return data;
 }
 function nwDiamondBalance(){if(nwWalletCurrent())return nwWalletState.balance;const d=nwRead(nwTripleKey,null);return Math.max(0,nwBattleDiamondTotal()+(Number.isSafeInteger(d?.diamondDelta)?d.diamondDelta:0));}
