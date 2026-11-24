@@ -22,7 +22,7 @@ const APP=(()=>{
  const img=(lvl)=>`<img src="assets/${artFiles[lvl-1]}.png" alt="${names[lvl-1]}">`;
  const fmt=n=>Number(n||0).toLocaleString('en-US');
  function load(){try{return JSON.parse(localStorage.getItem(KEY))}catch{return null}}
- function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){console.warn('Offline save unavailable',e)}}
+ function save(){try{localStorage.setItem(KEY,JSON.stringify(state));if(EMBEDDED&&typeof window.parent.nwGrowingQueueSave==='function')window.parent.nwGrowingQueueSave(state)}catch(e){console.warn('Offline save unavailable',e)}}
  function fresh(){const b=E.initial();return{board:b,queue:E.nextQueue(b),natural:100,bonus:0,nextRegen:0,diamonds:EMBEDDED?window.parent.nwDiamondBalance():0,juice:1,ray:1,score:0,total:0,claimed:[],notices:[],highest:Math.max(...b),discovered:[...new Set(b.filter(Boolean))],lastAt:Date.now(),gameOver:false,testOffset:0,weekId:weekId(Date.now()),boardWeekId:weekId(Date.now()),packs:[],started:false,daily:{date:todayUTC(Date.now()),battles:0,worlds:0,merges:0,spent:0,played:0,claimed:[]}}}
  function weekId(now){const d=new Date(now),day=d.getUTCDay(),toTue=(day+5)%7;return new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())-toTue*86400000).toISOString().slice(0,10)}
  function now(){return Date.now()+(state?.testOffset||0)}
