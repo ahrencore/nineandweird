@@ -30,105 +30,166 @@ const nwRoomPages={usual:0,weird:0,fav:0,all:0};
 // All player data is tied to the active Supabase user ID, never shared across accounts.
 // No account = no saved player data. Legacy unscoped keys are deliberately ignored
 // rather than assigned to another player. A browser's local data is not cloud sync.
-/* Revision-checked save recovery: retain existing local saves, never overwrite another device's divergent version. */
-const nwCloudSaveKeys=['nineweird-favourites-v1','nineweird-points-v1','nineweird-results-v1','nineweird-profile-v1','nineweird-selected-frame-v1','nineweird-battle-practice-v1','nineweird-battle-diamond-claims-v1','nineweird-double-practice-v2','nineweird-triple-economy-beta-v1','nineweird-triple-daily-missions-v1','nineweird-triple-practice-v2','nineweird-prize-diamond-receipts-v1','nw-growing-live-v1'];
-let nwCloudSaveState={id:null,ready:false,base:{},conflicts:new Set(),timers:new Map(),active:new Set()};
+/* V51: Supabase is the durable progress store; in-memory values provide instant play.
+   Local storage is READ ONCE only to migrate a legacy save if Supabase has no version. */
+const nwCloudSaveKeys=[
+ 'nineweird-favourites-v1','nineweird-points-v1','nineweird-results-v1',
+ 'nineweird-profile-v1','nineweird-selected-frame-v1','nineweird-battle-practice-v1',
+ 'nineweird-battle-diamond-claims-v1','nineweird-double-practice-v2',
+ 'nineweird-triple-economy-beta-v1','nineweird-triple-daily-missions-v1',
+ 'nineweird-triple-practice-v2','nineweird-prize-diamond-receipts-v1',
+ 'nw-growing-live-v1','nineweird-growing-activity-v1',
+ 'nineweird-tt-verification-pending-v1'
+];
+const nwCloudState=()=>({id:null,ready:false,values:Object.create(null),base:Object.create(null),
+ confirmed:Object.create(null),timers:new Map(),active:new Set(),retry:new Map(),
+ conflicts:new Set(),generation:0});
+let nwCloudSaveState=nwCloudState();
+let nwSyncStatusTimeout=null;
 function nwCloudSaveLocalKey(key,id){
  return key==='nw-growing-live-v1'?'nw-growing-live-v1:'+id:'nineweird-player:'+id+':'+key;
 }
-function nwCloudSaveMetaKey(id){return 'nineweird-cloud-save-meta-v1:'+id;}
-function nwCloudSaveSignature(raw){let h=2166136261;for(let i=0;i<raw.length;i++)h=Math.imul(h^raw.charCodeAt(i),16777619);return raw.length+':'+(h>>>0).toString(36);}
-function nwCloudSaveSame(meta,raw){return !!meta&&raw!=null&&(meta.raw===raw||meta.signature===nwCloudSaveSignature(raw));}
-function nwCloudSaveMetadata(id){try{return JSON.parse(localStorage.getItem(nwCloudSaveMetaKey(id))||'{}')}catch{return {};}}
-function nwCloudSaveStoreMeta(id,meta){try{localStorage.setItem(nwCloudSaveMetaKey(id),JSON.stringify(meta))}catch{}}
+function nwCloudSaveStatus(message,kind='pending'){
+ let el=document.getElementById('nw-save-status');
+ if(!el){
+  el=document.createElement('div');el.id='nw-save-status';
+  el.setAttribute('role','status');el.setAttribute('aria-live','polite');
+  el.style.cssText='position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);right:12px;z-index:99999;max-width:min(320px,85vw);border-radius:13px;background:rgba(24,16,34,.94);color:#f5eaff;font:600 12px system-ui,sans-serif;padding:8px 12px;box-shadow:0 3px 16px #0005;pointer-events:none;';
+  document.body.appendChild(el);
+ }
+ el.textContent=message;
+ el.style.display=message?'block':'none';
+ el.style.color=kind==='error'?'#ffbec5':'#e4d6ff';
+ el.style.pointerEvents=kind==='conflict'?'auto':'none';
+ if(nwSyncStatusTimeout){clearTimeout(nwSyncStatusTimeout);nwSyncStatusTimeout=null}
+ if(kind==='saved')nwSyncStatusTimeout=setTimeout(()=>{el.style.display='none'},1400);
+ if(kind==='conflict'){
+  const btn=document.createElement('button');
+  btn.type='button';btn.textContent='Reload';
+  btn.style.cssText='margin-left:8px;padding:3px 7px;background:#f36b78;color:#160b0e;border:0;border-radius:7px;font:inherit;cursor:pointer';
+  btn.onclick=()=>window.location.reload();el.append(btn);
+ }
+}
+function nwCloudSaveStatusUpdate(){
+ const s=nwCloudSaveState;
+ if(!s.ready||!s.id)return;
+ if(s.conflicts.size){nwCloudSaveStatus('Progress changed on another device. Reload to use the cloud version.','conflict');return}
+ if(s.retry.size){nwCloudSaveStatus('Connection lost · retrying save…','error');return}
+ if(s.active.size||s.timers.size){nwCloudSaveStatus('Syncing…');return}
+ nwCloudSaveStatus('Saved','saved');
+}
+function nwLegacySaveValue(key,id){
+ try{
+  let old;
+  if(key==='nineweird-growing-activity-v1'){
+   const k='nineweird-player:'+id+':nw-growing-activity-v1:'+id+':'+new Date().toISOString().slice(0,10);
+   old=localStorage.getItem(k);
+   if(old!==null){const val=JSON.parse(old);return JSON.stringify({...val,day:new Date().toISOString().slice(0,10)})}
+  }
+  old=localStorage.getItem(nwCloudSaveLocalKey(key,id));
+  return old===null?null:JSON.stringify(JSON.parse(old));
+ }catch{return null}
+}
 async function nwCloudSaveInit(){
  const id=nwCloud?.user()?.id;
  if(!id)return;
  if(nwCloudSaveState.id===id&&nwCloudSaveState.ready)return;
  for(const timer of nwCloudSaveState.timers.values())clearTimeout(timer);
- nwCloudSaveState={id,ready:false,base:{},conflicts:new Set(),timers:new Map(),active:new Set()};
+ for(const retry of nwCloudSaveState.retry.values())clearTimeout(retry);
+ nwCloudSaveState=nwCloudState();const state=nwCloudSaveState;state.id=id;
  const c=await nwCloud.get(),{data,error}=await c.rpc('nw_cloud_save_read');
- if(error)throw Error(error.message);
- if(nwCloud?.user()?.id!==id)return;
- const meta=nwCloudSaveMetadata(id),remote=data||{},toUpload=[];
+ if(error)throw Error('Cannot load progress from Supabase: '+error.message);
+ if(nwCloud?.user()?.id!==id||nwCloudSaveState!==state)return;
+ const toUpload=[];
  for(const key of nwCloudSaveKeys){
-  const saved=remote[key],storageKey=nwCloudSaveLocalKey(key,id),local=localStorage.getItem(storageKey);
-  if(saved){
-   const remoteRaw=JSON.stringify(saved.value),version=Number(saved.revision);
-   const last=meta[key];
-   if(local===null||(last&&nwCloudSaveSame(last,local)&&version>Number(last.revision||0))){
-    localStorage.setItem(storageKey,remoteRaw);
-    meta[key]={revision:version,signature:nwCloudSaveSignature(remoteRaw)};
-   }else if(local===remoteRaw){
-    meta[key]={revision:version,signature:nwCloudSaveSignature(remoteRaw)};
-   }else if(last&&nwCloudSaveSame(last,local)){
-    meta[key]={revision:version,signature:nwCloudSaveSignature(remoteRaw)};
-    // The remote device has newer progress; restore it only if local is still unchanged.
-    localStorage.setItem(storageKey,remoteRaw);
-   }else if(last&&Number(last.revision)===version){
-    // Local progress changed after its last acknowledged save; safely retry it.
-    toUpload.push(key);
-   }else{
-    nwCloudSaveState.conflicts.add(key);
-    // Preserve both divergent device states rather than overwriting either.
-   }
-   nwCloudSaveState.base[key]=version;
-  }else if(local!==null){
-   nwCloudSaveState.base[key]=0;toUpload.push(key);
+  const saved=data?.[key];
+  if(saved&&Number.isSafeInteger(Number(saved.revision))&&Number(saved.revision)>=1){
+   state.values[key]=JSON.stringify(saved.value);
+   state.base[key]=Number(saved.revision);
+   state.confirmed[key]=state.values[key];
+  }else{
+   state.base[key]=0;
+   const legacy=nwLegacySaveValue(key,id);
+   if(legacy!==null){state.values[key]=legacy;toUpload.push(key)}
   }
  }
- nwCloudSaveStoreMeta(id,meta);
- nwCloudSaveState.ready=true;
- for(const key of toUpload)nwCloudSaveQueue(key);
+ state.ready=true;
+ nwCloudSaveStatusUpdate();
+ // Keep the legacy save intact until its first successful Supabase write.
+ for(const key of toUpload)nwCloudSaveQueue(key,0);
 }
-function nwCloudSaveQueue(key){
- const state=nwCloudSaveState,id=nwCloud?.user()?.id;
- if(!id||!state.ready||state.id!==id||!nwCloudSaveKeys.includes(key)||state.conflicts.has(key))return;
- clearTimeout(state.timers.get(key));
- state.timers.set(key,setTimeout(()=>{state.timers.delete(key);void nwCloudSaveFlush(key)},1100));
+function nwCloudSaveQueue(key,delay=350){
+ const s=nwCloudSaveState,id=nwCloud?.user()?.id;
+ if(!s.ready||id!==s.id||!nwCloudSaveKeys.includes(key)||s.conflicts.has(key))return;
+ clearTimeout(s.timers.get(key));clearTimeout(s.retry.get(key));s.retry.delete(key);
+ s.timers.set(key,setTimeout(()=>{s.timers.delete(key);void nwCloudSaveFlush(key)},delay));
+ nwCloudSaveStatusUpdate();
 }
 async function nwCloudSaveFlush(key){
- const state=nwCloudSaveState,id=state.id;
- if(!id||!state.ready||state.active.has(key)||state.conflicts.has(key)||nwCloud?.user()?.id!==id)return;
- const storageKey=nwCloudSaveLocalKey(key,id),raw=localStorage.getItem(storageKey);
- if(raw===null)return;
- const meta=nwCloudSaveMetadata(id),known=meta[key];
- if(nwCloudSaveSame(known,raw))return;
- state.active.add(key);
+ const s=nwCloudSaveState,id=s.id;
+ if(!id||!s.ready||!nwCloud?.user()||nwCloud.user().id!==id||s.conflicts.has(key))return;
+ if(s.active.has(key))return;
+ const raw=s.values[key];
+ if(raw===undefined||raw===s.confirmed[key]){nwCloudSaveStatusUpdate();return}
+ s.active.add(key);nwCloudSaveStatusUpdate();
  try{
   const c=await nwCloud.get();
-  if(nwCloud?.user()?.id!==id)return;
-  const {data,error}=await c.rpc('nw_cloud_save_write',{p_key:key,p_value:JSON.parse(raw),p_revision:Number(state.base[key]||0)});
+  if(nwCloud?.user()?.id!==id||nwCloudSaveState!==s)return;
+  const {data,error}=await c.rpc('nw_cloud_save_write',{
+   p_key:key,p_value:JSON.parse(raw),p_revision:Number(s.base[key]||0)
+  });
   if(error)throw Error(error.message);
-  if(nwCloud?.user()?.id!==id||nwCloudSaveState!==state)return;
-  const revision=Number(data);
-  state.base[key]=revision;
-  const latest=nwCloudSaveMetadata(id);latest[key]={revision,signature:nwCloudSaveSignature(raw)};nwCloudSaveStoreMeta(id,latest);
+  if(nwCloud?.user()?.id!==id||nwCloudSaveState!==s)return;
+  s.base[key]=Number(data);s.confirmed[key]=raw;
+  // Removing an old browser copy is safe only once its cloud replacement is confirmed.
+  try{localStorage.removeItem(nwCloudSaveLocalKey(key,id))}catch{}
+  if(key==='nineweird-growing-activity-v1'){
+   try{localStorage.removeItem('nineweird-player:'+id+':nw-growing-activity-v1:'+id+':'+new Date().toISOString().slice(0,10))}catch{}
+  }
   nwPrizeFlushDurableReceipts();
-  if(localStorage.getItem(storageKey)!==raw)nwCloudSaveQueue(key);
  }catch(e){
-  if(/conflict/i.test(e.message||''))state.conflicts.add(key);
-  console.warn('Game save sync:',key,e.message);
- }finally{state.active.delete(key)}
+  if(nwCloudSaveState===s&&/save conflict|progress changed/i.test(e.message||''))s.conflicts.add(key);
+  else if(nwCloudSaveState===s&&!s.conflicts.has(key)){
+   const next=Math.min(20000,Math.max(1500,((s.retryCount?.[key])||750)*2));
+   s.retryCount??=Object.create(null);s.retryCount[key]=next;
+   s.retry.set(key,setTimeout(()=>{s.retry.delete(key);nwCloudSaveQueue(key,0)},next));
+  }
+  console.warn('Supabase progress save:',key,e.message);
+ }finally{
+  s.active.delete(key);
+  if(nwCloudSaveState===s){
+   if(!s.conflicts.has(key)&&!s.retry.has(key)&&s.values[key]!==s.confirmed[key])nwCloudSaveQueue(key,0);
+   nwCloudSaveStatusUpdate();
+  }
+ }
 }
-function nwGrowingQueueSave(payload){
- const id=nwCloud?.user()?.id;
- if(!id||!nwCloudSaveState.ready||nwCloudSaveState.id!==id)return;
+function nwGrowingLoadSave(){
+ const s=nwCloudSaveState;
+ if(!s.ready||s.id!==nwCloud?.user()?.id)return null;
+ try{return s.values['nw-growing-live-v1']===undefined?null:JSON.parse(s.values['nw-growing-live-v1'])}catch{return null}
+}
+function nwGrowingQueueSave(value){
+ const s=nwCloudSaveState;
+ if(!s.ready||s.id!==nwCloud?.user()?.id||s.conflicts.has('nw-growing-live-v1'))return;
+ s.values['nw-growing-live-v1']=JSON.stringify(value);
  nwCloudSaveQueue('nw-growing-live-v1');
 }
 function nwPlayerStorageKey(key){
-  const id=window.nwCloud?.user()?.id;
-  return id ? `nineweird-player:${id}:${key}` : null;
+ const id=window.nwCloud?.user()?.id;
+ return id?'nineweird-player:'+id+':'+key:null;
 }
 function nwRead(key,fallback){
-  const scoped=nwPlayerStorageKey(key);
-  if(!scoped)return fallback;
-  try{const raw=localStorage.getItem(scoped);return raw===null?fallback:JSON.parse(raw)}catch{return fallback}
+ const s=nwCloudSaveState;
+ if(!s.ready||s.id!==nwCloud?.user()?.id)return fallback;
+ try{return s.values[key]===undefined?fallback:JSON.parse(s.values[key])}catch{return fallback}
 }
 function nwWrite(key,value){
-  const scoped=nwPlayerStorageKey(key);
-  if(!scoped)return;
-  try{localStorage.setItem(scoped,JSON.stringify(value));nwCloudSaveQueue(key)}catch{}
+ const s=nwCloudSaveState;
+ if(!s.ready||s.id!==nwCloud?.user()?.id)return;
+ if(!nwCloudSaveKeys.includes(key)){console.warn('Unregistered Supabase progress key:',key);return}
+ if(s.conflicts.has(key)){nwCloudSaveStatusUpdate();return}
+ s.values[key]=JSON.stringify(value);
+ nwCloudSaveQueue(key);
 }
 function nwFavs(){const a=nwRead(nwFavKey,[]);return Array.isArray(a)?a.filter((id,i)=>worlds[id]&&a.indexOf(id)===i):[]}
 function nwIsFav(id){return nwFavs().includes(id)}
