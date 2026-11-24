@@ -1068,10 +1068,56 @@ const nwBattleDiamondPrizes={10:100,25:250,50:500,100:1000,150:1500,200:2000};
 function nwBattleDiamondPrize(wins){return nwBattleDiamondPrizes[wins]||0;}
 function nwDiamondAmount(n){return `<span class="nw-diamond-amount"><img class="nw-diamond-icon" src="assets/currency/diamond.png" alt="Diamonds"><span>${n}</span></span>`;}
 function nwBattleRewards(){
- evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-battle-theme');const st=nwBattleMonthStats(),month=nwSeasonId();
- evDisplay(`${evHeader('',showBattle)}<section class="nw-battle nw-battle-ready nw-battle-rewards"><div class="nw-radio-ornament" aria-hidden="true">⋆ ☢ ⋆</div><h2>BATTLE REWARDS</h2><p class="nw-radio-season">${st.wins} MONTHLY WINS · RESETS IN ${nwBattleSeasonClock()}</p><div class="nw-battle-diamond-balance">YOUR DIAMONDS ${nwDiamondAmount(nwDiamondBalance())}</div><div class="nw-radio-tiers">${nwSeasonFrameTiers.map(t=>{const unlocked=st.wins>=t.wins,claimed=nwBattleDiamondClaimed(month,t.wins);return `<div class="nw-radio-tier ${unlocked?'earned':''}"><div class="nw-radio-frame-preview"><img class="nw-radio-reward-art" src="frames/nw-monthly-${t.wins}.png" alt="${nwEscape(t.title)} frame"></div><div><strong>${nwEscape(t.title)}</strong><small>${t.wins} WINS · ${unlocked?'UNLOCKED':'LOCKED'}</small><div class="nw-radio-progress"><i style="width:${Math.min(100,st.wins/t.wins*100)}%"></i></div><div class="nw-battle-diamond-row">${nwDiamondAmount(nwBattleDiamondPrize(t.wins))}${claimed?'<span class="nw-battle-claim-status">CLAIMED</span>':unlocked?`<button type="button" class="nw-battle-claim" data-diamond-claim="${t.wins}">CLAIM</button>`:'<span class="nw-battle-claim-status">LOCKED</span>'}</div></div></div>`;}).join('')}</div><p class="nw-battle-claim-error" role="status" hidden></p><button class="nw-battle-fine-button" id="nwRadioBack">BACK TO BATTLE</button></section>`);
+ evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-battle-theme');
+ const month=nwSeasonId(),account=nwCloud?.user()?.id,
+  current=nwBattleRewardState.loaded&&nwBattleRewardState.account===account&&nwBattleRewardState.month===month,
+  wins=current?nwBattleRewardState.wins:0;
+ if(!current&&!nwBattleRewardLoading&&!nwBattleRewardError){
+  void nwBattleLoadRewards().then(()=>{
+   if(document.getElementById('nwBattleRewardsRoot'))nwBattleRewards();
+  }).catch(e=>{
+   if(document.getElementById('nwBattleRewardsRoot'))nwBattleRewards();
+  });
+ }
+ evDisplay(`${evHeader('',showBattle)}<section id="nwBattleRewardsRoot" class="nw-battle nw-battle-ready nw-battle-rewards">
+ <div class="nw-radio-ornament" aria-hidden="true">⋆ ☢ ⋆</div>
+ <h2>BATTLE REWARDS</h2>
+ <p class="nw-radio-season">${current?wins+' VERIFIED MONTHLY WINS':nwBattleRewardError?'VERIFICATION UNAVAILABLE':'LOADING VERIFIED WINS…'} · RESETS IN ${nwBattleSeasonClock()}</p>
+ <div class="nw-battle-diamond-balance">YOUR DIAMONDS ${nwDiamondAmount(nwDiamondBalance())}</div>
+ <div class="nw-radio-tiers">${nwSeasonFrameTiers.map(t=>{
+   const unlocked=current&&wins>=t.wins,claimed=nwBattleDiamondClaimed(month,t.wins);
+   return `<div class="nw-radio-tier ${unlocked?'earned':''}"><div class="nw-radio-frame-preview"><img class="nw-radio-reward-art" src="frames/nw-monthly-${t.wins}.png" alt="${nwEscape(t.title)} frame"></div><div><strong>${nwEscape(t.title)}</strong><small>${t.wins} VERIFIED WINS · ${!current?'CHECKING…':unlocked?'UNLOCKED':'LOCKED'}</small><div class="nw-radio-progress"><i style="width:${Math.min(100,wins/t.wins*100)}%"></i></div><div class="nw-battle-diamond-row">${nwDiamondAmount(nwBattleDiamondPrize(t.wins))}${claimed?'<span class="nw-battle-claim-status">CLAIMED</span>':unlocked?`<button type="button" class="nw-battle-claim" data-diamond-claim="${t.wins}">CLAIM</button>`:'<span class="nw-battle-claim-status">LOCKED</span>'}</div></div></div>`;
+ }).join('')}</div>
+ <p class="nw-battle-claim-error" role="status" ${nwBattleRewardError?'':'hidden'}>${nwEscape(nwBattleRewardError)}</p>
+ ${nwBattleRewardError?'<button type="button" class="nw-battle-fine-button" id="nwBattleRetryRewards">RETRY SYNC</button>':''}
+ <button class="nw-battle-fine-button" id="nwRadioBack">BACK TO BATTLE</button></section>`);
  evRoot.querySelector('#nwRadioBack').onclick=showBattle;
- evRoot.querySelectorAll('[data-diamond-claim]').forEach(b=>b.onclick=async()=>{b.disabled=true;const wins=Number(b.dataset.diamondClaim),scoped=nwPlayerStorageKey(nwBattleDiamondKey);const claim=()=>scoped&&scoped===nwPlayerStorageKey(nwBattleDiamondKey)&&nwClaimBattleDiamond(wins,month);let ok=false;try{ok=navigator.locks?await navigator.locks.request(scoped||'nw-battle-no-account',claim):claim();}catch{}if(!b.isConnected)return;if(ok||nwBattleDiamondClaimed(month,wins)){nwBattleRewards();return;}b.disabled=false;const e=evRoot.querySelector('.nw-battle-claim-error');if(e){e.hidden=false;e.textContent='Unable to claim reward. Please try again.';}});
+ const retry=evRoot.querySelector('#nwBattleRetryRewards');
+ if(retry)retry.onclick=()=>{nwBattleRewardError='';nwBattleRewards()};
+ evRoot.querySelectorAll('[data-diamond-claim]').forEach(b=>b.onclick=async()=>{
+  if(b.disabled)return;
+  const uid=nwCloud?.user()?.id,tier=Number(b.dataset.diamondClaim);
+  b.disabled=true;b.textContent='CLAIMING…';
+  try{
+   const c=await nwCloud.get();
+   if(nwCloud?.user()?.id!==uid||month!==nwSeasonId())throw Error('Account or reward month changed');
+   const {data,error}=await c.rpc('nw_battle_claim_reward',{p_tier:tier});
+   if(error)throw Error(error.message);
+   if(nwCloud?.user()?.id!==uid)return;
+   nwBattleRewardState.claimed=[...new Set([...nwBattleRewardState.claimed,tier])];
+   if(Number.isSafeInteger(Number(data?.balance))&&nwWalletCurrent()){
+    nwWalletState.balance=Number(data.balance);
+    const d=nwRead(nwTripleKey,null);if(d){d.diamonds=nwWalletState.balance;nwWrite(nwTripleKey,d)}
+    nwRefreshVisibleDiamondBalances();
+   }
+   if(b.isConnected)nwBattleRewards();
+  }catch(e){
+   if(!b.isConnected)return;
+   b.disabled=false;b.textContent='CLAIM';
+   const msg=evRoot.querySelector('.nw-battle-claim-error');
+   if(msg){msg.hidden=false;msg.textContent='Unable to claim reward: '+e.message}
+  }
+ });
 }
 function showBattle(){
   evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-battle-theme');
