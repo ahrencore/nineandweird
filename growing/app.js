@@ -1,6 +1,6 @@
 'use strict';
 const APP=(()=>{
- const E=HexEngine,EMBEDDED=window.parent!==window&&typeof window.parent.nwGrowingUserId==='function',KEY=EMBEDDED?'nw-growing-live-v1:'+window.parent.nwGrowingUserId():'nw-growing-live-standalone-v1';
+ const E=HexEngine,EMBEDDED=window.parent!==window&&typeof window.parent.nwGrowingUserId==='function',ACCOUNT=EMBEDDED?window.parent.nwGrowingUserId():null,KEY=EMBEDDED?'nw-growing-live-v1:'+ACCOUNT:'nw-growing-live-standalone-v1';
  const names=['Crab','Tripod','Caterpillar','Bat','Olive','Shaggy','Snail','Mushroom','Dinosaur','Coil','Tentacles','Gloop','Chomps','Noodle','Blink','Grumble','Pinky','Wobbles','Stinky','Crumbs'];
  const artFiles=['10_crab','11_tripod','12_caterpillar','13_bat','14_olive','15_shaggy','16_snail','17_mushroom','18_dinosaur','19_coil','20_tentacles','01_gloop','02_chomps','03_noodle','04_blink','05_grumble','06_pinky','07_wobbles','08_stinky','09_crumbs'];
  const rewards=[[500,'diamonds',30],[1000,'energy',20],[2000,'diamonds',40],[3000,'energy',20],[5000,'diamonds',50],[7500,'energy',20],[10000,'ray',1],[15000,'diamonds',60],[20000,'energy',30],[30000,'juice',1],[45000,'diamonds',70],[60000,'ray',1],[80000,'energy',50],[100000,'diamonds',150],[150000,'diamonds',300]];
@@ -42,11 +42,11 @@ const APP=(()=>{
  const img=(lvl)=>`<img src="assets/${artFiles[lvl-1]}.png" alt="${names[lvl-1]}">`;
  const fmt=n=>Number(n||0).toLocaleString('en-US');
  function load(){
-  if(EMBEDDED)return typeof window.parent.nwGrowingLoadSave==='function'?window.parent.nwGrowingLoadSave():null;
+  if(EMBEDDED)return typeof window.parent.nwGrowingLoadSave==='function'?window.parent.nwGrowingLoadSave(ACCOUNT):null;
   try{return JSON.parse(localStorage.getItem(KEY))}catch{return null}
  }
  function save(){
-  if(EMBEDDED){if(typeof window.parent.nwGrowingQueueSave==='function')window.parent.nwGrowingQueueSave(state);return}
+  if(EMBEDDED){if(typeof window.parent.nwGrowingQueueSave==='function')window.parent.nwGrowingQueueSave(state,ACCOUNT);return}
   try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){console.warn('Standalone beta save unavailable',e)}
  }
  function fresh(){const n=newVerifiedBoard(weekId(Date.now()));return{board:n.board,queue:n.queue,verifier:n.verifier,natural:100,bonus:0,nextRegen:0,diamonds:EMBEDDED?window.parent.nwDiamondBalance():0,juice:1,ray:1,score:0,total:0,claimed:[],notices:[],highest:Math.max(...n.board),discovered:[...new Set(n.board.filter(Boolean))],lastAt:Date.now(),gameOver:false,testOffset:0,weekId:weekId(Date.now()),boardWeekId:weekId(Date.now()),packs:[],started:false,daily:{date:todayUTC(Date.now()),battles:0,worlds:0,merges:0,spent:0,played:0,claimed:[]}}}
