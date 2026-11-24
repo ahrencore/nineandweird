@@ -1329,13 +1329,42 @@ function nwTripleChallengeScore(tiles){
  }
  return score;
 }
+const nwTTVerificationPendingKey='nineweird-tt-verification-pending-v1';
+const nwTTVerificationActive=new Set();
+function nwTTQueueProof(stage,period,audit){
+ if(!nwCloud?.user()?.id||!Array.isArray(audit)||!audit.length)return;
+ const id=period+':'+stage,records=nwRead(nwTTVerificationPendingKey,{});
+ if(!records[id]){records[id]={stage,period,actions:audit.slice(0,1500)};nwWrite(nwTTVerificationPendingKey,records);}
+ void nwTTFlushProofs();
+}
+async function nwTTFlushProofs(){
+ const account=nwCloud?.user()?.id;
+ if(!account||!nwTripleInEvent())return;
+ const pending=nwRead(nwTTVerificationPendingKey,{});
+ for(const [id,item] of Object.entries(pending).sort((a,b)=>a[1].stage-b[1].stage)){
+  const key=account+':'+id;
+  if(nwTTVerificationActive.has(key)||item.period!==nwTripleWeek())continue;
+  nwTTVerificationActive.add(key);
+  try{
+   const c=await nwCloud.get();
+   if(nwCloud.user()?.id!==account)return;
+   const {data,error}=await c.functions.invoke('nw-verify-tournament',{body:{event:'tt',stage:item.stage,period:item.period,actions:item.actions}});
+   if(error||!data?.verified)throw Error(data?.error||error?.message||'Verification unavailable');
+   if(nwCloud.user()?.id!==account)return;
+   const latest=nwRead(nwTTVerificationPendingKey,{});
+   if(latest[id]){delete latest[id];nwWrite(nwTTVerificationPendingKey,latest);}
+   console.info('Triple Trouble stage verified:',item.stage);
+  }catch(e){console.warn('Triple Trouble stage verification:',e.message)}
+  finally{nwTTVerificationActive.delete(key);}
+ }
+}
 function nwTripleCreate(stage){
  let best=null,bestRank=Infinity;
  for(let i=0;i<12;i++){
    const candidate=nwTripleCandidate(stage,i),rank=nwTripleChallengeScore(candidate.tiles);
    if(rank<bestRank){best=candidate;bestRank=rank;}
  }
- return best;
+ best.audit=[];return best;
 }
 function nwTripleFree(tile,tiles){
  return !tiles.some(other=>other.id!==tile.id&&other.layer>tile.layer&&(tile.stack!=null?other.stack===tile.stack:other.stack==null&&other.x<tile.x+(tile.w??17.5)&&other.x+(other.w??17.5)>tile.x&&other.y<tile.y+(tile.h??17)&&other.y+(other.h??17)>tile.y));
@@ -1347,7 +1376,7 @@ function nwTriplePersist(spentKind){
  const s=nwTriple;if(!s||s.week!==nwTripleWeek()||s.practice===nwTripleInEvent())return;
  const d=nwTripleSessionData();
  if(spentKind&&!s.practice){if(d.boosters[spentKind]<=0)throw Error('No booster available');d.boosters[spentKind]--;}
- if(s.won){if(s.practice){d.best=Math.max(d.best,s.stage);d.stage=Math.max(d.stage,s.stage+1);delete d.active;}else {nwTTClear(d,s.stage);void nwLbSubmit('tt',d.best).catch(e=>console.warn('Leaderboard sync:',e.message));}}
+ if(s.won){if(s.practice){d.best=Math.max(d.best,s.stage);d.stage=Math.max(d.stage,s.stage+1);delete d.active;}else {const audit=Array.isArray(s.audit)?s.audit.slice():[];nwTTClear(d,s.stage);if(audit.length)nwTTQueueProof(s.stage,s.week,audit);void nwLbSubmit('tt',d.best).catch(e=>console.warn('Leaderboard sync:',e.message));}}
  else {d.active=s;d.stage=s.stage;}
  if(s.practice)nwWrite('nineweird-triple-practice-v2',d);else nwTripleSave(d);
 }
@@ -1360,7 +1389,7 @@ function nwTripleRemember(){
 function nwTripleChoose(id){
  const s=nwTriple;if(!s||s.won||s.lost)return;
  const i=s.tiles.findIndex(t=>t.id===id);if(i<0||!nwTripleAvailable(s.tiles[i]))return;
- nwTripleRemember();const [tile]=s.tiles.splice(i,1);s.tray.push(tile);
+ nwTripleRemember();if(!s.practice){if(!Array.isArray(s.audit))s.audit=[];s.audit.push({type:'pick',id});}const [tile]=s.tiles.splice(i,1);s.tray.push(tile);
  const count=s.tray.filter(t=>t.symbol===tile.symbol);
  if(count.length===3){let removed=0;s.tray=s.tray.filter(t=>{if(t.symbol===tile.symbol&&removed<3){removed++;return false}return true});if(!s.practice)nwTTMissionEvent('matches');}
  if(!s.tiles.length&&!s.tray.length){s.won=true}
@@ -1377,13 +1406,13 @@ function nw431MagicPlan(s){
  const need=3-held.length;if(need<0)continue;const matches=s.tiles.filter(t=>t.symbol===symbol).sort((a,b)=>Number(nwTripleFree(b,s.tiles))-Number(nwTripleFree(a,s.tiles))||b.layer-a.layer).slice(0,need);
  if(matches.length===need&&held.length+matches.length===3)return {symbol,held,matches};}return null;
 }
-function nw431BoosterPlan(original,kind){
+function nw431BoosterPlan(original,kind,seed=Date.now()){
  const s=JSON.parse(JSON.stringify(original));let cleared=null;
  if(kind==='undo'){
    if(!s.history.length)return null;
    const previous=s.history.pop();s.tiles=previous.tiles;s.tray=previous.tray;s.used.undo=true;
  }else if(kind==='shuffle'){
-   const random=nwTripleRng((Date.now()^s.tiles.length)>>>0);
+   const random=nwTripleRng((seed^s.tiles.length)>>>0);
    const order=s.tiles.slice().sort((a,b)=>b.layer-a.layer||a.id-b.id);
    const available={};for(const t of s.tiles)available[t.symbol]=(available[t.symbol]||0)+1;
    const pending={};for(const t of s.tray)pending[t.symbol]=(pending[t.symbol]||0)+1;
@@ -1416,8 +1445,9 @@ function nwTripleBooster(kind){
  const s=nwTriple;if(!s||s.won||!['undo','shuffle','magic'].includes(kind)||(kind==='shuffle'&&s.tray.length>=7))return;
  if(s.week!==nwTripleWeek()||s.practice===nwTripleInEvent())return;
  if(s.practice?s.used[kind]:!nwTripleData().boosters[kind]){if(!s.practice)nwTTBuy(kind);return;}
- const result=nw431BoosterPlan(s,kind);
+ const seed=Date.now(),result=nw431BoosterPlan(s,kind,seed);
  if(!result){if(!s.practice)nwTTModal('Booster not used','<p>No valid change was possible. Your booster has not been consumed.</p>',[{label:'OK'}]);return;}
+ if(!s.practice)result.state.audit=[...(Array.isArray(s.audit)?s.audit:[]),{type:'booster',kind,seed}];
  nwTriple=result.state;nwTriplePersist(kind);if(!s.practice)nwTTMissionEvent(kind);nwTripleDraw();if(result.cleared!==null)nw431ClearEffect(result.cleared);
 }
 const nwTTRecovered=new Set();
@@ -1432,7 +1462,7 @@ function nwTripleHome(){
  </section>`);
  evRoot.querySelector('#nwTripleStart').onclick=()=>nwTripleBegin(d.stage,true);
  nw433FocusTrack();
- if(event){evRoot.querySelector('#nw431Rank').onclick=nwTTRank;evRoot.querySelector('#nwTTMissionsBtn').onclick=nwTTMissionsScreen;if(!d.welcomed)nwTTWelcomePopup();else nwTTBind()}else nwTTShowPendingMissionPopup()
+ if(event){void nwTTFlushProofs();evRoot.querySelector('#nw431Rank').onclick=nwTTRank;evRoot.querySelector('#nwTTMissionsBtn').onclick=nwTTMissionsScreen;if(!d.welcomed)nwTTWelcomePopup();else nwTTBind()}else nwTTShowPendingMissionPopup()
 }
 function nwTripleBegin(stage,resume=false){const d=nwTripleSessionData();if(nwTripleInEvent()){if(!d.welcomed){nwTTWelcomePopup();return;}if(nwTTCount(d)<=0){nwTTShop();return;}stage=d.stage;}const a=d.active;const resumed=resume&&a?.version>=2&&a.stage===stage&&!a.won&&a.week===nwTripleWeek()&&a.practice===!nwTripleInEvent();if(nwTripleInEvent()&&!resumed)nwTTMissionEvent('plays');nwTriple=resumed?a:nwTripleCreate(stage);nwTripleDraw()}
 function nwTripleStackArt(symbol,depth){
