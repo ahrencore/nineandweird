@@ -140,7 +140,7 @@ async function nwCloudSaveFlush(key){
   });
   if(error)throw Error(error.message);
   if(nwCloud?.user()?.id!==id||nwCloudSaveState!==s)return;
-  s.base[key]=Number(data);s.confirmed[key]=raw;
+  s.base[key]=Number(data);s.confirmed[key]=raw;if(s.retryCount)delete s.retryCount[key];
   // Removing an old browser copy is safe only once its cloud replacement is confirmed.
   try{localStorage.removeItem(nwCloudSaveLocalKey(key,id))}catch{}
   if(key==='nineweird-growing-activity-v1'){
@@ -558,15 +558,15 @@ function nwPrizeAckTransfer(id){void nwPrizeAck('transfer',id)}
 function nwPrizeFlushDurableReceipts(){
  const id=nwCloud?.user()?.id;
  if(!id||nwCloudSaveState.id!==id||!nwCloudSaveState.ready)return;
- const meta=nwCloudSaveMetadata(id);
- const durable=key=>nwCloudSaveSame(meta[key],localStorage.getItem(nwCloudSaveLocalKey(key,id)));
+ const progress=nwCloudSaveState;
+ const durable=key=>progress.values[key]!==undefined&&progress.confirmed[key]===progress.values[key];
  if(durable('nineweird-triple-economy-beta-v1')){
   const tt=nwRead(nwTripleKey,{});
   const ids=new Set(tt.inventoryApplied||[]);
   for(const t of nwPrizeCache.transfers||[])if(t.event==='tt'&&ids.has(t.id))nwPrizeAckTransfer(t.id);
  }
  if(durable('nw-growing-live-v1')){
-  let tg={};try{tg=JSON.parse(localStorage.getItem(nwCloudSaveLocalKey('nw-growing-live-v1',id))||'{}')}catch{}
+  let tg={};try{tg=JSON.parse(progress.values['nw-growing-live-v1']||'{}')}catch{}
   const ids=new Set(Array.isArray(tg.inventoryApplied)?tg.inventoryApplied:[]);
   for(const t of nwPrizeCache.transfers||[])if(t.event==='tg'&&ids.has(t.id))nwPrizeAckTransfer(t.id);
  }
@@ -1050,10 +1050,10 @@ async function nwGrowingVerifyScore(period,score,actions){
  }finally{nwGrowingVerifyBusy=false}
 }
 function nwGrowingUserId(){return window.nwCloud?.user()?.id || 'guest';}
-function nwGrowingActivityKey(){return 'nw-growing-activity-v1:'+nwGrowingUserId()+':'+new Date().toISOString().slice(0,10);}
+function nwGrowingActivityKey(){return 'nineweird-growing-activity-v1';}
 function nwGrowingActivity(type){
  if(!['battles','worlds','played'].includes(type))return;
- const k=nwGrowingActivityKey(),o=nwRead(k,{battles:0,worlds:0,played:0});
+ const k=nwGrowingActivityKey(),today=new Date().toISOString().slice(0,10),saved=nwRead(k,null),o=saved?.day===today?saved:{day:today,battles:0,worlds:0,played:0};
  if(type==='battles'||type==='worlds')o[type]=Math.min(1000,Math.max(0,Number(o[type])||0)+1);
  o.played=1;nwWrite(k,o);
 }
