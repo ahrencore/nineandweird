@@ -4677,3 +4677,13 @@ body:has(#game.nw-cosmic-mail-theme:not([hidden])){background:#0B1020!important;
 #game.nw-cosmic-mail-theme .nw-mail-claim-dialog p{font:700 16px 'Pangolin',system-ui}
 #game.nw-cosmic-mail-theme .nw-mail-claim-directions{color:#C5B8E8}
 #game.nw-cosmic-mail-theme .nw-mail-claim-dialog button{background:#81C8FF;color:#10182D;border-color:#B0E0FF;font:400 15px 'Chelsea Market',cursive;box-shadow:0 0 14px #81C8FF55}
+
+
+/* Welcome letters share the approved cosmic Mail design. */
+#game.nw-cosmic-mail-theme .nw-mail-letter-body{margin:0;white-space:pre-line;color:#F8EBDD;font:700 14px/1.55 'Pangolin',system-ui,sans-serif;overflow-wrap:anywhere}
+#game.nw-cosmic-mail-theme .nw-mail-gift-prizes[hidden]{display:none!important}
+#game.nw-cosmic-mail-theme .nw-mail-gift-prizes .nw-mail-claimed-items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;gap:8px;padding:0;background:none;border:0;border-radius:0}
+#game.nw-cosmic-mail-theme .nw-mail-gift-prizes .nw-lb-reward-entry{display:flex;flex-direction:row;align-items:center;text-align:left;min-width:0;max-width:none;min-height:56px;flex-wrap:wrap;gap:7px;border-radius:9px;border:1px solid #8E83BE55;background:#10162B99;padding:7px;color:#F8EBDD}
+#game.nw-cosmic-mail-theme .nw-mail-gift-prizes .nw-lb-reward-icon{height:29px;width:29px;flex:none}
+#game.nw-cosmic-mail-theme .nw-mail-gift-prizes .nw-lb-reward-entry small{color:#C5B8E8;min-width:0;font:700 11px 'Pangolin',system-ui}
+#game.nw-cosmic-mail-theme .nw-mail-gift-prizes .nw-lb-reward-entry b{color:#F8EBDD;font:700 15px 'Pangolin',system-ui}
