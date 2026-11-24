@@ -7,15 +7,11 @@ function evDisplay(html){window.nwCloud?.clearCaptcha?.();evRoot.hidden=false;ev
  queueMicrotask(()=>{nwRefreshNotificationOrbits();nwBindSharedUtilities();});}
 function nwSharedUtilityMarkup(){return `<div class="nw-shared-utilities"><span class="nw-shared-wallet" title="Diamond balance">${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</span><button type="button" class="nw-shared-settings" data-nw-settings aria-label="Settings">${nwLobbyIcon('settings')}</button></div>`;}
 function nwOpenSharedSettings(){
- if(sudoku?.challenge&&!sudoku.done){
-  if(!confirm('Leave Challenge? Opening Settings will forfeit your attempt.'))return;
-  sudoku.done=true;void nwChallengeForfeit(sudoku.challenge.id);
- }
  const o=document.createElement('div');o.className='nw-shared-settings-shade';
  o.innerHTML='<section role="dialog" aria-modal="true" aria-label="Settings" class="nw-shared-settings-dialog"><h2>SETTINGS</h2><button type="button" data-profile>PROFILE / ACCOUNT</button><a href="privacy.html">PRIVACY POLICY</a><button type="button" data-close>CLOSE</button></section>';
  evRoot.appendChild(o);
  o.querySelector('[data-close]').onclick=()=>o.remove();
- o.querySelector('[data-profile]').onclick=()=>{o.remove();nwShowProfile();};
+ o.querySelector('[data-profile]').onclick=()=>{if(sudoku?.challenge&&!sudoku.done&&!confirm('Leave Challenge? Leaving now counts as a loss.'))return;o.remove();nwShowProfile();};
  o.addEventListener('click',e=>{if(e.target===o)o.remove()});
  o.querySelector('[data-close]').focus();
 }
