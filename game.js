@@ -753,16 +753,55 @@ function nwPrizeClaimConfirmation(data){
 }
 
 async function nwPrizeMail(){
- evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-trophy-theme');
- evDisplay(`${evHeader('MAIL',showCategories)}<section class="nw-new-panel nw-trophy-panel"><div class="nw-trophy-heading"><h2>REWARD MAIL</h2><div class="nw-trophy-doodle">✧ ── ☆ ── ✧</div></div><div id="nwPrizeMailBody" class="nw-prize-mail" aria-live="polite">Checking tournament results…</div></section>`);
+ const account=nwCloud?.user()?.id;
+ evSudokuLeave();applyTheme('hub');
+ evRoot.classList.add('nw-trophy-theme','nw-cosmic-mail-theme');
+ evDisplay(`${evHeader('MAIL',showCategories)}<section class="nw-cosmic-mail" aria-label="Mailbox">
+  <div class="nw-cosmic-postmark">NINE &amp; WEIRD <span aria-hidden="true">✧</span></div>
+  <div class="nw-mail-sky" aria-hidden="true">
+   <span class="nw-mail-star star-one">✦</span><span class="nw-mail-star star-two">✧</span>
+   <span class="nw-mail-star star-three">✦</span><span class="nw-mail-star star-four">✧</span>
+   <span class="nw-mail-orbit orbit-one"></span><span class="nw-mail-orbit orbit-two"></span>
+   <span class="nw-mail-envelope"><span class="nw-mail-seal">✦</span></span>
+  </div>
+  <div class="nw-mail-heading"><h2>MAILBOX</h2><p>✧ MESSAGES FROM THE COSMOS ✧</p></div>
+  <div class="nw-mail-inbox-heading"><div><span class="nw-mail-indicator" aria-hidden="true"></span><strong>INBOX</strong><span id="nwMailCount">(…)</span></div><small>MOST RECENT FIRST ↓</small></div>
+  <div id="nwPrizeMailBody" class="nw-prize-mail nw-cosmic-mail-list" aria-live="polite">Checking tournament results…</div>
+  <div class="nw-mail-end" aria-hidden="true">✦ ⋆ ✧ END OF MAIL ✧ ⋆ ✦</div>
+ </section>`);
  const container=evRoot.querySelector('#nwPrizeMailBody');
  try{
-  const c=await nwCloud.get(),{data,error}=await c.rpc('nw_prize_inbox');if(error)throw Error(error.message);
-  if(!container.isConnected)return;
+  const c=await nwCloud.get(),{data,error}=await c.rpc('nw_prize_inbox');
+  if(error)throw Error(error.message);
+  if(!container.isConnected||nwCloud?.user()?.id!==account)return;
   const rows=Array.isArray(data)?data:[];
-  container.innerHTML=rows.length?rows.map(r=>`<article class="nw-prize-letter"><small>${r.event==='tt'?'TRIPLE TROUBLE':"THEY'RE GROWING!"} · ${nwEscape(r.period)}</small><strong>FINISHED #${Number(r.rank)}</strong><div class="nw-prize-mail-rewards">${nwRankRewardArt(r.event,r.rank)}</div><button type="button" data-prize-claim="${r.event}:${r.period}" ${r.claimed?'disabled':''}>${r.claimed?'CLAIMED':'CLAIM REWARDS'}</button></article>`).join(''):'<p class="nw-prize-hint">No tournament rewards waiting. Finish in the Top 10 to receive a prize!</p>';
+  const count=evRoot.querySelector('#nwMailCount');
+  if(count)count.textContent='('+rows.length+')';
+  const indicator=evRoot.querySelector('.nw-mail-indicator');
+  if(indicator)indicator.classList.toggle('has-unclaimed',rows.some(r=>!r.claimed));
+  container.innerHTML=rows.length?rows.map((r,i)=>{
+   const isTT=r.event==='tt',claimed=!!r.claimed;
+   const eventName=isTT?'TRIPLE TROUBLE':"THEY'RE GROWING!";
+   const eventCode=isTT?'tt':'tg';
+   const period=String(r.period||''),rank=Number(r.rank);
+   const validRank=Number.isInteger(rank)&&rank>=1&&rank<=10;
+   return `<article class="nw-cosmic-letter ${claimed?'is-claimed':'is-new'}" style="--mail-index:${Math.min(i,8)}">
+    <div class="nw-mail-letter-top"><div><span class="nw-mail-letter-event">✦ ${eventName}</span><small>TOURNAMENT REWARDS · ${nwEscape(period)}</small></div><span class="nw-mail-postal-stamp ${claimed?'stamp-claimed':''}">${claimed?'CLAIMED ✓':'NEW'}</span></div>
+    <strong class="nw-mail-finish">${validRank?'You finished #'+rank+'!':'Tournament rewards'}</strong>
+    <p class="nw-mail-letter-subtitle">${claimed?'Your rewards have been collected.':'A little something for your clever brain.'}</p>
+    <div class="nw-cosmic-prizes" ${claimed?'hidden':''}>${nwRankRewardArt(eventCode,rank)}</div>
+    ${claimed?'<button class="nw-mail-detail-button" type="button" data-mail-details aria-expanded="false">VIEW DETAILS</button>':`<button class="nw-mail-claim-button" type="button" data-prize-claim="${eventCode}:${nwEscape(period)}">CLAIM REWARDS ✦</button>`}
+   </article>`;
+  }).join(''):'<div class="nw-mail-empty"><span class="nw-mail-empty-envelope" aria-hidden="true">✉</span><p>Nothing in your mailbox yet.</p></div>';
   nwPrizeSetMailNotice(rows.some(r=>!r.claimed));
-  container.querySelectorAll('[data-prize-claim]:not([disabled])').forEach(b=>b.onclick=async()=>{
+  container.querySelectorAll('[data-mail-details]').forEach(button=>button.onclick=()=>{
+   const prizes=button.closest('.nw-cosmic-letter')?.querySelector('.nw-cosmic-prizes');
+   if(!prizes)return;
+   prizes.hidden=!prizes.hidden;
+   button.textContent=prizes.hidden?'VIEW DETAILS':'HIDE DETAILS';
+   button.setAttribute('aria-expanded',String(!prizes.hidden));
+  });
+  container.querySelectorAll('[data-prize-claim]').forEach(b=>b.onclick=async()=>{
    b.disabled=true;b.textContent='CLAIMING…';
    const [event,period]=b.dataset.prizeClaim.split(':');
    let confirmed=false;
@@ -775,7 +814,7 @@ async function nwPrizeMail(){
     if(evRoot.querySelector('#nwPrizeMailBody'))nwPrizeClaimConfirmation(data);
    }catch(e){
     if(confirmed){b.textContent='CLAIMED';return}
-    b.disabled=false;b.textContent='CLAIM REWARDS';
+    b.disabled=false;b.textContent='CLAIM REWARDS ✦';
     const p=document.createElement('p');p.className='nw-prize-msg';p.textContent=e.message;b.after(p);
    }
   });
