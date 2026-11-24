@@ -28,6 +28,22 @@ const APP=(()=>{
  function now(){return Date.now()+(state?.testOffset||0)}
  function live(){return [2,3,4].includes(new Date(now()).getUTCDay())}
  function countdown(){const t=now(),start=Date.parse(weekId(t)+'T00:00:00Z'),end=start+(live()?3:7)*86400000;const diff=Math.max(0,end-t);return `${Math.floor(diff/86400000)}d ${Math.floor(diff/3600000)%24}h ${Math.floor(diff/60000)%60}m ${live()?'remaining':'until next event'}`}
+ function applyInventory(){
+  if(!EMBEDDED||typeof window.parent.nwPrizeTransferReceipts!=='function')return;
+  const applied=new Set(Array.isArray(state.inventoryApplied)?state.inventoryApplied:[]);
+  let changed=false;
+  for(const receipt of window.parent.nwPrizeTransferReceipts('tg')){
+   if(applied.has(receipt.id)||receipt.period!==state.weekId)continue;
+   const n=Number(receipt.quantity);
+   if(!Number.isSafeInteger(n)||n<1)continue;
+   if(receipt.item==='tg_energy')state.bonus=(state.bonus||0)+n;
+   else if(receipt.item==='tg_ray')state.ray=(state.ray||0)+n;
+   else if(receipt.item==='tg_juice')state.juice=(state.juice||0)+n;
+   else continue;
+   applied.add(receipt.id);changed=true;
+  }
+  if(changed)state.inventoryApplied=[...applied];
+ }
  function sync(){const t=now();if(!state)state=fresh();if(!state.daily||state.daily.date!==todayUTC(t))state.daily={date:todayUTC(t),battles:0,worlds:0,merges:0,spent:0,played:0,claimed:[]};if(weekId(t)!==state.weekId||state.boardWeekId!==weekId(t)){
   const newWeek=weekId(t),board=E.initial();
   state.weekId=newWeek;state.boardWeekId=newWeek;
@@ -36,7 +52,7 @@ const APP=(()=>{
   state.highest=Math.max(...board);state.discovered=[...new Set(board.filter(Boolean))];
   state.gameOver=false;state.started=false;
   selected=-1;route=[];hover=-1;previewBoard=null;mergeGlow=[];locked=false;turnNote='';
- }if(EMBEDDED){const o=window.parent.nwRead(window.parent.nwGrowingActivityKey(),{});state.daily.battles=Math.max(state.daily.battles||0,Number(o.battles)||0);state.daily.worlds=Math.max(state.daily.worlds||0,Number(o.worlds)||0);state.daily.played=Math.max(state.daily.played||0,Number(o.played)||0);state.diamonds=window.parent.nwDiamondBalance();}if(state.natural<100&&state.nextRegen&&t>=state.nextRegen){const count=Math.min(100-state.natural,1+Math.floor((t-state.nextRegen)/300000));state.natural+=count;state.nextRegen=state.natural===100?0:state.nextRegen+count*300000}save()}
+ }applyInventory();if(EMBEDDED){const o=window.parent.nwRead(window.parent.nwGrowingActivityKey(),{});state.daily.battles=Math.max(state.daily.battles||0,Number(o.battles)||0);state.daily.worlds=Math.max(state.daily.worlds||0,Number(o.worlds)||0);state.daily.played=Math.max(state.daily.played||0,Number(o.played)||0);state.diamonds=window.parent.nwDiamondBalance();}if(state.natural<100&&state.nextRegen&&t>=state.nextRegen){const count=Math.min(100-state.natural,1+Math.floor((t-state.nextRegen)/300000));state.natural+=count;state.nextRegen=state.natural===100?0:state.nextRegen+count*300000}save()}
  function energy(){return state.natural+state.bonus}
  function spend(){state.daily.spent++;state.daily.played=1;if(state.natural){if(state.natural===100||!state.nextRegen)state.nextRegen=now()+300000;state.natural--}else if(state.bonus)state.bonus--}
  function grant(type,count){if(type==='energy')state.bonus+=count;else if(type==='diamonds'&&EMBEDDED){if(window.parent.nwGrowingAdjustDiamonds(count))state.diamonds=window.parent.nwDiamondBalance();}else state[type]+=count}
@@ -133,6 +149,7 @@ const APP=(()=>{
  function testTool(which){if(which==='test-points'){state.score+=5000;for(const [at,k,n] of rewards)if(state.score>=at&&!state.claimed.includes(at)){state.claimed.push(at);grant(k,n);announce(`MILESTONE ${fmt(at)}!`,[[k,n]])}}if(which==='test-energy')grant('energy',50);if(which==='test-energy500')grant('energy',500);if(which==='test-week'){state.testOffset+=7*86400000;sync()}if(which==='test-merge'){state.board=Array(37).fill(0);[16,17,18].forEach(i=>state.board[i]=2);state.board[12]=2;state.board[24]=3;state.queue=[1,1,2,2];state.gameOver=false;turnNote='Test setup: move Level 2 into a connected cluster to merge.'}if(which==='test-path'){state.board=Array(37).fill(0);state.board[3]=1;[4,10,11,12,17,18,24,25,26].forEach(i=>state.board[i]=3);state.queue=[1,1,1,2];state.gameOver=false;turnNote='Test setup: try winding an unblocked path around obstacles.'}if(which==='test-full'){state.board=Array(37).fill(0);for(let i=0;i<34;i++)state.board[i]=i%3+1;state.board[0]=4;state.board[1]=0;state.board[34]=2;state.board[35]=0;state.board[36]=0;state.queue=[1,2,3,1];state.gameOver=false;turnNote='Test setup: fewer than four spawning spaces should cause recoverable Game Over.'}if(which==='reset'){overlay('RESET OFFLINE DATA?',`<p>Delete only They're Growing! local beta progress for this account?</p>`,[['RESET',()=>{localStorage.removeItem(KEY);state=fresh();selected=-1;home()}],['CANCEL',()=>{}]]);return}save();home();showNotices()}
  function wire(){app.querySelectorAll('[data-action]').forEach(el=>el.addEventListener('click',()=>{const action=el.dataset.action;if(action==='back'){if(view==='game'||view==='planet')home();else if(EMBEDDED)window.parent.showCategories();else planet()}else if(action==='exit'&&EMBEDDED)window.parent.showCategories();else if(action==='home')home();else if(action==='play'){state.started=true;save();game();}else if(action==='shop')shop();else if(action==='boosters')boosterShop();else if(action==='help')how();else if(action==='roster')guide();else if(action==='packs')packsScreen();else if(action==='planet')planet();else if(action==='rank')rank();else if(action==='missions')missionScreen();else if(action==='milestones')milestonePage();else if(action==='juice'||action==='ray')useBooster(action);else if(action==='restart')restart();else if(action.startsWith('test-')||action==='reset')testTool(action)}))}
  function start(){state=load()||fresh();if(!Array.isArray(state.board)||state.board.length!==37)state=fresh();sync();home();uiTimer=setInterval(()=>{sync();if(document.querySelector('.modal-shade'))return;const old=view;if(old==='home')home();else if(old==='planet')planet()},30000)}
+ window.nwGrowingApplyInventory=()=>{if(!state)return;sync();if(view==='game')game();else if(view==='home')home();};
  window.nwGrowingNavigateBack=()=>{if(view==='game'||view!=='home'){if(modalActive){document.querySelector('.modal-shade')?.remove();modalActive=false;}home();return true;}return false;};
  return{start,getState:()=>structuredClone(state),engine:E};
 })();
