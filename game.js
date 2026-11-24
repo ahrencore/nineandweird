@@ -357,7 +357,7 @@ function nwFriendPhoto(player){
  const f=player.frame;
  const known=[...nwSeasonFrameTiers.map(t=>'monthly-'+t.wins),'usual','weird'];
  const frame=known.includes(f)?(f==='usual'?'frames/nw-free-usual.png?v=42':f==='weird'?'frames/nw-free-weird.png?v=42':'frames/nw-monthly-'+f.slice(8)+'.png'):null;
- return '<span class="nw-friend-avatar">'+nwAvatarImg(avatar,'nw-friend-avatar-img')+(frame?'<img class="nw-friend-frame" alt="" src="'+nwEscape(frame)+'">':'')+'</span>';
+ return '<span class="nw-friend-avatar '+(frame?'framed':'')+'">'+nwAvatarImg(avatar,'nw-friend-avatar-img')+(frame?'<img class="nw-friend-frame" alt="" src="'+nwEscape(frame)+'">':'')+'</span>';
 }
 async function nwFriendsRpc(method,args={}){
  const c=await nwCloud.get();
