@@ -309,23 +309,13 @@ html,body,#app{font-family:'Bubblegum Sans','Trebuchet MS',sans-serif}
 
 .nw-grow-refill-count{display:flex;justify-content:center;align-items:center;gap:10px;margin:12px 0}.nw-grow-refill-count button{width:39px;height:39px;background:var(--panel);border:1px solid var(--rim);border-radius:11px;color:var(--lime);font-size:23px}.nw-grow-refill-count input{width:90px;min-width:0;text-align:center;background:#1a1324;border:1px solid var(--rim);border-radius:11px;padding:7px;color:var(--text);font:700 23px Pangolin,sans-serif}#nwEnergyRefillMessage{color:var(--pink);font-size:14px}
 
-/* TG promo: Gloop + Stinky laboratory duo using the original Ugly Little Things sprites. */
-.growing-lab-promo{max-width:540px!important;min-height:215px!important;margin:0 auto 5px!important}
-.growing-lab-pair{position:relative;display:flex;align-items:flex-end;justify-content:center;gap:0;min-height:215px;padding:3px 4px 8px}
-.growing-lab-character{position:relative;flex:0 0 36%;max-width:190px;align-self:flex-end;isolation:isolate;animation:growingLabBob 3.8s ease-in-out infinite}
-.growing-lab-character.stinky{animation-delay:-1.4s}
-.growing-lab-character img{display:block;position:relative;z-index:2;width:100%;height:auto;object-fit:contain;filter:drop-shadow(0 5px 2px #080610b0)}
-.growing-lab-coat{position:absolute;z-index:1;width:76%;height:45%;left:12%;bottom:0;background:#F1F0E9;border:3px solid #17101A;border-radius:28% 32% 18% 18%;transform:rotate(-4deg)}
-.growing-lab-character.stinky .growing-lab-coat{transform:rotate(5deg)}
-.growing-lab-coat:after{content:'';position:absolute;top:12%;left:47%;height:75%;width:2px;background:#17101A}
-.growing-lab-equipment{position:relative;z-index:3;flex:0 0 29%;max-width:155px;margin:0 -7% -11px;pointer-events:none}
-.growing-lab-equipment svg{display:block;width:100%;height:auto;filter:drop-shadow(0 3px 3px #12101488)}
-.growing-lab-fume{position:absolute;z-index:4;left:48%;top:-13px;font:700 70px/1 'Pangolin',cursive;color:#B9F25A;opacity:.6;pointer-events:none;animation:growingLabFume 4.3s ease-in-out infinite}
-@keyframes growingLabBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-@keyframes growingLabFume{0%{transform:translate(-8px,22px) rotate(-15deg) scale(.72);opacity:0}30%{opacity:.55}100%{transform:translate(10px,-30px) rotate(13deg) scale(1.2);opacity:0}}
-@media(max-width:380px){.growing-lab-promo,.growing-lab-pair{min-height:170px!important}.growing-lab-fume{font-size:50px}}
-@media(prefers-reduced-motion:reduce){.growing-lab-character,.growing-lab-fume{animation:none!important}}
-</style><link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Eater&family=Bricolage+Grotesque:wght@400;600;700;800&family=Oxanium:wght@400;600;700;800&display=swap" rel="stylesheet"></head><body><main id="app" class="shell"></main><script src="engine.js"></script><script src="app.js?v=62-approved-gloop-stinky-art"></script><script>
+/* TG! official Gloop + Stinky lab promo: genuine transparent art, live green smoke */
+.growing-lab-promo{width:100%;max-width:540px!important;min-height:0!important;margin:0 auto 6px!important}
+.growing-lab-promo .growing-approved-lab-art{display:block!important;width:min(100%,360px)!important;max-width:100%!important;height:auto!important;margin:0 auto!important;object-fit:contain!important;image-rendering:auto;position:relative;z-index:2;filter:drop-shadow(0 5px 5px #09070DBC)}
+.growing-lab-promo .growing-smoke{inset:-5% 4%!important;z-index:1!important;pointer-events:none}
+@media(max-width:370px){.growing-lab-promo .growing-approved-lab-art{width:min(100%,320px)!important}}
+
+</style><link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Eater&family=Bricolage+Grotesque:wght@400;600;700;800&family=Oxanium:wght@400;600;700;800&display=swap" rel="stylesheet"></head><body><main id="app" class="shell"></main><script src="engine.js"></script><script src="app.js?v=63-gloop-stinky-art-file"></script><script>
 (function(){
   if(window.parent===window)return;
   document.body.classList.add('nw-growing-embedded');
