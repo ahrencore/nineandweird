@@ -5070,3 +5070,61 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
  color:#C5B8E8;font:400 11px/1.15 'Oxanium',system-ui,sans-serif;
  letter-spacing:.14em;white-space:nowrap;text-shadow:none;
 }
+
+/* Header alignment correction: equal-width sides keep branding truly centered.
+   Keeps the existing two-row safe layout only on narrow devices. */
+#game .ev-head.ev-head:has(>strong.nw-brand-title){
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;
+ grid-template-rows:auto!important;
+ column-gap:6px!important;
+ align-items:center!important;
+}
+#game .ev-head.ev-head > strong.nw-brand-title{
+ display:block!important;
+ visibility:visible!important;
+ grid-column:2!important;
+ grid-row:1!important;
+ justify-self:center!important;
+ width:auto!important;
+ max-width:100%!important;
+ text-align:center!important;
+}
+#game .ev-head.ev-head:has(>strong.nw-brand-title) > button[data-back]{
+ grid-column:1!important;grid-row:1!important;justify-self:start!important;
+}
+#game .ev-head.ev-head:has(>strong.nw-brand-title) > .nw-shared-utilities{
+ grid-column:3!important;grid-row:1!important;justify-self:end!important;
+}
+/* Growing previously suppressed its title and forced flex, bypassing our shared header. */
+#game.nw-growing-live-shell > .ev-head.ev-head:has(>strong.nw-brand-title){
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;
+}
+#game.nw-growing-live-shell > .ev-head.ev-head > strong.nw-brand-title{
+ display:block!important;visibility:visible!important;color:#F7EEF5!important;
+}
+/* Let Me Out should use the same compact page width as the other modes. */
+#game.theme-hub.nw-let-shell{
+ max-width:470px!important;
+}
+#game.nw-let-shell > .nw-let-frame-container{
+ width:100%!important;max-width:470px!important;
+}
+/* Small phones: use the centered second row where the wallet needs room. */
+@media(max-width:520px){
+ #game .ev-head.ev-head:has(>strong.nw-brand-title),
+ #game.nw-growing-live-shell > .ev-head.ev-head:has(>strong.nw-brand-title){
+  grid-template-columns:minmax(0,1fr) max-content!important;
+  grid-template-rows:auto auto!important;
+  row-gap:2px!important;
+ }
+ #game .ev-head.ev-head > strong.nw-brand-title{
+  grid-column:1 / -1!important;grid-row:2!important;
+  justify-self:center!important;
+  font-size:11px!important;
+ }
+ #game .ev-head.ev-head:has(>strong.nw-brand-title) > .nw-shared-utilities{
+  grid-column:2!important;grid-row:1!important;
+ }
+}
