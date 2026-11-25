@@ -733,6 +733,26 @@ async function nwPrizeSync(){
 }
 async function nwGrowingUseReserve(qty){const n=Math.floor(Number(qty));if(!Number.isSafeInteger(n)||n<1)throw Error('Invalid amount');await nwPrizeTransfer('tg_energy',n);return n;}
 function nwGrowingInventoryAmount(){return nwPrizeAvailable('tg_energy');}
+const nwAutoBoosterInflight=new Set();
+async function nwLoadEventBoosters(event){
+ const uid=nwCloud?.user()?.id,key=uid+':'+event;
+ if(!uid||nwAutoBoosterInflight.has(key)||(event==='tt'&&!nwTripleInEvent())||(event==='tg'&&![2,3,4].includes(new Date().getUTCDay())))return;
+ nwAutoBoosterInflight.add(key);
+ try{
+  await nwPrizeSync();
+  const items=event==='tt'?['tt_undo','tt_shuffle','tt_magic']:['tg_ray','tg_juice'];
+  let changed=false;
+  for(const item of items){
+   if(uid!==nwCloud?.user()?.id)break;
+   const amount=Math.min(10000,nwPrizeAvailable(item));
+   if(amount>0){await nwPrizeTransfer(item,amount);changed=true;}
+  }
+  if(changed&&uid===nwCloud?.user()?.id&&event==='tt'&&evRoot.classList.contains('nw-triple-theme')){
+   if(nwTriple)nwTripleDraw();else nwTripleHome();
+  }
+ }catch(e){console.warn('Event booster inventory:',e.message)}
+ finally{nwAutoBoosterInflight.delete(key)}
+}
 function nwPrizeAvailable(key){return Math.max(0,Number(nwPrizeCache.stock?.[key])||0);}
 function nwPrizeTransferReceipts(event){return (nwPrizeCache.transfers||[]).filter(t=>t.event===event&&t.period===nwPrizeTransferPeriod(event));}
 async function nwPrizeTransfer(key,amount){
@@ -784,10 +804,17 @@ function nwRenderInventory(){
  evRoot.querySelectorAll('[data-prize-use]').forEach(b=>b.onclick=()=>nwPrizeQuantityDialog(b.dataset.prizeUse));
  evRoot.querySelectorAll('[data-prize-info]').forEach(b=>b.onclick=()=>nwInventoryInfoDialog(b.dataset.prizeInfo));
 }
+function nwInventoryLoaded(key){
+ const tt=key.startsWith('tt_')?nwTripleData():null;
+ if(tt){if(key==='tt_ticket')return Math.max(0,Number(tt.extra)||0);return Math.max(0,Number(tt.boosters?.[key.slice(3)])||0);}
+ const tg=key.startsWith('tg_')?nwGrowingLoadSave(nwCloud?.user()?.id):null;
+ if(tg)return Math.max(0,Number(tg[key==='tg_energy'?'bonus':key==='tg_ray'?'ray':'juice'])||0);
+ return 0;
+}
 function nwPrizeInventoryArt(){
  const cards=event=>nwPrizeDefinitions.filter(d=>d.event===event).map(d=>{
-  const n=nwPrizeAvailable(d.key),use=d.key==='tt_ticket'||d.key==='tg_energy';
-  return '<article class="nw-compact-item"><button type="button" class="nw-compact-info" data-prize-info="'+d.key+'" aria-label="About '+nwEscape(d.name)+'">!</button><span class="nw-compact-icon" aria-hidden="true">'+nwPrizeIcon(d.key)+'</span><strong>'+nwEscape(d.name)+'</strong><b>× '+n.toLocaleString()+'</b>'+(use?'<button type="button" data-prize-use="'+d.key+'" '+(n?'':'disabled')+'>USE</button>':'')+'</article>';
+  const n=nwPrizeAvailable(d.key),loaded=nwInventoryLoaded(d.key),use=d.key==='tt_ticket'||d.key==='tg_energy';
+  return '<article class="nw-compact-item"><button type="button" class="nw-compact-info" data-prize-info="'+d.key+'" aria-label="About '+nwEscape(d.name)+'">!</button><span class="nw-compact-icon" aria-hidden="true">'+nwPrizeIcon(d.key)+'</span><strong>'+nwEscape(d.name)+'</strong><b>× '+(n+loaded).toLocaleString()+'</b><small>Stored '+n+' · Event '+loaded+'</small>'+(use?'<button type="button" data-prize-use="'+d.key+'" '+(n?'':'disabled')+'>USE</button>':'')+'</article>';
  }).join('');
  return '<div class="nw-compact-wallet">'+nwDiamondAmount(nwDiamondBalance().toLocaleString())+'</div><h3>TRIPLE TROUBLE</h3><div class="nw-compact-grid">'+cards('tt')+'</div><h3>THEY\'RE GROWING!</h3><div class="nw-compact-grid">'+cards('tg')+'</div><h3>SUDOKU</h3><div class="nw-compact-grid"><article class="nw-compact-item"><button class="nw-compact-info" type="button" data-prize-info="sudoku_hint" aria-label="About Sudoku Hints">!</button><span class="nw-compact-icon">'+nwPrizeIcon('sudoku_hint')+'</span><strong>Sudoku Hints</strong><b>× '+nwPrizeAvailable('sudoku_hint').toLocaleString()+'</b></article></div>';
 }
@@ -1416,7 +1443,7 @@ function nwGrowingBack(){
  try {if(frame?.contentWindow?.nwGrowingNavigateBack?.())return;} catch(e){console.warn('Growing event navigation',e);}
  showCategories();
 }
-function nwGrowingOpen(){void nwPrizeSync().catch(e=>console.warn('Inventory sync:',e.message));
+function nwGrowingOpen(){void nwLoadEventBoosters('tg');
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-growing-live-shell');
  evDisplay(`${evHeader("THEY'RE GROWING!",nwGrowingBack)}<section class="nw-growing-frame-container"><iframe id="nwGrowingFrame" title="They're Growing! — playable hex evolution event" src="growing/index.html?v=51-supabase-progress" loading="eager" allow="fullscreen"></iframe></section>`);
  nwResetViewToTop();
@@ -2025,6 +2052,7 @@ function nwTripleBooster(kind){
 }
 const nwTTRecovered=new Set();
 function nwTripleHome(){
+ void nwLoadEventBoosters('tt');
  const account=nwPlayerStorageKey(nwTripleKey);if(!account){void nwRouteAccount();return;}if(!nwTTRecovered.has(account)){nwTTRecovered.add(account);nwTTRecoverInterrupted();}
  evSudokuLeave();nwTriple=null;applyTheme('hub');evRoot.classList.add('nw-triple-theme');const d=nwTripleSessionData(),event=nwTripleInEvent();
  evDisplay(`${evHeader('EVENTS',showCategories)}<section class="nw-triple nw-triple-home">
