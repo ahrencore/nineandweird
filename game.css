@@ -5128,3 +5128,7 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
   grid-column:2!important;grid-row:1!important;
  }
 }
+
+/* Main menu already has the large Nine & Weird logo: no duplicate small title. */
+#game.nw-lobby-v37 > header.nw-lobby-top{padding-bottom:0!important;}
+#game.nw-lobby-v37 .nw-lobby-brand{display:none!important;}
