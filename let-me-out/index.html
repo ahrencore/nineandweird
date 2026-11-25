@@ -278,11 +278,59 @@ function scramblePuzzle(raw,index){
  // (The original templates are solvable; any legal scramble is also solvable.)
  return out;
 }
+// Exact shortest-path test; a move is one slide to any reachable position.
+// A search budget prevents pathological layouts from stalling mobile devices.
+function puzzleMinimumMoves(pieces,limit){
+ const start=pieces.map(p=>p.pos),key=a=>a.join(',');
+ const queue=[start],steps=[0],seen=new Set([key(start)]);
+ for(let head=0;head<queue.length&&head<limit;head++){
+  const positions=queue[head],distance=steps[head];
+  if(positions[0]===4)return distance;
+  const occupied=new Int8Array(36);
+  for(let i=0;i<pieces.length;i++){
+   const p=pieces[i];
+   for(let t=0;t<p.len;t++){
+    const x=p.axis==='H'?positions[i]+t:p.col,y=p.axis==='V'?positions[i]+t:p.row;
+    occupied[y*6+x]=i+1;
+   }
+  }
+  for(let i=0;i<pieces.length;i++){
+   const p=pieces[i];
+   for(const step of [-1,1]){
+    for(let position=positions[i]+step;position>=0&&position<=6-p.len;position+=step){
+     const edge=step>0?position+p.len-1:position;
+     const x=p.axis==='H'?edge:p.col,y=p.axis==='V'?edge:p.row;
+     if(occupied[y*6+x])break;
+     const next=positions.slice();next[i]=position;const id=key(next);
+     if(!seen.has(id)){seen.add(id);queue.push(next);steps.push(distance+1);}
+    }
+   }
+  }
+ }
+ return null;
+}
 function makePuzzle(index,legacy=false,version='v3'){
  const zero=index-1,wave=Math.floor(zero/5),slot=zero%5;
  const source=legacy?(zero%PUZZLES.length):(wave<PUZZLE_WAVES.length?PUZZLE_WAVES[wave][slot]:LATER_WAVE[slot]);
  const raw=PUZZLES[source],rotated=Math.floor(zero/PUZZLES.length)%PALETTE.length;
- const layout=!legacy&&version==='v3'?scramblePuzzle(raw,index):raw.pieces;
+ let layout=raw.pieces;
+ if(!legacy&&version==='v3'){
+  const target=[5,7,8,10,12][slot];
+  let best=null,bestScore=-Infinity;
+  // Evaluate several deterministic scrambles and keep the strongest viable challenge.
+  // Fallback stays a verified solvable original layout if the search budget runs out.
+  const tries=slot===4?7:4;
+  for(let attempt=0;attempt<tries;attempt++){
+   const candidate=scramblePuzzle(raw,index+attempt*100003);
+   const depth=puzzleMinimumMoves(candidate,18000);
+   if(depth===null)continue;
+   const score=slot===4?depth:-Math.abs(depth-target)+(depth>=target?0.2:0);
+   if(score>bestScore){best=candidate;bestScore=score;}
+   if(slot===4&&depth>=14)break;
+   if(slot!==4&&depth===target)break;
+  }
+  layout=best||raw.pieces;
+ }
  return layout.map((p,i)=>({...p,pos:p.pos,color:PALETTE[(i+rotated)%PALETTE.length]}));
 }
 let cloudReady=false,cloudClient=null,cloudUser=null,pendingSave=null,cloudSaving=false;
