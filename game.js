@@ -1445,7 +1445,7 @@ function nwGrowingBack(){
 }
 function nwGrowingOpen(){void nwLoadEventBoosters('tg');
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-growing-live-shell');
- evDisplay(`${evHeader("THEY'RE GROWING!",nwGrowingBack)}<section class="nw-growing-frame-container"><iframe id="nwGrowingFrame" title="They're Growing! — playable hex evolution event" src="growing/index.html?v=66-tg-art-spacing" loading="eager" allow="fullscreen"></iframe></section>`);
+ evDisplay(`${evHeader("THEY'RE GROWING!",nwGrowingBack)}<section class="nw-growing-frame-container"><iframe id="nwGrowingFrame" title="They're Growing! — playable hex evolution event" src="growing/index.html?v=67-tg-smoke-soft-edges" loading="eager" allow="fullscreen"></iframe></section>`);
  nwResetViewToTop();
 }
 // This version is local-first for the game owner's beta: NO Supabase claim/payment sync.
