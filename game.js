@@ -813,20 +813,20 @@ function nwInventoryLoaded(key){
 }
 function nwPrizeInventoryArt(){
  const cards=event=>nwPrizeDefinitions.filter(d=>d.event===event).map(d=>{
-  const n=nwPrizeAvailable(d.key),loaded=nwInventoryLoaded(d.key),use=d.key==='tt_ticket'||d.key==='tg_energy';
-  return '<article class="nw-compact-item"><button type="button" class="nw-compact-info" data-prize-info="'+d.key+'" aria-label="About '+nwEscape(d.name)+'">!</button><span class="nw-compact-icon" aria-hidden="true">'+nwPrizeIcon(d.key)+'</span><strong>'+nwEscape(d.name)+'</strong><b>× '+(n+loaded).toLocaleString()+'</b><small>Stored '+n+' · Event '+loaded+'</small>'+(use?'<button type="button" data-prize-use="'+d.key+'" '+(n?'':'disabled')+'>USE</button>':'')+'</article>';
+  const n=nwPrizeAvailable(d.key),loaded=nwInventoryLoaded(d.key),use=d.key==='tt_ticket'||d.key==='tg_energy',live=d.event==='tt'?nwTripleInEvent():[2,3,4].includes(new Date().getUTCDay());
+  return '<article class="nw-compact-item"><button type="button" class="nw-compact-info" data-prize-info="'+d.key+'" aria-label="About '+nwEscape(d.name)+'">!</button><span class="nw-compact-icon" aria-hidden="true">'+nwPrizeIcon(d.key)+'</span><strong>'+nwEscape(d.name)+'</strong><b>× '+(n+loaded).toLocaleString()+'</b><small>Stored '+n+' · Event '+loaded+'</small>'+(use?'<button type="button" data-prize-use="'+d.key+'" '+(n&&live?'':'disabled')+'>USE</button>':'')+'</article>';
  }).join('');
  return '<div class="nw-compact-wallet">'+nwDiamondAmount(nwDiamondBalance().toLocaleString())+'</div><h3>TRIPLE TROUBLE</h3><div class="nw-compact-grid">'+cards('tt')+'</div><h3>THEY\'RE GROWING!</h3><div class="nw-compact-grid">'+cards('tg')+'</div><h3>SUDOKU</h3><div class="nw-compact-grid"><article class="nw-compact-item"><button class="nw-compact-info" type="button" data-prize-info="sudoku_hint" aria-label="About Sudoku Hints">!</button><span class="nw-compact-icon">'+nwPrizeIcon('sudoku_hint')+'</span><strong>Sudoku Hints</strong><b>× '+nwPrizeAvailable('sudoku_hint').toLocaleString()+'</b></article></div>';
 }
 function nwPrizeQuantityDialog(key){
  const item=nwPrizeDefinitions.find(d=>d.key===key),max=nwPrizeAvailable(key);if(!item||!max)return;
  const overlay=document.createElement('div');overlay.className='nw-prize-overlay';
- overlay.innerHTML=`<section class="nw-prize-dialog" role="dialog" aria-modal="true" aria-label="Transfer ${nwEscape(item.name)}">
+ overlay.innerHTML=`<section class="nw-prize-dialog" role="dialog" aria-modal="true" aria-label="Use ${nwEscape(item.name)}">
  <h2>USE ${nwEscape(item.name).toUpperCase()}</h2><p>Available in Inventory: <strong>${max}</strong></p>
  <div class="nw-prize-quantity"><button type="button" data-step="-1" aria-label="Decrease">−</button><input id="nwPrizeQty" type="number" min="1" max="${max}" value="1" inputmode="numeric" aria-label="Quantity"><button type="button" data-step="1" aria-label="Increase">+</button></div>
- <p class="nw-prize-summary">After transfer: <strong id="nwPrizeLeft">${max-1}</strong> remaining in Inventory</p>
+ <p class="nw-prize-summary">After use: <strong id="nwPrizeLeft">${max-1}</strong> remaining in Inventory</p>
  <p class="nw-prize-msg" id="nwPrizeMessage" role="status"></p>
- <div class="nw-prize-actions"><button type="button" id="nwPrizeCancel">CANCEL</button><button type="button" id="nwPrizeConfirm">USE IN TOURNAMENT</button></div></section>`;
+ <div class="nw-prize-actions"><button type="button" id="nwPrizeCancel">CANCEL</button><button type="button" id="nwPrizeConfirm" >USE</button></div></section>`;
  evRoot.appendChild(overlay);
  const input=overlay.querySelector('#nwPrizeQty'),left=overlay.querySelector('#nwPrizeLeft');
  const quantity=()=>Math.min(max,Math.max(1,Math.trunc(Number(input.value)||1)));
