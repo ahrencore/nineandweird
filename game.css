@@ -4790,3 +4790,12 @@ body:has(#game.nw-cosmic-mail-theme:not([hidden])){background:#0B1020!important;
 #game.nw-double-theme .nw-double select{background:#1E3244!important;border-color:#7198AE!important;color:#F3F7FA!important}
 #game.nw-double-theme .nw-double-person>strong,#game.nw-double-theme .nw-double-person>span{color:#F3F7FA!important}
 @media(prefers-reduced-motion:reduce){#game.nw-double-theme .nw-double:before,#game.nw-double-theme .nw-double:after{animation:none!important}}
+
+/* Shaggy twins + matching main-menu Double Trouble event portal. */
+#game.nw-double-theme .nw-double-mascots img.dt-shaggy-twins{transform:none!important;margin:auto;display:block;max-width:100%;height:auto!important}
+#game .nw-lobby-portal.double{--portal-accent:#B9DDF2;--portal-panel:#294257;--portal-bg:#101B29}
+#game .nw-lobby-portal.double .nw-lobby-portal-disc{background:radial-gradient(ellipse at 50% 20%,#35566A,#172B3D 63%,#0C1724)!important;border-color:#9CCBE3;gap:1px}
+#game .nw-lobby-portal.double .nw-lobby-portal-decor{display:flex;justify-content:center;align-items:center;height:clamp(28px,8.5vw,43px);width:100%;flex:none}
+#game .nw-lobby-portal.double img.dt-lobby-twins{display:block;width:clamp(54px,15vw,73px);height:100%;object-fit:contain;filter:drop-shadow(0 2px 3px #07111BAD)}
+#game .nw-lobby-portal.double strong{color:#E1F3FF!important;font-family:'Rubik Wet Paint','Rubik Glitch',sans-serif;font-weight:400;text-shadow:0 1px #29465F,0 0 7px #9CCBE355;line-height:1.03}
+#game .nw-double-event-icon img{display:block;width:100%;max-width:48px;height:auto;object-fit:contain}
