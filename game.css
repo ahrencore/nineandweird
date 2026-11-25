@@ -4755,3 +4755,38 @@ body:has(#game.nw-cosmic-mail-theme:not([hidden])){background:#0B1020!important;
 
 
 #game.nw-account-theme .nw-social-panel .nw-friend-avatar.framed .nw-friend-avatar-img{position:absolute;top:15%;left:15%;width:70%;height:70%;border-radius:50%}
+
+/* Double Trouble — The Twins' Corridor (visual-only refresh). */
+#game.nw-double-theme{--dt-ink:#0A111A;--dt-dark:#132131;--dt-panel:#22384C;--dt-outline:#7198AE;--dt-baby:#B9DDF2;--dt-ice:#DDF2FB;--dt-muted:#9CCBE3;--accent:#B9DDF2;--glow:#9CCBE3;--text:#F3F7FA;color:var(--dt-ice)!important;background:radial-gradient(ellipse at 50% 9%,#273D52 0%,#132131 39%,#0A111A 85%)!important}
+#game.nw-double-theme:has(.nw-double-home){background:radial-gradient(ellipse at 50% 12%,#253B50,#101B29 55%,#090F17 100%)!important}
+#game.nw-double-theme>.ev-head{background:#0D1927E8!important;border-color:#54718A!important}
+#game.nw-double-theme>.ev-head button{background:#22384C!important;color:var(--dt-ice)!important;border-color:#7198AE!important;box-shadow:none!important}
+#game.nw-double-theme .nw-double-home,#game.nw-double-theme .nw-double:not(.nw-double-home){position:relative;isolation:isolate;background:radial-gradient(ellipse at 50% 15%,#344C6050,transparent 60%),repeating-linear-gradient(90deg,transparent 0 31px,#A9D8F109 32px,#A9D8F109 33px),repeating-linear-gradient(0deg,transparent 0 31px,#A9D8F109 32px,#A9D8F109 33px),linear-gradient(180deg,#192C41,#0D1722 68%,#0A121D)!important;border:1px solid #517996!important;box-shadow:0 14px 35px #0009,inset 0 0 24px #83BED50B!important;color:#F3F7FA!important}
+#game.nw-double-theme .nw-double:before,#game.nw-double-theme .nw-double:after{content:"";pointer-events:none;position:absolute;z-index:0;top:13px;width:34%;height:165px;opacity:.56;background:radial-gradient(ellipse at 50% 11%,#F1FAFFAD 0 3%,#B8E5FD55 8%,#9CCBE328 23%,transparent 68%);filter:blur(4px);animation:dtHauntedLeft 17s linear infinite}
+#game.nw-double-theme .nw-double:before{left:-9%;transform:rotate(-10deg)}
+#game.nw-double-theme .nw-double:after{right:-9%;transform:rotate(10deg);animation-name:dtHauntedRight;animation-duration:23s;animation-delay:-8s}
+@keyframes dtHauntedLeft{0%,16%,19%,36%,39%,62%,66%,100%{opacity:.56}17%,37%,63%{opacity:.35}18%,38%,65%{opacity:.44}}
+@keyframes dtHauntedRight{0%,25%,30%,48%,51%,77%,80%,100%{opacity:.48}26%,49%,78%{opacity:.29}28%,50%,79%{opacity:.40}}
+#game.nw-double-theme .nw-double>*{position:relative;z-index:1}
+#game.nw-double-theme .nw-double-mascots{height:auto!important;min-height:86px;overflow:visible}
+#game.nw-double-theme .nw-double-mascots img.dt-shaggy-twins{height:auto!important;width:min(66%,230px)!important;max-height:146px!important;object-fit:contain!important;filter:drop-shadow(0 6px 7px #020812A8)!important}
+#game.nw-double-theme .nw-double h2.nw-double-logo,#game.nw-double-theme .nw-double h2.nw-double-result-title,#game.nw-double-theme .nw-double-subtitle{color:#DDF2FB!important;text-shadow:0 2px #29465F,0 0 12px #8DC4E047!important}
+#game.nw-double-theme .nw-double-home .nw-double-logo>span:first-child{background:linear-gradient(#F3FAFF,#A9D8F1)!important;background-clip:text!important;-webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important;filter:drop-shadow(0 2px #253F56)!important}
+#game.nw-double-theme .nw-double-decoration,#game.nw-double-theme .nw-double-kicker,#game.nw-double-theme .nw-double-earned{color:#B9DDF2!important;text-shadow:none!important}
+#game.nw-double-theme .nw-double-home .nw-double-kicker{background:#22384CBF!important;border-color:#7198AE!important;box-shadow:none!important}
+#game.nw-double-theme .nw-double-count,#game.nw-double-theme .nw-double-home .nw-double-count{background:#172839DB!important;border:1px solid #7198AE!important;color:#DDF2FB!important;box-shadow:inset 0 1px #E6F5FF1D!important}
+#game.nw-double-theme .nw-double-count small{color:#9CCBE3!important}
+#game.nw-double-theme .nw-double-team,#game.nw-double-theme .nw-double-team.rival,#game.nw-double-theme .nw-double-home .nw-double-team,#game.nw-double-theme .nw-double-home .nw-double-team.rival,#game.nw-double-theme .nw-double-reward-tier,#game.nw-double-theme .nw-double-reward-tier.rival{background:linear-gradient(150deg,#345166EE,#1D3042F5)!important;border:1px solid #7198AE!important;box-shadow:inset 0 1px #DDF2FB23,0 3px 9px #07101B6E!important;border-radius:13px!important;--team:#B9DDF2;--reward:#B9DDF2}
+#game.nw-double-theme .nw-double-team.rival,#game.nw-double-theme .nw-double-reward-tier.rival{background:linear-gradient(150deg,#2B4156EE,#192B3BF5)!important}
+#game.nw-double-theme .nw-double-team-head,#game.nw-double-theme .nw-double-team-head small,#game.nw-double-theme .nw-double-margin{color:#DDF2FB!important}
+#game.nw-double-theme .nw-double .nw-double-vs,#game.nw-double-theme .nw-double-home .nw-double-vs{color:#DDF2FB!important;text-shadow:0 0 7px #9CCBE399!important}
+#game.nw-double-theme .nw-double-avatar{border-color:#A9D8F1!important;background:#132131!important;box-shadow:none!important}
+#game.nw-double-theme .nw-double-track,#game.nw-double-theme .nw-double-home .nw-double-track{background:#50677B!important;border-color:#7F9DB3!important;box-shadow:none!important}
+#game.nw-double-theme .nw-double-track i,#game.nw-double-theme .nw-double-eligibility-track i{background:linear-gradient(90deg,#7DB9DC,#DDF2FB)!important}
+#game.nw-double-theme .nw-double-btn,#game.nw-double-theme .nw-double-home .nw-double-btn,#game.nw-double-theme .nw-double:not(.nw-double-home) .nw-double-btn{background:linear-gradient(180deg,#D6F0FD,#96C9E8)!important;border:1px solid #DDF2FB!important;color:#122638!important;text-shadow:none!important;box-shadow:0 3px #456E88!important;border-radius:12px!important}
+#game.nw-double-theme .nw-double-btn.secondary,#game.nw-double-theme .nw-double-home .nw-double-btn.secondary,#game.nw-double-theme .nw-double:not(.nw-double-home) .nw-double-btn.secondary{background:#22384C!important;border:1px solid #7198AE!important;color:#DDF2FB!important;box-shadow:none!important}
+#game.nw-double-theme .nw-double-btn.nw-double-level{background:#22384C!important;border:2px solid var(--level,#9CCBE3)!important;color:var(--level,#DDF2FB)!important}
+#game.nw-double-theme .nw-double-reward-progress,#game.nw-double-theme .nw-double-reward-record,#game.nw-double-theme .nw-double-summary,#game.nw-double-theme .nw-double-rankrow,#game.nw-double-theme .nw-double-alert{background:#203449F0!important;border:1px solid #7198AE!important;color:#DDF2FB!important;box-shadow:none!important}
+#game.nw-double-theme .nw-double select{background:#1E3244!important;border-color:#7198AE!important;color:#F3F7FA!important}
+#game.nw-double-theme .nw-double-person>strong,#game.nw-double-theme .nw-double-person>span{color:#F3F7FA!important}
+@media(prefers-reduced-motion:reduce){#game.nw-double-theme .nw-double:before,#game.nw-double-theme .nw-double:after{animation:none!important}}
