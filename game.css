@@ -4908,3 +4908,61 @@ body:has(#game.nw-cosmic-mail-theme:not([hidden])){background:#0B1020!important;
 #game .nw-compact-item{min-height:117px}
 #game.nw-inventory-theme .nw-prize-dialog{max-width:380px}
 #game.nw-lobby-v37 .nw-daily-mini:focus-visible{outline:2px solid #81C8FF;outline-offset:2px}
+
+/* Inventory V2: Midnight Galaxy colors only; the header wallet is the only Diamonds display. */
+#game.nw-inventory-theme{
+ background:radial-gradient(ellipse at 50% 14%,#1B2240 0%,#141A33 48%,#0B1020 100%)!important;
+ color:#F8EBDD!important;
+}
+#game.nw-inventory-theme>.ev-head.ev-head{
+ background:#141A33!important;
+ border-color:#8E83BE!important;
+ box-shadow:none!important;
+}
+#game.nw-inventory-theme>.ev-head.ev-head>strong{
+ color:#F8EBDD!important;
+ text-shadow:none!important;
+ font-family:'Chelsea Market','Finger Paint',cursive!important;
+ font-weight:400!important;
+}
+#game.nw-inventory-theme>.ev-head.ev-head>button.ev-btn[data-back],
+#game.nw-inventory-theme>.ev-head.ev-head>.nw-shared-utilities>.nw-shared-settings{
+ background:#222743!important;
+ color:#F8EBDD!important;
+ border:1px solid #8E83BE!important;
+ box-shadow:none!important;
+}
+#game.nw-inventory-theme>.ev-head.ev-head>.nw-shared-utilities>.nw-shared-wallet{
+ background:#222743!important;
+ color:#F8EBDD!important;
+ border-color:#8E83BE!important;
+ box-shadow:none!important;
+}
+#game.nw-inventory-theme .nw-inventory-panel{
+ padding-top:8px;
+}
+#game.nw-inventory-theme .nw-inventory-panel>h2{
+ color:#F8EBDD!important;
+ font-family:'Chelsea Market','Finger Paint',cursive!important;
+ text-shadow:none!important;
+ margin:4px 0 9px;
+}
+#game.nw-inventory-theme .nw-inventory-panel h3{
+ color:#BCADD9!important;
+}
+#game.nw-inventory-theme .nw-compact-item{
+ background:linear-gradient(150deg,#242746,#141A33)!important;
+ border-color:#8E83BE!important;
+ box-shadow:none!important;
+}
+#game.nw-inventory-theme .nw-compact-info{
+ background:#191B35!important;
+ color:#F8EBDD!important;
+ border-color:#8E83BE!important;
+}
+#game.nw-inventory-theme .nw-compact-item [data-prize-use]{
+ background:#343B61!important;
+ border-color:#81C8FF!important;
+ color:#F8EBDD!important;
+}
+#game.nw-inventory-theme .nw-compact-wallet{display:none!important}
