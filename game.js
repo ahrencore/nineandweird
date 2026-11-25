@@ -1563,7 +1563,9 @@ function nwTripleWeek(now=nwTTNow()){const t=new Date(now);const mon=Date.UTC(t.
 function nwTripleInEvent(){return [1,2,3].includes(new Date(nwTTNow()).getUTCDay())}
 function nwTTDay(now){return new Date(now).toISOString().slice(0,10)}
 function nwTTNew(week,day,now,delta=0){return {week,day,stage:1,best:0,diamondDelta:delta,diamonds:nwBattleDiamondTotal()+delta,natural:10,extra:0,next:0,ads:0,spent:0,boosters:{undo:0,shuffle:0,magic:0},welcomed:false,claimed:[],packs:[],notices:[]}}
-function nwTTSync(old,now){const week=nwTripleWeek(now),day=nwTTDay(now);const delta=Number.isSafeInteger(old?.diamondDelta)?old.diamondDelta:0;if(!old||old.week!==week){const fresh=nwTTNew(week,day,now,delta);if(nwWalletCurrent())fresh.diamonds=nwWalletState.balance;return fresh;}const d=old;d.diamonds=nwWalletCurrent()?nwWalletState.balance:Math.max(0,nwBattleDiamondTotal()+delta);if(d.day!==day){d.day=day;d.natural=10;d.next=0;d.ads=0;}if(d.natural<10&&d.next>0&&now>=d.next){const n=Math.min(10-d.natural,1+Math.floor((now-d.next)/3600000));d.natural+=n;d.next=d.natural===10?0:d.next+n*3600000;}return d}
+function nwTTSync(old,now){const week=nwTripleWeek(now),day=nwTTDay(now);const delta=Number.isSafeInteger(old?.diamondDelta)?old.diamondDelta:0;if(!old||old.week!==week){const fresh=nwTTNew(week,day,now,delta);
+ if(old){fresh.extra=Math.max(0,Number(old.extra)||0);for(const k of ['undo','shuffle','magic'])fresh.boosters[k]=Math.max(0,Number(old.boosters?.[k])||0);}
+ if(nwWalletCurrent())fresh.diamonds=nwWalletState.balance;return fresh;}const d=old;d.diamonds=nwWalletCurrent()?nwWalletState.balance:Math.max(0,nwBattleDiamondTotal()+delta);if(d.day!==day){d.day=day;d.natural=10;d.next=0;d.ads=0;}if(d.natural<10&&d.next>0&&now>=d.next){const n=Math.min(10-d.natural,1+Math.floor((now-d.next)/3600000));d.natural+=n;d.next=d.natural===10?0:d.next+n*3600000;}return d}
 function nwTripleData(){const old=nwRead(nwTripleKey,null),d=nwTTSync(old,nwTTNow());if(!old){const legacy=nwRead(nwTTOldKey,null);if(legacy?.week===d.week&&Number.isSafeInteger(legacy.best)&&legacy.best>=0){d.best=legacy.best;d.stage=d.best+1;}}nwTripleSave(d);return d}
 function nwTripleSave(obj){nwWrite(nwTripleKey,obj)}
 function nwTTCount(d){return d.natural+d.extra}
@@ -1600,13 +1602,15 @@ function nwTTPackArt(p,i){return `<div class="nw431-pack tier-${i}"><div class="
 function nwTTUseInventoryTickets(){
  const available=nwPrizeAvailable('tt_ticket');
  if(!available){nwTTShop();return;}
- nwTTModal('USE TICKETS','<p>Tickets in Inventory: '+available+'</p><p>How many would you like to use?</p><input id="nwTTReserveQty" type="number" inputmode="numeric" min="1" max="'+available+'" value="'+Math.min(5,available)+'" aria-label="Tickets to use"><p id="nwTTReserveError" role="status"></p>',[
+ let selected=Math.min(5,available);nwTTModal('USE TICKETS','<p>Tickets in Inventory: '+available+'</p><p>How many would you like to use?</p><input id="nwTTReserveQty" type="number" inputmode="numeric" min="1" max="'+available+'" value="'+Math.min(5,available)+'" aria-label="Tickets to use"><p id="nwTTReserveError" role="status"></p>',[
   {label:'USE TICKETS',run:async()=>{
-   const n=Math.max(1,Math.min(available,Math.trunc(Number(document.querySelector('#nwTTReserveQty')?.value)||1)));
+   const n=Math.max(1,Math.min(available,selected));
    try{await nwPrizeTransfer('tt_ticket',n);nwTripleHome();nwTTModal('TICKETS ADDED!','<p>+'+n+' Tickets. Ready to play!</p>',[{label:'CONTINUE'}]);}
    catch(e){nwTTModal('COULD NOT USE TICKETS','<p>'+nwEscape(e.message)+'</p>',[{label:'OK'}]);}
   }},{label:'CANCEL'}
  ]);
+ const input=evRoot.querySelector('#nwTTReserveQty');
+ if(input)input.oninput=()=>{selected=Math.max(1,Math.min(available,Math.trunc(Number(input.value)||1)));};
 }
 function nwTTOutOfTickets(){
  void nwPrizeSync().then(()=>{
