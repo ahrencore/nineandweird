@@ -4836,3 +4836,46 @@ body:has(#game.nw-cosmic-mail-theme:not([hidden])){background:#0B1020!important;
 #game.nw-double-theme .nw-double-spoils-light.right{right:-27px;animation-delay:-4.2s;animation-duration:9s}
 @keyframes nwSpoilsHaunt{0%,17%,22%,46%,51%,78%,83%,100%{opacity:.6}19%,48%,80%{opacity:.16}20%,49%,81%{opacity:.4}}
 @media(prefers-reduced-motion:reduce){#game.nw-double-theme .nw-double-spoils-light{animation:none;opacity:.4}}
+
+/* Daily sign-in mini planet, matching the current Midnight Galaxy lobby. */
+#game.nw-lobby-v37 .nw-lobby-top{gap:4px;min-width:0}
+#game.nw-lobby-v37 .nw-lobby-top .nw-lobby-profile{min-width:0;flex:1 1 0;gap:5px}
+#game.nw-lobby-v37 .nw-lobby-top-right{flex:none;gap:5px}
+#game.nw-lobby-v37 .nw-daily-mini{position:relative;flex:0 0 58px;width:58px;height:58px;border:0;background:none;cursor:pointer;appearance:none;padding:0;margin:0;color:#F8EBDD;isolation:isolate}
+#game .nw-daily-mini-disc{position:absolute;inset:10px;display:grid;place-items:center;border:1.5px solid #BCADD9;border-radius:50%;background:radial-gradient(circle at 35% 25%,#443A60,#191B35 75%);box-shadow:inset 0 0 9px #81C8FF25,0 0 8px #BCADD933}
+#game .nw-daily-mini-disc svg{width:27px;height:27px}
+#game .nw-daily-mini-label{position:absolute;inset:0;width:100%;height:100%;overflow:visible;fill:#F8EBDD;font:400 10px 'Chelsea Market','Finger Paint',cursive;letter-spacing:.2px}
+#game .nw-daily-mini-orbit{position:absolute;left:calc(50% - 4px);top:calc(50% - 4px);height:8px;width:8px;font-size:10px;line-height:8px;color:#81C8FF;animation:nwDailyOrbit 4s linear infinite;filter:drop-shadow(0 0 3px #81C8FF)}
+@keyframes nwDailyOrbit{from{transform:rotate(0deg) translateX(26px) rotate(0deg)}to{transform:rotate(360deg) translateX(26px) rotate(-360deg)}}
+#game .nw-daily-mini:focus-visible{outline:2px solid #F8EBDD;outline-offset:2px;border-radius:50%}
+@media(max-width:350px){#game.nw-lobby-v37 .nw-daily-mini{flex-basis:49px;width:49px;height:49px}#game .nw-daily-mini-disc{inset:9px}#game .nw-daily-mini-disc svg{width:22px;height:22px}#game .nw-daily-mini-orbit{animation-name:nwDailyOrbitSmall}@keyframes nwDailyOrbitSmall{from{transform:rotate(0deg) translateX(22px) rotate(0deg)}to{transform:rotate(360deg) translateX(22px) rotate(-360deg)}}#game.nw-lobby-v37 .nw-lobby-money .nw-diamond-amount{font-size:11px}#game.nw-lobby-v37 .nw-lobby-top-right .nw-lobby-icon{width:32px;height:32px;min-height:32px}}
+/* Daily rewards screen: floating gifts with no ruby palette. */
+#game.nw-daily-theme{background:radial-gradient(ellipse at 45% 10%,#292544,#191B35 47%,#0B1020 95%)!important;color:#F8EBDD!important;min-height:100dvh}
+#game.nw-daily-theme>.ev-head{background:#141A33!important;border-color:#8E83BE!important}
+#game.nw-daily-theme>.ev-head button{background:#141A33!important;border-color:#8E83BE!important;color:#F8EBDD!important}
+#game .nw-daily-screen{box-sizing:border-box;max-width:470px;margin:0 auto;padding:18px 12px 35px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:stretch}
+#game .nw-daily-screen h2{font:400 clamp(25px,7vw,35px)/1.2 'Finger Paint',cursive;color:#F08BC2;margin:0;text-shadow:0 0 9px #F08BC24C}
+#game .nw-daily-stars{color:#F4ED91;font-size:16px;letter-spacing:18px}
+#game .nw-daily-intro{font:400 15px/1.4 'Pangolin',cursive;color:#F8EBDD;margin:0 0 5px}
+#game .nw-daily-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#game .nw-daily-tile{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;min-height:141px;gap:6px;padding:10px 5px;border:1px solid #625576;border-radius:14px;background:linear-gradient(145deg,#302B46,#1B203A);color:#F8EBDD}
+#game .nw-daily-tile.is-ready{border-color:#F4ED91;box-shadow:0 0 13px #F4ED9136,inset 0 0 12px #F4ED9112}
+#game .nw-daily-tile.is-done{opacity:.73}
+#game .nw-daily-tile small{font:400 15px/1 'Gaegu',cursive;color:#F4ED91}
+#game .nw-daily-tile-gift{width:43px;height:43px;animation:nwDailyGiftFloat 3.2s ease-in-out infinite}
+#game .nw-daily-tile:nth-child(3n+2) .nw-daily-tile-gift{animation-delay:-1.1s}
+#game .nw-daily-tile:nth-child(3n) .nw-daily-tile-gift{animation-delay:-2.2s}
+#game .nw-daily-tile-gift svg{height:100%;width:100%;filter:drop-shadow(0 3px 4px #0005)}
+#game .nw-daily-tile-art{height:20px;display:grid;place-items:center;color:#81C8FF}
+#game .nw-daily-tile-art svg,#game .nw-daily-tile-art img{width:19px;height:19px;object-fit:contain}
+#game .nw-daily-tile strong{font:400 12px/1.2 'Pangolin',cursive;color:#F8EBDD;overflow-wrap:anywhere}
+#game .nw-daily-check{position:absolute;top:6px;right:8px;color:#F4ED91;font-size:17px}
+#game .nw-daily-tile.is-done .nw-daily-tile-gift{animation:none}
+#game .nw-daily-final .nw-daily-tile{min-height:110px;border-color:#BCADD9;background:linear-gradient(140deg,#443A60,#252444);box-shadow:0 0 15px #F4ED9119}
+#game .nw-daily-final .nw-daily-tile-gift{width:49px;height:49px}
+#game .nw-daily-rule{font:400 13px/1.4 'Pangolin',cursive;color:#BCADD9;margin:2px 0}
+#game .nw-daily-status{font:400 13px/1.5 'Pangolin',cursive;color:#F4ED91;margin:0}
+#game .nw-daily-action{align-self:center;width:min(100%,280px);min-height:46px;border:1px solid #F4ED91;border-radius:13px;background:#443A60;color:#F8EBDD;font:400 18px 'Gaegu',cursive;cursor:pointer}
+#game .nw-daily-action:disabled{opacity:.65;cursor:default}
+@keyframes nwDailyGiftFloat{0%,100%{transform:translateY(2px)}50%{transform:translateY(-5px)}}
+@media(prefers-reduced-motion:reduce){#game .nw-daily-mini-orbit,#game .nw-daily-tile-gift{animation:none!important}}
