@@ -5032,3 +5032,41 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
 #game.nw-let-shell>.nw-let-frame-container iframe{
  display:block;width:100%;height:100%;min-height:0!important;border:0;overflow:hidden;background:#120D1C
 }
+
+
+/* Shared miniature Nine & Weird identity: page-specific palettes remain in charge. */
+#game .ev-head.ev-head > strong.nw-brand-title{
+ font-family:'Oxanium','Bricolage Grotesque',system-ui,sans-serif!important;
+ font-size:clamp(10px,1.75vw,13px)!important;
+ font-weight:400!important;
+ letter-spacing:.14em!important;
+ line-height:1.3!important;
+ white-space:nowrap!important;
+ overflow-wrap:normal!important;
+ text-transform:uppercase!important;
+ text-shadow:none!important;
+ color:inherit!important;
+}
+/* The game header keeps the World title at full original scale. */
+#game .ev-head.ev-head > strong.nw-world-title{font-size:clamp(14px,2.35vw,24px)!important}
+@media(max-width:760px){
+ #game .ev-head.ev-head:has(>strong.nw-brand-title){
+  grid-template-columns:minmax(0,1fr) auto!important;
+  grid-template-rows:auto auto!important;
+  row-gap:0!important;
+ }
+ #game .ev-head.ev-head > strong.nw-brand-title{
+  grid-column:1 / -1!important;grid-row:2!important;
+  font-size:11px!important;line-height:1.2!important;padding:0 2px 1px!important;
+ }
+ #game .ev-head.ev-head > strong.nw-world-title{font-size:clamp(15px,4.2vw,22px)!important}
+}
+/* The lobby's first row is already crowded with player and utility controls;
+   center the brand in a slim second row without moving any of those controls. */
+#game.nw-lobby-v37 > header.nw-lobby-top{position:relative!important;padding-bottom:19px!important;}
+#game.nw-lobby-v37 .nw-lobby-brand{
+ position:absolute;left:0;right:0;bottom:1px;
+ display:block;text-align:center;pointer-events:none;
+ color:#C5B8E8;font:400 11px/1.15 'Oxanium',system-ui,sans-serif;
+ letter-spacing:.14em;white-space:nowrap;text-shadow:none;
+}
