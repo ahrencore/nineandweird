@@ -168,13 +168,15 @@ body{background:radial-gradient(ellipse 85% 46% at 50% 20%,#39204A9B,transparent
 .status{flex:none;margin:0 2px 7px}
 .status .level b{font-size:clamp(20px,3.4dvh,29px);line-height:1.05}
 .moves{padding:6px 10px}
-.board-shell{flex:none;align-self:center;box-sizing:border-box;width:min(100%,max(180px,calc(100dvh - 395px)),480px);padding:clamp(4px,1dvh,8px);border-radius:16px}
+.board-shell{flex:none;align-self:center;box-sizing:border-box;width:min(100%,calc(100dvh - 265px),480px);max-width:100%;padding:clamp(4px,1dvh,8px);border-radius:16px}
 .board{width:100%;aspect-ratio:1/1}
 .instruction{flex:none;min-height:17px;margin:clamp(5px,1dvh,10px) 0 clamp(5px,1dvh,9px);font-size:11px;line-height:1.3}
 .actions{flex:none;gap:8px}
 .btn{padding:clamp(7px,1.5dvh,12px) 8px}
 .bottom{flex:none;margin-top:clamp(7px,1.35dvh,13px);padding:clamp(7px,1.25dvh,11px) 12px;line-height:1.35}
 .footer{flex:none;margin:clamp(4px,1dvh,9px) 0 0;font-size:9px}
+/* On short phone screens, prioritize a comfortably sized interactive board over secondary copy. */
+@media(max-height:760px){.bottom{display:none}.hero{margin-top:3px;margin-bottom:7px}.instruction{margin:5px 0}.footer{margin-top:4px}}
 @media(max-height:650px){
  .wrap{padding:5px 11px 7px}
  .hero{margin:2px auto 5px}
