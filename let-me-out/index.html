@@ -156,8 +156,44 @@ body{background:radial-gradient(ellipse 85% 46% at 50% 29%,#39204A9B,transparent
 @media(prefers-reduced-motion:reduce){
   .hero h1 .title-let,.hero h1 .title-me,.hero h1 .title-out{animation:none!important;opacity:1!important;transform:none!important}
 }
+
+/* V2 fitted mini-game: no extra brand/tag header, Blacklight Candy throughout. */
+:root{--bg:#120D1C;--panel:#271A36;--ruby:#FF76D8;--line:#674B80;--lime:#BBFB45;--muted:#C9B3DB;--cream:#FFF4FC}
+html,body{height:100%;min-height:0;margin:0;background:#120D1C!important;overflow:hidden}
+body{background:radial-gradient(ellipse 85% 46% at 50% 20%,#39204A9B,transparent 76%),#120D1C!important}
+.wrap{height:100dvh;min-height:0;max-height:100dvh;max-width:530px;margin:0 auto;overflow:hidden;padding:clamp(6px,1.7dvh,14px) 14px 9px;justify-content:flex-start}
+.hero{flex:none;margin:clamp(4px,1.2dvh,12px) auto clamp(8px,1.8dvh,14px)}
+.hero h1{font-size:clamp(37px, min(11vw, 7dvh), 64px)!important}
+.hero p{margin-top:4px;font-size:clamp(10px,1.65dvh,12px);line-height:1.3}
+.status{flex:none;margin:0 2px 7px}
+.status .level b{font-size:clamp(20px,3.4dvh,29px);line-height:1.05}
+.moves{padding:6px 10px}
+.board-shell{flex:none;align-self:center;box-sizing:border-box;width:min(100%,max(180px,calc(100dvh - 395px)),480px);padding:clamp(4px,1dvh,8px);border-radius:16px}
+.board{width:100%;aspect-ratio:1/1}
+.instruction{flex:none;min-height:17px;margin:clamp(5px,1dvh,10px) 0 clamp(5px,1dvh,9px);font-size:11px;line-height:1.3}
+.actions{flex:none;gap:8px}
+.btn{padding:clamp(7px,1.5dvh,12px) 8px}
+.bottom{flex:none;margin-top:clamp(7px,1.35dvh,13px);padding:clamp(7px,1.25dvh,11px) 12px;line-height:1.35}
+.footer{flex:none;margin:clamp(4px,1dvh,9px) 0 0;font-size:9px}
+@media(max-height:650px){
+ .wrap{padding:5px 11px 7px}
+ .hero{margin:2px auto 5px}
+ .hero h1{font-size:clamp(33px,8.5vw,48px)!important}
+ .status{margin-bottom:5px}
+ .bottom{padding:6px 10px;font-size:10px}
+ .bottom-copy strong{font-size:11px}
+ .footer{margin-top:3px}
+}
+@media(max-height:520px){
+ html,body{overflow:auto;scrollbar-width:thin;scrollbar-color:#BBFB45 #271A36}
+ .wrap{height:auto;min-height:100dvh;max-height:none;overflow:visible}
+}
+*::-webkit-scrollbar{width:5px;height:5px}
+*::-webkit-scrollbar-track{background:#271A36}
+*::-webkit-scrollbar-thumb{background:#BBFB45;border-radius:9px}
+
 </style></head><body><main class="wrap">
-<div class="top"><div class="brand"><span class="brand-mark">✳</span> NINE & WEIRD</div><div class="tag"><span class="mini-dot">●</span> MINI GAME</div></div>
+
 <header class="hero"><h1 aria-label="LET ME OUT!"><span class="title-let" aria-hidden="true">LET</span><span class="title-me" aria-hidden="true"> ME</span><span class="title-out" aria-hidden="true"> OUT!</span></h1><p>Slide the blocks and free Gloop.</p></header>
 <section class="status"><div class="level">CURRENT PUZZLE <b id="level">001</b></div><div class="moves"><span>MOVES</span><strong id="moves">00</strong></div></section>
 <div class="board-shell"><div class="board" id="board" aria-label="Sliding block puzzle board"><div class="exit" title="Exit to the right"></div></div></div>
