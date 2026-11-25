@@ -4903,3 +4903,8 @@ body:has(#game.nw-cosmic-mail-theme:not([hidden])){background:#0B1020!important;
 #game.nw-lobby-v37 .nw-lobby-top-right{gap:3px}
 @media(max-width:390px){#game.nw-lobby-v37 .nw-daily-mini{flex:0 0 48px;width:48px;height:48px}#game.nw-lobby-v37 .nw-daily-mini-disc{inset:9px}#game.nw-lobby-v37 .nw-daily-mini-disc svg{width:22px;height:22px}#game.nw-lobby-v37 .nw-daily-mini-label{font-size:9.5px}#game.nw-lobby-v37 .nw-lobby-money .nw-diamond-amount{font-size:11px}#game.nw-lobby-v37 .nw-lobby-money .nw-diamond-icon{width:15px;height:15px}}
 @media(max-width:330px){#game.nw-lobby-v37 .nw-daily-mini{flex-basis:43px;width:43px;height:43px}#game.nw-lobby-v37 .nw-lobby-top .nw-lobby-profile{gap:3px}#game.nw-lobby-v37 .nw-lobby-profile>strong{font-size:10px}}
+
+#game .nw-compact-item small{font:400 10px/1.1 'Pangolin',cursive;color:#BCADD9;text-align:center}
+#game .nw-compact-item{min-height:117px}
+#game.nw-inventory-theme .nw-prize-dialog{max-width:380px}
+#game.nw-lobby-v37 .nw-daily-mini:focus-visible{outline:2px solid #81C8FF;outline-offset:2px}
