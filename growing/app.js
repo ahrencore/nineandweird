@@ -104,7 +104,26 @@ const APP=(()=>{
  function home(){view='home';sync();const next=rewards.find(([pt])=>!state.claimed.includes(pt));const claimed=state.daily.claimed||[];const ready=dailyMissions.filter(m=>!claimed.includes(m.id)&&(state.daily[m.kind]||0)>=m.goal).length;app.innerHTML=top()+`<section class="growing-hero">
  <div class="growing-motes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
  <div class="growing-hero-heading"><div class="growing-eyebrow">･ ༝ ･</div><h1 class="title growing-arched-title"><svg viewBox="0 0 960 190" role="img" aria-label="They’re Growing!" preserveAspectRatio="xMidYMid meet"><defs><path id="growing-title-curve" d="M60 154 Q480 -4 900 154"/></defs><text font-family="Eater,serif" font-size="85" fill="currentColor" textLength="832" lengthAdjust="spacingAndGlyphs"><textPath href="#growing-title-curve" startOffset="50%" text-anchor="middle">THEY'RE GROWING!</textPath></text></svg></h1>
- <div class="growing-class-photo-wrap"><div class="growing-smoke" aria-hidden="true"><i></i><i></i><i></i><i></i></div><img class="growing-class-photo" src="assets/uglies_class_photo.png" alt="All twenty Ugly Little Things together on two benches"></div>
+ <div class="growing-class-photo-wrap growing-lab-promo">
+    <div class="growing-smoke" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="growing-lab-pair" role="img" aria-label="Gloop and Stinky making a bubbling green potion in their laboratory">
+      <div class="growing-lab-character gloop"><div class="growing-lab-coat" aria-hidden="true"></div><img src="assets/01_gloop.png" alt="" /></div>
+      <div class="growing-lab-equipment" aria-hidden="true">
+        <svg viewBox="0 0 155 170" xmlns="http://www.w3.org/2000/svg">
+          <g fill="none" stroke="#17101A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M30 76h95v14c0 29-9 51-32 57H62C40 141 30 119 30 90Z" fill="#E5E8E8"/>
+            <path d="M40 98h75c0 22-11 38-28 42H70c-17-5-26-19-30-42Z" fill="#AAEF39"/>
+            <path d="M24 76h107" stroke="#FAF3E4" stroke-width="8"/>
+            <path d="M13 155h129" stroke="#4B3554" stroke-width="10"/>
+            <path d="M26 76l8-17 11 17M107 76l12-20 11 20" fill="#ABF03B"/>
+          </g>
+          <g fill="#C5FF59" stroke="#17101A" stroke-width="3"><circle cx="66" cy="117" r="7"/><circle cx="92" cy="106" r="5"/><circle cx="85" cy="125" r="4"/><circle cx="57" cy="44" r="8"/><circle cx="105" cy="28" r="5"/></g>
+        </svg>
+      </div>
+      <div class="growing-lab-character stinky"><div class="growing-lab-coat" aria-hidden="true"></div><img src="assets/08_stinky.png" alt="" /></div>
+      <span class="growing-lab-fume" aria-hidden="true">〰</span>
+    </div>
+  </div>
  <div class="growing-event-pill"><span class="live-dot"></span>${live()?'NOW LIVE':'TUE — THU'}<span class="pill-divider">✦</span>${countdown()}</div></div>
  </section>
  <section class="growing-dashboard"><div class="growing-score-block"><span class="g-label">EVENT SCORE</span><strong>${fmt(state.score)}</strong></div><div class="growing-energy-block"><span class="g-label">ENERGY</span><strong><span class="energy-glyph">ϟ</span> ${fmt(energy())}</strong><div class="g-energy-meter"><i style="width:${state.natural}%"></i></div><small>${state.natural>=100?'FULL':`+1 IN ${Math.max(0,Math.ceil((state.nextRegen-now())/60000))} MIN`}</small></div></section>
