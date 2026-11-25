@@ -1597,6 +1597,24 @@ function nwTTBuy(kind){if(!nwTripleInEvent())return;const d=nwTripleData();const
  nwTTModal('Purchase unavailable','<p>Connect to Supabase to buy with Diamonds.</p>',[{label:'OK'}]);return;};nwTTModal('Get '+nwTTNames[kind],`<p>Diamond balance: ${nwDiamondAmount(d.diamonds)}</p>${kind==='ticket'?`<p>${d.spent}/10,000 Diamonds spent on tickets</p>`:''}<p>Rewarded ads are coming soon.</p>`,[{label:'Buy for '+nwTTPrices[kind]+' Diamonds',disabled:d.diamonds<nwTTPrices[kind]||(kind==='ticket'&&d.spent+100>10000),run:buy},{label:'Watch Ad',run:()=>nw433ComingSoon(()=>nwTTBuy(kind))},{label:'Cancel'}]);}
 function nwTTRewardIcon(k){return k==='diamonds'?'<img class="nw-diamond-icon" src="assets/currency/diamond.png" alt="">':k==='ticket'?'<img class="nw-tt-ticket-icon" src="assets/triple/triple_ticket.png" alt="">':k==='magic'?'<span class="nw-triple-spiral" aria-hidden="true"></span>':`<span aria-hidden="true">${{shuffle:'⤨',undo:'↶'}[k]}</span>`;}
 function nwTTPackArt(p,i){return `<div class="nw431-pack tier-${i}"><div class="nw431-pack-top"><span class="nw431-pack-art" aria-hidden="true">${Array.from({length:i+2},(_,j)=>`<i style="--n:${j}">✦</i>`).join('')}</span><div><strong>${p.tickets} Tickets</strong><small>${nwDiamondAmount(p.diamonds)} Diamonds</small></div><b class="nw431-price">RM${p.price}</b></div><div class="nw431-bonuses"><span>${nwTTRewardIcon('shuffle')} ${p.shuffle} Shuffle</span>${p.magic?`<span>${nwTTRewardIcon('magic')} ${p.magic} Magic Clear</span>`:''}</div></div>`;}
+function nwTTUseInventoryTickets(){
+ const available=nwPrizeAvailable('tt_ticket');
+ if(!available){nwTTShop();return;}
+ nwTTModal('USE TICKETS','<p>Tickets in Inventory: '+available+'</p><p>How many would you like to use?</p><input id="nwTTReserveQty" type="number" inputmode="numeric" min="1" max="'+available+'" value="'+Math.min(5,available)+'" aria-label="Tickets to use"><p id="nwTTReserveError" role="status"></p>',[
+  {label:'USE TICKETS',run:async()=>{
+   const n=Math.max(1,Math.min(available,Math.trunc(Number(document.querySelector('#nwTTReserveQty')?.value)||1)));
+   try{await nwPrizeTransfer('tt_ticket',n);nwTripleHome();nwTTModal('TICKETS ADDED!','<p>+'+n+' Tickets. Ready to play!</p>',[{label:'CONTINUE'}]);}
+   catch(e){nwTTModal('COULD NOT USE TICKETS','<p>'+nwEscape(e.message)+'</p>',[{label:'OK'}]);}
+  }},{label:'CANCEL'}
+ ]);
+}
+function nwTTOutOfTickets(){
+ void nwPrizeSync().then(()=>{
+  const n=nwPrizeAvailable('tt_ticket');
+  if(n)nwTTModal('OUT OF TICKETS!','<p>You have '+n+' Tickets in Inventory. Want to use some?</p>',[{label:'YES, USE TICKETS',run:nwTTUseInventoryTickets},{label:'GET TICKETS',run:nwTTShop},{label:'NOT NOW'}]);
+  else nwTTShop();
+ }).catch(()=>nwTTShop());
+}
 function nwTTShop(){const d=nwTripleData();nwTTModal('More tickets',`<p>${nwTTCount(d)} available</p><p>Premium packs · coming soon</p>`,[{label:'Get a ticket · Diamonds or Watch Ad',run:()=>nwTTBuy('ticket')},...nwTTPacks.map((p,i)=>({label:`RM${p.price} pack`,html:nwTTPackArt(p,i),run:()=>nw433ComingSoon(nwTTShop)})),{label:'Close'}]);}
 
 async function nwLbSubmit(eventCode,score){
@@ -2015,7 +2033,7 @@ function nwTripleHome(){
  nw433FocusTrack();
  if(event){void nwTTFlushProofs();evRoot.querySelector('#nw431Rank').onclick=nwTTRank;evRoot.querySelector('#nwTTMissionsBtn').onclick=nwTTMissionsScreen;if(!d.welcomed)nwTTWelcomePopup();else nwTTBind()}else nwTTShowPendingMissionPopup()
 }
-function nwTripleBegin(stage,resume=false){const d=nwTripleSessionData();if(nwTripleInEvent()){if(!d.welcomed){nwTTWelcomePopup();return;}if(nwTTCount(d)<=0){nwTTShop();return;}stage=d.stage;}const a=d.active;const resumed=resume&&a?.version>=2&&a.stage===stage&&!a.won&&a.week===nwTripleWeek()&&a.practice===!nwTripleInEvent();if(nwTripleInEvent()&&!resumed)nwTTMissionEvent('plays');nwTriple=resumed?a:nwTripleCreate(stage);if(nwTripleInEvent())void nwTTStartAttempt(stage);nwTripleDraw()}
+function nwTripleBegin(stage,resume=false){const d=nwTripleSessionData();if(nwTripleInEvent()){if(!d.welcomed){nwTTWelcomePopup();return;}if(nwTTCount(d)<=0){nwTTOutOfTickets();return;}stage=d.stage;}const a=d.active;const resumed=resume&&a?.version>=2&&a.stage===stage&&!a.won&&a.week===nwTripleWeek()&&a.practice===!nwTripleInEvent();if(nwTripleInEvent()&&!resumed)nwTTMissionEvent('plays');nwTriple=resumed?a:nwTripleCreate(stage);if(nwTripleInEvent())void nwTTStartAttempt(stage);nwTripleDraw()}
 function nwTripleStackArt(symbol,depth){
  return Array.from({length:Math.max(0,depth-1)},(_,i)=>`<span class="nw-triple-hidden-back" style="--tt-back:${depth-1-i}" aria-hidden="true"></span>`).join('')+`<span class="nw-triple-stack-face">${nwTripleArt(symbol)}</span>`;
 }
