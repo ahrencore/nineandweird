@@ -2069,7 +2069,7 @@ async function nwDailyScreen(){
   const c=await nwCloud.get(),{data,error}=await c.rpc('nw_daily_signin_status');
   if(error)throw Error(error.message);
   if(nwCloud?.user()?.id!==account)return;
-  nwDailyRender(data);
+  nwDailyRender({...data,account});
  }catch(e){if(nwCloud?.user()?.id===account){const area=evRoot.querySelector('.nw-daily-screen');if(area)area.innerHTML='<h2>DAILY SIGN-IN</h2><p class="nw-daily-status">'+nwEscape(e.message)+'</p><button class="nw-daily-action" id="nwDailyRetry">RETRY</button>';evRoot.querySelector('#nwDailyRetry').onclick=nwDailyScreen;}}
 }
 function nwDailyRender(status,notice=''){
@@ -2082,7 +2082,7 @@ function nwDailyRender(status,notice=''){
   try{
    const c=await nwCloud.get(),{data,error}=await c.rpc('nw_daily_signin_claim');
    if(error)throw Error(error.message);
-   if(nwCloud?.user()?.id!==status.account&&status.account)return;
+   if(nwCloud?.user()?.id!==status.account||!evRoot.classList.contains('nw-daily-theme'))return;
    if(data.claimed){
     await Promise.allSettled([nwWalletSync(),nwPrizeSync()]);
     nwDailyRender({...status,day:data.next_day,can_claim:false},'DAY '+data.day+' CLAIMED! ✦');
