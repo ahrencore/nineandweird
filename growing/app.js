@@ -179,7 +179,7 @@ function chooseReserveEnergy(amount){
 }
 function shop(kind='energy'){sync();const list=kind==='energy'?[['energy',30,100],['juice',1,100],['ray',1,80]]:[['juice',1,100],['ray',1,80],['energy',30,100]];overlay(kind==='boost'?'BOOSTER SHOP':'GET ENERGY',`<p class="hint">💎 ${fmt(state.diamonds)}</p>${list.map(([k,n,c])=>`<div class="item"><div><strong>${itemIcon(k)} ${n} ${k}</strong><small></small></div><button class="btn" data-buy="${k}" data-count="${n}" data-cost="${c}">💎 ${c}</button></div>`).join('')}<h3 style="color:#e5a6ff">PREMIUM PACKS</h3><div class="hint"></div>`,[['VIEW PACKS',packsScreen],['CLOSE',()=>{}]]);const m=document.querySelector('.modal-shade');m.querySelectorAll('[data-buy]').forEach(b=>b.onclick=async()=>{const type=b.dataset.buy,n=+b.dataset.count,c=+b.dataset.cost;if(b.disabled)return;b.disabled=true;
  try{
-  if(state.diamonds<c){m.remove();modalActive=false;overlay('NOT ENOUGH DIAMONDS','<p>Not enough Diamonds.</p>');return}
+  if(state.diamonds<c){m.remove();modalActive=false;overlay('NOT ENOUGH DIAMONDS','<p>You need more Diamonds to get Energy.</p>',[['VIEW PACKS',packsScreen],['BACK TO ENERGY',()=>shop('energy')],['CLOSE',()=>{}]]);return}
   if(EMBEDDED&&typeof window.parent.nwWalletCurrent==='function'&&window.parent.nwWalletCurrent()){
    await window.parent.nwWalletPurchase('tg_'+type);
    state.diamonds=window.parent.nwDiamondBalance();
