@@ -2039,6 +2039,59 @@ function nwLobbyUpdateEventStatus(){
   if(evRoot.hidden||!evRoot.classList.contains('nw-lobby-theme'))return;
   evRoot.querySelectorAll('[data-lobby-event]').forEach(el=>{const state=nwLobbyEventStatus(el.dataset.lobbyEvent);el.classList.toggle('is-live',state.live);const label=el.querySelector('textPath');if(label&&label.textContent!==state.label){label.textContent=state.label;el.setAttribute('aria-label',el.dataset.eventName+' — '+state.label);}});
 }
+/* 7-Day Daily Sign-In — the server owns UTC eligibility, rotation, and rewards. */
+const nwDailyRewards=[
+ {label:'50 Diamonds',icon:'diamonds'},
+ {label:'2 Sudoku Hints',icon:'sudoku_hint'},
+ {label:'5 Triple Trouble Tickets',icon:'tt_ticket'},
+ {label:"30 They're Growing! Energy",icon:'tg_energy'},
+ {label:'100 Diamonds',icon:'diamonds'},
+ {label:'1 Undo + 1 Shuffle',icon:'tt_undo'},
+ {label:'200 Diamonds + 5 TT Tickets',icon:'diamonds'}
+];
+let nwDailyClaimInFlight=false;
+function nwDailyGiftArt(){
+ return '<svg viewBox="0 0 48 48" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="20" width="32" height="22" rx="3" stroke="#BCADD9" stroke-width="2.8"/><path d="M6 20v-7h36v7H6Z" fill="#2A1F44" stroke="#BCADD9" stroke-width="2.8"/><path d="M24 13v29M20 13C9 12 10 3 17 5c4 1 7 8 7 8Zm4 0c2-9 9-11 12-7 3 6-5 7-12 7Z" stroke="#F08BC2" stroke-width="2.8"/></svg>';
+}
+function nwDailyPortal(){
+ return '<button id="nwDailyPortal" type="button" class="nw-daily-mini" aria-label="Open Daily Sign-In rewards"><span class="nw-daily-mini-disc">'+nwDailyGiftArt()+'</span><svg class="nw-daily-mini-label" viewBox="0 0 100 100" aria-hidden="true"><defs><path id="nwDailyPortalArc" d="M10 50 A40 40 0 0 1 90 50"/></defs><text><textPath href="#nwDailyPortalArc" startOffset="50%" text-anchor="middle">DAILY SIGN-IN</textPath></text></svg><span class="nw-daily-mini-orbit" aria-hidden="true">✦</span></button>';
+}
+function nwDailyTile(i,day,canClaim){
+ const r=nwDailyRewards[i],n=i+1,done=(!canClaim&&n===day-1)||(n<day),active=canClaim&&n===day;
+ const art=r.icon==='diamonds'?'<img src="assets/currency/diamond.png" alt="">':nwPrizeIcon(r.icon);
+ return '<div class="nw-daily-tile '+(done?'is-done':active?'is-ready':'')+'"><small>DAY '+n+'</small><div class="nw-daily-tile-gift">'+nwDailyGiftArt()+'</div><span class="nw-daily-tile-art">'+art+'</span><strong>'+nwEscape(r.label)+'</strong>'+(done?'<span class="nw-daily-check">✓</span>':'')+'</div>';
+}
+async function nwDailyScreen(){
+ applyTheme('hub');evRoot.classList.add('nw-daily-theme');
+ evDisplay(evHeader('',showCategories)+'<section class="nw-daily-screen"><h2>DAILY SIGN-IN</h2><p class="nw-daily-intro">A little something for showing up ♡</p><p class="nw-daily-status">CHECKING YOUR REWARDS…</p></section>');
+ const account=nwCloud?.user()?.id;
+ try{
+  const c=await nwCloud.get(),{data,error}=await c.rpc('nw_daily_signin_status');
+  if(error)throw Error(error.message);
+  if(nwCloud?.user()?.id!==account)return;
+  nwDailyRender(data);
+ }catch(e){if(nwCloud?.user()?.id===account){const area=evRoot.querySelector('.nw-daily-screen');if(area)area.innerHTML='<h2>DAILY SIGN-IN</h2><p class="nw-daily-status">'+nwEscape(e.message)+'</p><button class="nw-daily-action" id="nwDailyRetry">RETRY</button>';evRoot.querySelector('#nwDailyRetry').onclick=nwDailyScreen;}}
+}
+function nwDailyRender(status,notice=''){
+ const day=Number(status.day)||1,canClaim=!!status.can_claim;
+ const grid=nwDailyRewards.slice(0,6).map((r,i)=>nwDailyTile(i,day,canClaim)).join('');
+ const last=nwDailyTile(6,day,canClaim);
+ evDisplay(evHeader('',showCategories)+'<section class="nw-daily-screen"><div class="nw-daily-stars" aria-hidden="true">✦ ⋆ ✧</div><h2>DAILY SIGN-IN</h2><p class="nw-daily-intro">A little something for showing up ♡</p><div class="nw-daily-grid">'+grid+'</div><div class="nw-daily-final">'+last+'</div><p class="nw-daily-rule">Missed a day? Your progress stays right here.</p><p class="nw-daily-status" role="status">'+(notice?nwEscape(notice):canClaim?'Your Day '+day+' reward is ready!':'Already claimed today. Come back after 00:00 UTC.')+'</p><button class="nw-daily-action" id="nwDailyClaim" '+(canClaim?'':'disabled')+'>'+(canClaim?'CLAIM DAY '+day+' ✦':'CLAIMED ✓')+'</button></section>');
+ const b=evRoot.querySelector('#nwDailyClaim');if(b&&canClaim)b.onclick=async()=>{
+  if(nwDailyClaimInFlight)return;nwDailyClaimInFlight=true;b.disabled=true;b.textContent='CLAIMING…';
+  try{
+   const c=await nwCloud.get(),{data,error}=await c.rpc('nw_daily_signin_claim');
+   if(error)throw Error(error.message);
+   if(nwCloud?.user()?.id!==status.account&&status.account)return;
+   if(data.claimed){
+    await Promise.allSettled([nwWalletSync(),nwPrizeSync()]);
+    nwDailyRender({...status,day:data.next_day,can_claim:false},'DAY '+data.day+' CLAIMED! ✦');
+   }else nwDailyRender({...status,day:data.next_day||day,can_claim:false},'Already claimed today.');
+  }catch(e){b.disabled=false;b.textContent='TRY AGAIN';const info=evRoot.querySelector('.nw-daily-status');if(info)info.textContent=e.message;}
+  finally{nwDailyClaimInFlight=false;}
+ };
+}
+
 let nwLobbyClock=null;
 function nwLobbyTitle(){return `<h1 class="nw-lobby-title" aria-label="Nine & Weird"><span class="nw-lobby-title-spark a" aria-hidden="true">✦</span><span class="nw-lobby-title-spark b" aria-hidden="true">✧</span><span class="nw-lobby-title-spark c" aria-hidden="true">⋆</span><span class="nw-lobby-title-letters" aria-hidden="true">${Array.from('NINE & WEIRD',(c,i)=>`<span style="--letter-delay:${i*.11}s">${nwEscape(c)}</span>`).join('')}</span></h1>`;}
 function nwLobbyPortal(id,cls,title,decor){
@@ -2078,7 +2131,7 @@ function showCategories(){
   const nav=(id,title,art)=>`<button type="button" class="nw-lobby-nav" id="${id}">${art}<strong>${title}</strong></button>`;
   const portal=nwLobbyPortal;
   evRoot.classList.add('nw-lobby-v37');
-  evDisplay(`<header class="nw-lobby-top"><button id="nwProfileButton" class="nw-lobby-profile" aria-label="Open player profile">${nwFrameArt(p.avatar)}<strong>${nwEscape(p.name)}</strong></button><div class="nw-lobby-top-right"><span class="nw-lobby-money">${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</span><button id="nwLobbySettings" class="nw-lobby-icon" aria-label="Settings">${nwLobbyIcon('settings')}</button></div></header><section class="nw-lobby">${nwLobbyTitle()}
+  evDisplay(`<header class="nw-lobby-top"><button id="nwProfileButton" class="nw-lobby-profile" aria-label="Open player profile">${nwFrameArt(p.avatar)}<strong>${nwEscape(p.name)}</strong></button>${nwDailyPortal()}<div class="nw-lobby-top-right"><span class="nw-lobby-money">${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</span><button id="nwLobbySettings" class="nw-lobby-icon" aria-label="Settings">${nwLobbyIcon('settings')}</button></div></header><section class="nw-lobby">${nwLobbyTitle()}
     ${nav('nwWorlds','WORLDS',`<span class="nw-lobby-nav-art nw-lobby-planet"><svg viewBox="0 0 80 70" aria-hidden="true"><g fill="none" stroke="#81C8FF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 30C20 11 41 6 54 17C68 30 61 50 47 56C33 62 19 52 18 40"/><path d="M19 26C4 37 4 49 17 48C34 48 62 30 70 20C77 9 62 10 55 15"/></g><path d="M37 20l2 5 5 2-5 2-2 5-2-5-5-2 5-2Z" fill="#81C8FF"/></svg></span>`)}
     <section class="nw-event-carousel" aria-label="Events"><div class="nw-event-heading">EVENTS</div><div class="nw-event-viewport"><div class="nw-event-track">
     ${portal('nwTriplePortal','triple','TRIPLE<br>TROUBLE','⋆˚꩜｡')}
@@ -2089,7 +2142,7 @@ function showCategories(){
     <div class="nw-lobby-bottom">${nav('nwMail','MAIL',`<span class="nw-lobby-nav-art nw-lobby-mail" aria-hidden="true"><svg viewBox="0 0 80 70" aria-hidden="true"><g fill="none" stroke="#F08BC2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 19Q12 16 17 16H63Q68 16 68 21V51Q68 55 63 55H17Q12 55 12 50V21Q12 20 13 19Z"/><path d="M15 20Q27 31 39 40Q41 42 43 40L65 20"/></g></svg></span>`)}${nav('nwTrophy','TROPHY CASE',`<span class="nw-lobby-nav-art nw-lobby-trophy"><svg viewBox="0 0 80 70" aria-hidden="true"><path d="M24 11H56V29Q56 44 40 47Q24 44 24 29Z M24 16H11V25Q11 39 29 39 M56 16H69V25Q69 39 51 39 M40 47V58 M27 62H53" fill="none" stroke="#ffcf9a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 16l3 8 8 3-8 3-3 8-3-8-8-3 8-3Z" fill="#ffe6bb"/></svg></span>`)}${nav('nwLobbyShop','SHOP',`<span class="nw-lobby-nav-art nw-lobby-shop"><svg viewBox="0 0 80 70" aria-hidden="true"><g fill="none" stroke="#F8EBDD" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 27Q15 27 15 31L17 56Q17 59 21 59H59Q63 59 63 55L65 31Q65 27 61 27H17Z"/><path d="M30 29V18Q30 9 40 9Q50 9 50 18V29"/></g></svg></span>`)}</div></section>`);
   const by=id=>evRoot.querySelector('#'+id);const openRooms=collection=>{roomCollection=collection;nwScroll[collection]=0;nwRoomPages[collection]=0;showRooms(0)};
   nwLastMailNoticeCheck=Date.now();void nwPrizeRefreshMailNotice();
-  by('nwWorlds').onclick=()=>openRooms('all');by('nwMail').onclick=()=>nwLobbyUtility('mail');by('nwTriplePortal').onclick=nwTripleHome;by('nwDoublePortal').onclick=nwDoublePracticeScreen;by('nwGrowingPortal').onclick=nwGrowingOpen;by('nwBattle').onclick=showBattle;by('nwTrophy').onclick=()=>nwShowTrophy();by('nwProfileButton').onclick=nwShowProfile;by('nwLobbyShop').onclick=()=>nwLobbyUtility('shop');by('nwLobbySettings').onclick=()=>nwLobbyUtility('settings');if(nwLobbyClock===null)nwLobbyClock=setInterval(()=>{if(evRoot.hidden||!evRoot.querySelector('[data-lobby-event]')){clearInterval(nwLobbyClock);nwLobbyClock=null;return;}nwLobbyUpdateEventStatus();if(Date.now()-nwLastMailNoticeCheck>=30000){nwLastMailNoticeCheck=Date.now();void nwPrizeRefreshMailNotice();}},1000);nwBindEventCarousel();nwResetViewToTop();
+  by('nwDailyPortal').onclick=nwDailyScreen;by('nwWorlds').onclick=()=>openRooms('all');by('nwMail').onclick=()=>nwLobbyUtility('mail');by('nwTriplePortal').onclick=nwTripleHome;by('nwDoublePortal').onclick=nwDoublePracticeScreen;by('nwGrowingPortal').onclick=nwGrowingOpen;by('nwBattle').onclick=showBattle;by('nwTrophy').onclick=()=>nwShowTrophy();by('nwProfileButton').onclick=nwShowProfile;by('nwLobbyShop').onclick=()=>nwLobbyUtility('shop');by('nwLobbySettings').onclick=()=>nwLobbyUtility('settings');if(nwLobbyClock===null)nwLobbyClock=setInterval(()=>{if(evRoot.hidden||!evRoot.querySelector('[data-lobby-event]')){clearInterval(nwLobbyClock);nwLobbyClock=null;return;}nwLobbyUpdateEventStatus();if(Date.now()-nwLastMailNoticeCheck>=30000){nwLastMailNoticeCheck=Date.now();void nwPrizeRefreshMailNotice();}},1000);nwBindEventCarousel();nwResetViewToTop();
 }
 function showRooms(page=0){
   const ids=roomCollection==='fav'?nwFavs():['favorites',...nwGalaxyOrder];
