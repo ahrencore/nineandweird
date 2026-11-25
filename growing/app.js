@@ -123,7 +123,7 @@ const APP=(()=>{
    if(locked)return;
    sync();
    if(state.gameOver){turnNote='Use a booster or restart to continue.';game();return}
-   if(!energy()){turnNote='No Energy left; visit Get Energy.';game();return}
+   if(!energy()){offerEnergyRefill();return}
    const result=E.move(state.board,state.queue,from,to,state.verifier?()=>nextVerifiedRandom(state.verifier):Math.random);
    if(!result.ok){turnNote='No unobstructed path to that hex. Zero Energy spent.';game();return}
    locked=true;spend();state.board=result.board;state.queue=result.queue;state.gameOver=result.gameOver;points(result.merges);if(state.verifier&&state.verifier.period===state.weekId)state.verifier.actions.push({type:'move',from,to});state.daily.merges+=result.merges.length;sendVerifiedProof();if(EMBEDDED&&live()&&state.score>0)void window.parent.nwLbSubmit('tg',state.score).catch(e=>console.warn('Growing rank sync:',e.message));
@@ -152,7 +152,32 @@ const APP=(()=>{
  function guide(){overlay('EVOLUTION GUIDE',`<div class="roster">${names.map((n,i)=>`<div class="${state.discovered.includes(i+1)?'':'locked'}">${img(i+1)}<br><b>${i+1}</b> ${n}</div>`).join('')}</div>`)}
  function useBooster(kind){sync();if(!state[kind]){overlay('NO BOOSTERS',`<p>You have no ${kind==='juice'?'Mutation Juice':'Shrink Ray'} left.</p>`,[['SHOP',()=>shop('boost')],['CLOSE',()=>{}]]);return}const result=kind==='juice'?E.juice(state.board):E.shrink(state.board);if(!result||((kind==='juice')&&!result.merges.length)){overlay('NO EFFECT',`<p>${kind==='juice'?'You need at least four creatures of one level anywhere on the board.':'You must have at least four creatures on the board.'} The item was not consumed.</p>`);return}overlay(kind==='juice'?'MUTATION JUICE':'SHRINK RAY',`<p>${kind==='juice'?`Merge same-level creatures anywhere. ${result.merges.length} merge(s) available.`:'Remove exactly the three lowest-level creatures for ZERO points.'}</p>`,[['USE BOOSTER',()=>{const fresh=kind==='juice'?E.juice(state.board):E.shrink(state.board);if(!fresh)return;state.board=fresh.board;state[kind]--;if(kind==='juice')points(fresh.merges);if(state.verifier&&state.verifier.period===state.weekId)state.verifier.actions.push({type:kind});state.gameOver=false;sendVerifiedProof();turnNote='Booster used. Keep growing!';save();game();showNotices()}],['CANCEL',()=>{}]])}
  function restart(){overlay('RESTART BOARD?',`<p>The current 37-hex arrangement will be replaced. Your earned score, Diamonds, Energy, discoveries and milestones remain untouched.</p>`,[['RESTART',()=>{if(state.verifier&&state.verifier.period===state.weekId){const rng=()=>nextVerifiedRandom(state.verifier);state.board=E.initial(rng);state.queue=E.nextQueue(state.board,rng);state.verifier.actions.push({type:'restart'});}else{state.board=E.initial();state.queue=E.nextQueue(state.board);}state.gameOver=false;sendVerifiedProof();selected=-1;turnNote='Fresh board!';save();game()}],['CANCEL',()=>{}]])}
- function shop(kind='energy'){sync();const list=kind==='energy'?[['energy',10,100],['juice',1,100],['ray',1,80]]:[['juice',1,100],['ray',1,80],['energy',10,100]];overlay(kind==='boost'?'BOOSTER SHOP':'GET ENERGY',`<p class="hint">💎 ${fmt(state.diamonds)}</p>${list.map(([k,n,c])=>`<div class="item"><div><strong>${itemIcon(k)} ${n} ${k}</strong><small></small></div><button class="btn" data-buy="${k}" data-count="${n}" data-cost="${c}">💎 ${c}</button></div>`).join('')}<h3 style="color:#e5a6ff">PREMIUM PACKS</h3><div class="hint"></div>`,[['VIEW PACKS',packsScreen],['CLOSE',()=>{}]]);const m=document.querySelector('.modal-shade');m.querySelectorAll('[data-buy]').forEach(b=>b.onclick=async()=>{const type=b.dataset.buy,n=+b.dataset.count,c=+b.dataset.cost;if(b.disabled)return;b.disabled=true;
+ function offerEnergyRefill(){
+ if(modalActive)return;
+ const available=EMBEDDED&&typeof window.parent.nwGrowingInventoryAmount==='function'?window.parent.nwGrowingInventoryAmount():0;
+ if(available>0)overlay('OUT OF ENERGY!','<p>You have '+available+' Energy in Inventory. Want to use some?</p>',[['YES, USE ENERGY',()=>chooseReserveEnergy(available)],['NOT NOW',()=>{}]]);
+ else overlay('OUT OF ENERGY!','<p>There is no Energy left in Inventory.</p>',[['GET ENERGY',()=>shop('energy')],['NOT NOW',()=>{}]]);
+}
+function chooseReserveEnergy(amount){
+ const max=Math.max(0,Math.trunc(amount));if(!max){shop('energy');return;}
+ overlay('USE ENERGY','<p>In Inventory: <strong>'+max+'</strong></p><div class="nw-grow-refill-count"><button type="button" data-nw-delta="-1">−</button><input id="nwEnergyQty" type="number" min="1" max="'+max+'" value="'+Math.min(30,max)+'" inputmode="numeric" aria-label="Energy to use"><button type="button" data-nw-delta="1">+</button></div><p id="nwEnergyRefillMessage" role="status"></p>',[['USE ENERGY',()=>{}],['BACK',offerEnergyRefill]]);
+ const modal=document.querySelector('.modal-shade'),input=modal.querySelector('#nwEnergyQty');
+ const quantity=()=>Math.max(1,Math.min(max,Math.trunc(Number(input.value)||1)));
+ const update=()=>{input.value=String(quantity())};
+ modal.querySelectorAll('[data-nw-delta]').forEach(b=>b.onclick=()=>{input.value=quantity()+Number(b.dataset.nwDelta);update()});
+ input.onchange=update;
+ const choices=modal.querySelectorAll('[data-choice]');choices[0].onclick=async()=>{
+  const n=quantity();choices[0].disabled=true;choices[1].disabled=true;
+  try{
+   if(!EMBEDDED||typeof window.parent.nwGrowingUseReserve!=='function')throw Error('Inventory unavailable');
+   await window.parent.nwGrowingUseReserve(n);
+   if(modal.isConnected){modal.remove();modalActive=false;}
+   save();game();
+   overlay('ENERGY ADDED!','<p>+'+n+' Energy. You can keep playing right here.</p>',[['CONTINUE',()=>{}]]);
+  }catch(e){if(modal.isConnected){modal.querySelector('#nwEnergyRefillMessage').textContent=e.message;choices[0].disabled=false;choices[1].disabled=false;}}
+ };
+}
+function shop(kind='energy'){sync();const list=kind==='energy'?[['energy',30,100],['juice',1,100],['ray',1,80]]:[['juice',1,100],['ray',1,80],['energy',30,100]];overlay(kind==='boost'?'BOOSTER SHOP':'GET ENERGY',`<p class="hint">💎 ${fmt(state.diamonds)}</p>${list.map(([k,n,c])=>`<div class="item"><div><strong>${itemIcon(k)} ${n} ${k}</strong><small></small></div><button class="btn" data-buy="${k}" data-count="${n}" data-cost="${c}">💎 ${c}</button></div>`).join('')}<h3 style="color:#e5a6ff">PREMIUM PACKS</h3><div class="hint"></div>`,[['VIEW PACKS',packsScreen],['CLOSE',()=>{}]]);const m=document.querySelector('.modal-shade');m.querySelectorAll('[data-buy]').forEach(b=>b.onclick=async()=>{const type=b.dataset.buy,n=+b.dataset.count,c=+b.dataset.cost;if(b.disabled)return;b.disabled=true;
  try{
   if(state.diamonds<c){m.remove();modalActive=false;overlay('NOT ENOUGH DIAMONDS','<p>Not enough Diamonds.</p>');return}
   if(EMBEDDED&&typeof window.parent.nwWalletCurrent==='function'&&window.parent.nwWalletCurrent()){
