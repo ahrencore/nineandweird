@@ -5471,3 +5471,28 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
 @media(prefers-reduced-motion:reduce){
  #game.theme-diner .nw-diner-difficulty{transition:none!important;}
 }
+
+/* DNET Option A approval: uncluttered puffy pin-up cartoon buttons.
+   Only this world's difficulty choices, no palette or gameplay changes. */
+#game.theme-diner .difficulty-list .nw-diner-difficulty{
+ height:clamp(54px,14vw,66px)!important;
+ filter:drop-shadow(0 2px 0 #09292D)!important;
+}
+#game.theme-diner .nw-diner-difficulty > span{
+ font-family:'Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif!important;
+ font-size:clamp(23px,7vw,36px)!important;
+ font-weight:900!important;
+ font-style:italic!important;
+ letter-spacing:-.035em!important;
+ color:#FFF0D5!important;
+ text-shadow:none!important;
+ line-height:1!important;
+ transform:skew(-3deg);
+}
+#game.theme-diner .nw-diner-difficulty:active{
+ filter:drop-shadow(0 0 0 #09292D)!important;
+}
+@media(max-height:690px){
+ #game.theme-diner .difficulty-list .nw-diner-difficulty{height:49px!important;}
+ #game.theme-diner .nw-diner-difficulty > span{font-size:clamp(22px,6.2vw,30px)!important;}
+}
