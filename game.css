@@ -5013,7 +5013,7 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
 }
 #game.theme-hub.nw-let-shell{
  background:#120D1C!important;color:#FFF4FC!important;
- width:100%;max-width:560px;height:100dvh;min-height:0!important;
+ width:100%;max-width:760px;height:100dvh;min-height:0!important;
  margin:0 auto;padding:0!important;display:flex;flex-direction:column;overflow:hidden!important;
 }
 #game.nw-let-shell>.ev-head{
