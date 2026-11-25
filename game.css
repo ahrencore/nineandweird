@@ -5006,3 +5006,29 @@ body:has(#game.nw-cosmic-mail-theme:not([hidden])){background:#0B1020!important;
 @media(prefers-reduced-motion:reduce){
  #game .nw-let-promo-let,#game .nw-let-promo-me,#game .nw-let-promo-out{animation:none!important;opacity:1!important;transform:none!important}
 }
+
+/* LET ME OUT! V2: single-screen Blacklight Candy shell, no page scrollbar. */
+html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidden])){
+ background:#120D1C!important;color:#FFF4FC!important;height:100%;overflow:hidden!important
+}
+#game.theme-hub.nw-let-shell{
+ background:#120D1C!important;color:#FFF4FC!important;
+ width:100%;max-width:560px;height:100dvh;min-height:0!important;
+ margin:0 auto;padding:0!important;display:flex;flex-direction:column;overflow:hidden!important;
+}
+#game.nw-let-shell>.ev-head{
+ flex:0 0 auto;min-height:58px!important;margin:0!important;padding:7px 12px!important;
+ background:#181022!important;border:0!important;border-bottom:1px solid #674B80!important;
+ color:#F9E8FF!important;box-shadow:none!important;top:auto!important;position:relative!important
+}
+#game.nw-let-shell>.ev-head strong{font-family:'Creepster',Impact,fantasy!important;font-size:clamp(20px,4vw,28px)!important;font-weight:400!important;letter-spacing:.3px!important;color:#FF76D8!important;text-shadow:0 0 8px #FF76D83D!important}
+#game.nw-let-shell>.ev-head [data-back]{background:#271A36!important;border-color:#79528E!important;color:#FFF4FC!important}
+#game.nw-let-shell>.ev-head .nw-shared-utilities{color:#FFF4FC!important}
+#game.nw-let-shell>.ev-head .nw-shared-settings{background:#271A36!important;border-color:#79528E!important;color:#FFF4FC!important}
+#game.nw-let-shell>.nw-let-frame-container{
+ width:100%;max-width:none;flex:1 1 auto;height:auto;min-height:0!important;
+ margin:0;padding:0;overflow:hidden;background:#120D1C
+}
+#game.nw-let-shell>.nw-let-frame-container iframe{
+ display:block;width:100%;height:100%;min-height:0!important;border:0;overflow:hidden;background:#120D1C
+}
