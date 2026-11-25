@@ -5132,3 +5132,46 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
 /* Main menu already has the large Nine & Weird logo: no duplicate small title. */
 #game.nw-lobby-v37 > header.nw-lobby-top{padding-bottom:0!important;}
 #game.nw-lobby-v37 .nw-lobby-brand{display:none!important;}
+
+/* Daily Sign-In: native-style lobby overlay, without navigating away. */
+#game .nw-daily-popover{
+ position:fixed;inset:0;z-index:10050;
+ background:#070817D9;
+ display:flex;align-items:center;justify-content:center;
+ padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px));
+ box-sizing:border-box;
+}
+#game .nw-daily-dialog{
+ position:relative;box-sizing:border-box;width:min(100%,440px);max-height:calc(100dvh - 24px);
+ overflow-y:auto;overscroll-behavior:contain;
+ border:1.5px solid #8E83BE;border-radius:21px;
+ background:radial-gradient(ellipse at 50% 0%,#373055 0%,#191B35 55%,#101329 100%);
+ box-shadow:0 22px 65px #03040CEB,0 0 22px #F08BC224;
+ scrollbar-width:thin;scrollbar-color:#8E83BE #191B35;
+ color:#F8EBDD;
+}
+#game .nw-daily-dialog .nw-daily-popup-close{
+ position:absolute;right:10px;top:9px;z-index:2;
+ display:grid;place-items:center;width:33px;height:33px;
+ border:1px solid #8E83BE;border-radius:50%;
+ background:#302B46;color:#F8EBDD;font:400 24px/1 'Gaegu',system-ui,sans-serif;cursor:pointer;
+}
+#game .nw-daily-popup-label{
+ padding:14px 45px 0;text-align:center;
+ font:400 10px/1.3 'Oxanium',system-ui,sans-serif;letter-spacing:.16em;color:#BCADD9;
+}
+#game .nw-daily-dialog .nw-daily-screen{padding:9px 13px 18px;gap:9px;}
+#game .nw-daily-dialog .nw-daily-screen h2{font-size:clamp(23px,6vw,30px);}
+#game .nw-daily-dialog .nw-daily-tile{min-height:105px;padding:7px 4px;gap:3px;}
+#game .nw-daily-dialog .nw-daily-tile-gift{width:33px;height:33px;}
+#game .nw-daily-dialog .nw-daily-tile strong{font-size:11px;}
+#game .nw-daily-dialog .nw-daily-final .nw-daily-tile{min-height:82px;}
+#game .nw-daily-dialog .nw-daily-final .nw-daily-tile-gift{width:37px;height:37px;}
+#game .nw-daily-dialog .nw-daily-intro{font-size:13px;margin:0;}
+#game .nw-daily-dialog .nw-daily-rule{margin:0;}
+#game .nw-daily-dialog button:focus-visible{outline:2px solid #F4ED91;outline-offset:2px;}
+@media(max-height:700px){
+ #game .nw-daily-dialog .nw-daily-tile{min-height:88px;}
+ #game .nw-daily-dialog .nw-daily-final .nw-daily-tile{min-height:70px;}
+ #game .nw-daily-dialog .nw-daily-screen{gap:6px;padding-bottom:12px;}
+}
