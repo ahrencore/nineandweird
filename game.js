@@ -2163,24 +2163,85 @@ async function nwDailyScreen(){
   nwDailyRender({...data,account});
  }catch(e){if(nwCloud?.user()?.id===account){const area=evRoot.querySelector('.nw-daily-screen');if(area)area.innerHTML='<h2>DAILY SIGN-IN</h2><p class="nw-daily-status">'+nwEscape(e.message)+'</p><button class="nw-daily-action" id="nwDailyRetry">RETRY</button>';evRoot.querySelector('#nwDailyRetry').onclick=nwDailyScreen;}}
 }
-function nwDailyRender(status,notice=''){
+function nwDailyRewardMarkup(status,notice=''){
  const day=Number(status.day)||1,canClaim=!!status.can_claim;
  const grid=nwDailyRewards.slice(0,6).map((r,i)=>nwDailyTile(i,day,canClaim)).join('');
  const last=nwDailyTile(6,day,canClaim);
- evDisplay(evHeader('',showCategories)+'<section class="nw-daily-screen"><div class="nw-daily-stars" aria-hidden="true">✦ ⋆ ✧</div><h2>DAILY SIGN-IN</h2><p class="nw-daily-intro">A little something for showing up ♡</p><div class="nw-daily-grid">'+grid+'</div><div class="nw-daily-final">'+last+'</div><p class="nw-daily-rule">Missed a day? Your progress stays right here.</p><p class="nw-daily-status" role="status">'+(notice?nwEscape(notice):canClaim?'Your Day '+day+' reward is ready!':'Already claimed today. Come back after 00:00 UTC.')+'</p><button class="nw-daily-action" id="nwDailyClaim" '+(canClaim?'':'disabled')+'>'+(canClaim?'CLAIM DAY '+day+' ✦':'CLAIMED ✓')+'</button></section>');
- const b=evRoot.querySelector('#nwDailyClaim');if(b&&canClaim)b.onclick=async()=>{
-  if(nwDailyClaimInFlight)return;nwDailyClaimInFlight=true;b.disabled=true;b.textContent='CLAIMING…';
+ return '<section class="nw-daily-screen"><div class="nw-daily-stars" aria-hidden="true">✦ ⋆ ✧</div><h2>DAILY SIGN-IN</h2><p class="nw-daily-intro">A little something for showing up ♡</p><div class="nw-daily-grid">'+grid+'</div><div class="nw-daily-final">'+last+'</div><p class="nw-daily-rule">Missed a day? Your progress stays right here.</p><p class="nw-daily-status" role="status">'+(notice?nwEscape(notice):canClaim?'Your Day '+day+' reward is ready!':'Already claimed today. Come back after 00:00 UTC.')+'</p><button class="nw-daily-action" id="nwDailyClaim" '+(canClaim?'':'disabled')+'>'+(canClaim?'CLAIM DAY '+day+' ✦':'CLAIMED ✓')+'</button></section>';
+}
+function nwDailyBindClaim(status,root,popup=false){
+ const b=root.querySelector('#nwDailyClaim');if(!b||!status.can_claim)return;
+ b.onclick=async()=>{
+  if(nwDailyClaimInFlight)return;
+  nwDailyClaimInFlight=true;b.disabled=true;b.textContent='CLAIMING…';
   try{
    const c=await nwCloud.get(),{data,error}=await c.rpc('nw_daily_signin_claim');
    if(error)throw Error(error.message);
-   if(nwCloud?.user()?.id!==status.account||!evRoot.classList.contains('nw-daily-theme'))return;
-   if(data.claimed){
-    await Promise.allSettled([nwWalletSync(),nwPrizeSync()]);
-    nwDailyRender({...status,day:data.next_day,can_claim:false},'DAY '+data.day+' CLAIMED! ✦');
-   }else nwDailyRender({...status,day:data.next_day||day,can_claim:false},'Already claimed today.');
-  }catch(e){b.disabled=false;b.textContent='TRY AGAIN';const info=evRoot.querySelector('.nw-daily-status');if(info)info.textContent=e.message;}
-  finally{nwDailyClaimInFlight=false;}
+   if(nwCloud?.user()?.id!==status.account||!root.isConnected)return;
+   if(popup){
+    if(!root.classList.contains('nw-daily-popover'))return;
+    if(data.claimed)await Promise.allSettled([nwWalletSync(),nwPrizeSync()]);
+    nwDailyClosePopup();
+   }else{
+    if(!evRoot.classList.contains('nw-daily-theme'))return;
+    if(data.claimed){
+     await Promise.allSettled([nwWalletSync(),nwPrizeSync()]);
+     nwDailyRender({...status,day:data.next_day,can_claim:false},'DAY '+data.day+' CLAIMED! ✦');
+    }else nwDailyRender({...status,day:data.next_day||status.day,can_claim:false},'Already claimed today.');
+   }
+  }catch(e){
+   if(root.isConnected){b.disabled=false;b.textContent='TRY AGAIN';const info=root.querySelector('.nw-daily-status');if(info)info.textContent=e.message||'Claim failed. Please try again.';}
+  }finally{nwDailyClaimInFlight=false;}
  };
+}
+function nwDailyRender(status,notice=''){
+ evDisplay(evHeader('',showCategories)+nwDailyRewardMarkup(status,notice));
+ nwDailyBindClaim(status,evRoot);
+}
+// One automatic offer per user per page session, only after the lobby has rendered.
+// A failed status check leaves the normal Daily Sign-In button available.
+const nwDailyAutoChecked=new Set();
+let nwDailyPopupOpener=null;
+function nwDailyClosePopup(){
+ const pop=evRoot.querySelector('#nwDailyPopup');if(!pop)return;
+ pop.remove();
+ const opener=nwDailyPopupOpener;nwDailyPopupOpener=null;
+ if(opener?.isConnected)opener.focus({preventScroll:true});
+}
+function nwDailyShowPopup(status){
+ if(evRoot.querySelector('#nwDailyPopup'))return;
+ const popup=document.createElement('div');
+ popup.id='nwDailyPopup';popup.className='nw-daily-popover';
+ popup.setAttribute('role','presentation');
+ popup.innerHTML='<div class="nw-daily-dialog" role="dialog" aria-modal="true" aria-labelledby="nwDailyPopupTitle"><button class="nw-daily-popup-close" type="button" aria-label="Close Daily Sign-In">×</button><div id="nwDailyPopupTitle" class="nw-daily-popup-label">DAILY REWARDS</div>'+nwDailyRewardMarkup(status)+'</div>';
+ evRoot.appendChild(popup);
+ nwDailyPopupOpener=evRoot.querySelector('#nwDailyPortal');
+ const close=popup.querySelector('.nw-daily-popup-close');
+ close.onclick=nwDailyClosePopup;
+ popup.addEventListener('click',e=>{if(e.target===popup)nwDailyClosePopup();});
+ popup.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){e.preventDefault();nwDailyClosePopup();}
+  if(e.key==='Tab'){
+   const controls=[...popup.querySelectorAll('button:not([disabled])')];
+   if(!controls.length)return;
+   const first=controls[0],last=controls[controls.length-1];
+   if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+   else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  }
+ });
+ nwDailyBindClaim(status,popup,true);
+ close.focus({preventScroll:true});
+}
+async function nwDailyAutoCheck(){
+ const account=nwCloud?.user()?.id;
+ if(!account||nwDailyAutoChecked.has(account)||!evRoot.querySelector('.nw-lobby-top'))return;
+ nwDailyAutoChecked.add(account);
+ try{
+  const c=await nwCloud.get(),{data,error}=await c.rpc('nw_daily_signin_status');
+  if(error)throw Error(error.message);
+  if(nwCloud?.user()?.id!==account||!evRoot.classList.contains('nw-lobby-v37')||!evRoot.querySelector('.nw-lobby-top'))return;
+  if(data?.can_claim===true)nwDailyShowPopup({...data,account});
+ }catch(e){console.warn('Daily Sign-In automatic status check:',e.message);}
 }
 
 let nwLobbyClock=null;
@@ -2234,7 +2295,7 @@ function showCategories(){
     <div class="nw-lobby-bottom">${nav('nwMail','MAIL',`<span class="nw-lobby-nav-art nw-lobby-mail" aria-hidden="true"><svg viewBox="0 0 80 70" aria-hidden="true"><g fill="none" stroke="#F08BC2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 19Q12 16 17 16H63Q68 16 68 21V51Q68 55 63 55H17Q12 55 12 50V21Q12 20 13 19Z"/><path d="M15 20Q27 31 39 40Q41 42 43 40L65 20"/></g></svg></span>`)}${nav('nwTrophy','TROPHY CASE',`<span class="nw-lobby-nav-art nw-lobby-trophy"><svg viewBox="0 0 80 70" aria-hidden="true"><path d="M24 11H56V29Q56 44 40 47Q24 44 24 29Z M24 16H11V25Q11 39 29 39 M56 16H69V25Q69 39 51 39 M40 47V58 M27 62H53" fill="none" stroke="#ffcf9a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 16l3 8 8 3-8 3-3 8-3-8-8-3 8-3Z" fill="#ffe6bb"/></svg></span>`)}${nav('nwLobbyShop','SHOP',`<span class="nw-lobby-nav-art nw-lobby-shop"><svg viewBox="0 0 80 70" aria-hidden="true"><g fill="none" stroke="#F8EBDD" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 27Q15 27 15 31L17 56Q17 59 21 59H59Q63 59 63 55L65 31Q65 27 61 27H17Z"/><path d="M30 29V18Q30 9 40 9Q50 9 50 18V29"/></g></svg></span>`)}</div></section>`);
   const by=id=>evRoot.querySelector('#'+id);const openRooms=collection=>{roomCollection=collection;nwScroll[collection]=0;nwRoomPages[collection]=0;showRooms(0)};
   nwLastMailNoticeCheck=Date.now();void nwPrizeRefreshMailNotice();
-  by('nwDailyPortal').onclick=nwDailyScreen;by('nwInventoryPortal').onclick=nwShowInventory;by('nwWorlds').onclick=()=>openRooms('all');by('nwMail').onclick=()=>nwLobbyUtility('mail');by('nwTriplePortal').onclick=nwTripleHome;by('nwDoublePortal').onclick=nwDoublePracticeScreen;by('nwGrowingPortal').onclick=nwGrowingOpen;by('nwLetMeOutPortal').onclick=nwLetMeOutOpen;by('nwBattle').onclick=showBattle;by('nwTrophy').onclick=()=>nwShowTrophy();by('nwProfileButton').onclick=nwShowProfile;by('nwLobbyShop').onclick=()=>nwLobbyUtility('shop');by('nwLobbySettings').onclick=()=>nwLobbyUtility('settings');if(nwLobbyClock===null)nwLobbyClock=setInterval(()=>{if(evRoot.hidden||!evRoot.querySelector('[data-lobby-event]')){clearInterval(nwLobbyClock);nwLobbyClock=null;return;}nwLobbyUpdateEventStatus();if(Date.now()-nwLastMailNoticeCheck>=30000){nwLastMailNoticeCheck=Date.now();void nwPrizeRefreshMailNotice();}},1000);nwBindEventCarousel();nwResetViewToTop();
+  by('nwDailyPortal').onclick=nwDailyScreen;by('nwInventoryPortal').onclick=nwShowInventory;by('nwWorlds').onclick=()=>openRooms('all');by('nwMail').onclick=()=>nwLobbyUtility('mail');by('nwTriplePortal').onclick=nwTripleHome;by('nwDoublePortal').onclick=nwDoublePracticeScreen;by('nwGrowingPortal').onclick=nwGrowingOpen;by('nwLetMeOutPortal').onclick=nwLetMeOutOpen;by('nwBattle').onclick=showBattle;by('nwTrophy').onclick=()=>nwShowTrophy();by('nwProfileButton').onclick=nwShowProfile;by('nwLobbyShop').onclick=()=>nwLobbyUtility('shop');by('nwLobbySettings').onclick=()=>nwLobbyUtility('settings');if(nwLobbyClock===null)nwLobbyClock=setInterval(()=>{if(evRoot.hidden||!evRoot.querySelector('[data-lobby-event]')){clearInterval(nwLobbyClock);nwLobbyClock=null;return;}nwLobbyUpdateEventStatus();if(Date.now()-nwLastMailNoticeCheck>=30000){nwLastMailNoticeCheck=Date.now();void nwPrizeRefreshMailNotice();}},1000);nwBindEventCarousel();nwResetViewToTop();requestAnimationFrame(()=>requestAnimationFrame(()=>{void nwDailyAutoCheck();}));
 }
 function showRooms(page=0){
   const ids=roomCollection==='fav'?nwFavs():['favorites',...nwGalaxyOrder];
