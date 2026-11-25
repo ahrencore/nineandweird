@@ -4796,4 +4796,11 @@ body:has(#game.nw-cosmic-mail-theme:not([hidden])){background:#0B1020!important;
 #game .nw-lobby-portal.double{--portal-accent:#B9DDF2;--portal-panel:#294257;--portal-bg:#101B29}
 #game .nw-lobby-portal.double .nw-lobby-portal-disc{background:radial-gradient(ellipse at 50% 20%,#35566A,#172B3D 63%,#0C1724)!important;border-color:#9CCBE3;gap:1px}
 #game .nw-lobby-portal.double strong{color:#E1F3FF!important;font-family:'Rubik Wet Paint','Rubik Glitch',sans-serif;font-weight:400;text-shadow:0 1px #29465F,0 0 7px #9CCBE355;line-height:1.03;transform:translateY(-6px)}
+/* Match the event landing screen's two-layer glitch on its main-menu promo. */
+#game .nw-lobby-portal.double strong.nw-double-glitch{position:relative;animation:none}
+#game .nw-lobby-portal.double .nw-double-glitch-copy{display:block;line-height:inherit;color:#B9DDF2;text-shadow:0 0 5px #9CCBE399;animation-duration:4s}
+#game .nw-lobby-portal.double .nw-double-glitch-copy.second{color:#F3FAFF}
+/* Slightly quicker glitch cycle on the event landing title as well. */
+#game .nw-double .nw-double-glitch-copy{animation-duration:4s}
+@media(prefers-reduced-motion:reduce){#game .nw-lobby-portal.double .nw-double-glitch-copy{animation:none;opacity:0}}
 #game .nw-double-event-icon img{display:block;width:100%;max-width:48px;height:auto;object-fit:contain}
