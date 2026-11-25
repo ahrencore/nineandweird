@@ -731,6 +731,8 @@ async function nwPrizeSync(){
  try{document.getElementById('nwGrowingFrame')?.contentWindow?.nwGrowingApplyInventory?.();}catch(e){console.warn('Growing Inventory refresh:',e.message)}
  return nwPrizeCache;
 }
+async function nwGrowingUseReserve(qty){const n=Math.floor(Number(qty));if(!Number.isSafeInteger(n)||n<1)throw Error('Invalid amount');await nwPrizeTransfer('tg_energy',n);return n;}
+function nwGrowingInventoryAmount(){return nwPrizeAvailable('tg_energy');}
 function nwPrizeAvailable(key){return Math.max(0,Number(nwPrizeCache.stock?.[key])||0);}
 function nwPrizeTransferReceipts(event){return (nwPrizeCache.transfers||[]).filter(t=>t.event===event&&t.period===nwPrizeTransferPeriod(event));}
 async function nwPrizeTransfer(key,amount){
@@ -753,16 +755,41 @@ function nwPrizeIcon(key){
  };
  return '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(paths[key]||'')+'</svg>';
 }
+const nwInventoryExplanations={
+tt_ticket:'Use these tickets to play Triple Trouble. Tickets in Inventory stay until used.',
+tt_undo:'Undo a move in Triple Trouble during gameplay.',
+tt_shuffle:'Shuffle your Triple Trouble tiles during gameplay.',
+tt_magic:'Clear a matching group in Triple Trouble during gameplay.',
+tg_energy:"Use Energy to make moves in They're Growing! Stored Energy does not expire.",
+tg_ray:"Remove three low-level creatures in They're Growing! during gameplay.",
+tg_juice:"Merge creatures in They're Growing! during gameplay.",
+sudoku_hint:'Reveal a correct placement in a Sudoku puzzle.'
+};
+function nwInventoryInfoDialog(key){
+ const label=key==='sudoku_hint'?'Sudoku Hints':nwPrizeDefinitions.find(d=>d.key===key)?.name;
+ if(!label)return;
+ const o=document.createElement('div');o.className='nw-prize-overlay';
+ o.innerHTML='<section class="nw-prize-dialog" role="dialog" aria-modal="true"><h2>'+nwEscape(label)+'</h2><p>'+nwEscape(nwInventoryExplanations[key]||'')+'</p><div class="nw-prize-actions"><button id="nwInfoClose" type="button">GOT IT</button></div></section>';
+ evRoot.appendChild(o);o.querySelector('#nwInfoClose').onclick=()=>o.remove();
+}
+async function nwShowInventory(){
+ evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-inventory-theme');
+ evDisplay(evHeader('INVENTORY',showCategories)+'<section class="nw-inventory-panel"><h2>INVENTORY</h2><p>LOADING INVENTORY…</p></section>');
+ const uid=nwCloud?.user()?.id;
+ try{await Promise.all([nwPrizeSync(),nwWalletSync()]);if(nwCloud?.user()?.id===uid&&evRoot.classList.contains('nw-inventory-theme'))nwRenderInventory();}
+ catch(e){const area=evRoot.querySelector('.nw-inventory-panel');if(area)area.innerHTML='<h2>INVENTORY</h2><p>'+nwEscape(e.message)+'</p><button id="nwInventoryRetry">RETRY</button>';evRoot.querySelector('#nwInventoryRetry')?.addEventListener('click',nwShowInventory);}
+}
+function nwRenderInventory(){
+ evDisplay(evHeader('INVENTORY',showCategories)+'<section class="nw-inventory-panel"><h2>INVENTORY</h2>'+nwPrizeInventoryArt()+'</section>');
+ evRoot.querySelectorAll('[data-prize-use]').forEach(b=>b.onclick=()=>nwPrizeQuantityDialog(b.dataset.prizeUse));
+ evRoot.querySelectorAll('[data-prize-info]').forEach(b=>b.onclick=()=>nwInventoryInfoDialog(b.dataset.prizeInfo));
+}
 function nwPrizeInventoryArt(){
  const cards=event=>nwPrizeDefinitions.filter(d=>d.event===event).map(d=>{
-  const n=nwPrizeAvailable(d.key);
-  return `<article class="nw-prize-item"><span class="nw-prize-symbol" aria-hidden="true">${nwPrizeIcon(d.key)}</span><strong>${nwEscape(d.name)}</strong><b>× ${n.toLocaleString()}</b><button type="button" data-prize-use="${d.key}" ${n?'':'disabled'}>USE</button></article>`;
+  const n=nwPrizeAvailable(d.key),use=d.key==='tt_ticket'||d.key==='tg_energy';
+  return '<article class="nw-compact-item"><button type="button" class="nw-compact-info" data-prize-info="'+d.key+'" aria-label="About '+nwEscape(d.name)+'">!</button><span class="nw-compact-icon" aria-hidden="true">'+nwPrizeIcon(d.key)+'</span><strong>'+nwEscape(d.name)+'</strong><b>× '+n.toLocaleString()+'</b>'+(use?'<button type="button" data-prize-use="'+d.key+'" '+(n?'':'disabled')+'>USE</button>':'')+'</article>';
  }).join('');
- return `<div class="nw-prize-wallet"><small>AVAILABLE DIAMONDS</small>${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</div>
- <p class="nw-prize-hint">Choose how many supplies to move into a live tournament. Unused items stay here for later.</p>
- <h3>TRIPLE TROUBLE</h3><div class="nw-prize-grid">${cards('tt')}</div>
- <h3>THEY'RE GROWING!</h3><div class="nw-prize-grid">${cards('tg')}</div>
- <h3>SUDOKU</h3><div class="nw-prize-grid"><article class="nw-prize-item"><span class="nw-prize-symbol" aria-hidden="true">${nwPrizeIcon('sudoku_hint')}</span><strong>Bonus Hints</strong><b>× ${nwPrizeAvailable('sudoku_hint').toLocaleString()}</b></article></div>`;
+ return '<div class="nw-compact-wallet">'+nwDiamondAmount(nwDiamondBalance().toLocaleString())+'</div><h3>TRIPLE TROUBLE</h3><div class="nw-compact-grid">'+cards('tt')+'</div><h3>THEY\'RE GROWING!</h3><div class="nw-compact-grid">'+cards('tg')+'</div><h3>SUDOKU</h3><div class="nw-compact-grid"><article class="nw-compact-item"><button class="nw-compact-info" type="button" data-prize-info="sudoku_hint" aria-label="About Sudoku Hints">!</button><span class="nw-compact-icon">'+nwPrizeIcon('sudoku_hint')+'</span><strong>Sudoku Hints</strong><b>× '+nwPrizeAvailable('sudoku_hint').toLocaleString()+'</b></article></div>';
 }
 function nwPrizeQuantityDialog(key){
  const item=nwPrizeDefinitions.find(d=>d.key===key),max=nwPrizeAvailable(key);if(!item||!max)return;
@@ -781,7 +808,7 @@ function nwPrizeQuantityDialog(key){
  input.oninput=update;overlay.querySelector('#nwPrizeCancel').onclick=()=>overlay.remove();
  overlay.querySelector('#nwPrizeConfirm').onclick=async()=>{
   const qty=quantity(),confirm=overlay.querySelector('#nwPrizeConfirm');confirm.disabled=true;
-  try{await nwPrizeTransfer(key,qty);overlay.remove();nwShowTrophy('inventory');}
+  try{await nwPrizeTransfer(key,qty);overlay.remove();nwShowInventory();}
   catch(e){overlay.querySelector('#nwPrizeMessage').textContent=e.message;confirm.disabled=false;}
  };
  input.focus();
@@ -954,14 +981,14 @@ function nwShowTrophy(tab='home',offset=0){
     return `<div class="nw-report-head"><strong>${nwBattleMonthStats().rate}%</strong><span>Monthly Battle Win Rate · ${nwBattleMonthStats().wins} Wins / ${nwBattleMonthStats().losses} Losses / ${nwBattleMonthStats().draws} Draws</span></div><h3>MONTHLY TITLE FRAMES</h3><div class="nw-battle-title-list">${nwSeasonFrameTiers.map(t=>`<div class="${nwBattleMonthStats().wins>=t.wins?'earned':''}"><span>${t.wins} WINS</span><strong>${nwEscape(t.title)}</strong></div>`).join('')}</div><h3>PAST SEASONS</h3>${months.length?months.map(([key,st])=>`<p class="nw-battle-history-row"><strong>${key}</strong> · ${st.wins} wins · ${st.losses} losses · ${st.draws} draws</p>`).join(''):'<p class="nw-muted">Your Battle history will appear here.</p>'}`;
   };
   const icons={inventory:'<rect x="7" y="15" width="34" height="27" rx="3"/><path d="M14 15V9h20v6M19 26h10M24 21v10"/>',brain:'<path d="M24 39C10 43 5 30 12 23C5 12 19 7 24 14C29 7 43 12 36 23C43 30 38 43 24 39ZM24 14V39M12 23Q19 19 19 29M36 23Q29 19 29 29"/>',achievements:'<circle cx="24" cy="18" r="12"/><path d="M16 28L12 43L24 38L36 43L32 28M24 11L26 16L32 18L26 20L24 25L22 20L16 18L22 16Z"/>',battle:'<path d="M10 8L36 34M38 8L12 34M10 8L12 18M10 8L20 10M38 8L36 18M38 8L28 10M29 28L41 40M19 28L7 40M30 40L41 29M7 29L18 40"/>'};
-  const items=[['brain','Weekly Reports','Your little brain diary'],['achievements','Achievements','Celebrate your milestones'],['battle','Battle Records','Your victories and defeats'],['inventory','Inventory','Diamonds, tickets and event supplies']];
+  const items=[['brain','Weekly Reports','Your little brain diary'],['achievements','Achievements','Celebrate your milestones'],['battle','Battle Records','Your victories and defeats']];
   const label=items.find(x=>x[0]===tab)?.[1]||'Trophy Case';
   const title=`<div class="nw-trophy-heading"><i class="nw-wish-star a" aria-hidden="true">✦</i><i class="nw-wish-star b" aria-hidden="true">✧</i><h2>${label}</h2><div class="nw-trophy-doodle" aria-hidden="true">✧ ── ☆ ── ✧</div></div>`;
   const landing=`<div class="nw-trophy-intro"><strong>${nwEscape(p.name)}’s Trophy Case</strong></div><div class="nw-trophy-menu">${items.map(([id,name,desc])=>`<button type="button" data-trophy="${id}"><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${icons[id]}</svg><span><strong>${name}</strong><small>${desc}</small></span><b aria-hidden="true">›</b></button>`).join('')}</div>`;
   const report=`<div class="nw-week-nav"><button id="nwOlderWeek" aria-label="Previous week">‹</button><strong>WEEK OF ${weekTitle.toUpperCase()}</strong><button id="nwNewerWeek" aria-label="Next week" ${offset>=0?'disabled':''}>›</button></div>${brain()}`;
   const achievements=`<div class="nw-report-head"><strong>✦ Coming soon ✦</strong><span>Your permanent milestones will appear here.</span></div>`;
-  evDisplay(`${evHeader('TROPHY CASE',tab==='home'?showCategories:()=>nwShowTrophy())}<section class="nw-new-panel nw-trophy-panel">${title}${tab==='brain'?report:tab==='battle'?battle():tab==='achievements'?achievements:tab==='inventory'?nwPrizeInventoryArt():landing}</section>`);
-  evRoot.querySelectorAll('[data-trophy]').forEach(b=>b.onclick=async()=>{if(b.dataset.trophy==='inventory'){try{await nwPrizeSync()}catch(e){console.warn('Inventory sync:',e.message)}}nwShowTrophy(b.dataset.trophy)});
+  evDisplay(`${evHeader('TROPHY CASE',tab==='home'?showCategories:()=>nwShowTrophy())}<section class="nw-new-panel nw-trophy-panel">${title}${tab==='brain'?report:tab==='battle'?battle():tab==='achievements'?achievements:landing}</section>`);
+  evRoot.querySelectorAll('[data-trophy]').forEach(b=>b.onclick=async()=>{nwShowTrophy(b.dataset.trophy)});
   evRoot.querySelectorAll('[data-prize-use]').forEach(b=>b.onclick=()=>nwPrizeQuantityDialog(b.dataset.prizeUse));
   if(tab==='brain'){evRoot.querySelector('#nwOlderWeek').onclick=()=>nwShowTrophy('brain',offset-1);evRoot.querySelector('#nwNewerWeek').onclick=()=>nwShowTrophy('brain',offset+1)}
 }
@@ -2053,6 +2080,9 @@ let nwDailyClaimInFlight=false;
 function nwDailyGiftArt(){
  return '<svg viewBox="0 0 48 48" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="20" width="32" height="22" rx="3" stroke="#BCADD9" stroke-width="2.8"/><path d="M6 20v-7h36v7H6Z" fill="#2A1F44" stroke="#BCADD9" stroke-width="2.8"/><path d="M24 13v29M20 13C9 12 10 3 17 5c4 1 7 8 7 8Zm4 0c2-9 9-11 12-7 3 6-5 7-12 7Z" stroke="#F08BC2" stroke-width="2.8"/></svg>';
 }
+function nwInventoryPortal(){
+ return '<button id="nwInventoryPortal" type="button" class="nw-daily-mini nw-inventory-mini" aria-label="Open Inventory"><span class="nw-daily-mini-disc"><svg viewBox="0 0 48 48" fill="none" stroke="#81C8FF" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M9 18h30v25H9zM15 18V9h18v9M18 28h12M24 23v11"/></svg></span><svg class="nw-daily-mini-label" viewBox="0 0 100 100" aria-hidden="true"><defs><path id="nwInventoryArc" d="M10 50 A40 40 0 0 1 90 50"/></defs><text><textPath href="#nwInventoryArc" startOffset="50%" text-anchor="middle">INVENTORY</textPath></text></svg><span class="nw-daily-mini-orbit" aria-hidden="true">✧</span></button>';
+}
 function nwDailyPortal(){
  return '<button id="nwDailyPortal" type="button" class="nw-daily-mini" aria-label="Open Daily Sign-In rewards"><span class="nw-daily-mini-disc">'+nwDailyGiftArt()+'</span><svg class="nw-daily-mini-label" viewBox="0 0 100 100" aria-hidden="true"><defs><path id="nwDailyPortalArc" d="M10 50 A40 40 0 0 1 90 50"/></defs><text><textPath href="#nwDailyPortalArc" startOffset="50%" text-anchor="middle">DAILY SIGN-IN</textPath></text></svg><span class="nw-daily-mini-orbit" aria-hidden="true">✦</span></button>';
 }
@@ -2131,7 +2161,7 @@ function showCategories(){
   const nav=(id,title,art)=>`<button type="button" class="nw-lobby-nav" id="${id}">${art}<strong>${title}</strong></button>`;
   const portal=nwLobbyPortal;
   evRoot.classList.add('nw-lobby-v37');
-  evDisplay(`<header class="nw-lobby-top"><button id="nwProfileButton" class="nw-lobby-profile" aria-label="Open player profile">${nwFrameArt(p.avatar)}<strong>${nwEscape(p.name)}</strong></button>${nwDailyPortal()}<div class="nw-lobby-top-right"><span class="nw-lobby-money">${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</span><button id="nwLobbySettings" class="nw-lobby-icon" aria-label="Settings">${nwLobbyIcon('settings')}</button></div></header><section class="nw-lobby">${nwLobbyTitle()}
+  evDisplay(`<header class="nw-lobby-top"><button id="nwProfileButton" class="nw-lobby-profile" aria-label="Open player profile">${nwFrameArt(p.avatar)}<strong>${nwEscape(p.name)}</strong></button>${nwDailyPortal()}${nwInventoryPortal()}<div class="nw-lobby-top-right"><span class="nw-lobby-money">${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</span><button id="nwLobbySettings" class="nw-lobby-icon" aria-label="Settings">${nwLobbyIcon('settings')}</button></div></header><section class="nw-lobby">${nwLobbyTitle()}
     ${nav('nwWorlds','WORLDS',`<span class="nw-lobby-nav-art nw-lobby-planet"><svg viewBox="0 0 80 70" aria-hidden="true"><g fill="none" stroke="#81C8FF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 30C20 11 41 6 54 17C68 30 61 50 47 56C33 62 19 52 18 40"/><path d="M19 26C4 37 4 49 17 48C34 48 62 30 70 20C77 9 62 10 55 15"/></g><path d="M37 20l2 5 5 2-5 2-2 5-2-5-5-2 5-2Z" fill="#81C8FF"/></svg></span>`)}
     <section class="nw-event-carousel" aria-label="Events"><div class="nw-event-heading">EVENTS</div><div class="nw-event-viewport"><div class="nw-event-track">
     ${portal('nwTriplePortal','triple','TRIPLE<br>TROUBLE','⋆˚꩜｡')}
@@ -2142,7 +2172,7 @@ function showCategories(){
     <div class="nw-lobby-bottom">${nav('nwMail','MAIL',`<span class="nw-lobby-nav-art nw-lobby-mail" aria-hidden="true"><svg viewBox="0 0 80 70" aria-hidden="true"><g fill="none" stroke="#F08BC2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 19Q12 16 17 16H63Q68 16 68 21V51Q68 55 63 55H17Q12 55 12 50V21Q12 20 13 19Z"/><path d="M15 20Q27 31 39 40Q41 42 43 40L65 20"/></g></svg></span>`)}${nav('nwTrophy','TROPHY CASE',`<span class="nw-lobby-nav-art nw-lobby-trophy"><svg viewBox="0 0 80 70" aria-hidden="true"><path d="M24 11H56V29Q56 44 40 47Q24 44 24 29Z M24 16H11V25Q11 39 29 39 M56 16H69V25Q69 39 51 39 M40 47V58 M27 62H53" fill="none" stroke="#ffcf9a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 16l3 8 8 3-8 3-3 8-3-8-8-3 8-3Z" fill="#ffe6bb"/></svg></span>`)}${nav('nwLobbyShop','SHOP',`<span class="nw-lobby-nav-art nw-lobby-shop"><svg viewBox="0 0 80 70" aria-hidden="true"><g fill="none" stroke="#F8EBDD" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 27Q15 27 15 31L17 56Q17 59 21 59H59Q63 59 63 55L65 31Q65 27 61 27H17Z"/><path d="M30 29V18Q30 9 40 9Q50 9 50 18V29"/></g></svg></span>`)}</div></section>`);
   const by=id=>evRoot.querySelector('#'+id);const openRooms=collection=>{roomCollection=collection;nwScroll[collection]=0;nwRoomPages[collection]=0;showRooms(0)};
   nwLastMailNoticeCheck=Date.now();void nwPrizeRefreshMailNotice();
-  by('nwDailyPortal').onclick=nwDailyScreen;by('nwWorlds').onclick=()=>openRooms('all');by('nwMail').onclick=()=>nwLobbyUtility('mail');by('nwTriplePortal').onclick=nwTripleHome;by('nwDoublePortal').onclick=nwDoublePracticeScreen;by('nwGrowingPortal').onclick=nwGrowingOpen;by('nwBattle').onclick=showBattle;by('nwTrophy').onclick=()=>nwShowTrophy();by('nwProfileButton').onclick=nwShowProfile;by('nwLobbyShop').onclick=()=>nwLobbyUtility('shop');by('nwLobbySettings').onclick=()=>nwLobbyUtility('settings');if(nwLobbyClock===null)nwLobbyClock=setInterval(()=>{if(evRoot.hidden||!evRoot.querySelector('[data-lobby-event]')){clearInterval(nwLobbyClock);nwLobbyClock=null;return;}nwLobbyUpdateEventStatus();if(Date.now()-nwLastMailNoticeCheck>=30000){nwLastMailNoticeCheck=Date.now();void nwPrizeRefreshMailNotice();}},1000);nwBindEventCarousel();nwResetViewToTop();
+  by('nwDailyPortal').onclick=nwDailyScreen;by('nwInventoryPortal').onclick=nwShowInventory;by('nwWorlds').onclick=()=>openRooms('all');by('nwMail').onclick=()=>nwLobbyUtility('mail');by('nwTriplePortal').onclick=nwTripleHome;by('nwDoublePortal').onclick=nwDoublePracticeScreen;by('nwGrowingPortal').onclick=nwGrowingOpen;by('nwBattle').onclick=showBattle;by('nwTrophy').onclick=()=>nwShowTrophy();by('nwProfileButton').onclick=nwShowProfile;by('nwLobbyShop').onclick=()=>nwLobbyUtility('shop');by('nwLobbySettings').onclick=()=>nwLobbyUtility('settings');if(nwLobbyClock===null)nwLobbyClock=setInterval(()=>{if(evRoot.hidden||!evRoot.querySelector('[data-lobby-event]')){clearInterval(nwLobbyClock);nwLobbyClock=null;return;}nwLobbyUpdateEventStatus();if(Date.now()-nwLastMailNoticeCheck>=30000){nwLastMailNoticeCheck=Date.now();void nwPrizeRefreshMailNotice();}},1000);nwBindEventCarousel();nwResetViewToTop();
 }
 function showRooms(page=0){
   const ids=roomCollection==='fav'?nwFavs():['favorites',...nwGalaxyOrder];
