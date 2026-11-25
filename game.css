@@ -4966,3 +4966,43 @@ body:has(#game.nw-cosmic-mail-theme:not([hidden])){background:#0B1020!important;
  color:#F8EBDD!important;
 }
 #game.nw-inventory-theme .nw-compact-wallet{display:none!important}
+
+/* LET ME OUT! — permanent Blacklight Candy mini-game promo, isolated from other Event planets. */
+#game .nw-lobby-portal.letout{--portal-bg:#120D1C;--portal-panel:#271A36;--portal-accent:#FF76D8;--portal-ink:#FF76D8;color:#FF76D8}
+#game .nw-lobby-portal.letout .nw-lobby-portal-disc{background:#271A36;border-color:#FF76D8}
+#game .nw-lobby-portal.letout .nw-lobby-portal-decor{display:none}
+#game .nw-lobby-portal.letout strong{display:block;margin:0;width:100%;font:400 clamp(19px,5.1vw,25px)/.98 'Creepster',Impact,fantasy!important;letter-spacing:0!important;color:#FF76D8!important;text-shadow:none!important;white-space:nowrap}
+#game .nw-let-promo-title{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;line-height:.95}
+#game .nw-let-promo-row{display:flex;align-items:baseline;justify-content:center;white-space:nowrap}
+#game .nw-let-promo-let,#game .nw-let-promo-me,#game .nw-let-promo-out{display:inline-block;white-space:pre;will-change:transform,opacity;transform-origin:center;color:#FF76D8;text-shadow:0 1px 0 #68285E,0 0 9px #FF76D85E}
+#game .nw-let-promo-out{font-size:1.3em;color:#BBFB45;text-shadow:0 1px 0 #45631B,0 0 9px #BBFB4570;transform-origin:left center}
+#game .nw-let-promo-let{animation:nwLetBamLet 5.5s linear both infinite}
+#game .nw-let-promo-me{animation:nwLetBamMe 5.5s linear both infinite}
+#game .nw-let-promo-out{animation:nwLetBamOut 5.5s linear both infinite}
+@keyframes nwLetBamLet{
+  0%,2.5%{opacity:0;transform:translateY(13px) scale(1.35)}
+  5.5%{opacity:1;transform:translateY(-2px) scale(1.09)}
+  8.5%,94%{opacity:1;transform:translateY(0) scale(1)}
+  98%,100%{opacity:0;transform:translateY(0) scale(1)}
+}
+@keyframes nwLetBamMe{
+  0%,11%{opacity:0;transform:translateY(13px) scale(1.35)}
+  14%{opacity:1;transform:translateY(-2px) scale(1.09)}
+  17%,94%{opacity:1;transform:translateY(0) scale(1)}
+  98%,100%{opacity:0;transform:translateY(0) scale(1)}
+}
+@keyframes nwLetBamOut{
+  0%,20%{opacity:0;transform:translateY(15px) scale(1.42)}
+  23.5%{opacity:1;transform:translateY(-3px) scale(1.12)}
+  27%,39%{opacity:1;transform:translateX(0) rotate(0) scale(1)}
+  42%{transform:translateX(13px) rotate(-3deg) scale(1)}
+  45%{transform:translateX(-2px) rotate(2deg) scale(1)}
+  48%{transform:translateX(15px) rotate(-2deg) scale(1)}
+  53%,94%{opacity:1;transform:translateX(0) rotate(0) scale(1)}
+  98%,100%{opacity:0;transform:translateX(0) rotate(0) scale(1)}
+}
+#game .nw-let-frame-container{width:100%;max-width:560px;margin:0 auto;min-height:calc(100dvh - 58px);background:#120D1C}
+#game .nw-let-frame-container iframe{display:block;width:100%;height:calc(100dvh - 58px);min-height:540px;border:0;background:#120D1C;overflow:auto}
+@media(prefers-reduced-motion:reduce){
+ #game .nw-let-promo-let,#game .nw-let-promo-me,#game .nw-let-promo-out{animation:none!important;opacity:1!important;transform:none!important}
+}
