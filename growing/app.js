@@ -1,6 +1,6 @@
 'use strict';
 const APP=(()=>{
- const NW_GLOOP_STINKY_ART='assets/gloop-stinky-lab.webp?v=63';
+ const NW_GLOOP_STINKY_ART='assets/gloop-stinky-lab.webp?v=64';
  const E=HexEngine,EMBEDDED=window.parent!==window&&typeof window.parent.nwGrowingUserId==='function',ACCOUNT=EMBEDDED?window.parent.nwGrowingUserId():null;
  const names=['Crab','Tripod','Caterpillar','Bat','Olive','Shaggy','Snail','Mushroom','Dinosaur','Coil','Tentacles','Gloop','Chomps','Noodle','Blink','Grumble','Pinky','Wobbles','Stinky','Crumbs'];
  const artFiles=['10_crab','11_tripod','12_caterpillar','13_bat','14_olive','15_shaggy','16_snail','17_mushroom','18_dinosaur','19_coil','20_tentacles','01_gloop','02_chomps','03_noodle','04_blink','05_grumble','06_pinky','07_wobbles','08_stinky','09_crumbs'];
