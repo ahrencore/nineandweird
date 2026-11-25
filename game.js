@@ -1444,7 +1444,7 @@ function nwShowEvents(){
 function nwLetMeOutOpen(){
  evSudokuLeave();applyTheme('hub');
  evRoot.classList.add('nw-let-shell');
- evDisplay(`${evHeader('LET ME OUT!',showCategories)}<section class="nw-let-frame-container"><iframe id="nwLetMeOutFrame" title="LET ME OUT! — sliding block mini game" src="let-me-out/index.html?v=4-board-smaller-help" loading="eager"></iframe></section>`);
+ evDisplay(`${evHeader('LET ME OUT!',showCategories)}<section class="nw-let-frame-container"><iframe id="nwLetMeOutFrame" title="LET ME OUT! — sliding block mini game" src="let-me-out/index.html?v=5-difficulty-waves" loading="eager"></iframe></section>`);
  nwResetViewToTop();
 }
 
