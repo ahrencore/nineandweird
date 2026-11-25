@@ -4879,3 +4879,27 @@ body:has(#game.nw-cosmic-mail-theme:not([hidden])){background:#0B1020!important;
 #game .nw-daily-action:disabled{opacity:.65;cursor:default}
 @keyframes nwDailyGiftFloat{0%,100%{transform:translateY(2px)}50%{transform:translateY(-5px)}}
 @media(prefers-reduced-motion:reduce){#game .nw-daily-mini-orbit,#game .nw-daily-tile-gift{animation:none!important}}
+
+/* Dedicated compact Inventory */
+#game.nw-inventory-theme{background:radial-gradient(ellipse at 50% 18%,#29203D,#0B1020 80%)!important;color:#F8EBDD!important;min-height:100dvh}
+#game.nw-inventory-theme>.ev-head{background:#141A33!important;border-color:#8E83BE!important}
+#game .nw-inventory-panel{max-width:470px;margin:auto;padding:12px 12px 30px;box-sizing:border-box}
+#game .nw-inventory-panel>h2{text-align:center;font:400 25px/1.3 'Chelsea Market','Finger Paint',cursive;color:#F08BC2;margin:6px 0 12px}
+#game .nw-inventory-panel h3{font:400 13px 'Chelsea Market',cursive;color:#BCADD9;margin:15px 0 7px}
+#game .nw-compact-wallet{text-align:center;margin:0 auto 12px;color:#F8EBDD}
+#game .nw-compact-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+#game .nw-compact-item{position:relative;min-width:0;min-height:106px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 4px 7px;background:linear-gradient(150deg,#2A1F44,#141A33);border:1px solid #8E83BE;border-radius:12px;text-align:center;box-sizing:border-box}
+#game .nw-compact-icon{display:grid;place-items:center;color:#81C8FF;height:31px;width:36px}
+#game .nw-compact-icon img,#game .nw-compact-icon svg{width:29px;height:29px;object-fit:contain}
+#game .nw-compact-item strong{font:400 12px/1.15 'Pangolin',cursive;color:#F8EBDD}
+#game .nw-compact-item b{font:400 15px/1.1 'Gaegu',cursive;color:#F4ED91}
+#game .nw-compact-info{position:absolute;right:5px;top:5px;width:18px;height:18px;border-radius:50%;border:1px solid #8E83BE;background:#191B35;color:#F8EBDD;padding:0;font:700 12px system-ui;cursor:pointer}
+#game .nw-compact-item [data-prize-use]{min-height:25px;background:#443A60;border:1px solid #BCADD9;border-radius:7px;color:#F8EBDD;font:400 11px 'Chelsea Market',cursive;padding:3px 10px;cursor:pointer}
+#game .nw-compact-item [data-prize-use]:disabled{opacity:.4;cursor:default}
+#game.nw-lobby-v37 .nw-inventory-mini .nw-daily-mini-disc{border-color:#81C8FF}
+#game.nw-lobby-v37 .nw-inventory-mini .nw-daily-mini-orbit{color:#F08BC2;filter:drop-shadow(0 0 3px #F08BC2)}
+#game.nw-lobby-v37 .nw-lobby-top .nw-lobby-profile .nw-equipped-frame{width:clamp(34px,10vw,44px);height:clamp(34px,10vw,44px)}
+#game.nw-lobby-v37 .nw-lobby-top{gap:2px;padding:0 2px}
+#game.nw-lobby-v37 .nw-lobby-top-right{gap:3px}
+@media(max-width:390px){#game.nw-lobby-v37 .nw-daily-mini{flex:0 0 48px;width:48px;height:48px}#game.nw-lobby-v37 .nw-daily-mini-disc{inset:9px}#game.nw-lobby-v37 .nw-daily-mini-disc svg{width:22px;height:22px}#game.nw-lobby-v37 .nw-daily-mini-label{font-size:9.5px}#game.nw-lobby-v37 .nw-lobby-money .nw-diamond-amount{font-size:11px}#game.nw-lobby-v37 .nw-lobby-money .nw-diamond-icon{width:15px;height:15px}}
+@media(max-width:330px){#game.nw-lobby-v37 .nw-daily-mini{flex-basis:43px;width:43px;height:43px}#game.nw-lobby-v37 .nw-lobby-top .nw-lobby-profile{gap:3px}#game.nw-lobby-v37 .nw-lobby-profile>strong{font-size:10px}}
