@@ -1438,6 +1438,16 @@ function nwShowEvents(){
 }
 
 
+
+// LET ME OUT! — permanent Blacklight Candy sliding-block mini-game.
+// Isolated iframe retains its complete approved gameplay, typography and electric Gloop art.
+function nwLetMeOutOpen(){
+ evSudokuLeave();applyTheme('hub');
+ evRoot.classList.add('nw-let-shell');
+ evDisplay(`${evHeader('LET ME OUT!',showCategories)}<section class="nw-let-frame-container"><iframe id="nwLetMeOutFrame" title="LET ME OUT! — sliding block mini game" src="let-me-out/index.html?v=1" loading="eager"></iframe></section>`);
+ nwResetViewToTop();
+}
+
 function nwGrowingBack(){
  const frame=document.getElementById('nwGrowingFrame');
  try {if(frame?.contentWindow?.nwGrowingNavigateBack?.())return;} catch(e){console.warn('Growing event navigation',e);}
@@ -2105,6 +2115,7 @@ const nwGalaxyColors={"classic": ["#fff", "#e3d3c7", "#111"], "dark": ["#050505"
 function nwLobbyIcon(kind){const p={shop:'<path d="M4 9h16l-1 12H5L4 9Z M8 9V6a4 4 0 0 1 8 0v3"/>',settings:'<path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/>'};return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p[kind]}</svg>`;}
 function nwLobbyUtility(kind){if(kind==='mail'){void nwPrizeMail();return;}evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-lobby-theme');evDisplay(`${evHeader(kind==='shop'?'SHOP':kind==='mail'?'MAIL':'SETTINGS',showCategories)}<section class="nw-lobby-utility">${kind==='mail'?'<h2>MAIL COMING SOON</h2>':kind==='shop'?`<div class="nw-lobby-money">${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</div><h2>COMING SOON</h2>`:`<button id="nwSettingsProfile" class="nw-lobby-nav">PROFILE / ACCOUNT</button><a href="privacy.html">Privacy Policy</a>`}</section>`);const b=evRoot.querySelector('#nwSettingsProfile');if(b)b.onclick=nwShowProfile;nwResetViewToTop();}
 function nwLobbyEventStatus(kind,now=new Date()){
+  if(kind==='letout')return {live:true,label:'MINI GAME'};
   const day=now.getUTCDay();
   if(kind==='growing'){const live=[2,3,4].includes(day);return {live,label:(live?'NOW LIVE: ':'COMING SOON: ')+'TUE – THU'};}
   if(kind==='battle')return {live:true,label:'NOW LIVE: '+now.toLocaleString('en-US',{month:'long',timeZone:'UTC'}).toUpperCase()};
@@ -2175,8 +2186,8 @@ function nwDailyRender(status,notice=''){
 let nwLobbyClock=null;
 function nwLobbyTitle(){return `<h1 class="nw-lobby-title" aria-label="Nine & Weird"><span class="nw-lobby-title-spark a" aria-hidden="true">✦</span><span class="nw-lobby-title-spark b" aria-hidden="true">✧</span><span class="nw-lobby-title-spark c" aria-hidden="true">⋆</span><span class="nw-lobby-title-letters" aria-hidden="true">${Array.from('NINE & WEIRD',(c,i)=>`<span style="--letter-delay:${i*.11}s">${nwEscape(c)}</span>`).join('')}</span></h1>`;}
 function nwLobbyPortal(id,cls,title,decor){
- const state=nwLobbyEventStatus(cls),name=title.replace(/<br>/g,' ');
- return `<button type="button" id="${id}" data-lobby-event="${cls}" data-event-name="${name}" aria-label="${name} — ${state.label}" class="nw-lobby-portal ${cls}${state.live?' is-live':''}"><span class="nw-lobby-portal-disc"><span class="nw-lobby-portal-decor" aria-hidden="true">${decor}</span><strong class="${cls==='double'?'nw-double-glitch':''}">${title}${cls==='double'?'<span class="nw-double-glitch-copy" aria-hidden="true">'+title+'</span><span class="nw-double-glitch-copy second" aria-hidden="true">'+title+'</span>':''}</strong></span><svg class="nw-lobby-event-orbit" viewBox="0 0 180 180" aria-hidden="true"><defs><path id="${id}Arc" d="M8 90 A82 82 0 0 0 172 90"/></defs><circle cx="90" cy="90" r="75" fill="none" stroke="currentColor" stroke-width=".8" opacity=".35"/><circle class="nw-event-pulse" cx="90" cy="90" r="62" fill="none" stroke="currentColor" stroke-width="2.2"/><g class="nw-event-star"><path d="M152 82l2 6 6 2-6 2-2 6-2-6-6-2 6-2Z" fill="currentColor"/></g><text fill="currentColor" font-size="10.4" letter-spacing=".05"><textPath href="#${id}Arc" startOffset="50%" text-anchor="middle">${state.label}</textPath></text></svg></button>`;
+ const state=nwLobbyEventStatus(cls),name=title.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+ return `<button type="button" id="${id}" data-lobby-event="${cls}" data-event-name="${name}" aria-label="${name} — ${state.label}" class="nw-lobby-portal ${cls}${state.live?' is-live':''}"><span class="nw-lobby-portal-disc"><span class="nw-lobby-portal-decor" aria-hidden="true">${decor}</span><strong class="${cls==='double'?'nw-double-glitch':''}">${cls==='letout'?'<span class="nw-let-promo-title" aria-hidden="true"><span class="nw-let-promo-row"><span class="nw-let-promo-let">LET</span><span class="nw-let-promo-me"> ME</span></span><span class="nw-let-promo-out">OUT!</span></span>':title}${cls==='double'?'<span class="nw-double-glitch-copy" aria-hidden="true">'+title+'</span><span class="nw-double-glitch-copy second" aria-hidden="true">'+title+'</span>':''}</strong></span><svg class="nw-lobby-event-orbit" viewBox="0 0 180 180" aria-hidden="true"><defs><path id="${id}Arc" d="M8 90 A82 82 0 0 0 172 90"/></defs><circle cx="90" cy="90" r="75" fill="none" stroke="currentColor" stroke-width=".8" opacity=".35"/><circle class="nw-event-pulse" cx="90" cy="90" r="62" fill="none" stroke="currentColor" stroke-width="2.2"/><g class="nw-event-star"><path d="M152 82l2 6 6 2-6 2-2 6-2-6-6-2 6-2Z" fill="currentColor"/></g><text fill="currentColor" font-size="10.4" letter-spacing=".05"><textPath href="#${id}Arc" startOffset="50%" text-anchor="middle">${state.label}</textPath></text></svg></button>`;
 }
 // V37: rotate the original portal nodes; no replacement artwork or duplicate SVG IDs.
 function nwBindEventCarousel(){
@@ -2218,11 +2229,12 @@ function showCategories(){
     ${portal('nwDoublePortal','double','DOUBLE<br>TROUBLE','⋆｡☁︎｡ ﾟ☾ ﾟ⋆')}
     ${portal('nwGrowingPortal','growing','THEY\'RE<br>GROWING!','･ ༝ ･')}
     ${portal('nwBattle','battle','BATTLE','ϟ ☢ ϟ')}
+    ${portal('nwLetMeOutPortal','letout','LET ME<br>OUT!','')}
     </div></div><div class="nw-event-controls"><button type="button" class="nw-event-prev" aria-label="Previous event">‹</button><div class="nw-event-dots"></div><button type="button" class="nw-event-next" aria-label="Next event">›</button></div></section>
     <div class="nw-lobby-bottom">${nav('nwMail','MAIL',`<span class="nw-lobby-nav-art nw-lobby-mail" aria-hidden="true"><svg viewBox="0 0 80 70" aria-hidden="true"><g fill="none" stroke="#F08BC2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 19Q12 16 17 16H63Q68 16 68 21V51Q68 55 63 55H17Q12 55 12 50V21Q12 20 13 19Z"/><path d="M15 20Q27 31 39 40Q41 42 43 40L65 20"/></g></svg></span>`)}${nav('nwTrophy','TROPHY CASE',`<span class="nw-lobby-nav-art nw-lobby-trophy"><svg viewBox="0 0 80 70" aria-hidden="true"><path d="M24 11H56V29Q56 44 40 47Q24 44 24 29Z M24 16H11V25Q11 39 29 39 M56 16H69V25Q69 39 51 39 M40 47V58 M27 62H53" fill="none" stroke="#ffcf9a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 16l3 8 8 3-8 3-3 8-3-8-8-3 8-3Z" fill="#ffe6bb"/></svg></span>`)}${nav('nwLobbyShop','SHOP',`<span class="nw-lobby-nav-art nw-lobby-shop"><svg viewBox="0 0 80 70" aria-hidden="true"><g fill="none" stroke="#F8EBDD" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 27Q15 27 15 31L17 56Q17 59 21 59H59Q63 59 63 55L65 31Q65 27 61 27H17Z"/><path d="M30 29V18Q30 9 40 9Q50 9 50 18V29"/></g></svg></span>`)}</div></section>`);
   const by=id=>evRoot.querySelector('#'+id);const openRooms=collection=>{roomCollection=collection;nwScroll[collection]=0;nwRoomPages[collection]=0;showRooms(0)};
   nwLastMailNoticeCheck=Date.now();void nwPrizeRefreshMailNotice();
-  by('nwDailyPortal').onclick=nwDailyScreen;by('nwInventoryPortal').onclick=nwShowInventory;by('nwWorlds').onclick=()=>openRooms('all');by('nwMail').onclick=()=>nwLobbyUtility('mail');by('nwTriplePortal').onclick=nwTripleHome;by('nwDoublePortal').onclick=nwDoublePracticeScreen;by('nwGrowingPortal').onclick=nwGrowingOpen;by('nwBattle').onclick=showBattle;by('nwTrophy').onclick=()=>nwShowTrophy();by('nwProfileButton').onclick=nwShowProfile;by('nwLobbyShop').onclick=()=>nwLobbyUtility('shop');by('nwLobbySettings').onclick=()=>nwLobbyUtility('settings');if(nwLobbyClock===null)nwLobbyClock=setInterval(()=>{if(evRoot.hidden||!evRoot.querySelector('[data-lobby-event]')){clearInterval(nwLobbyClock);nwLobbyClock=null;return;}nwLobbyUpdateEventStatus();if(Date.now()-nwLastMailNoticeCheck>=30000){nwLastMailNoticeCheck=Date.now();void nwPrizeRefreshMailNotice();}},1000);nwBindEventCarousel();nwResetViewToTop();
+  by('nwDailyPortal').onclick=nwDailyScreen;by('nwInventoryPortal').onclick=nwShowInventory;by('nwWorlds').onclick=()=>openRooms('all');by('nwMail').onclick=()=>nwLobbyUtility('mail');by('nwTriplePortal').onclick=nwTripleHome;by('nwDoublePortal').onclick=nwDoublePracticeScreen;by('nwGrowingPortal').onclick=nwGrowingOpen;by('nwLetMeOutPortal').onclick=nwLetMeOutOpen;by('nwBattle').onclick=showBattle;by('nwTrophy').onclick=()=>nwShowTrophy();by('nwProfileButton').onclick=nwShowProfile;by('nwLobbyShop').onclick=()=>nwLobbyUtility('shop');by('nwLobbySettings').onclick=()=>nwLobbyUtility('settings');if(nwLobbyClock===null)nwLobbyClock=setInterval(()=>{if(evRoot.hidden||!evRoot.querySelector('[data-lobby-event]')){clearInterval(nwLobbyClock);nwLobbyClock=null;return;}nwLobbyUpdateEventStatus();if(Date.now()-nwLastMailNoticeCheck>=30000){nwLastMailNoticeCheck=Date.now();void nwPrizeRefreshMailNotice();}},1000);nwBindEventCarousel();nwResetViewToTop();
 }
 function showRooms(page=0){
   const ids=roomCollection==='fav'?nwFavs():['favorites',...nwGalaxyOrder];
