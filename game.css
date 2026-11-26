@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Barlow+Condensed:wght@500;600;700;800&family=Nunito:wght@500;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Chewy&family=Fredoka:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Bungee&family=Pixelify+Sans:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Chewy&family=Fredoka:wght@400;500;600;700&display=swap");
@@ -9129,4 +9130,216 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
 }
 #game.theme-cakefail .result-actions .nw-cake-action > span{
  font-size:clamp(16px,3.9vw,22px)!important;
+}
+
+
+/* Baggage Claim From Hell — approved vintage suitcase and baggage-label SVG UI.
+   Scoped to baggagehell; Sudoku board, original 86% piece sizing and mechanics untouched. */
+#game.theme-baggagehell{font-family:'Nunito',system-ui,sans-serif!important;}
+#game.theme-baggagehell > .ev-head > strong,
+#game.theme-baggagehell :is(.difficulty-panel,.result-panel) h2{
+ font-family:'Bree Serif',Georgia,serif!important;
+ font-weight:400!important;
+ line-height:1.15!important;
+ color:#76381F!important;
+ text-shadow:none!important;
+ letter-spacing:0!important;
+}
+#game.theme-baggagehell > .ev-head > strong{
+ font-size:clamp(14px,3.5vw,19px)!important;
+}
+#game.theme-baggagehell .ev-head :is(.ev-btn,.nw-shared-settings),
+#game.theme-baggagehell .nw-fav-toggle,
+#game.theme-baggagehell .ev-sudo-stats,
+#game.theme-baggagehell .ev-note,
+#game.theme-baggagehell .result-panel :is(p,.result-stats,.result-score small),
+#game.theme-baggagehell .ev-sudo-tools-clean .ev-sudo-tool-label{
+ font-family:'Nunito',system-ui,sans-serif!important;
+}
+#game.theme-baggagehell .ev-head :is(.ev-btn,.nw-shared-settings){
+ background:#FFE5BE!important;
+ color:#71371F!important;
+ border:1px solid #B36136!important;
+ border-radius:5px!important;
+ box-shadow:none!important;
+}
+#game.theme-baggagehell .nw-fav-toggle{
+ background:#FFF0D6!important;
+ color:#8F4425!important;
+ border:2px solid #B75A35!important;
+ border-radius:7px!important;
+ box-shadow:none!important;
+}
+#game.theme-baggagehell .difficulty-list{gap:7px!important;}
+#game.theme-baggagehell .difficulty-list .nw-baggage-difficulty{
+ display:grid!important;
+ place-items:center!important;
+ position:relative!important;
+ isolation:isolate!important;
+ width:100%!important;
+ height:clamp(50px,12.5vw,59px)!important;
+ min-height:0!important;
+ padding:0!important;
+ margin:0!important;
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ overflow:visible!important;
+ cursor:pointer!important;
+}
+#game.theme-baggagehell .nw-baggage-difficulty > .nw-baggage-case-svg,
+#game.theme-baggagehell .result-actions .nw-baggage-action > .nw-baggage-case-svg{
+ position:absolute!important;
+ inset:0!important;
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ pointer-events:none!important;
+}
+#game.theme-baggagehell .nw-baggage-difficulty > span,
+#game.theme-baggagehell .result-actions .nw-baggage-action > span{
+ position:relative!important;
+ z-index:1!important;
+ display:block!important;
+ color:#4C281A!important;
+ font:800 clamp(17px,4.5vw,22px)/1 'Barlow Condensed',sans-serif!important;
+ letter-spacing:.065em!important;
+ text-shadow:0 1px #FFF3DE99!important;
+ padding-top:8px!important;
+ pointer-events:none!important;
+}
+#game.theme-baggagehell .nw-baggage-difficulty:active,
+#game.theme-baggagehell .result-actions .nw-baggage-action:active{
+ transform:translateY(2px)!important;
+}
+#game.theme-baggagehell .nw-baggage-difficulty:focus-visible,
+#game.theme-baggagehell .result-actions .nw-baggage-action:focus-visible{
+ outline:2px solid #A54C25!important;
+ outline-offset:2px!important;
+}
+/* Decorative baggage labels sit behind untouched PNGs; no image sizing overrides. */
+#game.theme-baggagehell .ev-sudoku-tray button.nw-baggage-tray-piece{
+ position:relative!important;
+ isolation:isolate!important;
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ overflow:visible!important;
+}
+#game.theme-baggagehell .ev-sudoku-tray button.nw-baggage-tray-piece > .nw-baggage-label-svg{
+ position:absolute!important;
+ inset:0!important;
+ z-index:0!important;
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ pointer-events:none!important;
+}
+#game.theme-baggagehell .ev-sudoku-tray button.nw-baggage-tray-piece > img{
+ position:relative!important;
+ z-index:1!important;
+}
+#game.theme-baggagehell .ev-sudoku-tray button.nw-baggage-tray-piece.selected{
+ background:transparent!important;
+ border:0!important;
+ box-shadow:none!important;
+ filter:drop-shadow(0 0 5px #B3613677)!important;
+}
+#game.theme-baggagehell .ev-sudoku-tray button.nw-baggage-tray-piece.selected .nw-baggage-label-paper{
+ fill:#F8C86B!important;
+ stroke-width:3.5!important;
+}
+#game.theme-baggagehell .ev-sudoku-tray button.nw-baggage-tray-piece .ev-sudo-remain{
+ z-index:3!important;
+ background:#8F4934!important;
+ color:#FFFFFF!important;
+ border:1px solid #FBE5C8!important;
+ border-radius:3px!important;
+ font:800 9px/1 'Nunito',system-ui,sans-serif!important;
+}
+#game.theme-baggagehell .ev-sudo-tools-clean .ev-sudo-tool{
+ background:#FFE6C5!important;
+ color:#66341F!important;
+ border:1.5px solid #C58557!important;
+ border-bottom:3px solid #A54C25!important;
+ border-radius:7px!important;
+ box-shadow:none!important;
+}
+#game.theme-baggagehell .ev-sudo-tools-clean .ev-sudo-tool.active{
+ background:#F8C86B!important;
+ border-color:#A54C25!important;
+ box-shadow:0 0 10px #A54C2560!important;
+}
+#game.theme-baggagehell .ev-sudo-tools-clean .ev-sudo-tool-icon{
+ display:grid!important;
+ place-items:center!important;
+ color:#A54C25!important;
+ text-shadow:none!important;
+}
+#game.theme-baggagehell .nw-baggage-tool-svg{
+ display:block!important;
+ width:20px!important;
+ height:20px!important;
+}
+#game.theme-baggagehell .ev-sudo-tools-clean .ev-sudo-tool-label{
+ color:#66341F!important;
+ font-weight:800!important;
+ font-size:9px!important;
+}
+#game.theme-baggagehell .result-panel .result-mark{
+ display:grid!important;
+ place-items:center!important;
+ box-sizing:border-box!important;
+ width:67px!important;
+ height:67px!important;
+ min-width:67px!important;
+ min-height:67px!important;
+ max-width:67px!important;
+ max-height:67px!important;
+ aspect-ratio:1/1!important;
+ flex:0 0 67px!important;
+ padding:0!important;
+ margin:8px auto 14px!important;
+ background:#FFE6C5!important;
+ border:3px solid #A54C25!important;
+ border-radius:50%!important;
+ color:#A54C25!important;
+ box-shadow:none!important;
+}
+#game.theme-baggagehell .result-panel .nw-baggage-result-svg{
+ display:block!important;
+ width:38px!important;
+ height:38px!important;
+}
+#game.theme-baggagehell .result-panel:not(:has(.result-score)) .result-mark{
+ border-color:#C75462!important;
+ color:#C75462!important;
+ background:#FFE0D5!important;
+}
+#game.theme-baggagehell .result-panel .result-score strong{
+ color:#A54C25!important;
+ font-family:'Bree Serif',Georgia,serif!important;
+ font-weight:400!important;
+}
+#game.theme-baggagehell .result-actions{gap:7px!important;}
+#game.theme-baggagehell .result-actions .nw-baggage-action{
+ display:grid!important;
+ place-items:center!important;
+ position:relative!important;
+ isolation:isolate!important;
+ width:100%!important;
+ height:clamp(50px,12.5vw,59px)!important;
+ min-height:0!important;
+ padding:0!important;
+ margin:0!important;
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ overflow:visible!important;
+}
+#game.theme-baggagehell .result-actions .nw-baggage-action > span{
+ font-size:clamp(16px,3.8vw,22px)!important;
 }
