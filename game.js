@@ -1591,12 +1591,31 @@ function nwDoubleInviteFriends(){
  evRoot.querySelector('#nwDoubleInviteBack').onclick=nwDoublePracticeScreen;
  evRoot.querySelectorAll('[data-dt-invite]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await nwDoubleRpc('invite',{p_target:b.dataset.dtInvite});b.querySelector('.nw-double-key-label').textContent='SENT';nwDoubleAlert('Invitation sent.');}catch(e){b.disabled=false;nwDoubleAlert(e.message);}});
 }
+function nwDoubleUtilityButton(id,type,label){
+ const icons={
+  invite:'<rect x="29" y="37" width="42" height="29" rx="2"/><path d="M30 39L50 53L70 39"/>',
+  rewards:'<path d="M50 24L57 39L74 41L61 53L65 70L50 61L35 70L39 53L26 41L43 39Z"/>',
+  help:'<circle cx="50" cy="46" r="20"/><path d="M43 41Q43 32 52 33Q63 34 57 44Q55 47 50 50L50 55"/><circle cx="50" cy="62" r="2" fill="#294A62" stroke="none"/>'
+ };
+ const outline='M16 8L83 9L93 20L91 82L80 92L15 90L7 80L8 19Z';
+ return `<button type="button" class="nw-double-utility-btn" id="${id}" aria-label="${label}"><span class="nw-double-utility-art"><svg class="nw-double-utility-base" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d="${outline}" fill="#A9D8F1" stroke="#0E1C2C" stroke-width="3" stroke-linejoin="round"/><path d="M20 15L79 15L86 23L85 77L76 85L20 84L14 76L15 24Z" fill="#B9DDF2" stroke="#608BA6" stroke-width="1.5" stroke-linejoin="round"/><g fill="none" stroke="#294A62" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round">${icons[type]}</g></svg><svg class="nw-double-utility-alert" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path class="nw-double-edge-halo" d="${outline}" pathLength="100"/><path class="nw-double-edge-streak" d="${outline}" pathLength="100"/></svg></span><span class="nw-double-utility-label">${label}</span></button>`;
+}
+function nwDoubleUtilityBar(){
+ return `<nav class="nw-double-utility-bar" aria-label="Double Trouble information">${nwDoubleUtilityButton('nwDoubleCheckInvites','invite','INVITATIONS')}${nwDoubleUtilityButton('nwDoubleRewards','rewards','REWARDS')}${nwDoubleUtilityButton('nwDoubleHowToPlay','help','HOW TO PLAY')}</nav>`;
+}
+function nwDoubleHowToPlay(){
+ clearInterval(nwDoubleTimer);nwDoubleTimer=null;nwDoubleTheme();
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-howto"><h2 class="nw-double-subtitle">HOW TO PLAY</h2><div class="nw-double-howto-text"><p><strong>PARTNER DAY</strong> Thursday, 00:00–Friday, 00:00 UTC. Invite friends or choose Random Match. The first accepted invitation confirms your partner. Random partners are revealed when Double Trouble begins.</p><p><strong>FRIDAY–SUNDAY</strong> Complete Sudoku puzzles to earn points. Your points and your partner’s points are added together. Players without a partner compete solo.</p><p><strong>THE RACE</strong> Compete against another team. Partnerships stay locked throughout the event.</p><p><strong>THE SPOILS</strong> Earn at least 3,500 personal points to qualify for diamonds. Rewards depend on your team's result and your personal contribution. An inactive partner who doesn't qualify receives no reward.</p></div>${nwDoubleButton('nwDoubleHowToBack','BACK TO EVENT',true)}</section>`);
+ evRoot.querySelector('#nwDoubleHowToBack').onclick=nwDoublePracticeScreen;
+}
 function nwDoublePracticeScreen(){
  clearInterval(nwDoubleTimer);nwDoubleTimer=null;evSudokuLeave();nwDoublePracticeActive=false;nwDoubleTheme();
  const period=nwDoublePeriod();
  const title='<div class="nw-double-decoration" aria-hidden="true">⋆｡ﾟ☁︎｡⋆｡ ﾟ☾ ﾟ｡⋆</div><div class="nw-double-mascots"><img class="dt-shaggy-twins" src="assets/double-trouble/shaggy-twins.png" alt=""></div><h2 class="nw-double-logo nw-double-glitch"><span>DOUBLE<br>TROUBLE</span><span class="nw-double-glitch-copy" aria-hidden="true">DOUBLE<br>TROUBLE</span><span class="nw-double-glitch-copy second" aria-hidden="true">DOUBLE<br>TROUBLE</span></h2><div class="nw-double-kicker">FRIDAY — SUNDAY</div>';
- evDisplay(`${evHeader('',nwDoubleExit)}<section class="nw-double nw-double-home">${title}<div class="nw-double-count"><small>${period.phase==='active'?'EVENT ENDS IN':period.phase==='pair'?'COMPETITION STARTS IN':'PARTNER DAY STARTS IN'}</small><strong id="nwDoubleClock"></strong></div><div id="nwDoubleLive"><p class="nw-double-note">Loading...</p></div>${nwDoubleButton('nwDoubleRewards','.✦ ݁˖ REWARDS',true)}</section>`);
+ evDisplay(`${evHeader('',nwDoubleExit)}<section class="nw-double nw-double-home">${title}<div class="nw-double-count"><small>${period.phase==='active'?'EVENT ENDS IN':period.phase==='pair'?'COMPETITION STARTS IN':'PARTNER DAY STARTS IN'}</small><strong id="nwDoubleClock"></strong></div><div id="nwDoubleLive"><p class="nw-double-note">Loading...</p></div>${nwDoubleUtilityBar()}</section>`);
  const rewards=evRoot.querySelector('#nwDoubleRewards');if(rewards)rewards.onclick=nwDoubleRewards;
+ const utilityInvites=evRoot.querySelector('#nwDoubleCheckInvites');if(utilityInvites)utilityInvites.onclick=nwDoubleInvitations;
+ const howTo=evRoot.querySelector('#nwDoubleHowToPlay');if(howTo)howTo.onclick=nwDoubleHowToPlay;
  const tickClock=()=>{const e=evRoot.querySelector('#nwDoubleClock');if(!e)return;const p=nwDoublePeriod(),ms=(p.phase==='active'?p.end:p.phase==='pair'?p.start:p.nextPair)-Date.now();e.textContent=nwDoubleCountdown(ms);if(p.phase!==period.phase||p.id!==period.id)nwDoublePracticeScreen();};
  tickClock();nwDoubleTimer=setInterval(tickClock,1000);
  const refresh=async()=>{const box=evRoot.querySelector('#nwDoubleLive');if(!box)return;try{const d=await nwDoubleRpc();if(!box.isConnected)return;
@@ -1607,14 +1626,15 @@ function nwDoublePracticeScreen(){
    if(d.mode==='random')content+='<p class="nw-double-note">Random Match confirmed. Your partner will be revealed on Friday.</p>';
    else if(paired)content+='<p class="nw-double-note">Your partnership is confirmed for Friday.</p>';
    else content+=nwDoubleButton('nwDoubleInvite','INVITE A FRIEND')+nwDoubleButton('nwDoubleRandom','RANDOM MATCH',true);
-   const count=(d.invitations||[]).length;
-   content+=`<div class="nw-double-invitation-button">${nwDoubleButton('nwDoubleCheckInvites',`INVITATIONS${count?' ('+count+')':''}`,true)}</div>`;
+   // Pending invitations light up the compact Invitations button below.
   }else if(period.phase==='active'){
    content=`${nwDoubleTeams(d)}<div class="nw-double-prize-progress"><div class="nw-double-prize-progress-top"><span>YOUR PROGRESS</span><strong>${nwDoubleFmt(d.points)} / 3,500</strong></div><div class="nw-double-eligibility-track"><i style="width:${Math.min(100,Number(d.points||0)/35)}%"></i></div></div>${nwDoubleButton('nwDoublePlay','▹ PLAY NOW')}`;
   }else content='<p class="nw-double-note">Partner Day begins Thursday at 00:00 UTC.</p>';
   box.innerHTML=content;
-  const invite=box.querySelector('#nwDoubleInvite'),random=box.querySelector('#nwDoubleRandom'),inv=box.querySelector('#nwDoubleCheckInvites'),play=box.querySelector('#nwDoublePlay');
-  if(invite)invite.onclick=nwDoubleInviteFriends;if(random)random.onclick=nwDoublePopup;if(inv){inv.onclick=nwDoubleInvitations;inv.classList.toggle('nw-notification-orbit',!!(d.invitations||[]).length);}if(play)play.onclick=nwDoubleDifficulty;
+  const invite=box.querySelector('#nwDoubleInvite'),random=box.querySelector('#nwDoubleRandom'),play=box.querySelector('#nwDoublePlay');
+  const inviteIndicator=evRoot.querySelector('#nwDoubleCheckInvites');
+  if(inviteIndicator){const pending=period.phase==='pair'&&(d.invitations||[]).length>0;inviteIndicator.classList.toggle('has-invitation',pending);inviteIndicator.setAttribute('aria-label',pending?'Invitations — new invitation received':'Invitations');}
+  if(invite)invite.onclick=nwDoubleInviteFriends;if(random)random.onclick=nwDoublePopup;if(play)play.onclick=nwDoubleDifficulty;
  }catch(e){if(box.isConnected)box.innerHTML=`<p class="nw-double-alert">${nwEscape(e.message)}</p>${nwDoubleButton('nwDoubleRetry','RETRY',true)}`;const b=box.querySelector('#nwDoubleRetry');if(b)b.onclick=refresh;}};
  void refresh();
  // Periodic server refresh makes new invitations and partner scores visible without reopening.
