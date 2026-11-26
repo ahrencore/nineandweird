@@ -9851,3 +9851,98 @@ body:has(#game.theme-donttakewater:not([hidden])){background:#101D20!important;}
  color:#245D83!important;
 }
 #game.theme-unpreparedchristmas .result-actions{gap:6px!important;}
+
+
+/* Christmas World ONLY — approved clean candy-cane screens and ornament tray.
+   Keep existing icy palette, static snow, 9x9 geometry and original PNG sizes. */
+#game.theme-christmas .difficulty-panel,
+#game.theme-christmas .result-panel{
+ background:#F7FCFF!important;color:#255878!important;
+ border:2px solid #ACCFE1!important;border-radius:13px!important;
+ box-shadow:0 5px 15px #508DAE17!important;
+}
+#game.theme-christmas .difficulty-panel .nw-fav-toggle{
+ display:block!important;margin:0 auto 17px!important;
+ padding:9px 17px!important;border:1px solid #9DC7DB!important;
+ background:#F8FCFF!important;color:#316E8E!important;
+ border-radius:6px!important;box-shadow:none!important;
+ font:600 12px/1.2 system-ui,sans-serif!important;
+}
+#game.theme-christmas .difficulty-panel h2,
+#game.theme-christmas .result-panel h2{
+ color:#285B7B!important;font-family:Georgia,serif!important;
+ text-shadow:none!important;letter-spacing:0!important;
+}
+#game.theme-christmas .difficulty-panel h2{
+ font-size:clamp(18px,5vw,22px)!important;
+ margin:0 0 19px!important;
+}
+#game.theme-christmas .difficulty-list{gap:5px!important;}
+#game.theme-christmas .difficulty-list .nw-christmas-difficulty,
+#game.theme-christmas .result-actions .nw-christmas-action{
+ position:relative!important;isolation:isolate!important;
+ display:flex!important;justify-content:center!important;align-items:center!important;
+ width:100%!important;height:52px!important;min-height:52px!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ padding:0 12px!important;box-shadow:none!important;overflow:hidden!important;
+ color:#255878!important;font:700 clamp(13px,3.9vw,16px)/1.15 Georgia,serif!important;
+ letter-spacing:0!important;text-shadow:none!important;cursor:pointer;
+}
+#game.theme-christmas .nw-christmas-difficulty > .nw-christmas-cane-svg,
+#game.theme-christmas .result-actions .nw-christmas-action > .nw-christmas-cane-svg{
+ position:absolute!important;inset:0!important;display:block!important;
+ width:100%!important;height:100%!important;z-index:0!important;
+ pointer-events:none!important;
+}
+#game.theme-christmas .nw-christmas-difficulty > span,
+#game.theme-christmas .result-actions .nw-christmas-action > span{
+ position:relative!important;z-index:1!important;display:block!important;
+ max-width:100%!important;white-space:normal!important;
+ overflow-wrap:break-word!important;text-align:center!important;
+}
+#game.theme-christmas .nw-christmas-difficulty:active,
+#game.theme-christmas .result-actions .nw-christmas-action:active{
+ transform:translateY(2px)!important;
+}
+#game.theme-christmas .nw-christmas-difficulty:focus-visible,
+#game.theme-christmas .result-actions .nw-christmas-action:focus-visible{
+ outline:2px solid #367DA4!important;outline-offset:2px!important;
+}
+#game.theme-christmas .ev-sudoku-tray button.nw-christmas-tray-piece{
+ position:relative!important;isolation:isolate!important;
+ background:transparent!important;border:0!important;
+ border-radius:0!important;box-shadow:none!important;overflow:visible!important;
+ padding:2px 0!important;
+}
+#game.theme-christmas .ev-sudoku-tray button.nw-christmas-tray-piece > .nw-christmas-ornament-svg{
+ position:absolute!important;inset:0!important;display:block!important;
+ width:100%!important;height:100%!important;z-index:0!important;
+ pointer-events:none!important;
+}
+#game.theme-christmas .ev-sudoku-tray button.nw-christmas-tray-piece > img,
+#game.theme-christmas .ev-sudoku-tray button.nw-christmas-tray-piece > .number-symbol{
+ position:relative!important;z-index:1!important;
+}
+#game.theme-christmas .ev-sudoku-tray button.nw-christmas-tray-piece.selected{
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ filter:drop-shadow(0 0 3px #288BBB)!important;
+}
+#game.theme-christmas .ev-sudoku-tray button.nw-christmas-tray-piece.selected .nw-christmas-ornament-body{
+ fill:#C7EBFA!important;stroke:#367DA4!important;stroke-width:2.5!important;
+}
+#game.theme-christmas .ev-sudoku-tray button.nw-christmas-tray-piece .ev-sudo-remain{
+ z-index:3!important;background:#367DA4!important;color:#FFF!important;
+ border-radius:8px!important;
+}
+#game.theme-christmas .result-panel .result-mark{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:80px!important;height:80px!important;margin:10px auto 20px!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;transform:none!important;
+ font-size:0!important;line-height:0!important;
+}
+#game.theme-christmas .result-panel .nw-christmas-result-svg{
+ display:block!important;width:80px!important;height:80px!important;
+}
+#game.theme-christmas .result-panel h2{font-size:clamp(22px,5.6vw,26px)!important;}
+#game.theme-christmas .result-actions{gap:7px!important;}
