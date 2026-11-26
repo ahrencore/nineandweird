@@ -10236,3 +10236,74 @@ body:has(#game.theme-donttakewater:not([hidden])){background:#101D20!important;}
 #game.nw-double-theme button.nw-double-roomkey:focus-visible{
  outline:2px solid #DDF2FB!important;outline-offset:2px!important;
 }
+
+/* Double Trouble · matte cartoon motel door signs — approved light icy-blue.
+   Both art and container have fixed aspect ratios; never stretch the SVG. */
+#game.nw-double-theme button.nw-double-roomkey.nw-double-door-sign,
+#game.nw-double-theme button.nw-double-btn.nw-double-roomkey.nw-double-door-sign,
+#game.nw-double-theme button.nw-double-btn.nw-double-roomkey.nw-double-door-sign.secondary,
+#game.nw-double-theme .nw-double-home button.nw-double-btn.nw-double-roomkey.nw-double-door-sign,
+#game.nw-double-theme .nw-double-home button.nw-double-btn.nw-double-roomkey.nw-double-door-sign.secondary,
+#game.nw-double-theme .nw-double:not(.nw-double-home) button.nw-double-btn.nw-double-roomkey.nw-double-door-sign,
+#game.nw-double-theme .nw-double:not(.nw-double-home) button.nw-double-btn.nw-double-roomkey.nw-double-door-sign.secondary{
+ appearance:none!important;-webkit-appearance:none!important;
+ position:relative!important;isolation:isolate!important;display:flex!important;
+ justify-content:center!important;align-items:center!important;
+ width:min(100%,308px)!important;max-width:308px!important;
+ height:76px!important;min-height:76px!important;
+ flex:0 0 auto!important;align-self:center!important;margin:0 auto!important;
+ padding:0 19px!important;background:transparent!important;
+ background-image:none!important;background-color:transparent!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+ outline:0!important;filter:none!important;text-shadow:none!important;
+ color:#142A3B!important;
+ font:800 clamp(12px,3.7vw,16px)/1.1 'Bricolage Grotesque',system-ui,sans-serif!important;
+}
+#game.nw-double-theme .nw-double-roomkey.nw-double-door-sign>.nw-double-roomkey-svg{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ object-fit:contain!important;overflow:visible!important;
+ filter:drop-shadow(0 2px 0 #081521)!important;
+}
+#game.nw-double-theme .nw-double-roomkey.nw-double-door-sign>.nw-double-key-label{
+ position:relative!important;z-index:1!important;display:block!important;
+ width:100%!important;min-width:0!important;padding:0 7px!important;
+ font:inherit!important;text-align:center!important;letter-spacing:.015em!important;
+ color:#142A3B!important;
+}
+#game.nw-double-theme .nw-double-roomkey.nw-double-door-sign.secondary,
+#game.nw-double-theme .nw-double-roomkey.nw-double-door-sign.secondary>.nw-double-key-label{
+ color:#142A3B!important;
+}
+#game.nw-double-theme .nw-double-home #nwDoubleLive,
+#game.nw-double-theme .nw-double-home .nw-double-invitation-button{
+ width:100%!important;min-width:0!important;
+}
+#game.nw-double-theme .nw-double-home .nw-double-invitation-button{
+ display:flex!important;justify-content:center!important;
+}
+#game.nw-double-theme .nw-double-home #nwDoubleLive>.nw-double-btn.nw-double-door-sign{
+ display:flex!important;
+}
+/* Compact sign drawn separately, rather than shrinking or flattening the large sign. */
+#game.nw-double-theme .nw-double-invite-row button.nw-double-roomkey.nw-double-door-sign.nw-double-smallkey,
+#game.nw-double-theme .nw-double-invite-row button.nw-double-roomkey.nw-double-door-sign.nw-double-smallkey.secondary{
+ flex:0 0 100px!important;width:100px!important;max-width:100px!important;
+ height:43px!important;min-height:43px!important;
+ padding:0 6px!important;margin:0!important;align-self:center!important;
+ font:800 11px/1.1 'Bricolage Grotesque',system-ui,sans-serif!important;
+ background:none!important;border:0!important;box-shadow:none!important;
+ color:#142A3B!important;
+}
+#game.nw-double-theme .nw-double-invite-row .nw-double-smallkey.nw-double-door-sign>.nw-double-key-label{
+ color:#142A3B!important;font:inherit!important;padding:0 4px!important;
+}
+#game.nw-double-theme .nw-double-door-sign:active{transform:translateY(2px)!important}
+#game.nw-double-theme button.nw-double-door-sign:focus-visible{
+ outline:2px solid #DDF2FB!important;outline-offset:1px!important;
+}
+@media(max-width:350px){
+ #game.nw-double-theme .nw-double-invite-row button.nw-double-door-sign.nw-double-smallkey{
+  flex-basis:82px!important;width:82px!important;max-width:82px!important;
+  height:36px!important;min-height:36px!important;font-size:10px!important;
+ }
+}
