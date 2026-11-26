@@ -10391,3 +10391,10 @@ body:has(#game.theme-donttakewater:not([hidden])){background:#101D20!important;}
   min-height:100px!important;font-size:9px!important;
  }
 }
+
+/* Twins' Corridor: replace the legacy gold moon/cloud/star header accents with icy blue. */
+#game.nw-double-theme .nw-double:not(.nw-double-home) > h2::before,
+#game.nw-double-theme .nw-double:not(.nw-double-home) > h2:not(.nw-double-logo)::before{
+ color:#B9DDF2!important;
+ text-shadow:0 0 8px #9CCBE355!important;
+}
