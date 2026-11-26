@@ -10212,3 +10212,27 @@ body:has(#game.theme-donttakewater:not([hidden])){background:#101D20!important;}
  #game.nw-double-theme .nw-double-invite-row .nw-double-smallkey{flex-basis:67px!important;width:67px!important;padding-left:14px!important}
  #game.nw-double-theme .nw-double-invite-row .nw-double-smallkey>.nw-double-key-label{font-size:9px!important}
 }
+
+/* Double Trouble motel key: all buttons match INVITE A FRIEND, with no legacy rectangular chrome.
+   The old secondary selector had higher specificity than the original key override. */
+#game.nw-double-theme button.nw-double-btn.nw-double-roomkey,
+#game.nw-double-theme button.nw-double-btn.nw-double-roomkey.secondary,
+#game.nw-double-theme .nw-double-home button.nw-double-btn.nw-double-roomkey,
+#game.nw-double-theme .nw-double-home button.nw-double-btn.nw-double-roomkey.secondary,
+#game.nw-double-theme .nw-double:not(.nw-double-home) button.nw-double-btn.nw-double-roomkey,
+#game.nw-double-theme .nw-double:not(.nw-double-home) button.nw-double-btn.nw-double-roomkey.secondary,
+#game.nw-double-theme .nw-double-invitation-button button.nw-double-btn.nw-double-roomkey.secondary{
+ appearance:none!important;-webkit-appearance:none!important;
+ background:none!important;background-color:transparent!important;background-image:none!important;
+ border:0!important;border-color:transparent!important;border-radius:0!important;
+ box-shadow:none!important;text-shadow:none!important;outline:0!important;
+ color:#DDF2FB!important;filter:none!important;
+ min-height:52px!important;height:52px!important;
+ padding:0 17px 0 49px!important;
+ font:800 clamp(12px,3.6vw,15px)/1.15 'Bricolage Grotesque',system-ui,sans-serif!important;
+}
+#game.nw-double-theme .nw-double-roomkey.secondary{color:#DDF2FB!important}
+#game.nw-double-theme .nw-double-roomkey:active{box-shadow:none!important}
+#game.nw-double-theme button.nw-double-roomkey:focus-visible{
+ outline:2px solid #DDF2FB!important;outline-offset:2px!important;
+}
