@@ -10437,3 +10437,17 @@ body:has(#game.theme-donttakewater:not([hidden])){background:#101D20!important;}
  background-image:none!important;
 }
 /* Frameless '?' opponent/partner placeholders intentionally keep their round badge. */
+
+/* Sudoku hint availability badge; inherit each World's existing tool palette. */
+#game .ev-sudo-tool#evSudoHint .nw-sudoku-hint-counter{
+ display:block;
+ margin:1px auto 0;
+ font:700 10px/1.15 inherit;
+ font-family:inherit;
+ letter-spacing:.04em;
+ text-align:center;
+ color:inherit;
+ min-height:11px;
+ white-space:nowrap;
+}
+#game .ev-sudo-tool#evSudoHint .nw-sudoku-hint-counter:not(:empty){opacity:.95}
