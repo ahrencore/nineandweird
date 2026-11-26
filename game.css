@@ -7645,3 +7645,207 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
 #game.theme-underthebed .result-actions .nw-underbed-action > span{
  font-size:clamp(13px,3.4vw,19px)!important;
 }
+
+
+/* Body Parts Department — approved OFFICE stationery controls, 2026-11-26.
+   Does not touch Sudoku grid, cell sizing, symbol image rules, or shell dimensions. */
+#game.theme-bodyparts{
+ font-family:'Space Grotesk',system-ui,sans-serif!important;
+}
+#game.theme-bodyparts > .ev-head > strong,
+#game.theme-bodyparts :is(.difficulty-panel,.result-panel) h2{
+ font-family:'Space Grotesk',system-ui,sans-serif!important;
+ font-weight:700!important;
+ line-height:1.2!important;
+ letter-spacing:-.025em!important;
+}
+#game.theme-bodyparts > .ev-head > strong{
+ font-size:clamp(12px,2.7vw,17px)!important;
+ color:#443B56!important;
+ text-shadow:none!important;
+}
+#game.theme-bodyparts .ev-head :is(.ev-btn,.nw-shared-settings),
+#game.theme-bodyparts .nw-fav-toggle,
+#game.theme-bodyparts .ev-sudo-stats small,
+#game.theme-bodyparts .result-panel :is(.result-score small,.result-stats),
+#game.theme-bodyparts .ev-sudo-tools-clean .ev-sudo-tool-label{
+ font-family:'DM Mono',monospace!important;
+}
+#game.theme-bodyparts .ev-head .ev-btn,
+#game.theme-bodyparts .nw-fav-toggle{
+ background:#FCFAF7!important;
+ color:#443B56!important;
+ border:1.5px solid #9471B4!important;
+ border-radius:4px!important;
+ box-shadow:none!important;
+}
+#game.theme-bodyparts .difficulty-list{gap:7px!important;}
+#game.theme-bodyparts .difficulty-list .nw-bodyparts-difficulty{
+ display:grid!important;
+ place-items:center!important;
+ position:relative!important;
+ isolation:isolate!important;
+ width:100%!important;
+ height:clamp(49px,12.5vw,55px)!important;
+ min-height:0!important;
+ padding:0!important;
+ margin:0!important;
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ overflow:visible!important;
+ cursor:pointer!important;
+}
+#game.theme-bodyparts .nw-bodyparts-difficulty > .nw-bodyparts-stamp-svg,
+#game.theme-bodyparts .result-actions .nw-bodyparts-action > .nw-bodyparts-stamp-svg{
+ position:absolute!important;
+ inset:0!important;
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ pointer-events:none!important;
+}
+#game.theme-bodyparts .nw-bodyparts-difficulty > span,
+#game.theme-bodyparts .result-actions .nw-bodyparts-action > span{
+ position:relative!important;
+ z-index:1!important;
+ display:block!important;
+ color:#443B56!important;
+ font:700 clamp(14px,4.2vw,19px)/1.1 'DM Mono',monospace!important;
+ letter-spacing:.03em!important;
+ text-shadow:none!important;
+ pointer-events:none!important;
+}
+#game.theme-bodyparts .nw-bodyparts-difficulty:active,
+#game.theme-bodyparts .result-actions .nw-bodyparts-action:active{transform:translateY(2px)!important;}
+#game.theme-bodyparts .nw-bodyparts-difficulty:focus-visible,
+#game.theme-bodyparts .result-actions .nw-bodyparts-action:focus-visible{
+ outline:2px solid #9471B4!important;
+ outline-offset:2px!important;
+}
+/* The existing 9-column tray and existing 100% original PNG dimensions are preserved. */
+#game.theme-bodyparts .ev-sudoku-tray button.nw-bodyparts-tray-piece{
+ position:relative!important;
+ isolation:isolate!important;
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ overflow:visible!important;
+}
+#game.theme-bodyparts .ev-sudoku-tray button.nw-bodyparts-tray-piece > .nw-bodyparts-paper-svg{
+ position:absolute!important;
+ inset:0!important;
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ z-index:0!important;
+ pointer-events:none!important;
+}
+#game.theme-bodyparts .ev-sudoku-tray button.nw-bodyparts-tray-piece > img{
+ position:relative!important;
+ z-index:1!important;
+}
+#game.theme-bodyparts .ev-sudoku-tray button.nw-bodyparts-tray-piece.selected{
+ background:transparent!important;
+ border:0!important;
+ filter:drop-shadow(0 0 4px #9471B488)!important;
+ box-shadow:none!important;
+}
+#game.theme-bodyparts .ev-sudoku-tray button.nw-bodyparts-tray-piece.selected .nw-bodyparts-paper{
+ fill:#B3F0D9!important;
+ stroke:#9471B4!important;
+ stroke-width:3!important;
+}
+#game.theme-bodyparts .ev-sudoku-tray button.nw-bodyparts-tray-piece .ev-sudo-remain{
+ z-index:3!important;
+ border:1px solid #9471B4!important;
+ border-radius:2px!important;
+ background:#E1F0EC!important;
+ color:#443B56!important;
+ font:700 9px/1 'DM Mono',monospace!important;
+}
+#game.theme-bodyparts .ev-sudo-tools-clean .ev-sudo-tool{
+ background:#FCFAF7!important;
+ color:#443B56!important;
+ border:1px solid #9471B4!important;
+ border-bottom:3px solid #9471B4!important;
+ border-radius:4px!important;
+ box-shadow:none!important;
+}
+#game.theme-bodyparts .ev-sudo-tools-clean .ev-sudo-tool.active{
+ background:#B3F0D9!important;
+ border-color:#9471B4!important;
+}
+#game.theme-bodyparts .ev-sudo-tools-clean .ev-sudo-tool-icon{
+ color:#9471B4!important;
+ text-shadow:none!important;
+ display:grid!important;
+ place-items:center!important;
+}
+#game.theme-bodyparts .nw-bodyparts-tool-svg{
+ display:block!important;
+ width:20px!important;
+ height:20px!important;
+}
+#game.theme-bodyparts .ev-sudo-tools-clean .ev-sudo-tool-label{
+ color:#443B56!important;
+ font-weight:700!important;
+ font-size:9px!important;
+}
+#game.theme-bodyparts .result-panel .result-mark{
+ display:grid!important;
+ place-items:center!important;
+ box-sizing:border-box!important;
+ width:67px!important;
+ height:67px!important;
+ min-width:67px!important;
+ min-height:67px!important;
+ max-width:67px!important;
+ max-height:67px!important;
+ aspect-ratio:1/1!important;
+ flex:0 0 67px!important;
+ margin:8px auto 14px!important;
+ padding:0!important;
+ border:3px solid #9471B4!important;
+ border-radius:50%!important;
+ background:#FCFAF7!important;
+ color:#9471B4!important;
+ box-shadow:none!important;
+}
+#game.theme-bodyparts .result-panel .nw-bodyparts-result-svg{
+ display:block!important;
+ width:38px!important;
+ height:38px!important;
+}
+#game.theme-bodyparts .result-panel:not(:has(.result-score)) .result-mark{
+ border-color:#D97988!important;
+ color:#D97988!important;
+}
+#game.theme-bodyparts .result-panel .result-score strong{
+ color:#443B56!important;
+ font-family:'Space Grotesk',system-ui,sans-serif!important;
+ font-weight:700!important;
+}
+#game.theme-bodyparts .result-actions .nw-bodyparts-action{
+ display:grid!important;
+ place-items:center!important;
+ position:relative!important;
+ isolation:isolate!important;
+ width:100%!important;
+ height:clamp(49px,12.5vw,55px)!important;
+ min-height:0!important;
+ padding:0!important;
+ margin:0!important;
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ overflow:visible!important;
+}
+#game.theme-bodyparts .result-actions{gap:7px!important;}
+#game.theme-bodyparts .result-actions .nw-bodyparts-action > span{
+ font-size:clamp(12px,3.3vw,17px)!important;
+ letter-spacing:0!important;
+}
