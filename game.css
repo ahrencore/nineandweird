@@ -10442,7 +10442,9 @@ body:has(#game.theme-donttakewater:not([hidden])){background:#101D20!important;}
 #game .ev-sudo-tool#evSudoHint .nw-sudoku-hint-counter{
  display:block;
  margin:1px auto 0;
- font:700 10px/1.15 inherit;
+ font-size:10px;
+ font-weight:700;
+ line-height:1.15;
  font-family:inherit;
  letter-spacing:.04em;
  text-align:center;
