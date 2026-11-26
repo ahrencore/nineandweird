@@ -7149,3 +7149,96 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
 @media(prefers-reduced-motion:reduce){
  #game.theme-alien .nw-alien-difficulty{transition:none!important;}
 }
+
+/* Alien Supermarket — 2026-11-26 polish after device review.
+   NO dark/black underside or bevel strips. Flat luminous edges only.
+   Restore gameplay board space that was lost to the 430px panel cap. */
+#game.theme-alien > .ev-sudo-shell{
+ width:100%!important;
+ max-width:540px!important;
+ margin-left:auto!important;
+ margin-right:auto!important;
+ padding:8px 5px 12px!important;
+ border:2px solid #5BFFD8!important;
+ border-radius:12px!important;
+ box-shadow:0 0 0 1px #2E5966,0 0 12px #5BFFD826!important;
+}
+#game.theme-alien > .difficulty-panel,
+#game.theme-alien > .result-panel{
+ box-shadow:0 0 0 1px #375768,0 0 15px #5BFFD821!important;
+}
+#game.theme-alien > .ev-head.ev-head{
+ box-shadow:0 0 8px #5BFFD821!important;
+}
+#game.theme-alien > .ev-head :is(.ev-btn,.nw-shared-settings){
+ box-shadow:none!important;
+}
+#game.theme-alien .difficulty-list .nw-alien-difficulty{
+ filter:none!important;
+}
+#game.theme-alien .nw-alien-difficulty:active{
+ filter:none!important;
+}
+#game.theme-alien .ev-sudo-stats > div{
+ border-bottom-color:#5BFFD8!important;
+ box-shadow:none!important;
+}
+#game.theme-alien .ev-sudo-stats > div:nth-child(2){border-bottom-color:#7CFF4F!important;}
+#game.theme-alien .ev-sudo-stats > div:nth-child(3){border-bottom-color:#2EE6FF!important;}
+#game.theme-alien .ev-sudo-stats > div:nth-child(4){border-bottom-color:#A7FFDA!important;}
+#game.theme-alien .ev-sudoku-grid{
+ box-shadow:0 0 0 2px #39586A,0 0 10px #5BFFD82D!important;
+}
+#game.theme-alien .ev-sudoku-tray button{
+ border-bottom-color:#5BFFD8!important;
+ box-shadow:none!important;
+}
+#game.theme-alien .ev-sudoku-tray button.selected{
+ box-shadow:0 0 0 1px #7CFF4F!important;
+}
+#game.theme-alien .ev-sudoku-tray .ev-sudo-remain{
+ box-shadow:none!important;
+}
+#game.theme-alien .ev-sudo-tools-clean .ev-sudo-tool{
+ border-bottom-color:#5BFFD8!important;
+ box-shadow:none!important;
+}
+#game.theme-alien .ev-sudo-tools-clean .ev-sudo-tool:nth-child(2){border-bottom-color:#2EE6FF!important;}
+#game.theme-alien .ev-sudo-tools-clean .ev-sudo-tool:nth-child(3){border-bottom-color:#7CFF4F!important;}
+#game.theme-alien .ev-sudo-tools-clean .ev-sudo-tool:nth-child(4){border-bottom-color:#A7FFDA!important;}
+#game.theme-alien .ev-sudo-tools-clean .ev-sudo-tool.active{
+ box-shadow:0 0 0 1px #7CFF4F!important;
+ border-bottom-color:#7CFF4F!important;
+}
+#game.theme-alien .result-mark{
+ box-shadow:0 0 0 1px #5BFFD8!important;
+}
+#game.theme-alien .result-panel:not(:has(.result-score)) .result-mark{
+ box-shadow:0 0 0 1px #FF6C83!important;
+}
+#game.theme-alien .result-score{
+ border-bottom-color:#5BFFD8!important;
+ box-shadow:none!important;
+}
+#game.theme-alien .result-stats > div{
+ border-bottom-color:#486B75!important;
+ box-shadow:none!important;
+}
+#game.theme-alien .result-actions .theme-button{
+ border-bottom-color:#EAFBFF!important;
+ box-shadow:none!important;
+}
+#game.theme-alien .result-actions .theme-button:nth-child(2){
+ border-bottom-color:#5BFFD8!important;
+}
+#game.theme-alien .result-actions .theme-button:active{
+ box-shadow:none!important;
+}
+/* Compact phone: retain as much of the 9x9 playable width as possible,
+   without clipping the panel edges. Existing board cell art remains 100%. */
+@media(max-width:390px){
+ #game.theme-alien > .ev-sudo-shell{
+  width:100%!important;
+  padding-inline:4px!important;
+ }
+}
