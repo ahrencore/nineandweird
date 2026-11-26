@@ -7242,3 +7242,18 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
   padding-inline:4px!important;
  }
 }
+
+/* 2026-11-26 — Restore readable Sudoku board width in DNET, WAILA and ULT.
+   Gameplay panels only. Preserve each world's artwork, theme, 3x3 dividers,
+   difficulty/result layouts, symbol sizing and Sudoku behavior. */
+#game.theme-diner > .ev-sudo-shell,
+#game.theme-weird > .ev-sudo-shell,
+#game.theme-ugly > .ev-sudo-shell{
+  box-sizing:border-box!important;
+  width:calc(100% - 20px)!important;
+  max-width:540px!important;
+  padding-left:5px!important;
+  padding-right:5px!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
