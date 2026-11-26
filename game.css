@@ -9946,3 +9946,91 @@ body:has(#game.theme-donttakewater:not([hidden])){background:#101D20!important;}
 }
 #game.theme-christmas .result-panel h2{font-size:clamp(22px,5.6vw,26px)!important;}
 #game.theme-christmas .result-actions{gap:7px!important;}
+
+
+/* Olympus ONLY — clean ivory marble tablets, antique-gold coins and SVG results.
+   No blue marble veins, grid resizing, or changes to original Olympus PNG assets. */
+#game.theme-olympus .difficulty-panel .nw-fav-toggle{
+ display:block!important;margin:0 auto 17px!important;
+ border:1px solid #C7AA76!important;border-radius:5px!important;
+ background:#FFFAF0!important;color:#24476D!important;
+ box-shadow:none!important;padding:9px 18px!important;
+}
+#game.theme-olympus .difficulty-panel h2,
+#game.theme-olympus .result-panel h2{
+ color:#203B60!important;font-family:Georgia,serif!important;
+ text-shadow:none!important;letter-spacing:0!important;
+}
+#game.theme-olympus .difficulty-panel h2{
+ font-size:clamp(18px,5vw,22px)!important;margin:0 0 19px!important;
+}
+#game.theme-olympus .difficulty-list{gap:7px!important;}
+#game.theme-olympus .difficulty-list .nw-olympus-difficulty,
+#game.theme-olympus .result-actions .nw-olympus-action{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ position:relative!important;isolation:isolate!important;
+ width:100%!important;height:53px!important;min-height:53px!important;
+ padding:0 14px!important;margin:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ color:#24476D!important;font:700 clamp(13px,3.8vw,16px)/1.1 Georgia,serif!important;
+ letter-spacing:0!important;text-shadow:none!important;
+ overflow:hidden!important;
+}
+#game.theme-olympus .nw-olympus-difficulty > .nw-olympus-marble-svg,
+#game.theme-olympus .result-actions .nw-olympus-action > .nw-olympus-marble-svg{
+ display:block!important;position:absolute!important;inset:0!important;
+ width:100%!important;height:100%!important;z-index:0!important;
+ pointer-events:none!important;
+}
+#game.theme-olympus .nw-olympus-difficulty > span,
+#game.theme-olympus .result-actions .nw-olympus-action > span{
+ position:relative!important;z-index:1!important;display:block!important;
+ max-width:100%!important;white-space:normal!important;
+ overflow-wrap:break-word!important;text-align:center!important;
+}
+#game.theme-olympus .nw-olympus-difficulty:active,
+#game.theme-olympus .result-actions .nw-olympus-action:active{
+ transform:translateY(2px)!important;
+}
+#game.theme-olympus .nw-olympus-difficulty:focus-visible,
+#game.theme-olympus .result-actions .nw-olympus-action:focus-visible{
+ outline:2px solid #347DAA!important;outline-offset:2px!important;
+}
+#game.theme-olympus .ev-sudoku-tray button.nw-olympus-tray-piece{
+ position:relative!important;isolation:isolate!important;
+ background:transparent!important;border:0!important;
+ border-radius:0!important;box-shadow:none!important;
+ overflow:visible!important;padding:2px 0!important;
+}
+#game.theme-olympus .ev-sudoku-tray button.nw-olympus-tray-piece > .nw-olympus-coin-svg{
+ position:absolute!important;inset:0!important;z-index:0!important;
+ display:block!important;width:100%!important;height:100%!important;
+ pointer-events:none!important;
+}
+#game.theme-olympus .ev-sudoku-tray button.nw-olympus-tray-piece > img,
+#game.theme-olympus .ev-sudoku-tray button.nw-olympus-tray-piece > .number-symbol{
+ position:relative!important;z-index:1!important;
+}
+#game.theme-olympus .ev-sudoku-tray button.nw-olympus-tray-piece.selected{
+ background:transparent!important;border:0!important;
+ box-shadow:none!important;filter:drop-shadow(0 0 4px #347DAA)!important;
+}
+#game.theme-olympus .ev-sudoku-tray button.nw-olympus-tray-piece.selected .nw-olympus-coin-base{
+ fill:#D5B574!important;stroke:#347DAA!important;stroke-width:2!important;
+}
+#game.theme-olympus .ev-sudoku-tray button.nw-olympus-tray-piece .ev-sudo-remain{
+ z-index:3!important;background:#203B60!important;color:#FFFAF0!important;
+ border-radius:8px!important;
+}
+#game.theme-olympus .result-panel .result-mark{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:80px!important;height:80px!important;margin:10px auto 20px!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;transform:none!important;
+ font-size:0!important;line-height:0!important;
+}
+#game.theme-olympus .result-panel .nw-olympus-result-svg{
+ display:block!important;width:80px!important;height:80px!important;
+}
+#game.theme-olympus .result-actions{gap:7px!important;}
