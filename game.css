@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Creepster&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Oxanium:wght@600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Chewy&family=Pangolin&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Bungee&family=Space+Grotesk:wght@500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Lilita+One&family=Fredoka:wght@500;600;700&display=swap");
@@ -6775,4 +6776,376 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
 #game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell{
  box-sizing:border-box!important;
  min-width:0!important;min-height:0!important;
+}
+
+/* ================================================================
+   ALIEN SUPERMARKET — approved Martian Neon Mart checkout-terminal UI
+   Scoped exclusively to theme-alien. Visual-only; Sudoku mechanics,
+   grid geometry/divider hierarchy and existing PNG sizing unchanged.
+   ================================================================ */
+#game.theme-alien{
+ --am-mint:#5BFFD8;--am-lime:#7CFF4F;--am-cyan:#2EE6FF;
+ --am-white:#EAFBFF;--am-night:#111827;--am-panel:#182332;
+ --am-edge:#40576A;
+ background:radial-gradient(ellipse at 50% 0%,#274459 0%,#111827 76%)!important;
+ color:var(--am-white)!important;
+ font-family:'Chakra Petch',system-ui,sans-serif!important;
+ overflow-x:hidden!important;
+ overflow-y:auto!important;
+ padding-bottom:max(38px,calc(env(safe-area-inset-bottom,0px) + 32px))!important;
+}
+#game.theme-alien>.ev-head.ev-head{
+ box-sizing:border-box!important;
+ width:calc(100% - 8px)!important;
+ max-width:calc(100% - 8px)!important;
+ margin:4px auto 0!important;
+ background:var(--am-panel)!important;
+ border:2px solid var(--am-mint)!important;
+ border-radius:11px!important;
+ padding:7px 9px!important;
+ box-shadow:0 4px 0 #080F19!important;
+}
+#game.theme-alien>.ev-head.ev-head>strong{
+ color:var(--am-mint)!important;
+ font:700 clamp(11px,3vw,16px)/1.2 'Oxanium',system-ui,sans-serif!important;
+ text-shadow:none!important;
+ letter-spacing:.07em!important;
+}
+#game.theme-alien>.ev-head.ev-head>strong.nw-brand-title{
+ font-size:clamp(10px,2.7vw,13px)!important;
+}
+#game.theme-alien>.ev-head.ev-head :is(.ev-btn,.nw-shared-settings){
+ background:#24384B!important;
+ color:var(--am-white)!important;
+ border:1.5px solid var(--am-mint)!important;
+ border-radius:7px!important;
+ box-shadow:0 2px 0 #080F19!important;
+ font-family:'Chakra Petch',system-ui,sans-serif!important;
+}
+#game.theme-alien>:is(.difficulty-panel,.result-panel,.ev-sudo-shell){
+ box-sizing:border-box!important;
+ width:calc(100% - 24px)!important;
+ max-width:430px!important;
+ margin:19px auto 32px!important;
+ padding:17px 12px 20px!important;
+ background:linear-gradient(150deg,#21374A,#182332 76%)!important;
+ border:3px solid var(--am-mint)!important;
+ border-radius:14px!important;
+ color:var(--am-white)!important;
+ box-shadow:0 0 0 4px var(--am-night),0 0 0 5px #375768,0 7px 0 5px #080F19!important;
+ overflow:visible!important;
+}
+#game.theme-alien .difficulty-panel h2,
+#game.theme-alien .result-panel h2{
+ color:var(--am-white)!important;
+ font:800 clamp(21px,5.4vw,28px)/1.12 'Oxanium',system-ui,sans-serif!important;
+ text-shadow:none!important;
+ letter-spacing:-.015em!important;
+ margin:2px 0 18px!important;
+}
+#game.theme-alien .nw-fav-toggle{
+ display:block!important;
+ width:max-content!important;
+ max-width:95%;
+ margin:0 auto 17px!important;
+ padding:8px 14px!important;
+ background:#25394B!important;
+ border:1.5px solid #486B75!important;
+ border-radius:8px!important;
+ color:#A7FFDA!important;
+ box-shadow:0 2px 0 #0A1521!important;
+ font:600 12px/1.2 'Chakra Petch',system-ui,sans-serif!important;
+}
+#game.theme-alien .difficulty-list{
+ display:grid!important;
+ gap:clamp(6px,2vw,10px)!important;
+}
+#game.theme-alien .difficulty-list .nw-alien-difficulty{
+ position:relative!important;
+ display:grid!important;place-items:center!important;
+ isolation:isolate!important;
+ width:100%!important;
+ height:clamp(52px,13.5vw,62px)!important;
+ min-height:0!important;
+ margin:0!important;
+ padding:0!important;
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ filter:drop-shadow(0 3px 0 #071019)!important;
+ transition:transform .12s ease,filter .12s ease!important;
+ cursor:pointer!important;
+ touch-action:manipulation;
+}
+#game.theme-alien .nw-alien-checkout-art{
+ position:absolute!important;
+ inset:0!important;
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ pointer-events:none!important;
+ overflow:visible!important;
+}
+#game.theme-alien .nw-alien-difficulty>span{
+ position:relative!important;
+ z-index:1!important;
+ color:var(--am-white)!important;
+ font:800 clamp(20px,5.7vw,27px)/1 'Oxanium',system-ui,sans-serif!important;
+ letter-spacing:.065em!important;
+ text-shadow:0 2px 0 #0B1728!important;
+ pointer-events:none!important;
+}
+#game.theme-alien :is(.nw-alien-easy,.nw-alien-medium)>span{
+ color:var(--am-night)!important;text-shadow:none!important;
+}
+#game.theme-alien .nw-alien-difficulty:active{
+ transform:translateY(3px)!important;
+ filter:drop-shadow(0 0 0 #071019)!important;
+}
+#game.theme-alien button:focus-visible{
+ outline:2px solid var(--am-lime)!important;
+ outline-offset:2px!important;
+}
+/* Gameplay: quiet machinery around bright original alien item artwork. */
+#game.theme-alien>.ev-sudo-shell{
+ padding:10px 9px 16px!important;
+ margin-top:13px!important;
+}
+#game.theme-alien .ev-sudo-stats{
+ gap:5px!important;
+ margin-bottom:12px!important;
+}
+#game.theme-alien .ev-sudo-stats>div{
+ box-sizing:border-box!important;
+ min-width:0!important;
+ padding:8px 2px!important;
+ background:#25394B!important;
+ border:1.5px solid var(--am-mint)!important;
+ border-bottom:3px solid #071019!important;
+ border-radius:6px 10px 6px 10px!important;
+ box-shadow:0 2px 0 #08141E!important;
+}
+#game.theme-alien .ev-sudo-stats>div:nth-child(2){border-color:var(--am-lime)!important;}
+#game.theme-alien .ev-sudo-stats>div:nth-child(3){border-color:var(--am-cyan)!important;}
+#game.theme-alien .ev-sudo-stats small{
+ color:#A7FFDA!important;
+ font:600 clamp(7px,1.9vw,10px)/1.18 'Chakra Petch',system-ui,sans-serif!important;
+ letter-spacing:0!important;
+}
+#game.theme-alien .ev-sudo-stats strong{
+ display:block!important;
+ margin-top:3px!important;
+ color:var(--am-white)!important;
+ font:800 clamp(11px,3vw,16px)/1.1 'Oxanium',system-ui,sans-serif!important;
+ text-shadow:none!important;
+}
+/* Board frame makeover only: preexisting 4px mint 3x3 overlay is preserved,
+   and selected/focused cell markings must never extend outside their tiles. */
+#game.theme-alien .ev-sudoku-grid{
+ border-radius:7px!important;
+ border-color:var(--am-mint)!important;
+ background:#1A2330!important;
+ box-shadow:0 0 0 3px #0E1A29,0 0 0 5px #486B75,0 6px 0 5px #071019!important;
+ margin-bottom:17px!important;
+ overflow:hidden!important;
+}
+#game.theme-alien .ev-sudoku-grid>.ev-sudoku-cell.selected:not(.bad),
+#game.theme-alien .ev-sudoku-grid>.ev-sudoku-cell.selected:focus-visible{
+ outline:0!important;
+ outline-offset:0!important;
+ background:var(--am-lime)!important;
+ box-shadow:inset 0 0 0 2px #152536!important;
+}
+#game.theme-alien .ev-sudoku-grid>.ev-sudoku-cell.bad{
+ outline:0!important;outline-offset:0!important;
+ box-shadow:inset 0 0 0 2px #6D122B!important;
+}
+#game.theme-alien .ev-sudoku-grid>.ev-sudoku-cell img{
+ width:100%!important;height:100%!important;
+ max-width:100%!important;max-height:100%!important;
+ object-fit:contain!important;filter:none!important;
+}
+/* Checkout scanner slots: image sizing unchanged, counters remain visible. */
+#game.theme-alien .ev-sudoku-tray{
+ position:relative;z-index:2;
+ padding:8px 1px 14px!important;
+ margin:0 0 11px!important;
+ overflow:visible!important;
+ gap:clamp(2px,.8vw,5px)!important;
+}
+#game.theme-alien .ev-sudoku-tray button{
+ position:relative!important;
+ background:#233A4B!important;
+ border:1.5px solid var(--am-mint)!important;
+ border-bottom:3px solid #071019!important;
+ border-radius:4px 9px 4px 9px!important;
+ box-shadow:0 2px 0 #071019!important;
+ overflow:visible!important;
+}
+#game.theme-alien .ev-sudoku-tray button.selected{
+ background:#335F55!important;
+ border:2px solid var(--am-lime)!important;
+ box-shadow:0 0 0 2px #0D2730!important;
+}
+#game.theme-alien .ev-sudoku-tray button.completed{
+ background:transparent!important;
+ border-color:transparent!important;
+ box-shadow:none!important;
+}
+#game.theme-alien .ev-sudoku-tray .ev-sudo-remain{
+ position:absolute!important;right:-2px!important;bottom:-7px!important;
+ z-index:5!important;display:block!important;
+ min-width:15px;
+ padding:2px 3px!important;
+ border:1px solid #111827!important;
+ border-radius:5px!important;
+ background:var(--am-lime)!important;
+ color:var(--am-night)!important;
+ text-align:center!important;
+ font:700 10px/1 'Chakra Petch',system-ui,sans-serif!important;
+ pointer-events:none;
+ box-shadow:0 1px 0 #071019!important;
+}
+#game.theme-alien .ev-sudoku-tray button.completed .ev-sudo-remain{visibility:hidden!important;}
+/* Tool row: compact checkout terminals, not stickers or rubber buttons. */
+#game.theme-alien .ev-sudo-tools-clean{
+ display:grid!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:clamp(3px,1.1vw,7px)!important;
+}
+#game.theme-alien .ev-sudo-tools-clean .ev-sudo-tool{
+ box-sizing:border-box!important;min-width:0!important;
+ padding:10px 2px 8px!important;
+ background:#203A4B!important;
+ color:var(--am-white)!important;
+ border:2px solid var(--am-mint)!important;
+ border-bottom:4px solid #08111C!important;
+ border-radius:7px 12px 7px 12px!important;
+ box-shadow:0 3px 0 #0B141C!important;
+}
+#game.theme-alien .ev-sudo-tools-clean .ev-sudo-tool:nth-child(2){border-color:var(--am-cyan)!important;}
+#game.theme-alien .ev-sudo-tools-clean .ev-sudo-tool:nth-child(3){border-color:var(--am-lime)!important;}
+#game.theme-alien .ev-sudo-tools-clean .ev-sudo-tool:nth-child(4){border-color:#A7FFDA!important;}
+#game.theme-alien .ev-sudo-tools-clean .ev-sudo-tool.active{
+ background:#315D57!important;
+ border-color:var(--am-lime)!important;
+ box-shadow:0 0 0 2px #111827,0 2px 0 #0B141C!important;
+}
+#game.theme-alien .ev-sudo-tool-icon{
+ color:var(--am-lime)!important;
+ font-size:clamp(17px,4.7vw,25px)!important;
+}
+#game.theme-alien .ev-sudo-tool-label{
+ color:var(--am-white)!important;
+ font:700 clamp(9px,2.4vw,12px)/1.2 'Chakra Petch',system-ui,sans-serif!important;
+ letter-spacing:0!important;
+}
+#game.theme-alien .ev-sudo-shell .ev-note{
+ color:var(--am-white)!important;
+ font:500 11px/1.4 'Chakra Petch',system-ui,sans-serif!important;
+}
+/* Completed and failed terminals share the approved design language. */
+#game.theme-alien .result-panel{
+ padding:19px 13px 24px!important;
+}
+#game.theme-alien .result-mark{
+ display:grid!important;place-items:center!important;
+ width:68px;height:67px;
+ margin:0 auto 15px!important;
+ border:3px solid #EAFBFF!important;
+ border-radius:15px 8px 15px 8px!important;
+ background:var(--am-mint)!important;
+ color:var(--am-night)!important;
+ box-shadow:0 4px 0 #071019!important;
+}
+#game.theme-alien .result-panel:not(:has(.result-score)) .result-mark{
+ background:#FF6C83!important;
+}
+#game.theme-alien .nw-alien-result-icon{
+ display:block;
+ width:43px;height:43px;
+ overflow:visible;
+}
+#game.theme-alien .result-panel h2{
+ font-size:clamp(23px,6.3vw,35px)!important;
+ margin:0 0 15px!important;
+}
+#game.theme-alien .result-panel p{
+ font:500 15px/1.4 'Chakra Petch',system-ui,sans-serif!important;
+ color:var(--am-white)!important;
+}
+#game.theme-alien .result-score{
+ background:#203D50!important;
+ border:2px solid var(--am-mint)!important;
+ border-bottom:4px solid #071019!important;
+ border-radius:8px!important;
+ margin:9px 0 14px!important;
+ padding:11px 7px!important;
+}
+#game.theme-alien .result-score small{
+ color:#A7FFDA!important;
+ font:700 12px/1.3 'Chakra Petch',system-ui,sans-serif!important;
+}
+#game.theme-alien .result-score strong{
+ color:var(--am-lime)!important;
+ font:800 clamp(33px,9vw,45px)/1.1 'Oxanium',system-ui,sans-serif!important;
+ text-shadow:none!important;
+ margin:6px 0!important;
+}
+#game.theme-alien .result-stats{gap:6px!important;margin:17px 0!important;}
+#game.theme-alien .result-stats>div{
+ min-width:0!important;
+ padding:10px 2px!important;
+ background:#25394B!important;
+ border:2px solid #486B75!important;
+ border-bottom:4px solid #071019!important;
+ border-radius:6px 10px 6px 10px!important;
+ color:var(--am-white)!important;
+ font:600 clamp(8px,2.3vw,11px)/1.2 'Chakra Petch',system-ui,sans-serif!important;
+}
+#game.theme-alien .result-stats strong{
+ display:block;
+ margin-top:6px!important;
+ color:var(--am-lime)!important;
+ font:800 clamp(12px,3.4vw,19px)/1.1 'Oxanium',system-ui,sans-serif!important;
+}
+#game.theme-alien .result-actions{gap:10px!important;margin-top:17px!important;}
+#game.theme-alien .result-actions .theme-button{
+ min-height:54px!important;
+ padding:12px 8px!important;
+ border:2px solid var(--am-white)!important;
+ border-bottom:5px solid #071019!important;
+ border-radius:4px 12px 4px 12px!important;
+ background:var(--am-mint)!important;
+ color:var(--am-night)!important;
+ box-shadow:0 3px 0 #071019!important;
+ font:800 clamp(17px,4.7vw,24px)/1.1 'Oxanium',system-ui,sans-serif!important;
+ letter-spacing:.015em!important;text-shadow:none!important;
+}
+#game.theme-alien .result-actions .theme-button:nth-child(2){
+ background:#203D50!important;color:var(--am-white)!important;
+ border-color:var(--am-mint)!important;
+}
+#game.theme-alien .result-panel:not(:has(.result-score)) .result-actions .theme-button:first-child{
+ background:#FF6C83!important;
+}
+#game.theme-alien .result-actions .theme-button:active{
+ transform:translateY(3px)!important;box-shadow:none!important;
+}
+@media(max-width:370px){
+ #game.theme-alien>:is(.difficulty-panel,.result-panel,.ev-sudo-shell){width:calc(100% - 24px)!important;padding-inline:8px!important;}
+ #game.theme-alien .difficulty-list{gap:5px!important;}
+ #game.theme-alien .difficulty-list .nw-alien-difficulty{height:49px!important;}
+ #game.theme-alien .ev-sudo-stats{gap:3px!important;}
+ #game.theme-alien .ev-sudo-tools-clean{gap:3px!important;}
+}
+@media(max-height:690px){
+ #game.theme-alien .difficulty-panel{padding-block:10px!important;margin-top:12px!important;}
+ #game.theme-alien .difficulty-panel h2{margin-bottom:11px!important;}
+ #game.theme-alien .difficulty-list{gap:5px!important;}
+ #game.theme-alien .difficulty-list .nw-alien-difficulty{height:48px!important;}
+}
+@media(prefers-reduced-motion:reduce){
+ #game.theme-alien .nw-alien-difficulty{transition:none!important;}
 }
