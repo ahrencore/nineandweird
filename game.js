@@ -2339,11 +2339,10 @@ let sudoku=null, sudokuTimer=null, sudokuLossTimer=null;
 function evSudokuCancelLoss(){if(sudokuLossTimer!==null){clearTimeout(sudokuLossTimer);sudokuLossTimer=null;}}
 function evSudokuLeave(){if(sudoku?.challenge&&!sudoku.done)void nwChallengeForfeit(sudoku.challenge.id);if(sudoku&&!sudoku.done&&sudoku.start&&!sudoku.practiceOpponent&&!sudoku.challenge)nwSaveResult(sudoku,false);evSudokuCancelLoss();clearInterval(sudokuTimer);sudoku=null;}
 function nwDinerDifficultySvg(){
- // DNET Option A: a single curvy, puffy vintage-cartoon silhouette.
- // Inline SVG only: no raster textures, interior stripes or shine strokes.
+ // DNET Option B: bold cartoon badge with no inner stripes or icons.
  return '<svg class="nw-diner-difficulty-art" viewBox="0 0 340 82" preserveAspectRatio="none" aria-hidden="true" focusable="false">'+
- '<path d="M18 17 Q48 3 87 9 Q175 -3 260 9 Q308 2 323 19 Q337 41 322 60 Q303 76 261 67 Q175 79 85 67 Q34 77 16 61 Q0 40 18 17Z" fill="#3C2022" transform="translate(0 5)"/>'+
- '<path d="M18 17 Q48 3 87 9 Q175 -3 260 9 Q308 2 323 19 Q337 41 322 60 Q303 76 261 67 Q175 79 85 67 Q34 77 16 61 Q0 40 18 17Z" fill="#FF173A" stroke="#FFF0D5" stroke-width="5" stroke-linejoin="round"/>'+
+ '<path d="M21 15 Q76 5 163 10 Q257 1 316 16 Q335 26 325 60 Q269 73 170 68 Q68 75 15 60 Q2 35 21 15Z" fill="#3C2022" transform="translate(2 6)"/>'+
+ '<path d="M21 15 Q76 5 163 10 Q257 1 316 16 Q335 26 325 60 Q269 73 170 68 Q68 75 15 60 Q2 35 21 15Z" fill="#FF173A" stroke="#FFF0D5" stroke-width="5" stroke-linejoin="round"/>'+
  '</svg>';
 }
 function evSudokuMenu(){evSudokuLeave();applyTheme(worlds[currentWorld].theme);evDisplay(`${evHeader(worlds[currentWorld].name,showRooms,false,true)}<section class="difficulty-panel"><button type="button" class="nw-fav-toggle" id="nwFavToggle" aria-pressed="${nwIsFav(currentWorld)}">${nwIsFav(currentWorld)?'♥ FAVOURITED':'♡ ADD TO FAV'}</button><h2>CHOOSE DIFFICULTY</h2><div class="difficulty-list">${Object.keys(difficulties).map(d=>`<button class="theme-button${currentWorld==='diner'?' nw-diner-difficulty':''}" data-difficulty="${d}">${currentWorld==='diner'?nwDinerDifficultySvg():''}<span>${d.toUpperCase()}</span></button>`).join('')}</div></section>`);evRoot.querySelectorAll('[data-difficulty]').forEach(b=>b.onclick=()=>evSudokuStart(b.dataset.difficulty));evRoot.querySelector('#nwFavToggle').onclick=()=>{const v=nwToggleFav(currentWorld),b=evRoot.querySelector('#nwFavToggle');b.textContent=v?'♥ FAVOURITED':'♡ ADD TO FAV';b.setAttribute('aria-pressed',String(v));};}
