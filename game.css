@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Bungee&family=Pixelify+Sans:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Chewy&family=Fredoka:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Audiowide&family=Nunito:wght@400;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Young+Serif&family=Special+Elite&family=Nunito:wght@500;600;700;800&display=swap");
@@ -8703,4 +8704,216 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
 }
 #game.theme-balloonwrong .result-actions .nw-balloon-action > span{
  font-size:clamp(16px,3.9vw,22px)!important;
+}
+
+
+/* 90s Throwback — approved Memphis-pop arcade SVG UI.
+   World-only decorative controls; original board, nine PNGs and difficulty overflow rule remain unchanged. */
+#game.theme-nineties{font-family:'Pixelify Sans',monospace!important;}
+#game.theme-nineties > .ev-head > strong,
+#game.theme-nineties :is(.difficulty-panel,.result-panel) h2{
+ font-family:'Bungee',system-ui,sans-serif!important;
+ font-weight:400!important;
+ line-height:1.15!important;
+ letter-spacing:0!important;
+ color:#FFE36D!important;
+ text-shadow:none!important;
+}
+#game.theme-nineties > .ev-head > strong{
+ font-size:clamp(15px,4vw,20px)!important;
+ color:#F6F4FF!important;
+ text-shadow:2px 2px #FF5BA6!important;
+}
+#game.theme-nineties .ev-head :is(.ev-btn,.nw-shared-settings),
+#game.theme-nineties .nw-fav-toggle,
+#game.theme-nineties .ev-sudo-stats,
+#game.theme-nineties .ev-note,
+#game.theme-nineties .result-panel :is(p,.result-stats,.result-score small),
+#game.theme-nineties .ev-sudo-tools-clean .ev-sudo-tool-label{
+ font-family:'Pixelify Sans',monospace!important;
+}
+#game.theme-nineties .ev-head :is(.ev-btn,.nw-shared-settings){
+ background:#343B6A!important;
+ color:#F6F4FF!important;
+ border:1px solid #FF5BA6!important;
+ border-radius:4px!important;
+ box-shadow:none!important;
+}
+#game.theme-nineties .nw-fav-toggle{
+ background:#343B6A!important;
+ color:#F6F4FF!important;
+ border:2px solid #FF5BA6!important;
+ border-radius:5px!important;
+ box-shadow:none!important;
+}
+#game.theme-nineties .difficulty-list{gap:7px!important;}
+#game.theme-nineties .difficulty-list .nw-nineties-difficulty{
+ display:grid!important;
+ place-items:center!important;
+ position:relative!important;
+ isolation:isolate!important;
+ width:100%!important;
+ height:clamp(49px,12.5vw,56px)!important;
+ min-height:0!important;
+ padding:0!important;
+ margin:0!important;
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ overflow:visible!important;
+ cursor:pointer!important;
+}
+#game.theme-nineties .nw-nineties-difficulty > .nw-nineties-arcade-svg,
+#game.theme-nineties .result-actions .nw-nineties-action > .nw-nineties-arcade-svg{
+ position:absolute!important;
+ inset:0!important;
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ pointer-events:none!important;
+}
+#game.theme-nineties .nw-nineties-difficulty > span,
+#game.theme-nineties .result-actions .nw-nineties-action > span{
+ position:relative!important;
+ z-index:1!important;
+ display:block!important;
+ color:#F6F4FF!important;
+ font:400 clamp(14px,3.8vw,20px)/1.1 'Bungee',system-ui,sans-serif!important;
+ text-shadow:2px 2px #12142F!important;
+ pointer-events:none!important;
+}
+#game.theme-nineties .nw-nineties-difficulty:active,
+#game.theme-nineties .result-actions .nw-nineties-action:active{
+ transform:translate(2px,2px)!important;
+}
+#game.theme-nineties .nw-nineties-difficulty:focus-visible,
+#game.theme-nineties .result-actions .nw-nineties-action:focus-visible{
+ outline:2px solid #36E0DC!important;
+ outline-offset:2px!important;
+}
+/* The unchanged 9-piece tray keeps original PNG geometry; SVG sits behind images. */
+#game.theme-nineties .ev-sudoku-tray button.nw-nineties-tray-piece{
+ position:relative!important;
+ isolation:isolate!important;
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ overflow:visible!important;
+}
+#game.theme-nineties .ev-sudoku-tray button.nw-nineties-tray-piece > .nw-nineties-token-svg{
+ position:absolute!important;
+ inset:0!important;
+ z-index:0!important;
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ pointer-events:none!important;
+}
+#game.theme-nineties .ev-sudoku-tray button.nw-nineties-tray-piece > img{
+ position:relative!important;
+ z-index:1!important;
+}
+#game.theme-nineties .ev-sudoku-tray button.nw-nineties-tray-piece.selected{
+ background:transparent!important;
+ border:0!important;
+ box-shadow:none!important;
+ filter:drop-shadow(0 0 5px #36E0DC)!important;
+}
+#game.theme-nineties .ev-sudoku-tray button.nw-nineties-tray-piece.selected .nw-nineties-token-plastic{
+ fill:#495581!important;
+ stroke:#FFE36D!important;
+ stroke-width:3.2!important;
+}
+#game.theme-nineties .ev-sudoku-tray button.nw-nineties-tray-piece .ev-sudo-remain{
+ z-index:3!important;
+ background:#FFE36D!important;
+ color:#20264A!important;
+ border:1px solid #FF5BA6!important;
+ border-radius:2px!important;
+ font:700 10px/1 'Pixelify Sans',monospace!important;
+}
+#game.theme-nineties .ev-sudo-tools-clean .ev-sudo-tool{
+ background:#303759!important;
+ color:#F6F4FF!important;
+ border:2px solid #36E0DC!important;
+ border-bottom:4px solid #188B9A!important;
+ border-radius:5px!important;
+ box-shadow:none!important;
+}
+#game.theme-nineties .ev-sudo-tools-clean .ev-sudo-tool.active{
+ background:#495581!important;
+ border-color:#FFE36D!important;
+ box-shadow:0 0 11px #36E0DC!important;
+}
+#game.theme-nineties .ev-sudo-tools-clean .ev-sudo-tool-icon{
+ display:grid!important;
+ place-items:center!important;
+ color:#FFE36D!important;
+ text-shadow:none!important;
+}
+#game.theme-nineties .nw-nineties-tool-svg{
+ display:block!important;
+ width:20px!important;
+ height:20px!important;
+}
+#game.theme-nineties .ev-sudo-tools-clean .ev-sudo-tool-label{
+ color:#F6F4FF!important;
+ font-weight:700!important;
+ font-size:10px!important;
+}
+#game.theme-nineties .result-panel .result-mark{
+ display:grid!important;
+ place-items:center!important;
+ box-sizing:border-box!important;
+ width:67px!important;
+ height:67px!important;
+ min-width:67px!important;
+ min-height:67px!important;
+ max-width:67px!important;
+ max-height:67px!important;
+ aspect-ratio:1/1!important;
+ flex:0 0 67px!important;
+ padding:0!important;
+ margin:8px auto 14px!important;
+ background:#303759!important;
+ border:3px solid #FFE36D!important;
+ border-radius:50%!important;
+ color:#FFE36D!important;
+ box-shadow:0 0 9px #FF5BA655!important;
+}
+#game.theme-nineties .result-panel .nw-nineties-result-svg{
+ display:block!important;
+ width:38px!important;
+ height:38px!important;
+}
+#game.theme-nineties .result-panel:not(:has(.result-score)) .result-mark{
+ border-color:#FF718B!important;
+ color:#FF718B!important;
+}
+#game.theme-nineties .result-panel .result-score strong{
+ color:#FFE36D!important;
+ font-family:'Bungee',system-ui,sans-serif!important;
+ font-weight:400!important;
+}
+#game.theme-nineties .result-actions{gap:7px!important;}
+#game.theme-nineties .result-actions .nw-nineties-action{
+ display:grid!important;
+ place-items:center!important;
+ position:relative!important;
+ isolation:isolate!important;
+ width:100%!important;
+ height:clamp(49px,12.5vw,56px)!important;
+ min-height:0!important;
+ margin:0!important;
+ padding:0!important;
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ overflow:visible!important;
+}
+#game.theme-nineties .result-actions .nw-nineties-action > span{
+ font-size:clamp(12px,3.1vw,18px)!important;
 }
