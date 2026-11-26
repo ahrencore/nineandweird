@@ -6305,3 +6305,55 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
  position:relative!important;
  z-index:1!important;
 }
+
+/* WAIA 3x3 hierarchy correction — section guides ALWAYS paint above cell
+   strokes. Cell borders stay thin underneath, and only the board's inner
+   area is covered, so no guide extends over the outside frame. */
+#game.theme-weird .ev-sudoku-grid{
+ position:relative!important;
+ isolation:isolate!important;
+ overflow:hidden!important;
+}
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell,
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6),
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54){
+ border-right:1px solid #665B88!important;
+ border-bottom:1px solid #665B88!important;
+}
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n){border-right:0!important;}
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73){border-bottom:0!important;}
+#game.theme-weird .ev-sudoku-grid::before{
+ content:none!important;display:none!important;
+}
+#game.theme-weird .ev-sudoku-grid::after{
+ content:""!important;
+ display:block!important;
+ position:absolute!important;
+ inset:0!important;
+ width:auto!important;height:auto!important;
+ pointer-events:none!important;
+ z-index:100!important;
+ border:0!important;border-radius:0!important;
+ background:
+ linear-gradient(to right,
+   transparent calc(33.333333% - 2px),
+   #FF399F calc(33.333333% - 2px),
+   #FF399F calc(33.333333% + 2px),
+   transparent calc(33.333333% + 2px),
+   transparent calc(66.666667% - 2px),
+   #FF399F calc(66.666667% - 2px),
+   #FF399F calc(66.666667% + 2px),
+   transparent calc(66.666667% + 2px)),
+ linear-gradient(to bottom,
+   transparent calc(33.333333% - 2px),
+   #FF399F calc(33.333333% - 2px),
+   #FF399F calc(33.333333% + 2px),
+   transparent calc(33.333333% + 2px),
+   transparent calc(66.666667% - 2px),
+   #FF399F calc(66.666667% - 2px),
+   #FF399F calc(66.666667% + 2px),
+   transparent calc(66.666667% + 2px))!important;
+ box-shadow:none!important;
+}
