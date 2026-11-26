@@ -10453,3 +10453,101 @@ body:has(#game.theme-donttakewater:not([hidden])){background:#101D20!important;}
  white-space:nowrap;
 }
 #game .ev-sudo-tool#evSudoHint .nw-sudoku-hint-counter:not(:empty){opacity:.95}
+
+
+/* Albums 23 DONUTS and 24 CAKES — scoped styling for the current WORLDS planet catalogue. */
+html:has(#game.theme-donuts:not([hidden])),
+body:has(#game.theme-donuts:not([hidden])){background:#F36A98!important}
+html:has(#game.theme-cakes:not([hidden])),
+body:has(#game.theme-cakes:not([hidden])){background:#FFE0E8!important}
+#game.theme-donuts{
+ --surface:#F36A98;--panel:#FFF0D4;--ink:#422A2D;--accent:#422A2D;
+ --line:#B96A75;--peer:#FCE3B8;--same:#65CFCC;--selected:#FFCE52;
+ --room-border:#422A2D;--room-glow:#FFCE52;
+ background:#F36A98!important;color:#422A2D!important;
+ font-family:'Fredoka',system-ui,sans-serif!important;
+}
+#game.theme-cakes{
+ --surface:#FFE0E8;--panel:#FFF1D8;--ink:#66313E;--accent:#CF3D72;
+ --line:#E6B1B3;--peer:#FFE2C5;--same:#9DE7E2;--selected:#FFD45B;
+ --room-border:#CF3D72;--room-glow:#FF8FB3;
+ background:#FFE0E8!important;color:#66313E!important;
+ font-family:'Fredoka',system-ui,sans-serif!important;
+}
+#game:is(.theme-donuts,.theme-cakes) :is(.ev-head,.difficulty-panel,.result-panel,.ev-sudo-shell){
+ background:var(--panel)!important;color:var(--ink)!important;
+ border:2px solid var(--accent)!important;border-radius:14px!important;
+ box-shadow:0 2px 8px #44232918!important;
+}
+#game:is(.theme-donuts,.theme-cakes) .ev-head>strong,
+#game:is(.theme-donuts,.theme-cakes) :is(.difficulty-panel,.result-panel) h2{
+ color:var(--ink)!important;text-shadow:none!important;
+ font-family:'Fredoka',system-ui,sans-serif!important;font-weight:800!important;
+}
+#game:is(.theme-donuts,.theme-cakes) :is(.ev-head .ev-btn,.theme-button,.nw-fav-toggle,.ev-sudoku-tray button,.ev-sudo-tools-clean .ev-sudo-tool){
+ background:#FFF9EB!important;color:var(--ink)!important;
+ border:2px solid var(--accent)!important;border-radius:10px!important;
+ box-shadow:none!important;text-shadow:none!important;
+}
+#game:is(.theme-donuts,.theme-cakes) .theme-button:focus-visible,
+#game:is(.theme-donuts,.theme-cakes) .ev-sudoku-tray button.selected,
+#game:is(.theme-donuts,.theme-cakes) .ev-sudo-tools-clean .ev-sudo-tool.active{
+ background:var(--selected)!important;box-shadow:inset 0 0 0 1px var(--accent)!important;
+}
+#game:is(.theme-donuts,.theme-cakes) .ev-sudo-stats>div{
+ background:#FFF9EB!important;border:1px solid var(--line)!important;
+ color:var(--ink)!important;
+}
+#game:is(.theme-donuts,.theme-cakes) .ev-sudo-stats :is(small,strong),
+#game:is(.theme-donuts,.theme-cakes) :is(.ev-note,.ev-sudo-tool-icon,.ev-sudo-tool-label){
+ color:var(--ink)!important;
+}
+#game:is(.theme-donuts,.theme-cakes) .ev-sudoku-grid{
+ position:relative!important;isolation:isolate!important;overflow:hidden!important;
+ width:100%!important;aspect-ratio:1!important;
+ display:grid!important;grid-template-columns:repeat(9,minmax(0,1fr))!important;
+ grid-template-rows:repeat(9,minmax(0,1fr))!important;
+ border:4px solid var(--accent)!important;background:#FFF6E7!important;
+ box-sizing:border-box!important;
+}
+#game.theme-donuts .ev-sudoku-grid>.ev-sudoku-cell{background:#FFF0D4!important}
+#game.theme-cakes .ev-sudoku-grid>.ev-sudoku-cell{background:#FFF4DF!important}
+#game:is(.theme-donuts,.theme-cakes) .ev-sudoku-grid>.ev-sudoku-cell{
+ position:relative!important;box-sizing:border-box!important;
+ border-right:1px solid var(--line)!important;
+ border-bottom:1px solid var(--line)!important;color:var(--ink)!important;
+}
+#game:is(.theme-donuts,.theme-cakes) .ev-sudoku-grid>.ev-sudoku-cell.given{background:#FFE6C5!important}
+#game:is(.theme-donuts,.theme-cakes) .ev-sudoku-grid>.ev-sudoku-cell.peer:not(.same):not(.selected):not(.bad){background:var(--peer)!important}
+#game:is(.theme-donuts,.theme-cakes) .ev-sudoku-grid>.ev-sudoku-cell.same:not(.selected):not(.bad){
+ background:var(--same)!important;box-shadow:inset 0 0 0 2px var(--accent)!important;
+}
+#game:is(.theme-donuts,.theme-cakes) .ev-sudoku-grid>.ev-sudoku-cell.selected:not(.bad){
+ background:var(--selected)!important;box-shadow:inset 0 0 0 2px var(--accent)!important;
+}
+#game:is(.theme-donuts,.theme-cakes) .ev-sudoku-grid>.ev-sudoku-cell.bad{
+ background:#EF7477!important;box-shadow:inset 0 0 0 2px #FFF0F0!important;
+}
+#game:is(.theme-donuts,.theme-cakes) .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n){border-right:0!important}
+#game:is(.theme-donuts,.theme-cakes) .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n+73){border-bottom:0!important}
+/* Only on the actual 9x9 grid; never the full screen. */
+#game:is(.theme-donuts,.theme-cakes) .ev-sudoku-grid::after{
+ content:''!important;display:block!important;position:absolute!important;
+ inset:0!important;width:auto!important;height:auto!important;
+ pointer-events:none!important;z-index:100!important;
+ background-image:
+ linear-gradient(to right,transparent calc(33.333333% - 2px),var(--accent) calc(33.333333% - 2px),var(--accent) calc(33.333333% + 2px),transparent calc(33.333333% + 2px),transparent calc(66.666667% - 2px),var(--accent) calc(66.666667% - 2px),var(--accent) calc(66.666667% + 2px),transparent calc(66.666667% + 2px)),
+ linear-gradient(to bottom,transparent calc(33.333333% - 2px),var(--accent) calc(33.333333% - 2px),var(--accent) calc(33.333333% + 2px),transparent calc(33.333333% + 2px),transparent calc(66.666667% - 2px),var(--accent) calc(66.666667% - 2px),var(--accent) calc(66.666667% + 2px),transparent calc(66.666667% + 2px))!important;
+ background-repeat:no-repeat!important;border:0!important;box-shadow:none!important;
+}
+#game:is(.theme-donuts,.theme-cakes) .ev-sudoku-grid>.ev-sudoku-cell img{
+ display:block!important;width:88%!important;height:88%!important;
+ object-fit:contain!important;filter:none!important;
+}
+#game:is(.theme-donuts,.theme-cakes) .ev-sudo-remain{
+ background:var(--accent)!important;color:#fff!important;
+}
+#game.theme-donuts .ev-sudo-remain{color:#FFF0D4!important}
+#game:is(.theme-donuts,.theme-cakes) .result-panel .result-score strong{
+ color:var(--accent)!important;
+}
