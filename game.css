@@ -10455,7 +10455,7 @@ body:has(#game.theme-donttakewater:not([hidden])){background:#101D20!important;}
 #game .ev-sudo-tool#evSudoHint .nw-sudoku-hint-counter:not(:empty){opacity:.95}
 
 
-/* ALBUM 23 & 24 — scoped, approved THE USUAL worlds; no other room selectors changed. */
+/* Albums 23 DONUTS and 24 CAKES — scoped styling for the current WORLDS planet catalogue. */
 html:has(#game.theme-donuts:not([hidden])),
 body:has(#game.theme-donuts:not([hidden])){background:#F36A98!important}
 html:has(#game.theme-cakes:not([hidden])),
