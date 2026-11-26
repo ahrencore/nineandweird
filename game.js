@@ -1509,7 +1509,7 @@ const nwDoubleDay=86400000;
 function nwDoublePeriod(now=Date.now()){
  const t=new Date(now),mid=Date.UTC(t.getUTCFullYear(),t.getUTCMonth(),t.getUTCDate()),day=t.getUTCDay();
  const fri=mid-((day+2)%7)*nwDoubleDay+(day===4?7*nwDoubleDay:0);
- return {id:new Date(fri).toISOString().slice(0,10),start:fri,end:fri+3*nwDoubleDay,phase:day===4?'pair':[5,6,0].includes(day)?'active':'waiting',nextPair:fri+6*nwDoubleDay};
+ return {id:new Date(fri).toISOString().slice(0,10),start:fri,end:fri+3*nwDoubleDay,phase:day===4?'pair':[5,6,0].includes(day)?'active':'waiting',nextPair:fri-nwDoubleDay};
 }
 function nwDoubleFmt(n){return Number(n||0).toLocaleString();}
 function nwDoubleCountdown(ms){const n=Math.max(0,Math.ceil(ms/1000));return `${Math.floor(n/86400)}D : ${String(Math.floor(n/3600)%24).padStart(2,'0')}H : ${String(Math.floor(n/60)%60).padStart(2,'0')}M : ${String(n%60).padStart(2,'0')}S`;}
@@ -1593,13 +1593,13 @@ function nwDoublePracticeScreen(){
    else if(paired)content+='<p class="nw-double-note">Your partnership is confirmed for Friday.</p>';
    else content+=nwDoubleButton('nwDoubleInvite','INVITE A FRIEND')+nwDoubleButton('nwDoubleRandom','RANDOM MATCH',true);
    const count=(d.invitations||[]).length;
-   content+=`<div class="nw-double-invitation-button">${nwDoubleButton('nwDoubleCheckInvites',`INVITATIONS${count?' ('+count+')':''}`,true)}${count?'<span class="nw-notification-orbit nw-double-invitation-orbit" aria-hidden="true"></span>':''}</div>`;
+   content+=`<div class="nw-double-invitation-button">${nwDoubleButton('nwDoubleCheckInvites',`INVITATIONS${count?' ('+count+')':''}`,true)}</div>`;
   }else if(period.phase==='active'){
    content=`${nwDoubleTeams(d)}<div class="nw-double-prize-progress"><div class="nw-double-prize-progress-top"><span>YOUR PROGRESS</span><strong>${nwDoubleFmt(d.points)} / 3,500</strong></div><div class="nw-double-eligibility-track"><i style="width:${Math.min(100,Number(d.points||0)/35)}%"></i></div></div>${nwDoubleButton('nwDoublePlay','▹ PLAY NOW')}`;
   }else content='<p class="nw-double-note">Partner Day begins Thursday at 00:00 UTC.</p>';
   box.innerHTML=content;
   const invite=box.querySelector('#nwDoubleInvite'),random=box.querySelector('#nwDoubleRandom'),inv=box.querySelector('#nwDoubleCheckInvites'),play=box.querySelector('#nwDoublePlay');
-  if(invite)invite.onclick=nwDoubleInviteFriends;if(random)random.onclick=nwDoublePopup;if(inv)inv.onclick=nwDoubleInvitations;if(play)play.onclick=nwDoubleDifficulty;
+  if(invite)invite.onclick=nwDoubleInviteFriends;if(random)random.onclick=nwDoublePopup;if(inv){inv.onclick=nwDoubleInvitations;inv.classList.toggle('nw-notification-orbit',!!(d.invitations||[]).length);}if(play)play.onclick=nwDoubleDifficulty;
  }catch(e){if(box.isConnected)box.innerHTML=`<p class="nw-double-alert">${nwEscape(e.message)}</p>${nwDoubleButton('nwDoubleRetry','RETRY',true)}`;const b=box.querySelector('#nwDoubleRetry');if(b)b.onclick=refresh;}};
  void refresh();
  // Periodic server refresh makes new invitations and partner scores visible without reopening.
