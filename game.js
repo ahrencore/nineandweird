@@ -1502,75 +1502,145 @@ function nwGrowingAdjustDiamonds(delta){
 }
 
 
-// Double Trouble — After Hours. Local recorded-match edition; no cloud invitations or prizes.
-const nwDoublePracticeKey='nineweird-double-practice-v2';
-let nwDoublePracticeActive=false,nwDoubleWorldBefore=null,nwDoubleTimer=null,nwDoubleMemory={},nwDoubleLastRoom=null;
+// Double Trouble — live shared partner and event state.
+let nwDoublePracticeActive=false,nwDoubleWorldBefore=null,nwDoubleTimer=null,nwDoubleLastRoom=null;
+let nwDoubleSnapshot=null,nwDoubleLoading=false;
 const nwDoubleDay=86400000;
 function nwDoublePeriod(now=Date.now()){
  const t=new Date(now),mid=Date.UTC(t.getUTCFullYear(),t.getUTCMonth(),t.getUTCDate()),day=t.getUTCDay();
  const fri=mid-((day+2)%7)*nwDoubleDay+(day===4?7*nwDoubleDay:0);
- return {id:new Date(fri).toISOString().slice(0,10),start:fri,end:fri+3*nwDoubleDay,phase:day===4?'pair':['5','6','0'].includes(String(day))?'active':'waiting',nextPair:fri+6*nwDoubleDay};
+ return {id:new Date(fri).toISOString().slice(0,10),start:fri,end:fri+3*nwDoubleDay,phase:day===4?'pair':[5,6,0].includes(day)?'active':'waiting',nextPair:fri+6*nwDoubleDay};
 }
-function nwDoubleStore(){const key=nwPlayerStorageKey(nwDoublePracticeKey)||'guest';return nwRead(nwDoublePracticeKey,nwDoubleMemory[key]||{matches:{}})}
-function nwDoubleSave(d){const key=nwPlayerStorageKey(nwDoublePracticeKey)||'guest';nwDoubleMemory[key]=d;nwWrite(nwDoublePracticeKey,d)}
-function nwDoublePracticeData(){return nwDoubleStore().matches[nwDoublePeriod().id]||null}
-function nwDoublePick(partner=null){
- const pool=nwBattleProfiles.filter(p=>nwBattlePracticeRuns.some(r=>r.profile_id===p.id));
- const shuffle=arr=>{arr=[...arr];for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}return arr};
- const first=pool.find(p=>p.id===partner)||shuffle(pool)[0];if(!first)return null;
- const chosen=[first,...shuffle(pool.filter(p=>p.id!==first.id)).slice(0,2)];if(chosen.length!==3)return null;
- const period=nwDoublePeriod(),d=nwDoubleStore();
- if(d.matches[period.id])return d.matches[period.id];
- const record={id:period.id,start:period.start,end:period.end,teamPoints:0,userPuzzles:0,participants:chosen.map((p,i)=>{const runs=nwBattlePracticeRuns.filter(r=>r.profile_id===p.id),r=runs[Math.floor(Math.random()*runs.length)];return {id:p.id,name:p.name,avatar:p.avatar,points:r.points,at:period.start+Math.max(1,r.elapsed_seconds||60)*1000+i*15000}}),claimed:false};
- d.matches[period.id]=record;nwDoubleSave(d);return record;
+function nwDoubleFmt(n){return Number(n||0).toLocaleString();}
+function nwDoubleCountdown(ms){const n=Math.max(0,Math.ceil(ms/1000));return `${Math.floor(n/86400)}D : ${String(Math.floor(n/3600)%24).padStart(2,'0')}H : ${String(Math.floor(n/60)%60).padStart(2,'0')}M : ${String(n%60).padStart(2,'0')}S`;}
+function nwDoubleButton(id,label,secondary=false){return `<button type="button" id="${id}" class="nw-double-btn${secondary?' secondary':''}">${label}</button>`;}
+function nwDoubleTheme(){applyTheme('hub');evRoot.classList.add('nw-double-theme');}
+function nwDoubleExit(){clearInterval(nwDoubleTimer);nwDoubleTimer=null;nwDoublePracticeActive=false;if(nwDoubleWorldBefore&&worlds[nwDoubleWorldBefore])currentWorld=nwDoubleWorldBefore;nwDoubleWorldBefore=null;showCategories();}
+async function nwDoubleRpc(action='snapshot',params={}){
+ const c=await nwCloud.get();const u=nwCloud.user();
+ if(!u||u.is_anonymous)throw Error('Sign in to join Double Trouble.');
+ const {data,error}=await c.rpc('nw_dt',{p_action:action,...params});
+ if(error)throw Error(error.message);
+ nwDoubleSnapshot=data;return data;
 }
-function nwDoubleScores(m,now=Date.now()){const p=m.participants.map(x=>now>=x.at?x.points:0);return {p,ours:m.teamPoints+p[0],theirs:p[1]+p[2]}}
-function nwDoubleFmt(n){return Number(n||0).toLocaleString()}
-function nwDoubleCountdown(ms){const n=Math.max(0,Math.ceil(ms/1000));return `${Math.floor(n/86400)}D : ${String(Math.floor(n/3600)%24).padStart(2,'0')}H : ${String(Math.floor(n/60)%60).padStart(2,'0')}M : ${String(n%60).padStart(2,'0')}S`}
-function nwDoubleButton(id,text,secondary=false){return `<button type="button" id="${id}" class="nw-double-btn${secondary?' secondary':''}">${text}</button>`}
-function nwDoubleTheme(){applyTheme('hub');evRoot.classList.add('nw-double-theme')}
-function nwDoubleExit(){clearInterval(nwDoubleTimer);nwDoublePracticeActive=false;if(nwDoubleWorldBefore&&worlds[nwDoubleWorldBefore])currentWorld=nwDoubleWorldBefore;nwDoubleWorldBefore=null;showCategories()}
-function nwDoublePlayer(p,points,self=false){return `<div class="nw-double-person">${self?nwFrameArt(p.avatar,'nw-double-avatar'):nwBattleProfileArt(p,'nw-double-avatar')}<strong>${nwEscape(p.name)}</strong><span>${nwDoubleFmt(points)}</span></div>`}
-function nwDoubleTeams(m){const {p,ours,theirs}=nwDoubleScores(m),pct=ours+theirs?100*ours/(ours+theirs):50,delta=ours-theirs;return `<div class="nw-double-teams"><article class="nw-double-team"><div class="nw-double-team-head"><small>YOUR TEAM</small><strong>${nwDoubleFmt(ours)}</strong></div><div class="nw-double-people">${nwDoublePlayer(nwProfile(),m.teamPoints,true)}${nwDoublePlayer(m.participants[0],p[0])}</div></article><div class="nw-double-vs">VS</div><article class="nw-double-team rival"><div class="nw-double-team-head"><small>RIVAL TEAM</small><strong>${nwDoubleFmt(theirs)}</strong></div><div class="nw-double-people">${nwDoublePlayer(m.participants[1],p[1])}${nwDoublePlayer(m.participants[2],p[2])}</div></article><div class="nw-double-track"><i style="width:${pct}%"></i></div><div class="nw-double-margin">${delta>0?'YOUR TEAM LEADS BY '+nwDoubleFmt(delta):delta<0?'RIVALS LEAD BY '+nwDoubleFmt(-delta):'TIED'}</div></div>`}
-function nwDoubleLaunch(difficulty){const m=nwDoublePracticeData();if(nwDoublePeriod().phase!=='active'||!m||Date.now()>=m.end){nwDoublePracticeScreen();return}if(nwDoubleWorldBefore===null)nwDoubleWorldBefore=currentWorld;nwDoublePracticeActive=true;const pool=[...nwGroups.usual,...nwGroups.weird].filter(id=>id!=='classic'&&id!=='dark'&&worlds[id]);const fresh=pool.filter(id=>id!==nwDoubleLastRoom);const choices=fresh.length?fresh:pool;currentWorld=choices[Math.floor(Math.random()*choices.length)]||'halloween';nwDoubleLastRoom=currentWorld;evSudokuStart(difficulty);if(sudoku)sudoku.doubleMatchId=m.id;}
+function nwDoubleIdentity(person,self=false){
+ if(self){const p=nwProfile();return `<div class="nw-double-person">${nwFrameArt(p.avatar,'nw-double-avatar')}<strong>${nwEscape(p.name)}</strong></div>`;}
+ if(!person)return '<div class="nw-double-person"><div class="nw-double-avatar unknown">?</div><strong>PARTNER</strong></div>';
+ if(Number.isInteger(person.recorded_id)){
+  const p=nwBattleProfiles[person.recorded_id];
+  return p?`<div class="nw-double-person">${nwBattleProfileArt(p,'nw-double-avatar')}<strong>${nwEscape(p.name)}</strong></div>`:'';
+ }
+ return `<div class="nw-double-person">${nwFriendPhoto(person)}<strong>${nwEscape(person.name||'Partner')}</strong></div>`;
+}
+function nwDoubleRecordPoints(id,start=Date.now(),end=Date.now()+259200000){
+ const rows=nwBattlePracticeRuns.filter(r=>r.profile_id===id);
+ const max=rows.reduce((sum,r)=>sum+Number(r.points||0),0);
+ const fraction=Math.max(0,Math.min(1,(Date.now()-start)/Math.max(1,end-start)));
+ return Math.floor(max*fraction);
+}
+function nwDoubleScores(m=nwDoubleSnapshot){
+ if(!m)return {ours:0,theirs:0,mine:0,partner:0};
+ const mine=Number(m.points||0);
+ const partner=m.partner?(Number.isInteger(m.partner.recorded_id)?nwDoubleRecordPoints(m.partner.recorded_id,Date.parse(m.start_at),Date.parse(m.end_at)):Number(m.partner.points||0)):0;
+ const theirs=(m.opponents||[]).reduce((sum,p)=>sum+Number(p.points||0),0);
+ return {ours:mine+partner,theirs,mine,partner};
+}
+function nwDoubleTeams(m=nwDoubleSnapshot){
+ if(!m)return '';
+ const sc=nwDoubleScores(m),rivals=m.opponents||[],solo=!m.partner;
+ const player=(p)=>`<div class="nw-double-person">${Number.isInteger(p.recorded_id)?nwBattleProfileArt(nwBattleProfiles[p.recorded_id],'nw-double-avatar'):nwFriendPhoto(p)}<strong>${nwEscape(Number.isInteger(p.recorded_id)?nwBattleProfiles[p.recorded_id]?.name||'Opponent':p.name||'Opponent')}</strong><span>${nwDoubleFmt(p.points)}</span></div>`;
+ const pct=sc.ours+sc.theirs?Math.round(sc.ours/(sc.ours+sc.theirs)*100):50;
+ return `<div class="nw-double-teams"><article class="nw-double-team"><div class="nw-double-team-head"><small>${solo?'SOLO':'YOUR TEAM'}</small><strong>${nwDoubleFmt(sc.ours)}</strong></div><div class="nw-double-people">${nwDoubleIdentity(null,true)}${solo?'':nwDoubleIdentity(m.partner)}</div></article><div class="nw-double-vs">VS</div><article class="nw-double-team rival"><div class="nw-double-team-head"><small>RIVAL TEAM</small><strong>${nwDoubleFmt(sc.theirs)}</strong></div><div class="nw-double-people">${rivals.map(player).join('')}</div></article><div class="nw-double-track"><i style="width:${pct}%"></i></div><div class="nw-double-margin">${sc.ours>sc.theirs?'YOUR SIDE LEADS BY '+nwDoubleFmt(sc.ours-sc.theirs):sc.ours<sc.theirs?'RIVALS LEAD BY '+nwDoubleFmt(sc.theirs-sc.ours):'TIED'}</div></div>`;
+}
+function nwDoubleAlert(message){
+ const el=evRoot.querySelector('#nwDoubleAlert');if(el){el.textContent=message;el.hidden=!message;}
+}
+function nwDoublePopup(){
+ const overlay=document.createElement('div');overlay.className='nw-double-match-overlay';
+ overlay.innerHTML='<div class="nw-double-match-dialog" role="dialog" aria-modal="true" aria-label="Random Match"><h3>RANDOM MATCH</h3><p>You will be matched with another player who chose Random Match. Your partner will be revealed when Double Trouble begins.</p><div class="nw-double-dialog-actions">'+nwDoubleButton('nwDoubleRandomConfirm','CONFIRM')+nwDoubleButton('nwDoubleRandomCancel','CANCEL',true)+'</div></div>';
+ evRoot.append(overlay);
+ overlay.querySelector('#nwDoubleRandomCancel').onclick=()=>overlay.remove();
+ overlay.querySelector('#nwDoubleRandomConfirm').onclick=async()=>{const b=overlay.querySelector('#nwDoubleRandomConfirm');b.disabled=true;try{await nwDoubleRpc('random');overlay.remove();nwDoublePracticeScreen();}catch(e){b.disabled=false;const p=overlay.querySelector('p');p.textContent=e.message;}};
+}
+function nwDoubleInvitations(){
+ const d=nwDoubleSnapshot||{},invitations=d.invitations||[];
+ nwDoubleTheme();
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-home"><h2 class="nw-double-subtitle">PARTNERSHIP INVITATIONS</h2><div class="nw-double-invitations">${invitations.length?invitations.map(p=>`<div class="nw-double-invite-row">${nwFriendPhoto(p)}<strong>${nwEscape(p.name)}</strong><button type="button" data-dt-accept="${nwEscape(p.sender)}">ACCEPT</button><button type="button" data-dt-decline="${nwEscape(p.sender)}">DECLINE</button></div>`).join(''):'<p class="nw-double-note">No pending invitations.</p>'}</div>${nwDoubleButton('nwDoubleInvBack','BACK',true)}<p id="nwDoubleAlert" class="nw-double-alert" role="status" hidden></p></section>`);
+ evRoot.querySelector('#nwDoubleInvBack').onclick=nwDoublePracticeScreen;
+ evRoot.querySelectorAll('[data-dt-accept],[data-dt-decline]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await nwDoubleRpc(b.hasAttribute('data-dt-accept')?'accept':'decline',{p_target:b.dataset.dtAccept||b.dataset.dtDecline});nwDoublePracticeScreen();}catch(e){b.disabled=false;nwDoubleAlert(e.message);}});
+}
+function nwDoubleInviteFriends(){
+ const d=nwDoubleSnapshot||{},friends=d.friends||[],outgoing=new Set((d.outgoing||[]).filter(i=>i.status==='pending').map(i=>i.recipient));
+ nwDoubleTheme();
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-home"><h2 class="nw-double-subtitle">INVITE A FRIEND</h2><div class="nw-double-invitations">${friends.length?friends.map(p=>`<div class="nw-double-invite-row">${nwFriendPhoto(p)}<strong>${nwEscape(p.name)}</strong><button type="button" data-dt-invite="${nwEscape(p.id)}" ${outgoing.has(p.id)?'disabled':''}>${outgoing.has(p.id)?'SENT':'INVITE'}</button></div>`).join(''):'<p class="nw-double-note">Your friends list is empty.</p>'}</div>${nwDoubleButton('nwDoubleInviteBack','BACK',true)}<p id="nwDoubleAlert" class="nw-double-alert" role="status" hidden></p></section>`);
+ evRoot.querySelector('#nwDoubleInviteBack').onclick=nwDoublePracticeScreen;
+ evRoot.querySelectorAll('[data-dt-invite]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await nwDoubleRpc('invite',{p_target:b.dataset.dtInvite});b.textContent='SENT';nwDoubleAlert('Invitation sent.');}catch(e){b.disabled=false;nwDoubleAlert(e.message);}});
+}
 function nwDoublePracticeScreen(){
- clearInterval(nwDoubleTimer);evSudokuLeave();nwDoublePracticeActive=false;nwDoubleTheme();const period=nwDoublePeriod(),data=nwDoubleStore(),m=data.matches[period.id],past=Object.values(data.matches).filter(x=>x.end<=Date.now()).sort((a,b)=>b.end-a.end),last=past[0];
- const active=period.phase==='active',pair=period.phase==='pair';
- const title=`<div class="nw-double-decoration" aria-hidden="true">⋆｡ﾟ☁︎｡⋆｡ ﾟ☾ ﾟ｡⋆</div><div class="nw-double-mascots"><img class="dt-shaggy-twins" src="assets/double-trouble/shaggy-twins.png" alt="Shaggy twins in matching baby-blue gingham dresses"></div><h2 class="nw-double-logo nw-double-glitch"><span>DOUBLE<br>TROUBLE</span><span class="nw-double-glitch-copy" aria-hidden="true">DOUBLE<br>TROUBLE</span><span class="nw-double-glitch-copy second" aria-hidden="true">DOUBLE<br>TROUBLE</span></h2><div class="nw-double-kicker">FRIDAY — SUNDAY</div>`;
- const countdown=`<div class="nw-double-count"><small>${active?'EVENT ENDS IN':pair?'COMPETITION STARTS IN':'PARTNER DAY STARTS IN'}</small><strong id="nwDoubleClock"></strong></div>`;
- const selection=`<h3>PARTNERS IN CRIME</h3><div class="nw-double-people">${nwDoublePlayer(nwProfile(),0,true)}<div class="nw-double-person"><div class="nw-double-avatar unknown">?</div><strong>PARTNER</strong></div></div>${nwDoubleButton('nwDoubleRandom','▹ RANDOM PARTNER')}${nwDoubleButton('nwDoubleInvite','CHOOSE A PARTNER',true)}${pair?nwDoubleButton('nwDoubleFriends','PAIR WITH A FRIEND',true):''}<div id="nwDoublePicker" hidden><label for="nwDoubleSelect">CHOOSE YOUR PARTNER</label><select id="nwDoubleSelect">${nwBattleProfiles.map(p=>`<option value="${p.id}">${nwEscape(p.name)}</option>`).join('')}</select>${nwDoubleButton('nwDoubleConfirm','▹ TEAM UP')}</div>`;
- evDisplay(`${evHeader('',nwDoubleExit)}<section class="nw-double nw-double-home">${title}${countdown}${active||pair?(m?`<div id="nwDoubleScoreboard">${nwDoubleTeams(m)}</div><p id="nwDoubleAlert" class="nw-double-alert" role="status" hidden></p>${active?nwDoubleButton('nwDoublePlay','▹ PLAY NOW'):'<p class="nw-double-note">Your team is ready for Friday.</p>'}`:selection):'<p class="nw-double-note">Team up on Thursday. Earn points together all weekend.</p>'}${nwDoubleButton('nwDoubleRewards','.✦ ݁˖ REWARDS',true)}</section>`);
- const by=id=>evRoot.querySelector('#'+id);if(by('nwDoubleRandom'))by('nwDoubleRandom').onclick=()=>{nwDoublePick();nwDoublePracticeScreen()};if(by('nwDoubleInvite'))by('nwDoubleInvite').onclick=()=>{by('nwDoublePicker').hidden=false};if(by('nwDoubleConfirm'))by('nwDoubleConfirm').onclick=()=>{nwDoublePick(+by('nwDoubleSelect').value);nwDoublePracticeScreen()};
- if(by('nwDoubleFriends'))by('nwDoubleFriends').onclick=()=>nwShowFriends('list',nwDoublePracticeScreen);
- if(by('nwDoublePlay'))by('nwDoublePlay').onclick=nwDoubleDifficulty;by('nwDoubleRewards').onclick=nwDoubleRewards;
- let lead=m?Math.sign(nwDoubleScores(m).ours-nwDoubleScores(m).theirs):0;
- const tick=()=>{if(!by('nwDoubleClock')){clearInterval(nwDoubleTimer);return}const now=Date.now(),p=nwDoublePeriod(now);if(p.id!==period.id||p.phase!==period.phase){nwDoublePracticeScreen();return}by('nwDoubleClock').textContent=nwDoubleCountdown((active?period.end:pair?period.start:period.nextPair)-now);if(m&&active&&by('nwDoubleScoreboard')){const s=nwDoubleScores(m,now),next=Math.sign(s.ours-s.theirs);if(next<0&&lead>=0){by('nwDoubleAlert').hidden=false;by('nwDoubleAlert').textContent='Your rivals have taken the lead!'}lead=next;by('nwDoubleScoreboard').innerHTML=nwDoubleTeams(m)}};tick();nwDoubleTimer=setInterval(tick,1000);
+ clearInterval(nwDoubleTimer);nwDoubleTimer=null;evSudokuLeave();nwDoublePracticeActive=false;nwDoubleTheme();
+ const period=nwDoublePeriod();
+ const title='<div class="nw-double-decoration" aria-hidden="true">⋆｡ﾟ☁︎｡⋆｡ ﾟ☾ ﾟ｡⋆</div><div class="nw-double-mascots"><img class="dt-shaggy-twins" src="assets/double-trouble/shaggy-twins.png" alt=""></div><h2 class="nw-double-logo nw-double-glitch"><span>DOUBLE<br>TROUBLE</span><span class="nw-double-glitch-copy" aria-hidden="true">DOUBLE<br>TROUBLE</span><span class="nw-double-glitch-copy second" aria-hidden="true">DOUBLE<br>TROUBLE</span></h2><div class="nw-double-kicker">FRIDAY — SUNDAY</div>';
+ evDisplay(`${evHeader('',nwDoubleExit)}<section class="nw-double nw-double-home">${title}<div class="nw-double-count"><small>${period.phase==='active'?'EVENT ENDS IN':period.phase==='pair'?'COMPETITION STARTS IN':'PARTNER DAY STARTS IN'}</small><strong id="nwDoubleClock"></strong></div><div id="nwDoubleLive"><p class="nw-double-note">Loading...</p></div>${nwDoubleButton('nwDoubleRewards','.✦ ݁˖ REWARDS',true)}</section>`);
+ const rewards=evRoot.querySelector('#nwDoubleRewards');if(rewards)rewards.onclick=nwDoubleRewards;
+ const tickClock=()=>{const e=evRoot.querySelector('#nwDoubleClock');if(!e)return;const p=nwDoublePeriod(),ms=(p.phase==='active'?p.end:p.phase==='pair'?p.start:p.nextPair)-Date.now();e.textContent=nwDoubleCountdown(ms);if(p.phase!==period.phase||p.id!==period.id)nwDoublePracticeScreen();};
+ tickClock();nwDoubleTimer=setInterval(tickClock,1000);
+ const refresh=async()=>{const box=evRoot.querySelector('#nwDoubleLive');if(!box)return;try{const d=await nwDoubleRpc();if(!box.isConnected)return;
+  const paired=!!d.partner;
+  let content='';
+  if(period.phase==='pair'){
+   content=`<h3>PARTNERS IN CRIME</h3><div class="nw-double-people">${nwDoubleIdentity(null,true)}${d.mode==='random'?nwDoubleIdentity(null):nwDoubleIdentity(d.partner)}</div>`;
+   if(d.mode==='random')content+='<p class="nw-double-note">Random Match confirmed. Your partner will be revealed on Friday.</p>';
+   else if(paired)content+='<p class="nw-double-note">Your partnership is confirmed for Friday.</p>';
+   else content+=nwDoubleButton('nwDoubleInvite','INVITE A FRIEND')+nwDoubleButton('nwDoubleRandom','RANDOM MATCH',true);
+   const count=(d.invitations||[]).length;
+   content+=`<div class="nw-double-invitation-button">${nwDoubleButton('nwDoubleCheckInvites',`INVITATIONS${count?' ('+count+')':''}`,true)}${count?'<span class="nw-notification-orbit nw-double-invitation-orbit" aria-hidden="true"></span>':''}</div>`;
+  }else if(period.phase==='active'){
+   content=`${nwDoubleTeams(d)}<div class="nw-double-prize-progress"><div class="nw-double-prize-progress-top"><span>YOUR PROGRESS</span><strong>${nwDoubleFmt(d.points)} / 3,500</strong></div><div class="nw-double-eligibility-track"><i style="width:${Math.min(100,Number(d.points||0)/35)}%"></i></div></div>${nwDoubleButton('nwDoublePlay','▹ PLAY NOW')}`;
+  }else content='<p class="nw-double-note">Partner Day begins Thursday at 00:00 UTC.</p>';
+  box.innerHTML=content;
+  const invite=box.querySelector('#nwDoubleInvite'),random=box.querySelector('#nwDoubleRandom'),inv=box.querySelector('#nwDoubleCheckInvites'),play=box.querySelector('#nwDoublePlay');
+  if(invite)invite.onclick=nwDoubleInviteFriends;if(random)random.onclick=nwDoublePopup;if(inv)inv.onclick=nwDoubleInvitations;if(play)play.onclick=nwDoubleDifficulty;
+ }catch(e){if(box.isConnected)box.innerHTML=`<p class="nw-double-alert">${nwEscape(e.message)}</p>${nwDoubleButton('nwDoubleRetry','RETRY',true)}`;const b=box.querySelector('#nwDoubleRetry');if(b)b.onclick=refresh;}};
+ void refresh();
+ // Periodic server refresh makes new invitations and partner scores visible without reopening.
+ const holder=evRoot.querySelector('#nwDoubleLive');const polling=setInterval(()=>{if(!holder?.isConnected){clearInterval(polling);return;}void refresh();},15000);
 }
 function nwDoubleDifficulty(){
- clearInterval(nwDoubleTimer);if(nwDoublePeriod().phase!=='active'||!nwDoublePracticeData()){nwDoublePracticeScreen();return}nwDoubleTheme();
- evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double"><h2 class="nw-double-subtitle">CHOOSE YOUR DIFFICULTY</h2><div class="nw-double-levels">${Object.entries(difficulties).map(([d,v])=>`<button class="nw-double-btn nw-double-level" data-double-difficulty="${d}"><span>▹ ${d.toUpperCase()}</span><small>${nwDoubleFmt(v.points)} PTS</small></button>`).join('')}</div></section>`);
+ clearInterval(nwDoubleTimer);if(nwDoublePeriod().phase!=='active'){nwDoublePracticeScreen();return;}nwDoubleTheme();
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double"><h2 class="nw-double-subtitle">CHOOSE YOUR DIFFICULTY</h2><div class="nw-double-levels">${Object.entries(difficulties).map(([d,v])=>`<button class="nw-double-btn" data-double-difficulty="${d}">${d.toUpperCase()}</button>`).join('')}</div></section>`);
  evRoot.querySelectorAll('[data-double-difficulty]').forEach(b=>b.onclick=()=>nwDoubleLaunch(b.dataset.doubleDifficulty));
 }
-function nwDoubleReward(m,now=Date.now()){
- const tally=nwDoubleScores(m,Math.min(now,m.end));
- const winning=tally.ours>=tally.theirs,first=m.teamPoints>=tally.p[0];
- return {eligible:m.teamPoints>=3500,winning,first,amount:m.teamPoints>=3500?(winning?(first?1000:700):(first?500:200)):0,finished:now>=m.end};
+function nwDoubleLaunch(difficulty){
+ if(nwDoublePeriod().phase!=='active'){nwDoublePracticeScreen();return;}
+ if(nwDoubleWorldBefore===null)nwDoubleWorldBefore=currentWorld;
+ nwDoublePracticeActive=true;
+ const pool=[...nwGroups.usual,...nwGroups.weird].filter(id=>id!=='classic'&&id!=='dark'&&worlds[id]);
+ const fresh=pool.filter(id=>id!==nwDoubleLastRoom),choices=fresh.length?fresh:pool;
+ currentWorld=choices[Math.floor(Math.random()*choices.length)]||'halloween';nwDoubleLastRoom=currentWorld;
+ evSudokuStart(difficulty);
 }
 function nwDoubleRewards(){
  clearInterval(nwDoubleTimer);nwDoubleTheme();
- const d=nwDoubleStore(),m=d.matches[nwDoublePeriod().id],hasHistory=Object.values(d.matches).some(x=>x.end<=Date.now());
+ const d=nwDoubleSnapshot,pts=Number(d?.points||0);
  const tier=(name,amounts,rival=false)=>`<article class="nw-double-prize-card${rival?' rival':''}"><div class="nw-double-prize-emblem" aria-hidden="true">${rival?'☾':'✦'}</div><h3>${name}</h3><div class="nw-double-prize-amount">${nwDiamondAmount(amounts[0])}</div><small>TOP CONTRIBUTOR</small><div class="nw-double-prize-divider"></div><div class="nw-double-prize-secondary">${nwDiamondAmount(amounts[1])}</div><small>OTHER TEAMMATE</small></article>`;
- const progress=m?`<div class="nw-double-prize-progress"><div class="nw-double-prize-progress-top"><span>YOUR PROGRESS</span><strong>${nwDoubleFmt(m.teamPoints)} / 3,500</strong></div><div class="nw-double-eligibility-track" role="progressbar" aria-label="Personal qualifying points" aria-valuemin="0" aria-valuemax="3500" aria-valuenow="${Math.min(3500,Math.max(0,m.teamPoints))}"><i style="width:${Math.max(0,Math.min(100,m.teamPoints/35))}%"></i></div><small>${m.teamPoints>=3500?'QUALIFIED ✓':nwDoubleFmt(3500-m.teamPoints)+' more points to qualify'}</small></div>`:'';
- evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-reward-page nw-double-spoils"><div class="nw-double-spoils-light left" aria-hidden="true"></div><div class="nw-double-spoils-light right" aria-hidden="true"></div><div class="nw-double-spoils-content"><div class="nw-double-spoils-decor" aria-hidden="true">⋆｡☁︎｡ ﾟ☾ ﾟ⋆</div><h2 class="nw-double-spoils-title">THE SPOILS</h2><p class="nw-double-spoils-sub">DOUBLE TROUBLE · WEEKEND REWARDS</p><div class="nw-double-prize-grid">${tier('WINNERS',[1000,700])}${tier('LOSERS',[500,200],true)}</div><p class="nw-double-spoils-rule">✧ Earn 3,500 personal points to qualify.</p>${progress}<small class="nw-double-spoils-footnote">Prizes are determined when the event ends.</small>${hasHistory?nwDoubleButton('nwDoubleHistory','EVENT HISTORY',true):''}</div></section>`);
- const history=evRoot.querySelector('#nwDoubleHistory');if(history)history.onclick=nwDoubleHistory;
+ const progress=`<div class="nw-double-prize-progress"><div class="nw-double-prize-progress-top"><span>YOUR PROGRESS</span><strong>${nwDoubleFmt(pts)} / 3,500</strong></div><div class="nw-double-eligibility-track"><i style="width:${Math.min(100,pts/35)}%"></i></div><small>${pts>=3500?'QUALIFIED ✓':nwDoubleFmt(3500-pts)+' more points to qualify'}</small></div>`;
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-reward-page nw-double-spoils"><div class="nw-double-spoils-light left" aria-hidden="true"></div><div class="nw-double-spoils-light right" aria-hidden="true"></div><div class="nw-double-spoils-content"><div class="nw-double-spoils-decor" aria-hidden="true">⋆｡☁︎｡ ﾟ☾ ﾟ⋆</div><h2 class="nw-double-spoils-title">THE SPOILS</h2><p class="nw-double-spoils-sub">DOUBLE TROUBLE · WEEKEND REWARDS</p><div class="nw-double-prize-grid">${tier('WINNERS',[1000,700])}${tier('LOSERS',[500,200],true)}</div><p class="nw-double-spoils-rule">✧ Earn 3,500 personal points to qualify.</p>${progress}<small class="nw-double-spoils-footnote">Prizes are determined when the event ends.</small></div></section>`);
 }
-function nwDoubleHistory(){clearInterval(nwDoubleTimer);nwDoubleTheme();const matches=Object.values(nwDoubleStore().matches).filter(m=>m.end<=Date.now()).sort((a,b)=>b.end-a.end);evDisplay(`${evHeader('EVENT HISTORY',nwDoubleRewards)}<section class="nw-double"><h2>EVENT HISTORY</h2>${matches.length?matches.map(m=>{const s=nwDoubleScores(m,m.end);return `<button class="nw-double-btn secondary" data-double-result="${m.id}">${m.id} · ${s.ours>s.theirs?'VICTORY':s.ours<s.theirs?'DEFEAT':'DRAW'} · ${nwDoubleFmt(s.ours)} / ${nwDoubleFmt(s.theirs)}</button>`}).join(''):'<p>No completed events yet.</p>'}</section>`);evRoot.querySelectorAll('[data-double-result]').forEach(b=>b.onclick=()=>nwDoubleResult(b.dataset.doubleResult))}
-function nwDoubleResult(id){clearInterval(nwDoubleTimer);nwDoubleTheme();const d=nwDoubleStore(),m=d.matches[id];if(!m||m.end>Date.now()){nwDoublePracticeScreen();return}const s=nwDoubleScores(m,m.end),win=s.ours>s.theirs;evDisplay(`${evHeader('EVENT RESULT',nwDoublePracticeScreen)}<section class="nw-double"><h2>${win?'VICTORY':s.ours===s.theirs?'DRAW':'DEFEAT'}</h2><div class="nw-double-kicker">${nwEscape(m.id)}</div>${nwDoubleTeams(m)}${nwDoubleButton('nwDoubleResultRewards','.✦ ݁˖ REWARDS',true)}${nwDoubleButton('nwDoubleBack','BACK TO EVENT',true)}</section>`);evRoot.querySelector('#nwDoubleResultRewards').onclick=nwDoubleRewards;evRoot.querySelector('#nwDoubleBack').onclick=nwDoublePracticeScreen}
 function nwDoublePracticeAfterSudoku(s,won,pts){
- const d=nwDoubleStore(),m=d.matches[s.doubleMatchId];const credited=!!(won&&m&&Date.now()<m.end&&!s.doubleCredited);if(credited){m.teamPoints+=pts;m.userPuzzles++;s.doubleCredited=true;nwDoubleSave(d)}nwDoublePracticeActive=false;nwDoubleTheme();const score=m?nwDoubleScores(m):{ours:0};
- evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2 class="nw-double-result-title">${won?'NICELY DONE!':'PUZZLE NOT COMPLETED'}</h2><div class="nw-double-kicker">POINTS CONTRIBUTED</div><div class="nw-double-earned">+${nwDoubleFmt(credited?pts:0)}</div>${won&&!credited?'<p>The event has ended. Your regular Sudoku points are safe.</p>':''}<div class="nw-double-summary"><div>YOUR CONTRIBUTION <strong>${nwDoubleFmt(m?.teamPoints)}</strong></div><div>TEAM TOTAL <strong>${nwDoubleFmt(score.ours)}</strong></div></div>${nwDoublePeriod().phase==='active'?nwDoubleButton('nwDoubleAgain','▹ '+(won?'PLAY AGAIN':'RETRY')):''}${nwDoublePeriod().phase==='active'?nwDoubleButton('nwDoubleChangeDifficulty','CHANGE DIFFICULTY',true):''}${nwDoubleButton('nwDoubleContinue','BACK TO EVENT',true)}</section>`);
- const again=evRoot.querySelector('#nwDoubleAgain');if(again)again.onclick=()=>nwDoubleLaunch(s.difficulty);const change=evRoot.querySelector('#nwDoubleChangeDifficulty');if(change)change.onclick=nwDoubleDifficulty;evRoot.querySelector('#nwDoubleContinue').onclick=nwDoublePracticeScreen;
+ nwDoublePracticeActive=false;nwDoubleTheme();
+ const credited=!!(won&&nwDoublePeriod().phase==='active'&&!s.doubleCredited);
+ if(credited)s.doubleCredited=true;
+ const show=(message,total)=>{const sc=nwDoubleScores();evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2 class="nw-double-result-title">${won?'NICELY DONE!':'PUZZLE NOT COMPLETED'}</h2><div class="nw-double-kicker">POINTS CONTRIBUTED</div><div class="nw-double-earned">+${nwDoubleFmt(credited?pts:0)}</div><div class="nw-double-summary"><div>YOUR CONTRIBUTION <strong>${nwDoubleFmt(total)}</strong></div><div>TEAM TOTAL <strong>${nwDoubleFmt(sc.ours)}</strong></div></div>${message?'<p class="nw-double-alert">'+nwEscape(message)+'</p>':''}${nwDoublePeriod().phase==='active'?nwDoubleButton('nwDoubleAgain','▹ '+(won?'PLAY AGAIN':'RETRY')):''}${nwDoublePeriod().phase==='active'?nwDoubleButton('nwDoubleChangeDifficulty','CHANGE DIFFICULTY',true):''}${nwDoubleButton('nwDoubleContinue','BACK TO EVENT',true)}</section>`);
+  const again=evRoot.querySelector('#nwDoubleAgain');if(again)again.onclick=()=>nwDoubleLaunch(s.difficulty);
+  const change=evRoot.querySelector('#nwDoubleChangeDifficulty');if(change)change.onclick=nwDoubleDifficulty;
+  evRoot.querySelector('#nwDoubleContinue').onclick=nwDoublePracticeScreen;
+ };
+ if(!credited){show('',nwDoubleSnapshot?.points||0);return;}
+ // Store each completed event puzzle once with an idempotent run ID.
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2>NICELY DONE!</h2><p class="nw-double-note">Syncing your points...</p></section>`);
+ const id=crypto.randomUUID();void nwDoubleRpc('score',{p_run_id:id,p_points:pts}).then(d=>show('',d.points)).catch(e=>show('Points could not sync: '+e.message,nwDoubleSnapshot?.points||0));
 }
+
 function nwShowEventDetail(type){
   if(type==='weekly'){nwShowTrophy();return}
   if(type==='double'){nwDoublePracticeScreen();return}
