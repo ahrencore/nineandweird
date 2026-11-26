@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Patrick+Hand&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Jost:wght@400;500;600;700&family=Cormorant+Garamond:wght@600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Special+Elite&family=Nunito:wght@500;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Barlow+Condensed:wght@500;600;700;800&family=Nunito:wght@500;600;700;800&display=swap");
@@ -9694,3 +9695,159 @@ body:has(#game.theme-donttakewater:not([hidden])){background:#101D20!important;}
  color:#493021!important;
 }
 #game.theme-patissserie .result-actions{gap:7px!important;}
+
+
+/* Unprepared Christmas — approved icy-blue gift wrap makeover.
+   Existing snow effects, grid/cell dimensions, PNG art and gameplay remain unchanged. */
+#game.theme-unpreparedchristmas{
+ font-family:'Fredoka',system-ui,sans-serif!important;
+}
+#game.theme-unpreparedchristmas > .ev-head > strong,
+#game.theme-unpreparedchristmas :is(.difficulty-panel,.result-panel) h2{
+ color:#245D83!important;font-family:'Fredoka',system-ui,sans-serif!important;
+ font-weight:600!important;line-height:1.1!important;
+ letter-spacing:0!important;text-shadow:none!important;
+}
+#game.theme-unpreparedchristmas > .ev-head > strong{
+ font-size:clamp(14px,3.4vw,20px)!important;
+}
+#game.theme-unpreparedchristmas .ev-head{
+ background:#F7FCFF!important;border:1px solid #9ACCE6!important;border-radius:9px!important;
+}
+#game.theme-unpreparedchristmas .ev-head :is(.ev-btn,.nw-shared-settings){
+ background:#EBF7FE!important;border:1px solid #79B6D5!important;
+ color:#245D83!important;border-radius:5px!important;
+ box-shadow:none!important;
+}
+#game.theme-unpreparedchristmas :is(.difficulty-panel,.result-panel,.ev-sudo-shell){
+ background:#EAF7FF!important;color:#245D83!important;
+ border:2px solid #9ACCE6!important;border-radius:11px!important;
+ box-shadow:0 3px 10px #579CC51A!important;
+}
+#game.theme-unpreparedchristmas .nw-fav-toggle{
+ display:block!important;margin-left:auto!important;margin-right:auto!important;
+ background:#F7FCFF!important;color:#245D83!important;
+ border:1px solid #79B6D5!important;border-radius:6px!important;
+ font-family:'Fredoka',system-ui,sans-serif!important;box-shadow:none!important;
+}
+#game.theme-unpreparedchristmas .ev-sudo-stats>div{
+ background:#F7FCFF!important;border-color:#9ACCE6!important;
+ color:#245D83!important;border-radius:5px!important;
+}
+#game.theme-unpreparedchristmas .ev-sudo-stats small{
+ color:#579CC5!important;
+}
+#game.theme-unpreparedchristmas .ev-sudo-stats strong{
+ color:#245D83!important;
+}
+#game.theme-unpreparedchristmas .ev-note{color:#579CC5!important;}
+#game.theme-unpreparedchristmas .difficulty-list{gap:6px!important;}
+#game.theme-unpreparedchristmas .difficulty-list .nw-unprepared-difficulty,
+#game.theme-unpreparedchristmas .result-actions .nw-unprepared-action{
+ display:grid!important;place-items:center!important;
+ position:relative!important;isolation:isolate!important;
+ width:100%!important;height:58px!important;min-height:0!important;
+ background:transparent!important;border:0!important;
+ padding:0!important;margin:0!important;
+ border-radius:0!important;box-shadow:none!important;
+ overflow:visible!important;cursor:pointer!important;
+}
+#game.theme-unpreparedchristmas .nw-unprepared-difficulty > .nw-unprepared-gift-svg,
+#game.theme-unpreparedchristmas .result-actions .nw-unprepared-action > .nw-unprepared-gift-svg{
+ position:absolute!important;inset:0!important;display:block!important;
+ width:100%!important;height:100%!important;pointer-events:none!important;
+}
+#game.theme-unpreparedchristmas .nw-unprepared-difficulty > span,
+#game.theme-unpreparedchristmas .result-actions .nw-unprepared-action > span{
+ position:relative!important;z-index:1!important;display:block!important;
+ max-width:69%!important;margin:0!important;padding:0!important;
+ font:400 clamp(16px,3.2vw,20px)/1 'Patrick Hand',cursive!important;
+ letter-spacing:.035em!important;color:#245D83!important;
+ white-space:nowrap!important;text-align:center!important;
+ text-shadow:none!important;pointer-events:none!important;
+}
+#game.theme-unpreparedchristmas .result-actions .nw-unprepared-action > span{
+ font-size:clamp(12px,2.4vw,15px)!important;
+ letter-spacing:.015em!important;
+}
+#game.theme-unpreparedchristmas .nw-unprepared-difficulty:active,
+#game.theme-unpreparedchristmas .result-actions .nw-unprepared-action:active{
+ transform:translateY(2px)!important;
+}
+#game.theme-unpreparedchristmas .nw-unprepared-difficulty:focus-visible,
+#game.theme-unpreparedchristmas .result-actions .nw-unprepared-action:focus-visible{
+ outline:2px solid #579CC5!important;outline-offset:2px!important;
+}
+/* Wrapped-paper tray artwork sits under the existing nine illustrations. */
+#game.theme-unpreparedchristmas .ev-sudoku-tray button.nw-unprepared-tray-piece{
+ position:relative!important;isolation:isolate!important;
+ background:transparent!important;border:0!important;
+ border-radius:0!important;box-shadow:none!important;overflow:visible!important;
+}
+#game.theme-unpreparedchristmas .ev-sudoku-tray button.nw-unprepared-tray-piece > .nw-unprepared-wrap-svg{
+ position:absolute!important;inset:0!important;z-index:0!important;
+ width:100%!important;height:100%!important;display:block!important;pointer-events:none!important;
+}
+#game.theme-unpreparedchristmas .ev-sudoku-tray button.nw-unprepared-tray-piece > img,
+#game.theme-unpreparedchristmas .ev-sudoku-tray button.nw-unprepared-tray-piece > .number-symbol{
+ position:relative!important;z-index:1!important;
+}
+#game.theme-unpreparedchristmas .ev-sudoku-tray button.nw-unprepared-tray-piece.selected{
+ background:transparent!important;border:0!important;
+ box-shadow:none!important;filter:drop-shadow(0 0 4px #579CC599)!important;
+}
+#game.theme-unpreparedchristmas .ev-sudoku-tray button.nw-unprepared-tray-piece.selected .nw-unprepared-wrap-base{
+ fill:#D1E9F7!important;stroke:#347DAA!important;stroke-width:3!important;
+}
+#game.theme-unpreparedchristmas .ev-sudoku-tray button.nw-unprepared-tray-piece .ev-sudo-remain{
+ z-index:3!important;background:#579CC5!important;color:#FFFFFF!important;
+ border:1px solid #F7FCFF!important;border-radius:5px!important;
+ font:600 9px/1 'Fredoka',system-ui,sans-serif!important;
+}
+#game.theme-unpreparedchristmas .ev-sudo-tools-clean .ev-sudo-tool{
+ background:#F7FCFF!important;color:#245D83!important;
+ border:1px solid #79B6D5!important;
+ border-bottom:3px solid #579CC5!important;
+ border-radius:6px!important;box-shadow:none!important;
+}
+#game.theme-unpreparedchristmas .ev-sudo-tools-clean .ev-sudo-tool.active{
+ background:#D1E9F7!important;border-color:#347DAA!important;
+ box-shadow:0 0 8px #579CC555!important;
+}
+#game.theme-unpreparedchristmas .ev-sudo-tools-clean .ev-sudo-tool-icon{
+ display:grid!important;place-items:center!important;
+ color:#579CC5!important;text-shadow:none!important;filter:none!important;
+}
+#game.theme-unpreparedchristmas .nw-unprepared-tool-svg{
+ display:block!important;width:20px!important;height:20px!important;
+}
+#game.theme-unpreparedchristmas .ev-sudo-tools-clean .ev-sudo-tool-label{
+ font:600 9px/1.2 'Fredoka',system-ui,sans-serif!important;
+ color:#245D83!important;text-shadow:none!important;
+}
+#game.theme-unpreparedchristmas .result-panel .result-mark{
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;
+ width:67px!important;height:67px!important;
+ min-width:67px!important;min-height:67px!important;
+ max-width:67px!important;max-height:67px!important;
+ aspect-ratio:1/1!important;flex:0 0 67px!important;
+ padding:0!important;margin:8px auto 14px!important;
+ background:#F7FCFF!important;border:3px solid #579CC5!important;
+ border-radius:50%!important;color:#579CC5!important;box-shadow:none!important;
+}
+#game.theme-unpreparedchristmas .nw-unprepared-result-svg{
+ display:block!important;width:38px!important;height:38px!important;
+}
+#game.theme-unpreparedchristmas .result-panel:not(:has(.result-score)) .result-mark{
+ color:#CE7385!important;border-color:#CE7385!important;
+ background:#FFF2F3!important;
+}
+#game.theme-unpreparedchristmas .result-panel .result-score strong{
+ font:600 32px/1.2 'Fredoka',system-ui,sans-serif!important;
+ color:#347DAA!important;text-shadow:none!important;
+}
+#game.theme-unpreparedchristmas .result-panel :is(.result-score,.result-stats){
+ color:#245D83!important;
+}
+#game.theme-unpreparedchristmas .result-actions{gap:6px!important;}
