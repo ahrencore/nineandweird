@@ -1625,7 +1625,25 @@ function nwDoubleRewards(){
  const d=nwDoubleSnapshot,pts=Number(d?.points||0);
  const tier=(name,amounts,rival=false)=>`<article class="nw-double-prize-card${rival?' rival':''}"><div class="nw-double-prize-emblem" aria-hidden="true">${rival?'☾':'✦'}</div><h3>${name}</h3><div class="nw-double-prize-amount">${nwDiamondAmount(amounts[0])}</div><small>TOP CONTRIBUTOR</small><div class="nw-double-prize-divider"></div><div class="nw-double-prize-secondary">${nwDiamondAmount(amounts[1])}</div><small>OTHER TEAMMATE</small></article>`;
  const progress=`<div class="nw-double-prize-progress"><div class="nw-double-prize-progress-top"><span>YOUR PROGRESS</span><strong>${nwDoubleFmt(pts)} / 3,500</strong></div><div class="nw-double-eligibility-track"><i style="width:${Math.min(100,pts/35)}%"></i></div><small>${pts>=3500?'QUALIFIED ✓':nwDoubleFmt(3500-pts)+' more points to qualify'}</small></div>`;
- evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-reward-page nw-double-spoils"><div class="nw-double-spoils-light left" aria-hidden="true"></div><div class="nw-double-spoils-light right" aria-hidden="true"></div><div class="nw-double-spoils-content"><div class="nw-double-spoils-decor" aria-hidden="true">⋆｡☁︎｡ ﾟ☾ ﾟ⋆</div><h2 class="nw-double-spoils-title">THE SPOILS</h2><p class="nw-double-spoils-sub">DOUBLE TROUBLE · WEEKEND REWARDS</p><div class="nw-double-prize-grid">${tier('WINNERS',[1000,700])}${tier('LOSERS',[500,200],true)}</div><p class="nw-double-spoils-rule">✧ Earn 3,500 personal points to qualify.</p>${progress}<small class="nw-double-spoils-footnote">Prizes are determined when the event ends.</small></div></section>`);
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-reward-page nw-double-spoils"><div class="nw-double-spoils-light left" aria-hidden="true"></div><div class="nw-double-spoils-light right" aria-hidden="true"></div><div class="nw-double-spoils-content"><div class="nw-double-spoils-decor" aria-hidden="true">⋆｡☁︎｡ ﾟ☾ ﾟ⋆</div><h2 class="nw-double-spoils-title">THE SPOILS</h2><p class="nw-double-spoils-sub">DOUBLE TROUBLE · WEEKEND REWARDS</p><div class="nw-double-prize-grid">${tier('WINNERS',[1000,700])}${tier('LOSERS',[500,200],true)}</div><p class="nw-double-spoils-rule">✧ Earn 3,500 personal points to qualify.</p>${progress}<small class="nw-double-spoils-footnote">Prizes are determined when the event ends.</small>${nwDoubleButton('nwDoubleHistory','EVENT HISTORY',true)}</div></section>`);
+ const history=evRoot.querySelector('#nwDoubleHistory');if(history)history.onclick=nwDoubleHistory;
+}
+
+async function nwDoubleHistory(){
+ clearInterval(nwDoubleTimer);nwDoubleTheme();
+ evDisplay(`${evHeader('EVENT HISTORY',nwDoubleRewards)}<section class="nw-double"><h2>EVENT HISTORY</h2><div id="nwDoubleHistoryItems"><p class="nw-double-note">Loading...</p></div></section>`);
+ const el=evRoot.querySelector('#nwDoubleHistoryItems');
+ try{
+  const c=await nwCloud.get();
+  const {data,error}=await c.rpc('nw_dt_history');
+  if(error)throw Error(error.message);
+  if(!el.isConnected)return;
+  el.innerHTML=data?.length?data.map(m=>{
+   const win=Number(m.team_points)>=Number(m.rival_points);
+   const tie=Number(m.team_points)===Number(m.rival_points);
+   return `<div class="nw-double-history-row"><strong>${nwEscape(m.date)} · ${tie?'DRAW':win?'VICTORY':'DEFEAT'}</strong><small>YOUR POINTS: ${nwDoubleFmt(m.points)}</small><small>TEAM: ${nwDoubleFmt(m.team_points)} · RIVALS: ${nwDoubleFmt(m.rival_points)}</small><small>REWARD: ${nwDoubleFmt(m.reward)} DIAMONDS</small></div>`;
+  }).join(''):'<p class="nw-double-note">No completed events yet.</p>';
+ }catch(e){if(el.isConnected)el.innerHTML='<p class="nw-double-alert">'+nwEscape(e.message)+'</p>';}
 }
 function nwDoublePracticeAfterSudoku(s,won,pts){
  nwDoublePracticeActive=false;nwDoubleTheme();
