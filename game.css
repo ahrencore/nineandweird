@@ -6730,3 +6730,49 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
 @media(prefers-reduced-motion:reduce){
  #game.theme-ugly .nw-ugly-difficulty{transition:none!important;}
 }
+
+/* 2026-11-26 — Correct out-of-cell Sudoku selection outline.
+   Keep the selection ring INSIDE its own tile, including keyboard focus,
+   so the established continuous 3x3 section guides remain uninterrupted.
+   Only the three recently redesigned Worlds are affected. */
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell.selected,
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell.selected:focus,
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell.selected:focus-visible,
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell:focus-visible{
+ outline:none!important;
+ outline-offset:0!important;
+}
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell.selected:not(.bad){
+ box-shadow:inset 0 0 0 3px #343139!important;
+ outline:none!important;
+ outline-offset:0!important;
+ position:relative;
+}
+#game.theme-diner .ev-sudoku-grid > .ev-sudoku-cell.selected,
+#game.theme-diner .ev-sudoku-grid > .ev-sudoku-cell.selected:focus-visible,
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell.selected,
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell.selected:focus-visible{
+ outline:none!important;
+ outline-offset:0!important;
+}
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell.bad,
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell.bad:focus-visible{
+ outline:none!important;
+ outline-offset:0!important;
+}
+/* Undo unapproved shrinking of the actual board art. Existing transparent
+   assets and their intrinsic canvas padding are preserved. No tray edits. */
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell img,
+#game.theme-diner .ev-sudoku-grid > .ev-sudoku-cell img,
+#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell img{
+ width:100%!important;
+ height:100%!important;
+ max-width:100%!important;
+ max-height:100%!important;
+ object-fit:contain!important;
+}
+/* Keep the inset selection and focused cells within the fixed 9x9 grid. */
+#game.theme-ugly .ev-sudoku-grid > .ev-sudoku-cell{
+ box-sizing:border-box!important;
+ min-width:0!important;min-height:0!important;
+}
