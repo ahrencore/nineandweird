@@ -782,7 +782,7 @@ async function nwShowInventory(){
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-inventory-theme');
  evDisplay(evHeader('INVENTORY',showCategories)+'<section class="nw-inventory-panel"><h2>INVENTORY</h2><p>LOADING INVENTORY…</p></section>');
  const uid=nwCloud?.user()?.id;
- try{await Promise.all([nwPrizeSync(),nwWalletSync()]);if(nwCloud?.user()?.id===uid&&evRoot.classList.contains('nw-inventory-theme'))nwRenderInventory();}
+ try{await Promise.all([nwInventoryClaimMilestones('tt',nwTripleWeek()),nwInventoryClaimMilestones('tg',nwPrizeTransferPeriod('tg'))]);await Promise.all([nwPrizeSync(),nwWalletSync()]);if(nwCloud?.user()?.id===uid&&evRoot.classList.contains('nw-inventory-theme'))nwRenderInventory();}
  catch(e){const area=evRoot.querySelector('.nw-inventory-panel');if(area)area.innerHTML='<h2>INVENTORY</h2><p>'+nwEscape(e.message)+'</p><button id="nwInventoryRetry">RETRY</button>';evRoot.querySelector('#nwInventoryRetry')?.addEventListener('click',nwShowInventory);}
 }
 function nwRenderInventory(){
@@ -799,7 +799,7 @@ function nwInventoryLoaded(key){
 }
 function nwPrizeInventoryArt(){
  const cards=event=>nwPrizeDefinitions.filter(d=>d.event===event).map(d=>{
-  const n=nwPrizeAvailable(d.key),loaded=nwInventoryLoaded(d.key),use=d.key==='tt_ticket'||d.key==='tg_energy',live=d.event==='tt'?nwTripleInEvent():[2,3,4].includes(new Date().getUTCDay()),displayCount=use?n:n+loaded;
+  const n=nwPrizeAvailable(d.key),use=true,live=d.event==='tt'?nwTripleInEvent():[2,3,4].includes(new Date().getUTCDay()),displayCount=n;
   return '<article class="nw-compact-item"><button type="button" class="nw-compact-info" data-prize-info="'+d.key+'" aria-label="About '+nwEscape(d.name)+'">!</button><span class="nw-compact-icon" aria-hidden="true">'+nwPrizeIcon(d.key)+'</span><strong>'+nwEscape(d.name)+'</strong><b>× '+displayCount.toLocaleString()+'</b>'+(use?'<button type="button" data-prize-use="'+d.key+'" '+(n&&live?'':'disabled')+'>USE</button>':'')+'</article>';
  }).join('');
  return '<h3>TRIPLE TROUBLE</h3><div class="nw-compact-grid">'+cards('tt')+'</div><h3>THEY\'RE GROWING!</h3><div class="nw-compact-grid">'+cards('tg')+'</div><h3>SUDOKU</h3><div class="nw-compact-grid"><article class="nw-compact-item"><button class="nw-compact-info" type="button" data-prize-info="sudoku_hint" aria-label="About Sudoku Hints">!</button><span class="nw-compact-icon">'+nwPrizeIcon('sudoku_hint')+'</span><strong>Sudoku Hints</strong><b>× '+nwPrizeAvailable('sudoku_hint').toLocaleString()+'</b></article></div>';
@@ -1314,7 +1314,6 @@ async function nwWalletClaimMilestones(event,period){
    if(d){d.diamonds=nwWalletState.balance;nwWrite(nwTripleKey,d)}
    nwRefreshVisibleDiamondBalances();
   }
-  void nwInventoryClaimMilestones(event,period);
  }catch(e){console.warn('Verified milestone Diamonds:',e.message)}
  finally{nwWalletMilestoneInflight.delete(key)}
 }
@@ -1479,7 +1478,7 @@ async function nwGrowingVerifyScore(period,score,actions){
   const {data,error}=await c.functions.invoke('nw-verify-tournament',{body:{event:'tg',period,score,actions}});
   if(error||!data?.verified)throw Error(data?.error||error?.message||'Event verification unavailable');
   if(nwCloud?.user()?.id!==account)return;
-  nwGrowingLastVerified={account,period,score:data.score,actions:actions.length};void nwWalletClaimMilestones('tg',period);
+  nwGrowingLastVerified={account,period,score:data.score,actions:actions.length};void nwWalletClaimMilestones('tg',period);void nwInventoryClaimMilestones('tg',period);
  }finally{nwGrowingVerifyBusy=false}
 }
 function nwGrowingUserId(){return window.nwCloud?.user()?.id || 'guest';}
@@ -2097,7 +2096,7 @@ async function nwTTFlushProofs(){
    if(nwCloud.user()?.id!==account)return;
    const latest=nwRead(nwTTVerificationPendingKey,{});
    if(latest[id]){delete latest[id];nwWrite(nwTTVerificationPendingKey,latest);}
-   console.info('Triple Trouble stage verified:',item.stage);void nwWalletClaimMilestones('tt',item.period);
+   console.info('Triple Trouble stage verified:',item.stage);void nwWalletClaimMilestones('tt',item.period);void nwInventoryClaimMilestones('tt',item.period);
   }catch(e){console.warn('Triple Trouble stage verification:',e.message)}
   finally{nwTTVerificationActive.delete(key);}
  }
