@@ -781,12 +781,12 @@ function nwPrizeIcon(key){
 }
 const nwInventoryExplanations={
 tt_ticket:'Use these tickets to play Triple Trouble. Tickets in Inventory stay until used.',
-tt_undo:'Undo a move in Triple Trouble during gameplay.',
-tt_shuffle:'Shuffle your Triple Trouble tiles during gameplay.',
-tt_magic:'Clear a matching group in Triple Trouble during gameplay.',
-tg_energy:"Use Energy to make moves in They're Growing! Stored Energy does not expire.",
-tg_ray:"Remove three low-level creatures in They're Growing! during gameplay.",
-tg_juice:"Merge creatures in They're Growing! during gameplay.",
+tt_undo:'Available directly in Triple Trouble. Unused boosters carry over.',
+tt_shuffle:'Available directly in Triple Trouble. Unused boosters carry over.',
+tt_magic:'Available directly in Triple Trouble. Unused boosters carry over.',
+tg_energy:"Use stored Energy when you choose. Diamond-purchased Energy goes directly into the event.",
+tg_ray:"Available directly in They're Growing! Unused boosters carry over.",
+tg_juice:"Available directly in They're Growing! Unused boosters carry over.",
 sudoku_hint:'Reveal a correct placement in a Sudoku puzzle.'
 };
 function nwInventoryInfoDialog(key){
