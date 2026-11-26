@@ -1638,7 +1638,17 @@ function nwDoublePracticeAfterSudoku(s,won,pts){
  if(!credited){show('',nwDoubleSnapshot?.points||0);return;}
  // Store each completed event puzzle once with an idempotent run ID.
  evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2>NICELY DONE!</h2><p class="nw-double-note">Syncing your points...</p></section>`);
- const id=crypto.randomUUID();void nwDoubleRpc('score',{p_run_id:id,p_points:pts}).then(d=>show('',d.points)).catch(e=>show('Points could not sync: '+e.message,nwDoubleSnapshot?.points||0));
+ const id=crypto.randomUUID();
+ const sync=async()=>{
+  try{
+   const d=await nwDoubleRpc('score',{p_run_id:id,p_points:pts});
+   show('',d.points);
+  }catch(e){
+   evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2>POINTS NOT SYNCED</h2><p class="nw-double-alert">${nwEscape(e.message)}</p>${nwDoubleButton('nwDoubleRetrySync','RETRY SYNC')}</section>`);
+   evRoot.querySelector('#nwDoubleRetrySync').onclick=sync;
+  }
+ };
+ void sync();
 }
 
 function nwShowEventDetail(type){
