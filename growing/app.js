@@ -81,6 +81,7 @@ const APP=(()=>{
   selected=-1;route=[];hover=-1;previewBoard=null;mergeGlow=[];locked=false;turnNote='';
  }applyInventory();if(EMBEDDED){const activity=window.parent.nwRead(window.parent.nwGrowingActivityKey(),{}),o=activity.day===todayUTC(t)?activity:{};state.daily.battles=Math.max(state.daily.battles||0,Number(o.battles)||0);state.daily.worlds=Math.max(state.daily.worlds||0,Number(o.worlds)||0);state.daily.played=Math.max(state.daily.played||0,Number(o.played)||0);state.diamonds=window.parent.nwDiamondBalance();}if(state.natural<100&&state.nextRegen&&t>=state.nextRegen){const count=Math.min(100-state.natural,1+Math.floor((t-state.nextRegen)/300000));state.natural+=count;state.nextRegen=state.natural===100?0:state.nextRegen+count*300000}save()}
  function energy(){return state.natural+state.bonus}
+ function boosterCount(kind){const cloud=EMBEDDED&&typeof window.parent.nwPrizeAvailable==='function'?window.parent.nwPrizeAvailable('tg_'+kind):0;return Math.max(0,Number(state[kind])||0)+Math.max(0,Number(cloud)||0)}
  function spend(){state.daily.spent++;state.daily.played=1;if(state.natural){if(state.natural===100||!state.nextRegen)state.nextRegen=now()+300000;state.natural--}else if(state.bonus)state.bonus--}
  function grant(type,count){if(type==='energy')state.bonus+=count;else if(type==='diamonds'&&EMBEDDED){if(window.parent.nwGrowingAdjustDiamonds(count))state.diamonds=window.parent.nwDiamondBalance();}else state[type]+=count}
  function announce(text,items){state.notices.push(items?{text,items}:text)}
@@ -118,7 +119,7 @@ const APP=(()=>{
  function positions(){const R=22.5,ww=Math.sqrt(3)*R;return E.cells.map(({q,r})=>({x:170+ww*(q+r/2),y:167+1.5*R*r}))}
  const pos=positions();
  function hexes(){const displayed=previewBoard||state.board;return `<svg id="hexmap" viewBox="-4 4 348 327" aria-label="Pointy-top 37-hex board">${displayed.map((v,i)=>{let p=pos[i],selectedCls=i===selected?' selected':'',reach=!locked&&selected>=0&&E.reachable(state.board,selected).has(i)?' reachable':'',glow=mergeGlow.includes(i)?' merge-glow':'',ppts='0,-22.5 19.5,-11.25 19.5,11.25 0,22.5 -19.5,11.25 -19.5,-11.25';return `<g class="hex${selectedCls}${reach}${glow}" data-cell="${i}" transform="translate(${p.x},${p.y})" tabindex="0" role="button" aria-label="${v?'Level '+v+' '+names[v-1]:'Empty hex'}"><polygon points="${ppts}"/>${v?`<image href="assets/${artFiles[v-1]}.png" x="-17" y="-19" width="34" height="34" pointer-events="none"/><rect x="8" y="6" width="13" height="12" rx="4" fill="#23172d" stroke="#e5a6ff" stroke-width=".7" pointer-events="none"/><text x="14.5" y="15.5" text-anchor="middle" pointer-events="none">${v}</text>`:''}</g>`}).join('')}${route.length>1?`<polyline class="pathline" points="${route.map(i=>pos[i].x+','+pos[i].y).join(' ')}"/>`:''}</svg>`}
- function game(){view='game';sync();app.innerHTML=top()+`<h2 class="title small">THEY'RE GROWING!</h2><div class="stats"><div class="stat"><small>ENERGY</small><b>ϟ ${energy()}</b></div><div class="stat"><small>EVENT SCORE</small><b>${fmt(state.score)}</b></div><div class="stat"><small>TOP LEVEL</small><b>${state.highest}</b></div></div><div class="board-wrap">${hexes()}</div><div class="message" role="status">${state.gameOver?'NOT ENOUGH SPACE TO SPAWN FOUR! Use a booster or restart.':turnNote||''}</div><div class="center muted">NEXT</div><div class="next">${state.queue.map(v=>`<div class="mini">${img(v)}<b>${v}</b></div>`).join('')}</div><div class="tools"><button class="btn tool" data-action="juice">${itemIcon('juice')}<small>Mutation Juice<br><b>× ${state.juice}</b></small></button><button class="btn tool" data-action="ray">${itemIcon('ray')}<small>Shrink Ray<br><b>× ${state.ray}</b></small></button></div><div class="two">${btn('Get Energy +','shop')}${btn('Restart Board','restart')}</div><div class="two">${btn('Milestones','milestones')}${btn('Evolution Guide','roster')}</div>`;wire();bindBoard()}
+ function game(){view='game';sync();app.innerHTML=top()+`<h2 class="title small">THEY'RE GROWING!</h2><div class="stats"><div class="stat"><small>ENERGY</small><b>ϟ ${energy()}</b></div><div class="stat"><small>EVENT SCORE</small><b>${fmt(state.score)}</b></div><div class="stat"><small>TOP LEVEL</small><b>${state.highest}</b></div></div><div class="board-wrap">${hexes()}</div><div class="message" role="status">${state.gameOver?'NOT ENOUGH SPACE TO SPAWN FOUR! Use a booster or restart.':turnNote||''}</div><div class="center muted">NEXT</div><div class="next">${state.queue.map(v=>`<div class="mini">${img(v)}<b>${v}</b></div>`).join('')}</div><div class="tools"><button class="btn tool" data-action="juice">${itemIcon('juice')}<small>Mutation Juice<br><b>× ${boosterCount('juice')}</b></small></button><button class="btn tool" data-action="ray">${itemIcon('ray')}<small>Shrink Ray<br><b>× ${boosterCount('ray')}</b></small></button></div><div class="two">${btn('Get Energy +','shop')}${btn('Restart Board','restart')}</div><div class="two">${btn('Milestones','milestones')}${btn('Evolution Guide','roster')}</div>`;wire();bindBoard()}
  function boardTap(i){if(locked)return;const b=state.board;if(b[i]){selected=selected===i?-1:i;route=[];turnNote=selected<0?'Selection cleared.':'Choose a glowing empty hex.';game();return}if(selected<0)return;executeMove(selected,i)}
  function executeMove(from,to){
    if(locked)return;
@@ -151,7 +152,31 @@ const APP=(()=>{
  function showNotices(){if(modalActive||!state.notices.length)return;const notice=state.notices.shift(),items=notice&&typeof notice==='object'?notice.items:null;save();const art=items?`<div class="prize-gallery">${items.map(([type,n])=>`<div class="prize-card">${itemIcon(type)}<strong>${n===1?'×1':'+'+n}</strong><span>${type==='diamonds'?'DIAMONDS':type==='energy'?'ENERGY':type==='juice'?'MUTATION JUICE':'SHRINK RAY'}</span></div>`).join('')}</div>`:`<p class="hint">${String(notice)}</p>`;overlay('CONGRATULATIONS!',art,[['AWESOME!',showNotices]])}
  function how(){overlay('HOW TO GROW',`<p>Drag ONE creature to an empty hex. Any unblocked route is valid, including winding paths around obstacles. Valid moves cost exactly <b>1 Energy</b>.</p><p>Connect <b>4 or more</b> creatures of the same level. The whole connected group becomes <b>one</b> upgraded creature at the destination, with no new spawns.</p><p>When a move does not merge, the <b>exact next four</b> previewed creatures spawn randomly. New groups merge automatically, lowest levels first and then reading order.</p><p>If fewer than four hexes remain free for that spawn, the turn ends in a recoverable Game Over: use a booster or restart. Board persists if you close the tab.</p>`)}
  function guide(){overlay('EVOLUTION GUIDE',`<div class="roster">${names.map((n,i)=>`<div class="${state.discovered.includes(i+1)?'':'locked'}">${img(i+1)}<br><b>${i+1}</b> ${n}</div>`).join('')}</div>`)}
- function useBooster(kind){sync();if(!state[kind]){overlay('NO BOOSTERS',`<p>You have no ${kind==='juice'?'Mutation Juice':'Shrink Ray'} left.</p>`,[['SHOP',()=>shop('boost')],['CLOSE',()=>{}]]);return}const result=kind==='juice'?E.juice(state.board):E.shrink(state.board);if(!result||((kind==='juice')&&!result.merges.length)){overlay('NO EFFECT',`<p>${kind==='juice'?'You need at least four creatures of one level anywhere on the board.':'You must have at least four creatures on the board.'} The item was not consumed.</p>`);return}overlay(kind==='juice'?'MUTATION JUICE':'SHRINK RAY',`<p>${kind==='juice'?`Merge same-level creatures anywhere. ${result.merges.length} merge(s) available.`:'Remove exactly the three lowest-level creatures for ZERO points.'}</p>`,[['USE BOOSTER',()=>{const fresh=kind==='juice'?E.juice(state.board):E.shrink(state.board);if(!fresh)return;state.board=fresh.board;state[kind]--;if(kind==='juice')points(fresh.merges);if(state.verifier&&state.verifier.period===state.weekId)state.verifier.actions.push({type:kind});state.gameOver=false;sendVerifiedProof();turnNote='Booster used. Keep growing!';save();game();showNotices()}],['CANCEL',()=>{}]])}
+ let boosterSpendPending=false;
+ function useBooster(kind){
+  sync();if(boosterSpendPending)return;
+  if(!boosterCount(kind)){overlay('NO BOOSTERS',`<p>You have no ${kind==='juice'?'Mutation Juice':'Shrink Ray'} left.</p>`,[['SHOP',()=>shop('boost')],['CLOSE',()=>{}]]);return}
+  const result=kind==='juice'?E.juice(state.board):E.shrink(state.board);
+  if(!result||(kind==='juice'&&!result.merges.length)){overlay('NO EFFECT',`<p>${kind==='juice'?'You need at least four creatures of one level anywhere on the board.':'You must have at least four creatures on the board.'} The item was not consumed.</p>`);return}
+  overlay(kind==='juice'?'MUTATION JUICE':'SHRINK RAY',`<p>${kind==='juice'?`Merge same-level creatures anywhere. ${result.merges.length} merge(s) available.`:'Remove exactly the three lowest-level creatures for ZERO points.'}</p>`,[['USE BOOSTER',async()=>{
+   if(boosterSpendPending)return;
+   const fresh=kind==='juice'?E.juice(state.board):E.shrink(state.board);
+   if(!fresh||(kind==='juice'&&!fresh.merges.length))return;
+   boosterSpendPending=true;
+   try{
+    if((state[kind]||0)>0)state[kind]--;
+    else {
+     if(!EMBEDDED||typeof window.parent.nwPrizeSpendBooster!=='function')throw Error('Cloud Inventory unavailable');
+     await window.parent.nwPrizeSpendBooster('tg_'+kind);
+    }
+    state.board=fresh.board;
+    if(kind==='juice')points(fresh.merges);
+    if(state.verifier&&state.verifier.period===state.weekId)state.verifier.actions.push({type:kind});
+    state.gameOver=false;sendVerifiedProof();turnNote='Booster used. Keep growing!';save();game();showNotices();
+   }catch(e){overlay('BOOSTER UNAVAILABLE',`<p>${String(e.message||'Try again.')}</p>`);}
+   finally{boosterSpendPending=false;}
+  }],['CANCEL',()=>{}]]);
+ }
  function restart(){overlay('RESTART BOARD?',`<p>The current 37-hex arrangement will be replaced. Your earned score, Diamonds, Energy, discoveries and milestones remain untouched.</p>`,[['RESTART',()=>{if(state.verifier&&state.verifier.period===state.weekId){const rng=()=>nextVerifiedRandom(state.verifier);state.board=E.initial(rng);state.queue=E.nextQueue(state.board,rng);state.verifier.actions.push({type:'restart'});}else{state.board=E.initial();state.queue=E.nextQueue(state.board);}state.gameOver=false;sendVerifiedProof();selected=-1;turnNote='Fresh board!';save();game()}],['CANCEL',()=>{}]])}
  function offerEnergyRefill(){
  if(modalActive)return;
@@ -189,7 +214,7 @@ function shop(kind='energy'){sync();const list=kind==='energy'?[['energy',30,100
    else state.diamonds-=c;
    grant(type,n);
   }
-  announce(`ADDED TO INVENTORY`,[[type,n]]);save();m.remove();modalActive=false;if(view==='game')game();else home();showNotices();
+  announce(type==='energy'?'ENERGY ADDED TO EVENT':'BOOSTER READY TO USE',[[type,n]]);save();m.remove();modalActive=false;if(view==='game')game();else home();showNotices();
  }catch(e){console.warn('Growing purchase:',e.message);m.remove();modalActive=false;overlay('PURCHASE UNAVAILABLE',`<p>${String(e.message||'Try again.')}</p>`)}
  finally{b.disabled=false}
 })}
