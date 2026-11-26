@@ -84,7 +84,7 @@ const APP=(()=>{
  function spend(){state.daily.spent++;state.daily.played=1;if(state.natural){if(state.natural===100||!state.nextRegen)state.nextRegen=now()+300000;state.natural--}else if(state.bonus)state.bonus--}
  function grant(type,count){if(type==='energy')state.bonus+=count;else if(type==='diamonds'&&EMBEDDED){if(window.parent.nwGrowingAdjustDiamonds(count))state.diamonds=window.parent.nwDiamondBalance();}else state[type]+=count}
  function announce(text,items){state.notices.push(items?{text,items}:text)}
- function points(merges){for(const m of merges){state.score+=m.points;state.total+=m.points;if(m.to&&!state.discovered.includes(m.to))state.discovered.push(m.to);state.highest=Math.max(state.highest,m.to||m.from)}for(const [at,type,n] of rewards)if(state.score>=at&&!state.claimed.includes(at)){state.claimed.push(at);grant(type,n);announce(`MILESTONE ${fmt(at)}!`,[[type,n]])}}
+ function points(merges){let verificationNeeded=false;for(const m of merges){state.score+=m.points;state.total+=m.points;if(m.to&&!state.discovered.includes(m.to))state.discovered.push(m.to);state.highest=Math.max(state.highest,m.to||m.from)}for(const [at,type,n] of rewards)if(state.score>=at&&!state.claimed.includes(at)){state.claimed.push(at);if(!EMBEDDED)grant(type,n);else if(type!=='diamonds')verificationNeeded=true;announce(`MILESTONE ${fmt(at)}!`,[[type,n]])}return verificationNeeded}
  function itemIcon(type){return type==='juice'?'<img class="item-icon" src="assets/mutation_juice.png" alt="Mutation Juice">':type==='ray'?'<img class="item-icon" src="assets/shrink_ray.png" alt="Shrink Ray">':type==='energy'?'<span class="currency-icon energy-symbol">ϟ</span>':'<img class="item-icon official-diamond" src="assets/official_diamond.png" alt="Diamonds">'}
  function rewardTrack(){
    const next=rewards.find(([pt])=>!state.claimed.includes(pt));
@@ -127,7 +127,7 @@ const APP=(()=>{
    if(!energy()){offerEnergyRefill();return}
    const result=E.move(state.board,state.queue,from,to,state.verifier?()=>nextVerifiedRandom(state.verifier):Math.random);
    if(!result.ok){turnNote='No unobstructed path to that hex. Zero Energy spent.';game();return}
-   locked=true;spend();state.board=result.board;state.queue=result.queue;state.gameOver=result.gameOver;points(result.merges);if(state.verifier&&state.verifier.period===state.weekId)state.verifier.actions.push({type:'move',from,to});state.daily.merges+=result.merges.length;sendVerifiedProof();if(EMBEDDED&&live()&&state.score>0)void window.parent.nwLbSubmit('tg',state.score).catch(e=>console.warn('Growing rank sync:',e.message));
+   locked=true;spend();state.board=result.board;state.queue=result.queue;state.gameOver=result.gameOver;const milestonePending=points(result.merges);if(state.verifier&&state.verifier.period===state.weekId)state.verifier.actions.push({type:'move',from,to});state.daily.merges+=result.merges.length;sendVerifiedProof(milestonePending);if(EMBEDDED&&live()&&state.score>0)void window.parent.nwLbSubmit('tg',state.score).catch(e=>console.warn('Growing rank sync:',e.message));
    selected=-1;route=result.path;save();
    const frames=result.frames||[];let step=0;
    function nextFrame(){
@@ -189,7 +189,7 @@ function shop(kind='energy'){sync();const list=kind==='energy'?[['energy',30,100
    else state.diamonds-=c;
    grant(type,n);
   }
-  announce(`PURCHASE RECEIVED`,[[type,n]]);save();m.remove();modalActive=false;if(view==='game')game();else home();showNotices();
+  announce(`ADDED TO INVENTORY`,[[type,n]]);save();m.remove();modalActive=false;if(view==='game')game();else home();showNotices();
  }catch(e){console.warn('Growing purchase:',e.message);m.remove();modalActive=false;overlay('PURCHASE UNAVAILABLE',`<p>${String(e.message||'Try again.')}</p>`)}
  finally{b.disabled=false}
 })}
