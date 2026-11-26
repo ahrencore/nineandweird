@@ -6246,3 +6246,62 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
 @media(prefers-reduced-motion:reduce){
  #game.theme-weird .nw-weird-difficulty{transition:none!important;}
 }
+
+/* WAIA board readability fix: 9 equal cells per row, thin lavender details,
+   bright PINK 3x3 boundaries. No pseudo-overlay crossing the sticker art. */
+#game.theme-weird .ev-sudoku-grid{
+ display:grid!important;
+ grid-template-columns:repeat(9,minmax(0,1fr))!important;
+ grid-template-rows:repeat(9,minmax(0,1fr))!important;
+ box-sizing:border-box!important;
+ position:relative!important;
+ isolation:isolate!important;
+ border:3px solid #FF399F!important;
+ border-radius:7px!important;
+ overflow:hidden!important;
+ background:#1F1B3A!important;
+}
+#game.theme-weird .ev-sudoku-grid::after,
+#game.theme-weird .ev-sudoku-grid::before{
+ content:none!important;
+ display:none!important;
+ background:none!important;
+ border:0!important;
+ box-shadow:none!important;
+}
+/* Reset the legacy thick strokes to genuinely thin normal-cell lines. */
+#game.theme-weird .ev-sudoku-grid > button.ev-sudoku-cell{
+ box-sizing:border-box!important;
+ min-width:0!important;
+ min-height:0!important;
+ border-top:0!important;
+ border-left:0!important;
+ border-right:1px solid #665B88!important;
+ border-bottom:1px solid #665B88!important;
+}
+/* More-specific row/column selectors override old doubled-nth rules too. */
+#game.theme-weird .ev-sudoku-grid > button.ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-weird .ev-sudoku-grid > button.ev-sudoku-cell:nth-child(9n + 6){
+ border-right:4px solid #FF399F!important;
+}
+#game.theme-weird .ev-sudoku-grid > button.ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-weird .ev-sudoku-grid > button.ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54){
+ border-bottom:4px solid #FF399F!important;
+}
+/* Rightmost/bottommost cells share the frame boundary, not another stroke. */
+#game.theme-weird .ev-sudoku-grid > button.ev-sudoku-cell:nth-child(9n){
+ border-right:0!important;
+}
+#game.theme-weird .ev-sudoku-grid > button.ev-sudoku-cell:nth-child(n + 73){
+ border-bottom:0!important;
+}
+#game.theme-weird .ev-sudoku-grid > button.ev-sudoku-cell img{
+ display:block!important;
+ max-width:88%!important;
+ max-height:88%!important;
+ width:88%!important;
+ height:88%!important;
+ object-fit:contain!important;
+ position:relative!important;
+ z-index:1!important;
+}
