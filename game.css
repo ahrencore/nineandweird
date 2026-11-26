@@ -7423,3 +7423,225 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
  outline:2px solid #FFE9FF!important;
  outline-offset:2px!important;
 }
+
+
+/* Something Under the Bed — approved bedtime storybook SVG and font styling.
+   No Sudoku grid, cell dimensions, artwork dimensions, or shell sizing changes. */
+#game.theme-underthebed{
+ font-family:'Fredoka',system-ui,sans-serif!important;
+}
+#game.theme-underthebed > .ev-head > strong,
+#game.theme-underthebed :is(.difficulty-panel,.result-panel) h2{
+ font-family:'Chelsea Market',cursive!important;
+ font-weight:400!important;
+ line-height:1.25!important;
+ color:#FFE1A8!important;
+}
+#game.theme-underthebed > .ev-head > strong{
+ font-size:clamp(10px,2.6vw,15px)!important;
+ text-shadow:0 0 7px #F4D18F44!important;
+}
+#game.theme-underthebed .ev-head :is(.ev-btn,.nw-shared-settings),
+#game.theme-underthebed .nw-fav-toggle,
+#game.theme-underthebed .ev-sudo-stats,
+#game.theme-underthebed .ev-note,
+#game.theme-underthebed .result-panel :is(p,.result-stats,.result-score small),
+#game.theme-underthebed .ev-sudo-tools-clean .ev-sudo-tool-label{
+ font-family:'Fredoka',system-ui,sans-serif!important;
+}
+#game.theme-underthebed .ev-head :is(.ev-btn,.nw-shared-settings){
+ background:#43334A!important;
+ color:#FFF1D9!important;
+ border:1.5px solid #B68A9D!important;
+ border-radius:7px!important;
+ box-shadow:none!important;
+}
+#game.theme-underthebed .nw-fav-toggle{
+ background:#45344A!important;
+ color:#FFE7B4!important;
+ border:1.5px solid #F4D18F!important;
+ border-radius:8px!important;
+ box-shadow:none!important;
+}
+#game.theme-underthebed .difficulty-list{gap:7px!important;}
+#game.theme-underthebed .difficulty-list .nw-underbed-difficulty{
+ display:grid!important;
+ place-items:center!important;
+ position:relative!important;
+ isolation:isolate!important;
+ width:100%!important;
+ height:clamp(49px,13vw,58px)!important;
+ min-height:0!important;
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ background:transparent!important;
+ overflow:visible!important;
+ cursor:pointer!important;
+}
+#game.theme-underthebed .nw-underbed-difficulty .nw-underbed-button-art,
+#game.theme-underthebed .result-actions .nw-underbed-action .nw-underbed-button-art{
+ position:absolute!important;
+ inset:0!important;
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ pointer-events:none!important;
+}
+#game.theme-underthebed .nw-underbed-difficulty > span,
+#game.theme-underthebed .result-actions .nw-underbed-action > span{
+ position:relative!important;
+ z-index:1!important;
+ display:block!important;
+ font:400 clamp(15px,4.1vw,22px)/1.1 'Chelsea Market',cursive!important;
+ color:#211C32!important;
+ text-shadow:none!important;
+ letter-spacing:0!important;
+ pointer-events:none!important;
+}
+#game.theme-underthebed .nw-underbed-difficulty:active,
+#game.theme-underthebed .result-actions .nw-underbed-action:active{
+ transform:translateY(2px)!important;
+}
+#game.theme-underthebed .nw-underbed-difficulty:focus-visible,
+#game.theme-underthebed .result-actions .nw-underbed-action:focus-visible{
+ outline:2px solid #FFEAC0!important;
+ outline-offset:2px!important;
+}
+/* The existing nine grid columns and PNG image sizing remain untouched.
+   SVG layers are absolute decoration inside each original tray button. */
+#game.theme-underthebed .ev-sudoku-tray button.nw-underbed-tray-piece{
+ position:relative!important;
+ isolation:isolate!important;
+ padding:2px 0!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ overflow:visible!important;
+}
+#game.theme-underthebed .ev-sudoku-tray button.nw-underbed-tray-piece > .nw-underbed-tray-art{
+ position:absolute!important;
+ inset:0!important;
+ z-index:0!important;
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ pointer-events:none!important;
+ overflow:visible!important;
+}
+#game.theme-underthebed .ev-sudoku-tray button.nw-underbed-tray-piece > img{
+ position:relative!important;
+ z-index:1!important;
+}
+#game.theme-underthebed .ev-sudoku-tray button.nw-underbed-tray-piece.selected{
+ background:transparent!important;
+ border:0!important;
+ box-shadow:0 0 8px #F4D18F66!important;
+}
+#game.theme-underthebed .ev-sudoku-tray button.nw-underbed-tray-piece.selected > .nw-underbed-tray-art path:first-child{
+ fill:#70516A!important;
+ stroke:#F4D18F!important;
+ stroke-width:3.5!important;
+}
+#game.theme-underthebed .ev-sudoku-tray button.nw-underbed-tray-piece.completed{
+ background:transparent!important;
+ border:0!important;
+ box-shadow:none!important;
+}
+#game.theme-underthebed .ev-sudoku-tray button.nw-underbed-tray-piece .ev-sudo-remain{
+ position:absolute!important;
+ z-index:3!important;
+ right:-2px!important;
+ bottom:-6px!important;
+ border:1px solid #FFDCCB!important;
+ border-radius:999px!important;
+ background:#E6A0A3!important;
+ color:#241627!important;
+ font:700 9px/1 'Fredoka',system-ui,sans-serif!important;
+}
+#game.theme-underthebed .ev-sudo-tools-clean .ev-sudo-tool{
+ background:#403149!important;
+ border:1.5px solid #A77F9A!important;
+ color:#FFF1D9!important;
+ border-radius:9px!important;
+ box-shadow:none!important;
+}
+#game.theme-underthebed .ev-sudo-tools-clean .ev-sudo-tool.active{
+ background:#70516A!important;
+ border-color:#F4D18F!important;
+ box-shadow:0 0 12px #F4D18F55!important;
+}
+#game.theme-underthebed .ev-sudo-tools-clean .ev-sudo-tool-icon{
+ display:grid!important;
+ place-items:center!important;
+ color:#F4D18F!important;
+ text-shadow:none!important;
+}
+#game.theme-underthebed .nw-underbed-tool-art{
+ display:block!important;
+ width:20px!important;
+ height:20px!important;
+}
+#game.theme-underthebed .ev-sudo-tools-clean .ev-sudo-tool-label{
+ color:#FFF1D9!important;
+ font-size:9px!important;
+ font-weight:700!important;
+}
+#game.theme-underthebed .result-panel .result-mark{
+ display:grid!important;
+ place-items:center!important;
+ box-sizing:border-box!important;
+ width:67px!important;
+ height:67px!important;
+ min-width:67px!important;
+ min-height:67px!important;
+ max-width:67px!important;
+ max-height:67px!important;
+ aspect-ratio:1 / 1!important;
+ flex:0 0 67px!important;
+ margin:7px auto 13px!important;
+ padding:0!important;
+ border:3px solid #F4D18F!important;
+ border-radius:50%!important;
+ background:#45344A!important;
+ color:#F4D18F!important;
+ box-shadow:none!important;
+}
+#game.theme-underthebed .result-panel .nw-underbed-result-art{
+ display:block!important;
+ width:39px!important;
+ height:39px!important;
+}
+#game.theme-underthebed .result-panel:not(:has(.result-score)) .result-mark{
+ border-color:#E69A87!important;
+ color:#E69A87!important;
+}
+#game.theme-underthebed .result-panel .result-score strong{
+ font-family:'Chelsea Market',cursive!important;
+ color:#FFE1A8!important;
+}
+#game.theme-underthebed .result-actions .nw-underbed-action{
+ display:grid!important;
+ place-items:center!important;
+ position:relative!important;
+ isolation:isolate!important;
+ width:100%!important;
+ height:clamp(49px,13vw,58px)!important;
+ min-height:0!important;
+ padding:0!important;
+ margin:0!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ overflow:visible!important;
+}
+#game.theme-underthebed .result-actions{
+ gap:7px!important;
+}
+#game.theme-underthebed .result-actions .nw-underbed-action > span{
+ font-size:clamp(13px,3.4vw,19px)!important;
+}
