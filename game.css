@@ -10461,10 +10461,10 @@ body:has(#game.theme-donuts:not([hidden])){background:#F36A98!important}
 html:has(#game.theme-cakes:not([hidden])),
 body:has(#game.theme-cakes:not([hidden])){background:#FFE0E8!important}
 #game.theme-donuts{
- --surface:#F36A98;--panel:#FFF0D4;--ink:#422A2D;--accent:#422A2D;
+ --surface:#F36A98;--panel:#FFF0D4;--ink:#754C55;--accent:#D25780;
  --line:#B96A75;--peer:#FCE3B8;--same:#65CFCC;--selected:#FFCE52;
- --room-border:#422A2D;--room-glow:#FFCE52;
- background:#F36A98!important;color:#422A2D!important;
+ --room-border:#D25780;--room-glow:#FFCE52;
+ background:#F36A98!important;color:#754C55!important;
  font-family:'Fredoka',system-ui,sans-serif!important;
 }
 #game.theme-cakes{
