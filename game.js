@@ -2386,7 +2386,8 @@ function nwAlienCheckoutSvg(d){
  };
  const x=shapes[d]||shapes.easy;
  return '<svg class="nw-alien-checkout-art" viewBox="0 0 340 58" preserveAspectRatio="none" aria-hidden="true" focusable="false">'+
- '<path d="'+x.d+'" transform="translate(0 4)" fill="#071019"/>'+
+ // No black extrusion below any Alien Supermarket difficulty button.
+
  '<path d="'+x.d+'" fill="'+x.fill+'" stroke="'+x.edge+'" stroke-width="2.5" stroke-linejoin="round"/>'+
  '<path d="M28 12H298 M33 47H307" fill="none" stroke="'+(d==='easy'||d==='medium'?'#111827':'#2EE6FF')+'" stroke-width="1" opacity=".35"/>'+
  '</svg>';
