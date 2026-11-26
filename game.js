@@ -1522,7 +1522,7 @@ function nwDoubleRoomKeySvg(secondary=false){
  '<path d="M75 17Q168 13 278 17" stroke="#729DB7" stroke-width="1.4" fill="none" stroke-dasharray="6 13" opacity=".7"/>'+
  '<path d="M76 56Q165 60 270 55" fill="none" stroke="#162D40" stroke-width="2" opacity=".55"/></svg>';
 }
-function nwDoubleButton(id,label,secondary=false){return `<button type="button" id="${id}" class="nw-double-btn nw-double-roomkey${secondary?' secondary':''}">${nwDoubleRoomKeySvg(secondary)}<span class="nw-double-key-label">${label}</span></button>`;}
+function nwDoubleButton(id,label,secondary=false){return `<button type="button" id="${id}" class="nw-double-btn nw-double-roomkey${secondary?' secondary':''}">${nwDoubleRoomKeySvg(false)}<span class="nw-double-key-label">${label}</span></button>`;}
 function nwDoublePhoto(player){
  const frame=String(player?.frame||'');
  const src=frame==='usual'?'frames/nw-free-usual.png?v=42':frame==='weird'?'frames/nw-free-weird.png?v=42':/^monthly-(10|25|50|100|150|200)$/.test(frame)?'frames/nw-monthly-'+frame.slice(8)+'.png':'';
@@ -1582,7 +1582,7 @@ function nwDoublePopup(){
 function nwDoubleInvitations(){
  const d=nwDoubleSnapshot||{},invitations=d.invitations||[];
  nwDoubleTheme();
- evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-home"><h2 class="nw-double-subtitle">PARTNERSHIP INVITATIONS</h2><div class="nw-double-invitations">${invitations.length?invitations.map(p=>`<div class="nw-double-invite-row">${nwDoublePhoto(p)}<strong>${nwEscape(p.name)}</strong><button type="button" class="nw-double-roomkey nw-double-smallkey" data-dt-accept="${nwEscape(p.sender)}">${nwDoubleRoomKeySvg(false)}<span class="nw-double-key-label">ACCEPT</span></button><button type="button" class="nw-double-roomkey nw-double-smallkey secondary" data-dt-decline="${nwEscape(p.sender)}">${nwDoubleRoomKeySvg(true)}<span class="nw-double-key-label">DECLINE</span></button></div>`).join(''):'<p class="nw-double-note">No pending invitations.</p>'}</div>${nwDoubleButton('nwDoubleInvBack','BACK',true)}<p id="nwDoubleAlert" class="nw-double-alert" role="status" hidden></p></section>`);
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-home"><h2 class="nw-double-subtitle">PARTNERSHIP INVITATIONS</h2><div class="nw-double-invitations">${invitations.length?invitations.map(p=>`<div class="nw-double-invite-row">${nwDoublePhoto(p)}<strong>${nwEscape(p.name)}</strong><button type="button" class="nw-double-roomkey nw-double-smallkey" data-dt-accept="${nwEscape(p.sender)}">${nwDoubleRoomKeySvg(false)}<span class="nw-double-key-label">ACCEPT</span></button><button type="button" class="nw-double-roomkey nw-double-smallkey secondary" data-dt-decline="${nwEscape(p.sender)}">${nwDoubleRoomKeySvg(false)}<span class="nw-double-key-label">DECLINE</span></button></div>`).join(''):'<p class="nw-double-note">No pending invitations.</p>'}</div>${nwDoubleButton('nwDoubleInvBack','BACK',true)}<p id="nwDoubleAlert" class="nw-double-alert" role="status" hidden></p></section>`);
  evRoot.querySelector('#nwDoubleInvBack').onclick=nwDoublePracticeScreen;
  evRoot.querySelectorAll('[data-dt-accept],[data-dt-decline]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await nwDoubleRpc(b.hasAttribute('data-dt-accept')?'accept':'decline',{p_target:b.dataset.dtAccept||b.dataset.dtDecline});nwDoublePracticeScreen();}catch(e){b.disabled=false;nwDoubleAlert(e.message);}});
 }
