@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Chewy&family=Fredoka:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Bungee&family=Pixelify+Sans:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Chewy&family=Fredoka:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Audiowide&family=Nunito:wght@400;600;700;800&display=swap");
@@ -8916,4 +8917,216 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
 }
 #game.theme-nineties .result-actions .nw-nineties-action > span{
  font-size:clamp(12px,3.1vw,18px)!important;
+}
+
+
+/* Cake Decorating Was a Mistake — approved frosting-disaster bakery SVG UI.
+   Scoped to cakefail; board, existing 88% PNG sizing and mechanics untouched. */
+#game.theme-cakefail{font-family:'Fredoka',system-ui,sans-serif!important;}
+#game.theme-cakefail > .ev-head > strong,
+#game.theme-cakefail :is(.difficulty-panel,.result-panel) h2{
+ font-family:'DM Serif Display',Georgia,serif!important;
+ font-weight:400!important;
+ line-height:1.14!important;
+ color:#633B46!important;
+ text-shadow:none!important;
+ letter-spacing:0!important;
+}
+#game.theme-cakefail > .ev-head > strong{
+ font-size:clamp(13px,3.5vw,18px)!important;
+}
+#game.theme-cakefail .ev-head :is(.ev-btn,.nw-shared-settings),
+#game.theme-cakefail .nw-fav-toggle,
+#game.theme-cakefail .ev-sudo-stats,
+#game.theme-cakefail .ev-note,
+#game.theme-cakefail .result-panel :is(p,.result-stats,.result-score small),
+#game.theme-cakefail .ev-sudo-tools-clean .ev-sudo-tool-label{
+ font-family:'Fredoka',system-ui,sans-serif!important;
+}
+#game.theme-cakefail .ev-head :is(.ev-btn,.nw-shared-settings){
+ background:#F9E3E5!important;
+ color:#633B46!important;
+ border:1px solid #A95570!important;
+ border-radius:5px!important;
+ box-shadow:none!important;
+}
+#game.theme-cakefail .nw-fav-toggle{
+ background:#F9E3E5!important;
+ color:#633B46!important;
+ border:2px solid #A95570!important;
+ border-radius:7px!important;
+ box-shadow:none!important;
+}
+#game.theme-cakefail .difficulty-list{gap:7px!important;}
+#game.theme-cakefail .difficulty-list .nw-cake-difficulty{
+ display:grid!important;
+ place-items:center!important;
+ position:relative!important;
+ isolation:isolate!important;
+ width:100%!important;
+ height:clamp(49px,12.5vw,57px)!important;
+ min-height:0!important;
+ padding:0!important;
+ margin:0!important;
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ overflow:visible!important;
+ cursor:pointer!important;
+}
+#game.theme-cakefail .nw-cake-difficulty > .nw-cake-frosting-svg,
+#game.theme-cakefail .result-actions .nw-cake-action > .nw-cake-frosting-svg{
+ position:absolute!important;
+ inset:0!important;
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ pointer-events:none!important;
+}
+#game.theme-cakefail .nw-cake-difficulty > span,
+#game.theme-cakefail .result-actions .nw-cake-action > span{
+ position:relative!important;
+ z-index:1!important;
+ display:block!important;
+ color:#633B46!important;
+ font:400 clamp(18px,4.7vw,23px)/1 'Chewy',cursive!important;
+ letter-spacing:.025em!important;
+ text-shadow:0 1px #FFFFFF88!important;
+ pointer-events:none!important;
+}
+#game.theme-cakefail .nw-cake-difficulty:active,
+#game.theme-cakefail .result-actions .nw-cake-action:active{
+ transform:translateY(2px)!important;
+}
+#game.theme-cakefail .nw-cake-difficulty:focus-visible,
+#game.theme-cakefail .result-actions .nw-cake-action:focus-visible{
+ outline:2px solid #A95570!important;
+ outline-offset:2px!important;
+}
+/* Frosted-tile SVG backgrounds sit below the existing cake PNGs.
+   No sizing changes are made to the tray images or 9x9 board. */
+#game.theme-cakefail .ev-sudoku-tray button.nw-cake-tray-piece{
+ position:relative!important;
+ isolation:isolate!important;
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ overflow:visible!important;
+}
+#game.theme-cakefail .ev-sudoku-tray button.nw-cake-tray-piece > .nw-cake-tile-svg{
+ position:absolute!important;
+ inset:0!important;
+ z-index:0!important;
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ pointer-events:none!important;
+}
+#game.theme-cakefail .ev-sudoku-tray button.nw-cake-tray-piece > img{
+ position:relative!important;
+ z-index:1!important;
+}
+#game.theme-cakefail .ev-sudoku-tray button.nw-cake-tray-piece.selected{
+ background:transparent!important;
+ border:0!important;
+ box-shadow:none!important;
+ filter:drop-shadow(0 0 5px #A9557088)!important;
+}
+#game.theme-cakefail .ev-sudoku-tray button.nw-cake-tray-piece.selected .nw-cake-tile-base{
+ fill:#F7CF91!important;
+ stroke-width:3.5!important;
+}
+#game.theme-cakefail .ev-sudoku-tray button.nw-cake-tray-piece .ev-sudo-remain{
+ z-index:3!important;
+ background:#A95570!important;
+ color:#FFFFFF!important;
+ border:1px solid #F9E3E5!important;
+ border-radius:4px!important;
+ font:700 9px/1 'Fredoka',system-ui,sans-serif!important;
+}
+#game.theme-cakefail .ev-sudo-tools-clean .ev-sudo-tool{
+ background:#F9E3E5!important;
+ color:#633B46!important;
+ border:1.5px solid #A95570!important;
+ border-bottom:3px solid #A95570!important;
+ border-radius:9px!important;
+ box-shadow:none!important;
+}
+#game.theme-cakefail .ev-sudo-tools-clean .ev-sudo-tool.active{
+ background:#F7CF91!important;
+ border-color:#8A3D5E!important;
+ box-shadow:0 0 8px #A9557070!important;
+}
+#game.theme-cakefail .ev-sudo-tools-clean .ev-sudo-tool-icon{
+ display:grid!important;
+ place-items:center!important;
+ color:#A95570!important;
+ text-shadow:none!important;
+}
+#game.theme-cakefail .nw-cake-tool-svg{
+ display:block!important;
+ width:20px!important;
+ height:20px!important;
+}
+#game.theme-cakefail .ev-sudo-tools-clean .ev-sudo-tool-label{
+ color:#633B46!important;
+ font-weight:600!important;
+ font-size:9px!important;
+}
+#game.theme-cakefail .result-panel .result-mark{
+ display:grid!important;
+ place-items:center!important;
+ box-sizing:border-box!important;
+ width:67px!important;
+ height:67px!important;
+ min-width:67px!important;
+ min-height:67px!important;
+ max-width:67px!important;
+ max-height:67px!important;
+ aspect-ratio:1/1!important;
+ flex:0 0 67px!important;
+ padding:0!important;
+ margin:8px auto 14px!important;
+ background:#F9E3E5!important;
+ border:3px solid #A95570!important;
+ border-radius:50%!important;
+ color:#A95570!important;
+ box-shadow:none!important;
+}
+#game.theme-cakefail .result-panel .nw-cake-result-svg{
+ display:block!important;
+ width:38px!important;
+ height:38px!important;
+}
+#game.theme-cakefail .result-panel:not(:has(.result-score)) .result-mark{
+ border-color:#D65A68!important;
+ color:#D65A68!important;
+ background:#FFE1E3!important;
+}
+#game.theme-cakefail .result-panel .result-score strong{
+ color:#A95570!important;
+ font-family:'DM Serif Display',Georgia,serif!important;
+ font-weight:400!important;
+}
+#game.theme-cakefail .result-actions{gap:7px!important;}
+#game.theme-cakefail .result-actions .nw-cake-action{
+ display:grid!important;
+ place-items:center!important;
+ position:relative!important;
+ isolation:isolate!important;
+ width:100%!important;
+ height:clamp(49px,12.5vw,57px)!important;
+ min-height:0!important;
+ padding:0!important;
+ margin:0!important;
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ overflow:visible!important;
+}
+#game.theme-cakefail .result-actions .nw-cake-action > span{
+ font-size:clamp(16px,3.9vw,22px)!important;
 }
