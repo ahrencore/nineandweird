@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Chewy&family=Fredoka:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Audiowide&family=Nunito:wght@400;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Young+Serif&family=Special+Elite&family=Nunito:wght@500;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap");
@@ -8488,4 +8489,218 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
 }
 #game.theme-deepsea .result-actions .nw-deepsea-action > span{
  font-size:clamp(12px,3.1vw,18px)!important;
+}
+
+
+/* Balloon Animals Gone Wrong — approved inflated-rubber carnival SVG controls.
+   Only decorative buttons and fonts; do not alter Sudoku grid, cell or PNG dimensions. */
+#game.theme-balloonwrong{font-family:'Fredoka',system-ui,sans-serif!important;}
+#game.theme-balloonwrong > .ev-head > strong,
+#game.theme-balloonwrong :is(.difficulty-panel,.result-panel) h2{
+ font-family:'Chewy',cursive!important;
+ font-weight:400!important;
+ line-height:1.15!important;
+ letter-spacing:.01em!important;
+ color:#7A2F80!important;
+ text-shadow:none!important;
+}
+#game.theme-balloonwrong > .ev-head > strong{
+ font-size:clamp(15px,3.8vw,21px)!important;
+}
+#game.theme-balloonwrong .ev-head :is(.ev-btn,.nw-shared-settings),
+#game.theme-balloonwrong .nw-fav-toggle,
+#game.theme-balloonwrong .ev-sudo-stats,
+#game.theme-balloonwrong .ev-note,
+#game.theme-balloonwrong .result-panel :is(p,.result-stats,.result-score small),
+#game.theme-balloonwrong .ev-sudo-tools-clean .ev-sudo-tool-label{
+ font-family:'Fredoka',system-ui,sans-serif!important;
+}
+#game.theme-balloonwrong .ev-head :is(.ev-btn,.nw-shared-settings){
+ background:#FFF3FA!important;
+ color:#6E2C73!important;
+ border:1px solid #D35DAA!important;
+ border-radius:7px!important;
+ box-shadow:none!important;
+}
+#game.theme-balloonwrong .nw-fav-toggle{
+ background:#FFF3FA!important;
+ color:#7A2F80!important;
+ border:2px solid #E84AA8!important;
+ border-radius:8px!important;
+ box-shadow:none!important;
+}
+#game.theme-balloonwrong .difficulty-list{gap:7px!important;}
+#game.theme-balloonwrong .difficulty-list .nw-balloon-difficulty{
+ display:grid!important;
+ place-items:center!important;
+ position:relative!important;
+ isolation:isolate!important;
+ width:100%!important;
+ height:clamp(49px,12.5vw,57px)!important;
+ min-height:0!important;
+ padding:0!important;
+ margin:0!important;
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ overflow:visible!important;
+ cursor:pointer!important;
+}
+#game.theme-balloonwrong .nw-balloon-difficulty > .nw-balloon-inflated-svg,
+#game.theme-balloonwrong .result-actions .nw-balloon-action > .nw-balloon-inflated-svg{
+ position:absolute!important;
+ inset:0!important;
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ pointer-events:none!important;
+}
+#game.theme-balloonwrong .nw-balloon-difficulty > span,
+#game.theme-balloonwrong .result-actions .nw-balloon-action > span{
+ position:relative!important;
+ z-index:1!important;
+ display:block!important;
+ color:#67306A!important;
+ font:400 clamp(18px,4.7vw,23px)/1 'Chewy',cursive!important;
+ letter-spacing:.03em!important;
+ text-shadow:0 1px #FFFFFF88!important;
+ padding-right:5px!important;
+ pointer-events:none!important;
+}
+#game.theme-balloonwrong .nw-balloon-difficulty:active,
+#game.theme-balloonwrong .result-actions .nw-balloon-action:active{
+ transform:scale(.97)!important;
+}
+#game.theme-balloonwrong .nw-balloon-difficulty:focus-visible,
+#game.theme-balloonwrong .result-actions .nw-balloon-action:focus-visible{
+ outline:2px solid #9A50B8!important;
+ outline-offset:2px!important;
+}
+/* Original tray grid and nine PNG artwork dimensions are preserved.
+   Inflated SVG backgrounds sit below the images and occupy no layout space. */
+#game.theme-balloonwrong .ev-sudoku-tray button.nw-balloon-tray-piece{
+ position:relative!important;
+ isolation:isolate!important;
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ overflow:visible!important;
+}
+#game.theme-balloonwrong .ev-sudoku-tray button.nw-balloon-tray-piece > .nw-balloon-orb-svg{
+ position:absolute!important;
+ inset:0!important;
+ z-index:0!important;
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ pointer-events:none!important;
+}
+#game.theme-balloonwrong .ev-sudoku-tray button.nw-balloon-tray-piece > img{
+ position:relative!important;
+ z-index:1!important;
+}
+#game.theme-balloonwrong .ev-sudoku-tray button.nw-balloon-tray-piece.selected{
+ background:transparent!important;
+ border:0!important;
+ box-shadow:none!important;
+ filter:drop-shadow(0 0 5px #E84AA8)!important;
+}
+#game.theme-balloonwrong .ev-sudoku-tray button.nw-balloon-tray-piece.selected .nw-balloon-orb-rubber{
+ fill:#FFE36B!important;
+ stroke:#9A50B8!important;
+ stroke-width:3.5!important;
+}
+#game.theme-balloonwrong .ev-sudoku-tray button.nw-balloon-tray-piece .ev-sudo-remain{
+ z-index:3!important;
+ background:#7CE6AE!important;
+ color:#243B2D!important;
+ border:1px solid #9A50B8!important;
+ border-radius:50%!important;
+ font:600 9px/1 'Fredoka',system-ui,sans-serif!important;
+}
+#game.theme-balloonwrong .ev-sudo-tools-clean .ev-sudo-tool{
+ background:linear-gradient(#FFF9D8,#FFF4F9)!important;
+ color:#6D2C73!important;
+ border:1.5px solid #D68AB9!important;
+ border-bottom:3px solid #9A50B8!important;
+ border-radius:11px!important;
+ box-shadow:none!important;
+}
+#game.theme-balloonwrong .ev-sudo-tools-clean .ev-sudo-tool.active{
+ background:linear-gradient(#FFF5B8,#FFE5D5)!important;
+ border-color:#9A50B8!important;
+ box-shadow:0 0 12px #FF9BCD66!important;
+}
+#game.theme-balloonwrong .ev-sudo-tools-clean .ev-sudo-tool-icon{
+ display:grid!important;
+ place-items:center!important;
+ color:#B3489A!important;
+ text-shadow:none!important;
+}
+#game.theme-balloonwrong .nw-balloon-tool-svg{
+ display:block!important;
+ width:20px!important;
+ height:20px!important;
+}
+#game.theme-balloonwrong .ev-sudo-tools-clean .ev-sudo-tool-label{
+ color:#6D2C73!important;
+ font-weight:600!important;
+ font-size:9px!important;
+}
+#game.theme-balloonwrong .result-panel .result-mark{
+ display:grid!important;
+ place-items:center!important;
+ box-sizing:border-box!important;
+ width:67px!important;
+ height:67px!important;
+ min-width:67px!important;
+ min-height:67px!important;
+ max-width:67px!important;
+ max-height:67px!important;
+ aspect-ratio:1/1!important;
+ flex:0 0 67px!important;
+ margin:8px auto 14px!important;
+ padding:0!important;
+ background:#FFF2C8!important;
+ border:3px solid #9A50B8!important;
+ border-radius:50%!important;
+ color:#9A50B8!important;
+ box-shadow:none!important;
+}
+#game.theme-balloonwrong .result-panel .nw-balloon-result-svg{
+ display:block!important;
+ width:38px!important;
+ height:38px!important;
+}
+#game.theme-balloonwrong .result-panel:not(:has(.result-score)) .result-mark{
+ color:#DA5B7C!important;
+ border-color:#DA5B7C!important;
+ background:#FFE3EB!important;
+}
+#game.theme-balloonwrong .result-panel .result-score strong{
+ color:#7A2F80!important;
+ font-family:'Chewy',cursive!important;
+ font-weight:400!important;
+}
+#game.theme-balloonwrong .result-actions{gap:7px!important;}
+#game.theme-balloonwrong .result-actions .nw-balloon-action{
+ display:grid!important;
+ place-items:center!important;
+ position:relative!important;
+ isolation:isolate!important;
+ width:100%!important;
+ height:clamp(49px,12.5vw,57px)!important;
+ min-height:0!important;
+ padding:0!important;
+ margin:0!important;
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ overflow:visible!important;
+}
+#game.theme-balloonwrong .result-actions .nw-balloon-action > span{
+ font-size:clamp(16px,3.9vw,22px)!important;
 }
