@@ -6314,16 +6314,16 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
  isolation:isolate!important;
  overflow:hidden!important;
 }
-#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell,
-#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 3),
-#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n + 6),
-#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
-#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54){
+#game.theme-weird .ev-sudoku-grid > button.ev-sudoku-cell,
+#game.theme-weird .ev-sudoku-grid > button.ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-weird .ev-sudoku-grid > button.ev-sudoku-cell:nth-child(9n + 6),
+#game.theme-weird .ev-sudoku-grid > button.ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-weird .ev-sudoku-grid > button.ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54){
  border-right:1px solid #665B88!important;
  border-bottom:1px solid #665B88!important;
 }
-#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(9n){border-right:0!important;}
-#game.theme-weird .ev-sudoku-grid > .ev-sudoku-cell:nth-child(n + 73){border-bottom:0!important;}
+#game.theme-weird .ev-sudoku-grid > button.ev-sudoku-cell:nth-child(9n){border-right:0!important;}
+#game.theme-weird .ev-sudoku-grid > button.ev-sudoku-cell:nth-child(n + 73){border-bottom:0!important;}
 #game.theme-weird .ev-sudoku-grid::before{
  content:none!important;display:none!important;
 }
