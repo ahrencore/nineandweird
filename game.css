@@ -10399,3 +10399,41 @@ body:has(#game.theme-donttakewater:not([hidden])){background:#101D20!important;}
  color:#B9DDF2!important;
  text-shadow:0 0 8px #9CCBE355!important;
 }
+
+/* All equipped avatar frames: transparent canvas, never an opaque square.
+   Keep the artwork overlay, circular avatar crop, and animated frame accents intact. */
+#game .nw-equipped-frame,
+#game .nw-equipped-frame.nw-double-avatar,
+#game.nw-double-theme .nw-double-person>.nw-equipped-frame.nw-double-avatar,
+#game.nw-double-theme .nw-double-team .nw-double-person>.nw-equipped-frame.nw-double-avatar,
+#game .nw-friend-avatar.framed,
+#game .nw-recorded-frame,
+#game .nw-lb-pfp>.nw-equipped-frame{
+ background:transparent!important;
+ background-color:transparent!important;
+ background-image:none!important;
+ border-color:transparent!important;
+ box-shadow:none!important;
+}
+#game .nw-equipped-frame>.nw-equipped-avatar,
+#game .nw-friend-avatar.framed>.nw-friend-avatar-img{
+ border-radius:50%!important;
+ object-fit:cover!important;
+}
+#game .nw-equipped-frame>.nw-equipped-art,
+#game .nw-friend-avatar.framed>.nw-friend-frame{
+ background:transparent!important;
+ background-color:transparent!important;
+ box-shadow:none!important;
+}
+/* Remove square portrait backplates only where a frame actually occupies them. */
+#game .nw-double-person:has(>.nw-equipped-frame),
+#game .nw-radio-self-frame:has(>.nw-equipped-frame),
+#game .nw-match-avatar:has(>.nw-equipped-frame),
+#game .nw-opponent-small-avatar:has(>.nw-equipped-frame),
+#game .nw-result-player-frame:has(>.nw-equipped-frame),
+#game .nw-profile-with-frame:has(>.nw-equipped-frame){
+ background-color:transparent!important;
+ background-image:none!important;
+}
+/* Frameless '?' opponent/partner placeholders intentionally keep their round badge. */
