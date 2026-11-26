@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Special+Elite&family=Nunito:wght@500;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Barlow+Condensed:wght@500;600;700;800&family=Nunito:wght@500;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Chewy&family=Fredoka:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Bungee&family=Pixelify+Sans:wght@400;500;600;700&display=swap");
@@ -9342,4 +9343,194 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
 }
 #game.theme-baggagehell .result-actions .nw-baggage-action > span{
  font-size:clamp(16px,3.8vw,22px)!important;
+}
+
+
+/* Do Not Take With Water — approved Radioactive Midnight Pharmacy.
+   This is the only World whose board palette is revised in this update.
+   Do not alter 9x9 geometry, original PNG filenames or existing image sizes. */
+html:has(#game.theme-donttakewater:not([hidden])),
+body:has(#game.theme-donttakewater:not([hidden])){background:#101D20!important;}
+#game.theme-donttakewater{
+ --surface:#101D20;--panel:#182C2B;--ink:#E7F5DB;
+ --accent:#C5F257;--line:#497466;--peer:#35594A;
+ --same:#497C65;--selected:#667D35;
+ --room-border:#C5F257;--room-glow:#7DDCC7;
+ background:radial-gradient(ellipse at 50% 0%,#29443C 0%,#101D20 65%,#0A1317 100%)!important;
+ color:#E7F5DB!important;
+ font-family:'Nunito',system-ui,sans-serif!important;
+}
+#game.theme-donttakewater .ev-head{
+ background:#192F2D!important;border-color:#7DDCC7!important;
+ border-radius:7px!important;box-shadow:none!important;
+}
+#game.theme-donttakewater > .ev-head > strong,
+#game.theme-donttakewater :is(.difficulty-panel,.result-panel) h2{
+ font-family:'Space Grotesk',system-ui,sans-serif!important;
+ font-weight:700!important;color:#D9FF94!important;
+ text-shadow:none!important;letter-spacing:0!important;
+ line-height:1.14!important;
+}
+#game.theme-donttakewater > .ev-head > strong{font-size:clamp(13px,3.5vw,18px)!important;}
+#game.theme-donttakewater .ev-head :is(.ev-btn,.nw-shared-settings){
+ background:#263E38!important;border:1px solid #7DDCC7!important;
+ border-radius:3px!important;color:#E7F5DB!important;box-shadow:none!important;
+}
+#game.theme-donttakewater :is(.difficulty-panel,.result-panel,.ev-sudo-shell){
+ background:#182C2B!important;color:#E7F5DB!important;
+ border:2px solid #669E84!important;box-shadow:none!important;
+ border-radius:9px!important;
+}
+#game.theme-donttakewater .nw-fav-toggle{
+ background:#263E38!important;border:1px solid #7DDCC7!important;
+ color:#D9FF94!important;border-radius:4px!important;box-shadow:none!important;
+ font-family:'Nunito',system-ui,sans-serif!important;
+}
+#game.theme-donttakewater .ev-sudo-stats>div,
+#game.theme-donttakewater .result-stats>div{
+ background:#263E38!important;border-color:#578C74!important;color:#E7F5DB!important;
+}
+#game.theme-donttakewater .ev-sudo-stats small,
+#game.theme-donttakewater .result-stats small,
+#game.theme-donttakewater .ev-note,
+#game.theme-donttakewater .result-score small{
+ color:#A8C6B4!important;
+}
+#game.theme-donttakewater .ev-sudo-stats strong,
+#game.theme-donttakewater .result-stats strong{color:#D9FF94!important;}
+#game.theme-donttakewater .ev-sudoku-grid{
+ background:#122421!important;border-color:#C5F257!important;
+ box-shadow:none!important;
+}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell{
+ background:#192E2B!important;color:#E7F5DB!important;
+ border-right-color:#497466!important;border-bottom-color:#497466!important;
+}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.given{background:#233A35!important;}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.peer:not(.same):not(.selected):not(.bad){background:#35594A!important;}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.same:not(.selected):not(.bad){
+ background:#35594A!important;
+ box-shadow:inset 0 0 0 2px #7DDCC7!important;
+}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.selected:not(.bad){
+ background:#667D35!important;
+ box-shadow:inset 0 0 0 3px #C5F257!important;
+}
+#game.theme-donttakewater .ev-sudoku-grid>.ev-sudoku-cell.bad{
+ background:#A54A34!important;
+ box-shadow:inset 0 0 0 2px #FF965C!important;
+}
+/* Keep the existing board-bound 3×3 overlay positioning/clipping. Change color only. */
+#game.theme-donttakewater .ev-sudoku-grid::after{
+ background-image:
+ linear-gradient(to right,
+ transparent calc(33.333333% - 2px),#7DDCC7 calc(33.333333% - 2px),#7DDCC7 calc(33.333333% + 2px),
+ transparent calc(33.333333% + 2px),transparent calc(66.666667% - 2px),
+ #7DDCC7 calc(66.666667% - 2px),#7DDCC7 calc(66.666667% + 2px),transparent calc(66.666667% + 2px)),
+ linear-gradient(to bottom,
+ transparent calc(33.333333% - 2px),#7DDCC7 calc(33.333333% - 2px),#7DDCC7 calc(33.333333% + 2px),
+ transparent calc(33.333333% + 2px),transparent calc(66.666667% - 2px),
+ #7DDCC7 calc(66.666667% - 2px),#7DDCC7 calc(66.666667% + 2px),transparent calc(66.666667% + 2px))!important;
+}
+/* Prescription labels replace only decorative difficulty-button styling. */
+#game.theme-donttakewater .difficulty-list{gap:7px!important;}
+#game.theme-donttakewater .difficulty-list .nw-water-difficulty,
+#game.theme-donttakewater .result-actions .nw-water-action{
+ display:grid!important;place-items:center!important;
+ position:relative!important;isolation:isolate!important;
+ width:100%!important;height:clamp(49px,12.5vw,57px)!important;
+ min-height:0!important;padding:0!important;margin:0!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;overflow:visible!important;cursor:pointer!important;
+}
+#game.theme-donttakewater .nw-water-difficulty > .nw-water-rx-svg,
+#game.theme-donttakewater .result-actions .nw-water-action > .nw-water-rx-svg{
+ display:block!important;position:absolute!important;inset:0!important;
+ width:100%!important;height:100%!important;pointer-events:none!important;
+}
+#game.theme-donttakewater .nw-water-difficulty > span,
+#game.theme-donttakewater .result-actions .nw-water-action > span{
+ position:relative!important;z-index:1!important;display:block!important;
+ color:#172522!important;
+ font:400 clamp(16px,3.8vw,21px)/1 'Special Elite',monospace!important;
+ letter-spacing:.025em!important;
+ padding:5px 0 0 18px!important;text-shadow:none!important;pointer-events:none!important;
+}
+#game.theme-donttakewater .nw-water-difficulty:active,
+#game.theme-donttakewater .result-actions .nw-water-action:active{transform:translateY(2px)!important;}
+#game.theme-donttakewater .nw-water-difficulty:focus-visible,
+#game.theme-donttakewater .result-actions .nw-water-action:focus-visible{
+ outline:2px solid #C5F257!important;outline-offset:2px!important;
+}
+/* Blister-pack tray backgrounds behind intact existing PNG artwork. */
+#game.theme-donttakewater .ev-sudoku-tray button.nw-water-tray-piece{
+ position:relative!important;isolation:isolate!important;background:transparent!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important;
+}
+#game.theme-donttakewater .ev-sudoku-tray button.nw-water-tray-piece > .nw-water-blister-svg{
+ position:absolute!important;inset:0!important;z-index:0!important;
+ display:block!important;width:100%!important;height:100%!important;pointer-events:none!important;
+}
+#game.theme-donttakewater .ev-sudoku-tray button.nw-water-tray-piece > img{
+ position:relative!important;z-index:1!important;
+}
+#game.theme-donttakewater .ev-sudoku-tray button.nw-water-tray-piece.selected{
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ filter:drop-shadow(0 0 5px #C5F257)!important;
+}
+#game.theme-donttakewater .ev-sudoku-tray button.nw-water-tray-piece.selected .nw-water-blister-base{
+ fill:#4B673D!important;stroke:#C5F257!important;stroke-width:3!important;
+}
+#game.theme-donttakewater .ev-sudoku-tray button.nw-water-tray-piece .ev-sudo-remain{
+ position:absolute!important;z-index:3!important;
+ background:#C5F257!important;color:#172522!important;
+ border:1px solid #497C65!important;border-radius:3px!important;
+ font:800 9px/1 'Nunito',system-ui,sans-serif!important;
+}
+#game.theme-donttakewater .ev-sudo-tools-clean .ev-sudo-tool{
+ background:#263E38!important;color:#E7F5DB!important;
+ border:1.5px solid #7DDCC7!important;border-bottom:3px solid #497C65!important;
+ border-radius:5px!important;box-shadow:none!important;
+}
+#game.theme-donttakewater .ev-sudo-tools-clean .ev-sudo-tool.active{
+ background:#35594A!important;border-color:#C5F257!important;
+ box-shadow:0 0 8px #C5F25755!important;
+}
+#game.theme-donttakewater .ev-sudo-tools-clean .ev-sudo-tool-icon{
+ color:#C5F257!important;text-shadow:none!important;
+ display:grid!important;place-items:center!important;
+}
+#game.theme-donttakewater .nw-water-tool-svg{width:20px!important;height:20px!important;display:block!important;}
+#game.theme-donttakewater .ev-sudo-tools-clean .ev-sudo-tool-label{
+ color:#E7F5DB!important;font:800 9px/1.2 'Nunito',system-ui,sans-serif!important;
+}
+#game.theme-donttakewater .result-panel .result-mark{
+ display:grid!important;place-items:center!important;box-sizing:border-box!important;
+ width:67px!important;height:67px!important;min-width:67px!important;min-height:67px!important;
+ max-width:67px!important;max-height:67px!important;aspect-ratio:1/1!important;
+ flex:0 0 67px!important;padding:0!important;margin:8px auto 14px!important;
+ background:#263E38!important;color:#C5F257!important;
+ border:3px solid #C5F257!important;border-radius:50%!important;box-shadow:none!important;
+}
+#game.theme-donttakewater .nw-water-result-svg{display:block!important;width:38px!important;height:38px!important;}
+#game.theme-donttakewater .result-panel:not(:has(.result-score)) .result-mark{
+ border-color:#FF965C!important;color:#FF965C!important;
+}
+#game.theme-donttakewater .result-panel .result-score strong{
+ font-family:'Space Grotesk',system-ui,sans-serif!important;
+ font-weight:800!important;color:#C5F257!important;text-shadow:none!important;
+}
+#game.theme-donttakewater .result-panel :is(.result-score,.result-stats){color:#E7F5DB!important;}
+#game.theme-donttakewater .result-actions{gap:7px!important;}
+#game.theme-donttakewater .result-actions .nw-water-action > span{
+ font-size:clamp(14px,3.4vw,20px)!important;
+}
+/* World picker: show the approved identity rather than the overridden old pastel colors. */
+#game.theme-hub .world-grid .world-donttakewater{
+ background:linear-gradient(145deg,#29443C,#101D20)!important;
+ border:2px solid #C5F257!important;color:#E7F5DB!important;
+ box-shadow:0 0 10px #7DDCC766!important;
+}
+#game.theme-hub .world-grid .world-donttakewater strong{
+ color:#D9FF94!important;text-shadow:none!important;
 }
