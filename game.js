@@ -23,7 +23,7 @@ let currentWorld='halloween',roomPage=0,roomCollection='all';
 const difficulties={easy:{fill:.60,points:350,hints:1},medium:{fill:.50,points:650,hints:1},hard:{fill:.40,points:1000,hints:1},expert:{fill:.35,points:1350,hints:1},extreme:{fill:.30,points:1750,hints:1}};
 function applyTheme(world){evRoot.className='ev-root theme-'+(world||'hub');}
 
-const nwGroups={usual:['classic','dark','halloween','patissserie','christmas','olympus','nineties','donuts','cakes'],weird:['weird','ugly','alien','diner','bodyparts','deepsea','solarsick','dontunwrap','unpreparedchristmas','underthebed','balloonwrong','donttakewater','baggagehell','cakefail']};
+const nwGroups={usual:['classic','dark','halloween','patissserie','christmas','olympus','nineties'],weird:['weird','ugly','alien','diner','bodyparts','deepsea','solarsick','dontunwrap','unpreparedchristmas','underthebed','balloonwrong','donttakewater','baggagehell','cakefail']};
 const nwFavKey='nineweird-favourites-v1',nwPointsKey='nineweird-points-v1';
 const nwScroll={usual:0,weird:0,fav:0,all:0};
 const nwRoomPages={usual:0,weird:0,fav:0,all:0};
