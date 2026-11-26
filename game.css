@@ -5830,3 +5830,37 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
   width:calc(100% - 18px)!important;
  }
 }
+
+/* DNET symbol remaining counts: keep each number in front of its token,
+   not clipped by the rounded token border or overlapped by the tool row. */
+#game.theme-diner .ev-sudoku-tray{
+ overflow:visible!important;
+ padding-bottom:13px!important;
+ margin-bottom:12px!important;
+ position:relative;
+ z-index:2;
+}
+#game.theme-diner .ev-sudoku-tray button{
+ overflow:visible!important;
+ position:relative!important;
+}
+#game.theme-diner .ev-sudoku-tray .ev-sudo-remain{
+ display:block;
+ position:absolute!important;
+ z-index:5!important;
+ right:-2px!important;
+ bottom:-7px!important;
+ min-width:15px;
+ padding:2px 3px!important;
+ border:1.5px solid #3C2022!important;
+ border-radius:8px!important;
+ background:#FFF0D5!important;
+ color:#3C2022!important;
+ font:800 10px/1 'Fredoka',system-ui,sans-serif!important;
+ text-align:center;
+ pointer-events:none;
+ box-shadow:0 1px 0 #3C2022!important;
+}
+#game.theme-diner .ev-sudoku-tray button.completed .ev-sudo-remain{
+ visibility:hidden!important;
+}
