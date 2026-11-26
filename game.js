@@ -1513,7 +1513,23 @@ function nwDoublePeriod(now=Date.now()){
 }
 function nwDoubleFmt(n){return Number(n||0).toLocaleString();}
 function nwDoubleCountdown(ms){const n=Math.max(0,Math.ceil(ms/1000));return `${Math.floor(n/86400)}D : ${String(Math.floor(n/3600)%24).padStart(2,'0')}H : ${String(Math.floor(n/60)%60).padStart(2,'0')}M : ${String(n%60).padStart(2,'0')}S`;}
-function nwDoubleButton(id,label,secondary=false){return `<button type="button" id="${id}" class="nw-double-btn${secondary?' secondary':''}">${label}</button>`;}
+function nwDoubleRoomKeySvg(secondary=false){
+ return '<svg class="nw-double-roomkey-svg" viewBox="0 0 350 75" preserveAspectRatio="none" aria-hidden="true" focusable="false">'+
+ '<path d="M33 11Q47 4 68 8L325 7Q343 7 343 23L341 53Q340 68 322 66L67 67Q45 71 30 63L6 47Q-1 36 7 27Z" fill="'+(secondary?'#7198AE':'#A7D1E7')+'" stroke="#101B29" stroke-width="2.5" stroke-linejoin="round"/>'+
+ '<path d="M35 15Q50 11 70 13L323 12Q337 12 337 25L335 51Q335 62 320 61L70 62Q49 65 34 57L13 44Q8 36 13 31Z" fill="'+(secondary?'#192B3B':'#416B83')+'"/>'+
+ '<circle cx="33" cy="37" r="11" fill="#152638" stroke="#A7D1E7" stroke-width="3"/>'+
+ '<circle cx="33" cy="37" r="5" fill="#0D1722"/>'+
+ '<path d="M75 17Q168 13 278 17" stroke="#729DB7" stroke-width="1.4" fill="none" stroke-dasharray="6 13" opacity=".7"/>'+
+ '<path d="M76 56Q165 60 270 55" fill="none" stroke="#162D40" stroke-width="2" opacity=".55"/></svg>';
+}
+function nwDoubleButton(id,label,secondary=false){return `<button type="button" id="${id}" class="nw-double-btn nw-double-roomkey${secondary?' secondary':''}">${nwDoubleRoomKeySvg(secondary)}<span class="nw-double-key-label">${label}</span></button>`;}
+function nwDoublePhoto(player){
+ const frame=String(player?.frame||'');
+ const src=frame==='usual'?'frames/nw-free-usual.png?v=42':frame==='weird'?'frames/nw-free-weird.png?v=42':/^monthly-(10|25|50|100|150|200)$/.test(frame)?'frames/nw-monthly-'+frame.slice(8)+'.png':'';
+ return '<span class="nw-double-photo nw-equipped-frame '+(frame.startsWith('monthly-')&&src?'nw-monthly-art-frame':'')+'">'+
+ nwAvatarImg(player?.avatar,'nw-equipped-avatar')+
+ (src?'<img class="nw-equipped-art" src="'+nwEscape(src)+'" alt="">':'')+'</span>';
+}
 function nwDoubleTheme(){applyTheme('hub');evRoot.classList.add('nw-double-theme');}
 function nwDoubleExit(){clearInterval(nwDoubleTimer);nwDoubleTimer=null;nwDoublePracticeActive=false;if(nwDoubleWorldBefore&&worlds[nwDoubleWorldBefore])currentWorld=nwDoubleWorldBefore;nwDoubleWorldBefore=null;showCategories();}
 async function nwDoubleRpc(action='snapshot',params={}){
@@ -1531,7 +1547,7 @@ function nwDoubleIdentity(person,self=false,score=null){
   const p=nwBattleProfiles[person.recorded_id];
   return p?`<div class="nw-double-person">${nwBattleProfileArt(p,'nw-double-avatar')}<strong>${nwEscape(p.name)}</strong>${points}</div>`:'';
  }
- return `<div class="nw-double-person">${nwFriendPhoto(person)}<strong>${nwEscape(person.name||'Partner')}</strong>${points}</div>`;
+ return `<div class="nw-double-person">${nwDoublePhoto(person)}<strong>${nwEscape(person.name||'Partner')}</strong>${points}</div>`;
 }
 function nwDoubleRecordPoints(id,start=Date.now(),end=Date.now()+259200000){
  const rows=nwBattlePracticeRuns.filter(r=>r.profile_id===id);
@@ -1549,7 +1565,7 @@ function nwDoubleScores(m=nwDoubleSnapshot){
 function nwDoubleTeams(m=nwDoubleSnapshot){
  if(!m)return '';
  const sc=nwDoubleScores(m),rivals=m.opponents||[],solo=!m.partner;
- const player=(p)=>`<div class="nw-double-person">${Number.isInteger(p.recorded_id)?nwBattleProfileArt(nwBattleProfiles[p.recorded_id],'nw-double-avatar'):nwFriendPhoto(p)}<strong>${nwEscape(Number.isInteger(p.recorded_id)?nwBattleProfiles[p.recorded_id]?.name||'Opponent':p.name||'Opponent')}</strong><span>${nwDoubleFmt(p.points)}</span></div>`;
+ const player=(p)=>`<div class="nw-double-person">${Number.isInteger(p.recorded_id)?nwBattleProfileArt(nwBattleProfiles[p.recorded_id],'nw-double-avatar'):nwDoublePhoto(p)}<strong>${nwEscape(Number.isInteger(p.recorded_id)?nwBattleProfiles[p.recorded_id]?.name||'Opponent':p.name||'Opponent')}</strong><span>${nwDoubleFmt(p.points)}</span></div>`;
  const pct=sc.ours+sc.theirs?Math.round(sc.ours/(sc.ours+sc.theirs)*100):50;
  return `<div class="nw-double-teams"><article class="nw-double-team"><div class="nw-double-team-head"><small>${solo?'SOLO':'YOUR TEAM'}</small><strong>${nwDoubleFmt(sc.ours)}</strong></div><div class="nw-double-people">${nwDoubleIdentity(null,true,sc.mine)}${solo?'':nwDoubleIdentity(m.partner,false,sc.partner)}</div></article><div class="nw-double-vs">VS</div><article class="nw-double-team rival"><div class="nw-double-team-head"><small>RIVAL TEAM</small><strong>${nwDoubleFmt(sc.theirs)}</strong></div><div class="nw-double-people">${rivals.map(player).join('')}</div></article><div class="nw-double-track"><i style="width:${pct}%"></i></div><div class="nw-double-margin">${sc.ours>sc.theirs?'YOUR SIDE LEADS BY '+nwDoubleFmt(sc.ours-sc.theirs):sc.ours<sc.theirs?'RIVALS LEAD BY '+nwDoubleFmt(sc.theirs-sc.ours):'TIED'}</div></div>`;
 }
@@ -1566,16 +1582,16 @@ function nwDoublePopup(){
 function nwDoubleInvitations(){
  const d=nwDoubleSnapshot||{},invitations=d.invitations||[];
  nwDoubleTheme();
- evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-home"><h2 class="nw-double-subtitle">PARTNERSHIP INVITATIONS</h2><div class="nw-double-invitations">${invitations.length?invitations.map(p=>`<div class="nw-double-invite-row">${nwFriendPhoto(p)}<strong>${nwEscape(p.name)}</strong><button type="button" data-dt-accept="${nwEscape(p.sender)}">ACCEPT</button><button type="button" data-dt-decline="${nwEscape(p.sender)}">DECLINE</button></div>`).join(''):'<p class="nw-double-note">No pending invitations.</p>'}</div>${nwDoubleButton('nwDoubleInvBack','BACK',true)}<p id="nwDoubleAlert" class="nw-double-alert" role="status" hidden></p></section>`);
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-home"><h2 class="nw-double-subtitle">PARTNERSHIP INVITATIONS</h2><div class="nw-double-invitations">${invitations.length?invitations.map(p=>`<div class="nw-double-invite-row">${nwDoublePhoto(p)}<strong>${nwEscape(p.name)}</strong><button type="button" class="nw-double-roomkey nw-double-smallkey" data-dt-accept="${nwEscape(p.sender)}">${nwDoubleRoomKeySvg(false)}<span class="nw-double-key-label">ACCEPT</span></button><button type="button" class="nw-double-roomkey nw-double-smallkey secondary" data-dt-decline="${nwEscape(p.sender)}">${nwDoubleRoomKeySvg(true)}<span class="nw-double-key-label">DECLINE</span></button></div>`).join(''):'<p class="nw-double-note">No pending invitations.</p>'}</div>${nwDoubleButton('nwDoubleInvBack','BACK',true)}<p id="nwDoubleAlert" class="nw-double-alert" role="status" hidden></p></section>`);
  evRoot.querySelector('#nwDoubleInvBack').onclick=nwDoublePracticeScreen;
  evRoot.querySelectorAll('[data-dt-accept],[data-dt-decline]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await nwDoubleRpc(b.hasAttribute('data-dt-accept')?'accept':'decline',{p_target:b.dataset.dtAccept||b.dataset.dtDecline});nwDoublePracticeScreen();}catch(e){b.disabled=false;nwDoubleAlert(e.message);}});
 }
 function nwDoubleInviteFriends(){
  const d=nwDoubleSnapshot||{},friends=d.friends||[],outgoing=new Set((d.outgoing||[]).filter(i=>i.status==='pending').map(i=>i.recipient));
  nwDoubleTheme();
- evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-home"><h2 class="nw-double-subtitle">INVITE A FRIEND</h2><div class="nw-double-invitations">${friends.length?friends.map(p=>`<div class="nw-double-invite-row">${nwFriendPhoto(p)}<strong>${nwEscape(p.name)}</strong><button type="button" data-dt-invite="${nwEscape(p.id)}" ${outgoing.has(p.id)?'disabled':''}>${outgoing.has(p.id)?'SENT':'INVITE'}</button></div>`).join(''):'<p class="nw-double-note">Your friends list is empty.</p>'}</div>${nwDoubleButton('nwDoubleInviteBack','BACK',true)}<p id="nwDoubleAlert" class="nw-double-alert" role="status" hidden></p></section>`);
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-home"><h2 class="nw-double-subtitle">INVITE A FRIEND</h2><div class="nw-double-invitations">${friends.length?friends.map(p=>`<div class="nw-double-invite-row">${nwDoublePhoto(p)}<strong>${nwEscape(p.name)}</strong><button type="button" class="nw-double-roomkey nw-double-smallkey" data-dt-invite="${nwEscape(p.id)}" ${outgoing.has(p.id)?'disabled':''}>${nwDoubleRoomKeySvg(false)}<span class="nw-double-key-label">${outgoing.has(p.id)?'SENT':'INVITE'}</span></button></div>`).join(''):'<p class="nw-double-note">Your friends list is empty.</p>'}</div>${nwDoubleButton('nwDoubleInviteBack','BACK',true)}<p id="nwDoubleAlert" class="nw-double-alert" role="status" hidden></p></section>`);
  evRoot.querySelector('#nwDoubleInviteBack').onclick=nwDoublePracticeScreen;
- evRoot.querySelectorAll('[data-dt-invite]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await nwDoubleRpc('invite',{p_target:b.dataset.dtInvite});b.textContent='SENT';nwDoubleAlert('Invitation sent.');}catch(e){b.disabled=false;nwDoubleAlert(e.message);}});
+ evRoot.querySelectorAll('[data-dt-invite]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await nwDoubleRpc('invite',{p_target:b.dataset.dtInvite});b.querySelector('.nw-double-key-label').textContent='SENT';nwDoubleAlert('Invitation sent.');}catch(e){b.disabled=false;nwDoubleAlert(e.message);}});
 }
 function nwDoublePracticeScreen(){
  clearInterval(nwDoubleTimer);nwDoubleTimer=null;evSudokuLeave();nwDoublePracticeActive=false;nwDoubleTheme();
@@ -1608,7 +1624,7 @@ function nwDoublePracticeScreen(){
 }
 function nwDoubleDifficulty(){
  clearInterval(nwDoubleTimer);if(nwDoublePeriod().phase!=='active'){nwDoublePracticeScreen();return;}nwDoubleTheme();
- evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double"><h2 class="nw-double-subtitle">CHOOSE YOUR DIFFICULTY</h2><div class="nw-double-levels">${Object.entries(difficulties).map(([d,v])=>`<button class="nw-double-btn" data-double-difficulty="${d}">${d.toUpperCase()}</button>`).join('')}</div></section>`);
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double"><h2 class="nw-double-subtitle">CHOOSE YOUR DIFFICULTY</h2><div class="nw-double-levels">${Object.entries(difficulties).map(([d,v])=>`<button class="nw-double-btn nw-double-roomkey" data-double-difficulty="${d}">${nwDoubleRoomKeySvg(false)}<span class="nw-double-key-label">${d.toUpperCase()}</span></button>`).join('')}</div></section>`);
  evRoot.querySelectorAll('[data-double-difficulty]').forEach(b=>b.onclick=()=>nwDoubleLaunch(b.dataset.doubleDifficulty));
 }
 function nwDoubleLaunch(difficulty){
