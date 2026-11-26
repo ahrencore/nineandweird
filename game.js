@@ -1509,7 +1509,7 @@ const nwDoubleDay=86400000;
 function nwDoublePeriod(now=Date.now()){
  const t=new Date(now),mid=Date.UTC(t.getUTCFullYear(),t.getUTCMonth(),t.getUTCDate()),day=t.getUTCDay();
  const fri=mid-((day+2)%7)*nwDoubleDay+(day===4?7*nwDoubleDay:0);
- return {id:new Date(fri).toISOString().slice(0,10),start:fri,end:fri+3*nwDoubleDay,phase:day===4?'pair':[5,6,0].includes(day)?'active':'waiting',nextPair:fri-nwDoubleDay};
+ return {id:new Date(fri).toISOString().slice(0,10),start:fri,end:fri+3*nwDoubleDay,phase:day===4?'pair':[5,6,0].includes(day)?'active':'waiting',nextPair:fri+6*nwDoubleDay};
 }
 function nwDoubleFmt(n){return Number(n||0).toLocaleString();}
 function nwDoubleCountdown(ms){const n=Math.max(0,Math.ceil(ms/1000));return `${Math.floor(n/86400)}D : ${String(Math.floor(n/3600)%24).padStart(2,'0')}H : ${String(Math.floor(n/60)%60).padStart(2,'0')}M : ${String(n%60).padStart(2,'0')}S`;}
