@@ -5765,3 +5765,68 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
 @media(prefers-reduced-motion:reduce){
  #game.theme-diner .nw-diner-difficulty{transition:none!important;}
 }
+
+/* DNET visual polish: keep every outline and shadow fully visible.
+   Outset panel shadow needs breathing room on BOTH axes, including small phones. */
+#game.theme-diner{
+ overflow-x:hidden!important;
+ overflow-y:auto!important;
+ padding-bottom:max(42px,env(safe-area-inset-bottom,0px) + 34px)!important;
+ scrollbar-gutter:stable;
+}
+#game.theme-diner > :is(.difficulty-panel,.ev-sudo-shell,.result-panel){
+ width:calc(100% - 16px)!important;
+ max-width:434px!important;
+ box-sizing:border-box!important;
+ margin-left:auto!important;
+ margin-right:auto!important;
+ margin-bottom:32px!important;
+ overflow:visible!important;
+}
+#game.theme-diner > .ev-sudo-shell{margin-bottom:40px!important;}
+#game.theme-diner > .ev-head{max-width:calc(100% - 4px)!important;margin-inline:auto!important;}
+/* Separators belong to the cells and cannot cover food-symbol artwork.
+   The previous 100-z-index grid pseudo-element was literally on top of the PNGs. */
+#game.theme-diner .ev-sudoku-grid::after{
+ content:none!important;
+ display:none!important;
+ background:none!important;
+ box-shadow:none!important;
+}
+#game.theme-diner .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n + 3),
+#game.theme-diner .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n + 6){
+ border-right:3px solid #FF173A!important;
+}
+#game.theme-diner .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+#game.theme-diner .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n + 46):nth-child(-n + 54){
+ border-bottom:3px solid #FF173A!important;
+}
+#game.theme-diner .ev-sudoku-grid>.ev-sudoku-cell:nth-child(9n){
+ border-right:0!important;
+}
+#game.theme-diner .ev-sudoku-grid>.ev-sudoku-cell:nth-child(n + 73){
+ border-bottom:0!important;
+}
+#game.theme-diner .ev-sudoku-grid>.ev-sudoku-cell img{
+ display:block!important;
+ position:relative;
+ z-index:1;
+ max-width:88%!important;
+ max-height:88%!important;
+ object-fit:contain!important;
+}
+/* Use the existing mint result medallion, with a crisp vector tick instead
+   of an emoji or a typographic star. */
+#game.theme-diner .result-mark .nw-diner-check{
+ display:block;
+ width:44px;
+ height:44px;
+ color:#3C2022;
+ overflow:visible;
+}
+/* Short phones still get a scrollable bottom gutter; don't truncate panels. */
+@media(max-width:370px){
+ #game.theme-diner > :is(.difficulty-panel,.ev-sudo-shell,.result-panel){
+  width:calc(100% - 18px)!important;
+ }
+}
