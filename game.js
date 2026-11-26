@@ -735,14 +735,32 @@ async function nwGrowingUseReserve(qty){const n=Math.floor(Number(qty));if(!Numb
 function nwGrowingInventoryAmount(){return nwPrizeAvailable('tg_energy');}
 const nwAutoBoosterInflight=new Set();
 async function nwLoadEventBoosters(event){
- // Earned and purchased boosters stay safely in Inventory until the player chooses USE.
  if(event!=='tt'&&event!=='tg')return;
- try{await nwPrizeSync();}catch(e){console.warn('Event inventory refresh:',e.message);}
+ try{
+  await nwPrizeSync();
+  if(event==='tt'&&nwTriple&&evRoot.querySelector('.nw-triple-play')){
+   for(const button of evRoot.querySelectorAll('[data-booster],[data-fail-booster]')){
+    const kind=button.dataset.booster||button.dataset.failBooster;
+    const local=Math.max(0,Number(nwTripleData().boosters?.[kind])||0);
+    const total=local+nwPrizeAvailable('tt_'+kind);
+    const label=button.querySelector('i');if(label)label.textContent=total||'GET';
+   }
+  }
+ }catch(e){console.warn('Event inventory refresh:',e.message);}
+}
+async function nwPrizeSpendBooster(key){
+ if(!['tt_undo','tt_shuffle','tt_magic','tg_ray','tg_juice'].includes(key))throw Error('Invalid booster');
+ const uid=nwCloud?.user()?.id;if(!uid)throw Error('Sign in to use boosters');
+ const client=await nwCloud.get(),{data,error}=await client.rpc('nw_booster_spend',{p_item:key});
+ if(error)throw Error(error.message);
+ if(nwCloud?.user()?.id!==uid)throw Error('Account changed');
+ nwPrizeCache.stock={...nwPrizeCache.stock,[key]:Math.max(0,Number(data)||0)};
+ return Math.max(0,Number(data)||0);
 }
 function nwPrizeAvailable(key){return Math.max(0,Number(nwPrizeCache.stock?.[key])||0);}
 function nwPrizeTransferReceipts(event){return (nwPrizeCache.transfers||[]).filter(t=>t.event===event&&t.period===nwPrizeTransferPeriod(event));}
 async function nwPrizeTransfer(key,amount){
- if(!nwPrizeDefinitions.some(d=>d.key===key)||!Number.isSafeInteger(amount)||amount<1)throw Error('Invalid transfer');
+ if(!['tt_ticket','tg_energy'].includes(key)||!Number.isSafeInteger(amount)||amount<1)throw Error('Invalid transfer');
  const c=await nwCloud.get(),{data,error}=await c.rpc('nw_prize_transfer',{p_item:key,p_quantity:amount});
  if(error)throw Error(error.message);
  try{await nwPrizeSync()}catch(e){console.warn('Transfer saved; inventory refresh pending:',e.message);nwPrizeCache.stock={...nwPrizeCache.stock,[key]:Math.max(0,nwPrizeAvailable(key)-amount)};nwPrizeCache.transfers=[...(nwPrizeCache.transfers||[]),data];nwPrizeApplyTTTransfers();}
@@ -799,13 +817,13 @@ function nwInventoryLoaded(key){
 }
 function nwPrizeInventoryArt(){
  const cards=event=>nwPrizeDefinitions.filter(d=>d.event===event).map(d=>{
-  const n=nwPrizeAvailable(d.key),use=true,live=d.event==='tt'?nwTripleInEvent():[2,3,4].includes(new Date().getUTCDay()),displayCount=n;
+  const n=nwPrizeAvailable(d.key),use=d.key==='tt_ticket'||d.key==='tg_energy',live=d.event==='tt'?nwTripleInEvent():[2,3,4].includes(new Date().getUTCDay()),displayCount=use?n:n+nwInventoryLoaded(d.key);
   return '<article class="nw-compact-item"><button type="button" class="nw-compact-info" data-prize-info="'+d.key+'" aria-label="About '+nwEscape(d.name)+'">!</button><span class="nw-compact-icon" aria-hidden="true">'+nwPrizeIcon(d.key)+'</span><strong>'+nwEscape(d.name)+'</strong><b>× '+displayCount.toLocaleString()+'</b>'+(use?'<button type="button" data-prize-use="'+d.key+'" '+(n&&live?'':'disabled')+'>USE</button>':'')+'</article>';
  }).join('');
  return '<h3>TRIPLE TROUBLE</h3><div class="nw-compact-grid">'+cards('tt')+'</div><h3>THEY\'RE GROWING!</h3><div class="nw-compact-grid">'+cards('tg')+'</div><h3>SUDOKU</h3><div class="nw-compact-grid"><article class="nw-compact-item"><button class="nw-compact-info" type="button" data-prize-info="sudoku_hint" aria-label="About Sudoku Hints">!</button><span class="nw-compact-icon">'+nwPrizeIcon('sudoku_hint')+'</span><strong>Sudoku Hints</strong><b>× '+nwPrizeAvailable('sudoku_hint').toLocaleString()+'</b></article></div>';
 }
 function nwPrizeQuantityDialog(key){
- const item=nwPrizeDefinitions.find(d=>d.key===key),max=nwPrizeAvailable(key);if(!item||!max)return;
+ if(key!=='tt_ticket'&&key!=='tg_energy')return;const item=nwPrizeDefinitions.find(d=>d.key===key),max=nwPrizeAvailable(key);if(!item||!max)return;
  const overlay=document.createElement('div');overlay.className='nw-prize-overlay';
  overlay.innerHTML=`<section class="nw-prize-dialog" role="dialog" aria-modal="true" aria-label="Use ${nwEscape(item.name)}">
  <h2>USE ${nwEscape(item.name).toUpperCase()}</h2><p>Available in Inventory: <strong>${max}</strong></p>
@@ -1334,7 +1352,7 @@ async function nwWalletPurchase(item){
  if(d){d.diamonds=nwWalletState.balance;nwWrite(nwTripleKey,d)}
  nwRefreshVisibleDiamondBalances();
  try{await nwPrizeSync()}catch(e){
-  // Purchase is committed in Inventory; never fabricate a transfer to the event.
+  // Purchase is committed in cloud; direct event receipts and booster stock are synced.
   console.warn('Purchased Inventory balance will refresh on next sync:',e.message);
  }
  try{localStorage.removeItem(pendingKey)}catch{}
@@ -1762,7 +1780,7 @@ function nwTTBuy(kind){if(!nwTripleInEvent())return;const d=nwTripleData();const
    if(account!==nwPlayerStorageKey(nwTripleKey))return;
    const updated=nwTripleData();
    if(kind==='ticket')updated.spent+=cost;
-   nwTTNotice(updated,'Added to Inventory!',[[kind,1]]);nwTripleSave(updated);redraw();
+   nwTTNotice(updated,kind==='ticket'?'Tickets added to event!':'Booster ready to use!',[[kind,1]]);nwTripleSave(updated);redraw();
   }catch(e){nwTTModal('Purchase unavailable',`<p>${nwEscape(e.message)}</p>`,[{label:'OK'}]);}
   return;
  }
@@ -2184,14 +2202,25 @@ function nw431BoosterPlan(original,kind,seed=Date.now()){
  return {state:s,cleared};
 }
 function nw431ClearEffect(symbol){const tray=evRoot.querySelector('.nw-triple-tray');if(!tray)return;const fx=document.createElement('div');fx.className='nw431-clear-fx';fx.setAttribute('role','status');fx.innerHTML=`<span>MAGIC CLEAR · −3 TILES</span><div>${Array.from({length:3},()=>nwTripleArt(symbol)).join('')}</div>`;tray.appendChild(fx);setTimeout(()=>fx.remove(),1300);}
-function nwTripleBooster(kind){
- const s=nwTriple;if(!s||s.won||!['undo','shuffle','magic'].includes(kind)||(kind==='shuffle'&&s.tray.length>=7))return;
+let nwTripleBoosterPending=false;
+async function nwTripleBooster(kind){
+ const s=nwTriple;if(nwTripleBoosterPending||!s||s.won||!['undo','shuffle','magic'].includes(kind)||(kind==='shuffle'&&s.tray.length>=7))return;
  if(s.week!==nwTripleWeek()||s.practice===nwTripleInEvent())return;
- if(s.practice?s.used[kind]:!nwTripleData().boosters[kind]){if(!s.practice)nwTTBuy(kind);return;}
+ const owned=s.practice?(!s.used[kind]):((nwTripleData().boosters[kind]||0)+nwPrizeAvailable('tt_'+kind)>0);
+ if(!owned){if(!s.practice)nwTTBuy(kind);return;}
  const seed=Date.now(),result=nw431BoosterPlan(s,kind,seed);
  if(!result){if(!s.practice)nwTTModal('Booster not used','<p>No valid change was possible. Your booster has not been consumed.</p>',[{label:'OK'}]);return;}
- if(!s.practice)result.state.audit=[...(Array.isArray(s.audit)?s.audit:[]),{type:'booster',kind,seed}];
- nwTriple=result.state;nwTriplePersist(kind);if(!s.practice)nwTTMissionEvent(kind);nwTripleDraw();if(result.cleared!==null)nw431ClearEffect(result.cleared);
+ const local=!s.practice&&(nwTripleData().boosters[kind]||0)>0;
+ nwTripleBoosterPending=true;
+ try{
+  if(!s.practice&&!local)await nwPrizeSpendBooster('tt_'+kind);
+  if(nwTriple!==s)return;
+  if(!s.practice)result.state.audit=[...(Array.isArray(s.audit)?s.audit:[]),{type:'booster',kind,seed}];
+  nwTriple=result.state;nwTriplePersist(local?kind:null);
+  if(!s.practice)nwTTMissionEvent(kind);
+  nwTripleDraw();if(result.cleared!==null)nw431ClearEffect(result.cleared);
+ }catch(e){nwTTModal('Booster unavailable','<p>'+nwEscape(e.message)+'</p>',[{label:'OK'}]);}
+ finally{nwTripleBoosterPending=false;}
 }
 const nwTTRecovered=new Set();
 function nwTripleHome(){
@@ -2227,7 +2256,7 @@ function nwTripleDraw(){
    return `<div class="nw-triple-pile"><button type="button" class="nw-triple-pile-top stacked" data-tile="${top.id}" aria-label="Mystery stack">${nwTripleStackArt(top.symbol,pile.length)}</button></div>`;
  }).join('')}</div>`;
  const tray=Array.from({length:7},(_,i)=>`<span class="nw-triple-tray-slot">${s.tray[i]?nwTripleArt(s.tray[i].symbol):''}</span>`).join('');
- const economy=s.practice?null:nwTripleData();const count=k=>s.practice?(s.used[k]?0:1):economy.boosters[k];
+ const economy=s.practice?null:nwTripleData();const count=k=>s.practice?(s.used[k]?0:1):(Math.max(0,Number(economy.boosters[k])||0)+nwPrizeAvailable('tt_'+k));
  const lostBoosters=[['undo','↶','UNDO'],['magic','<span class="nw-triple-spiral"></span>','MAGIC CLEAR']].filter(([key])=>(!s.practice||!s.used[key])&&(key!=='undo'||s.history.length)&&(key!=='magic'||!!nw431MagicPlan(s))).map(([key,icon,label])=>`<button class="nw-triple-fail-booster" data-fail-booster="${key}"><span>${icon}</span><b>${label}</b><i>${count(key)||'GET'}</i></button>`).join('');
  const action=s.won?`<div class="nw-triple-end"><div class="nw-triple-party">${nwTripleMascots()}</div><div class="nw-triple-sparks" aria-hidden="true">⋆˚<span class="nw-triple-spiral"></span>｡</div><h2>STAGE ${s.stage} CLEARED!</h2><p>${nwTripleIsHard(s.stage+1)?'HARD STAGE UP NEXT!':'BRILLIANTLY WEIRD!'}</p><button id="nwTripleNext" class="nw-triple-main-btn">NEXT STAGE ▹</button><button id="nwTripleBack" class="nw-triple-back-btn">BACK TO EVENT</button></div>`:s.lost?`<div class="nw-triple-end"><h2>TRAY FULL!</h2>${lostBoosters?`<p>RESCUE THIS STAGE?</p><div class="nw-triple-fail-boosters">${lostBoosters}</div>`:`<p>NO RESCUE POSSIBLE.</p>`}<button id="nwTripleRetry" class="nw-triple-main-btn">RETRY STAGE ↻</button><button id="nwTripleBack" class="nw-triple-back-btn">END GAME</button></div>`:'';
  evDisplay(`${evHeader('TRIPLE TROUBLE',()=>nwTTAbandon(false))}<section class="nw-triple nw-triple-play">
