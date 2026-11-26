@@ -1513,16 +1513,14 @@ function nwDoublePeriod(now=Date.now()){
 }
 function nwDoubleFmt(n){return Number(n||0).toLocaleString();}
 function nwDoubleCountdown(ms){const n=Math.max(0,Math.ceil(ms/1000));return `${Math.floor(n/86400)}D : ${String(Math.floor(n/3600)%24).padStart(2,'0')}H : ${String(Math.floor(n/60)%60).padStart(2,'0')}M : ${String(n%60).padStart(2,'0')}S`;}
-function nwDoubleRoomKeySvg(secondary=false){
- return '<svg class="nw-double-roomkey-svg" viewBox="0 0 350 75" preserveAspectRatio="none" aria-hidden="true" focusable="false">'+
- '<path d="M33 11Q47 4 68 8L325 7Q343 7 343 23L341 53Q340 68 322 66L67 67Q45 71 30 63L6 47Q-1 36 7 27Z" fill="'+(secondary?'#7198AE':'#A7D1E7')+'" stroke="#101B29" stroke-width="2.5" stroke-linejoin="round"/>'+
- '<path d="M35 15Q50 11 70 13L323 12Q337 12 337 25L335 51Q335 62 320 61L70 62Q49 65 34 57L13 44Q8 36 13 31Z" fill="'+(secondary?'#192B3B':'#416B83')+'"/>'+
- '<circle cx="33" cy="37" r="11" fill="#152638" stroke="#A7D1E7" stroke-width="3"/>'+
- '<circle cx="33" cy="37" r="5" fill="#0D1722"/>'+
- '<path d="M75 17Q168 13 278 17" stroke="#729DB7" stroke-width="1.4" fill="none" stroke-dasharray="6 13" opacity=".7"/>'+
- '<path d="M76 56Q165 60 270 55" fill="none" stroke="#162D40" stroke-width="2" opacity=".55"/></svg>';
+function nwDoubleDoorSignSvg(compact=false){
+ const view=compact?'0 0 156 66':'0 0 308 76';
+ const shape=compact
+  ?'<path d="M15 8L141 5L151 18L148 56L18 61L5 49L8 18Z" fill="#A9D8F1" stroke="#0E1C2C" stroke-width="2.5" stroke-linejoin="round"/><path d="M19 13L137 11L145 20L142 51L21 55L12 47L14 20Z" fill="#B9DDF2"/><path d="M28 18L128 17L134 25L131 44L28 48L20 41L23 25Z" fill="none" stroke="#547C98" stroke-width="1.5" stroke-linejoin="round"/><circle cx="22" cy="28" r="2.5" fill="#2D4F65"/><circle cx="134" cy="27" r="2.5" fill="#2D4F65"/>'
+  :'<path d="M20 10L287 6L301 22L297 63L24 69L8 56L12 23Z" fill="#A9D8F1" stroke="#0E1C2C" stroke-width="2.7" stroke-linejoin="round"/><path d="M24 16L283 12L294 24L291 58L27 63L15 53L18 26Z" fill="#B9DDF2"/><path d="M34 22L272 19L283 28L279 52L36 56L25 49L28 29Z" fill="none" stroke="#5D8CAB" stroke-width="1.7" stroke-linejoin="round"/><circle cx="34" cy="34" r="3" fill="#315570"/><circle cx="273" cy="32" r="3" fill="#315570"/>';
+ return '<svg class="nw-double-roomkey-svg nw-double-door-sign-svg" viewBox="'+view+'" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">'+shape+'</svg>';
 }
-function nwDoubleButton(id,label,secondary=false){return `<button type="button" id="${id}" class="nw-double-btn nw-double-roomkey${secondary?' secondary':''}">${nwDoubleRoomKeySvg(false)}<span class="nw-double-key-label">${label}</span></button>`;}
+function nwDoubleButton(id,label,secondary=false){return `<button type="button" id="${id}" class="nw-double-btn nw-double-roomkey nw-double-door-sign${secondary?' secondary':''}">${nwDoubleDoorSignSvg(false)}<span class="nw-double-key-label">${label}</span></button>`;}
 function nwDoublePhoto(player){
  const frame=String(player?.frame||'');
  const src=frame==='usual'?'frames/nw-free-usual.png?v=42':frame==='weird'?'frames/nw-free-weird.png?v=42':/^monthly-(10|25|50|100|150|200)$/.test(frame)?'frames/nw-monthly-'+frame.slice(8)+'.png':'';
@@ -1582,14 +1580,14 @@ function nwDoublePopup(){
 function nwDoubleInvitations(){
  const d=nwDoubleSnapshot||{},invitations=d.invitations||[];
  nwDoubleTheme();
- evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-home"><h2 class="nw-double-subtitle">PARTNERSHIP INVITATIONS</h2><div class="nw-double-invitations">${invitations.length?invitations.map(p=>`<div class="nw-double-invite-row">${nwDoublePhoto(p)}<strong>${nwEscape(p.name)}</strong><button type="button" class="nw-double-roomkey nw-double-smallkey" data-dt-accept="${nwEscape(p.sender)}">${nwDoubleRoomKeySvg(false)}<span class="nw-double-key-label">ACCEPT</span></button><button type="button" class="nw-double-roomkey nw-double-smallkey secondary" data-dt-decline="${nwEscape(p.sender)}">${nwDoubleRoomKeySvg(false)}<span class="nw-double-key-label">DECLINE</span></button></div>`).join(''):'<p class="nw-double-note">No pending invitations.</p>'}</div>${nwDoubleButton('nwDoubleInvBack','BACK',true)}<p id="nwDoubleAlert" class="nw-double-alert" role="status" hidden></p></section>`);
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-home"><h2 class="nw-double-subtitle">PARTNERSHIP INVITATIONS</h2><div class="nw-double-invitations">${invitations.length?invitations.map(p=>`<div class="nw-double-invite-row">${nwDoublePhoto(p)}<strong>${nwEscape(p.name)}</strong><button type="button" class="nw-double-roomkey nw-double-door-sign nw-double-smallkey" data-dt-accept="${nwEscape(p.sender)}">${nwDoubleDoorSignSvg(true)}<span class="nw-double-key-label">ACCEPT</span></button><button type="button" class="nw-double-roomkey nw-double-door-sign nw-double-smallkey secondary" data-dt-decline="${nwEscape(p.sender)}">${nwDoubleDoorSignSvg(true)}<span class="nw-double-key-label">DECLINE</span></button></div>`).join(''):'<p class="nw-double-note">No pending invitations.</p>'}</div>${nwDoubleButton('nwDoubleInvBack','BACK',true)}<p id="nwDoubleAlert" class="nw-double-alert" role="status" hidden></p></section>`);
  evRoot.querySelector('#nwDoubleInvBack').onclick=nwDoublePracticeScreen;
  evRoot.querySelectorAll('[data-dt-accept],[data-dt-decline]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await nwDoubleRpc(b.hasAttribute('data-dt-accept')?'accept':'decline',{p_target:b.dataset.dtAccept||b.dataset.dtDecline});nwDoublePracticeScreen();}catch(e){b.disabled=false;nwDoubleAlert(e.message);}});
 }
 function nwDoubleInviteFriends(){
  const d=nwDoubleSnapshot||{},friends=d.friends||[],outgoing=new Set((d.outgoing||[]).filter(i=>i.status==='pending').map(i=>i.recipient));
  nwDoubleTheme();
- evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-home"><h2 class="nw-double-subtitle">INVITE A FRIEND</h2><div class="nw-double-invitations">${friends.length?friends.map(p=>`<div class="nw-double-invite-row">${nwDoublePhoto(p)}<strong>${nwEscape(p.name)}</strong><button type="button" class="nw-double-roomkey nw-double-smallkey" data-dt-invite="${nwEscape(p.id)}" ${outgoing.has(p.id)?'disabled':''}>${nwDoubleRoomKeySvg(false)}<span class="nw-double-key-label">${outgoing.has(p.id)?'SENT':'INVITE'}</span></button></div>`).join(''):'<p class="nw-double-note">Your friends list is empty.</p>'}</div>${nwDoubleButton('nwDoubleInviteBack','BACK',true)}<p id="nwDoubleAlert" class="nw-double-alert" role="status" hidden></p></section>`);
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-home"><h2 class="nw-double-subtitle">INVITE A FRIEND</h2><div class="nw-double-invitations">${friends.length?friends.map(p=>`<div class="nw-double-invite-row">${nwDoublePhoto(p)}<strong>${nwEscape(p.name)}</strong><button type="button" class="nw-double-roomkey nw-double-door-sign nw-double-smallkey" data-dt-invite="${nwEscape(p.id)}" ${outgoing.has(p.id)?'disabled':''}>${nwDoubleDoorSignSvg(true)}<span class="nw-double-key-label">${outgoing.has(p.id)?'SENT':'INVITE'}</span></button></div>`).join(''):'<p class="nw-double-note">Your friends list is empty.</p>'}</div>${nwDoubleButton('nwDoubleInviteBack','BACK',true)}<p id="nwDoubleAlert" class="nw-double-alert" role="status" hidden></p></section>`);
  evRoot.querySelector('#nwDoubleInviteBack').onclick=nwDoublePracticeScreen;
  evRoot.querySelectorAll('[data-dt-invite]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await nwDoubleRpc('invite',{p_target:b.dataset.dtInvite});b.querySelector('.nw-double-key-label').textContent='SENT';nwDoubleAlert('Invitation sent.');}catch(e){b.disabled=false;nwDoubleAlert(e.message);}});
 }
@@ -1624,7 +1622,7 @@ function nwDoublePracticeScreen(){
 }
 function nwDoubleDifficulty(){
  clearInterval(nwDoubleTimer);if(nwDoublePeriod().phase!=='active'){nwDoublePracticeScreen();return;}nwDoubleTheme();
- evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double"><h2 class="nw-double-subtitle">CHOOSE YOUR DIFFICULTY</h2><div class="nw-double-levels">${Object.entries(difficulties).map(([d,v])=>`<button class="nw-double-btn nw-double-roomkey" data-double-difficulty="${d}">${nwDoubleRoomKeySvg(false)}<span class="nw-double-key-label">${d.toUpperCase()}</span></button>`).join('')}</div></section>`);
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double"><h2 class="nw-double-subtitle">CHOOSE YOUR DIFFICULTY</h2><div class="nw-double-levels">${Object.entries(difficulties).map(([d,v])=>`<button class="nw-double-btn nw-double-roomkey nw-double-door-sign" data-double-difficulty="${d}">${nwDoubleDoorSignSvg(false)}<span class="nw-double-key-label">${d.toUpperCase()}</span></button>`).join('')}</div></section>`);
  evRoot.querySelectorAll('[data-double-difficulty]').forEach(b=>b.onclick=()=>nwDoubleLaunch(b.dataset.doubleDifficulty));
 }
 function nwDoubleLaunch(difficulty){
