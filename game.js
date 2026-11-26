@@ -735,23 +735,9 @@ async function nwGrowingUseReserve(qty){const n=Math.floor(Number(qty));if(!Numb
 function nwGrowingInventoryAmount(){return nwPrizeAvailable('tg_energy');}
 const nwAutoBoosterInflight=new Set();
 async function nwLoadEventBoosters(event){
- const uid=nwCloud?.user()?.id,key=uid+':'+event;
- if(!uid||nwAutoBoosterInflight.has(key)||(event==='tt'&&!nwTripleInEvent())||(event==='tg'&&![2,3,4].includes(new Date().getUTCDay())))return;
- nwAutoBoosterInflight.add(key);
- try{
-  await nwPrizeSync();
-  const items=event==='tt'?['tt_undo','tt_shuffle','tt_magic']:['tg_ray','tg_juice'];
-  let changed=false;
-  for(const item of items){
-   if(uid!==nwCloud?.user()?.id)break;
-   const amount=Math.min(10000,nwPrizeAvailable(item));
-   if(amount>0){await nwPrizeTransfer(item,amount);changed=true;}
-  }
-  if(changed&&uid===nwCloud?.user()?.id&&event==='tt'&&evRoot.classList.contains('nw-triple-theme')){
-   if(nwTriple)nwTripleDraw();else nwTripleHome();
-  }
- }catch(e){console.warn('Event booster inventory:',e.message)}
- finally{nwAutoBoosterInflight.delete(key)}
+ // Earned and purchased boosters stay safely in Inventory until the player chooses USE.
+ if(event!=='tt'&&event!=='tg')return;
+ try{await nwPrizeSync();}catch(e){console.warn('Event inventory refresh:',e.message);}
 }
 function nwPrizeAvailable(key){return Math.max(0,Number(nwPrizeCache.stock?.[key])||0);}
 function nwPrizeTransferReceipts(event){return (nwPrizeCache.transfers||[]).filter(t=>t.event===event&&t.period===nwPrizeTransferPeriod(event));}
@@ -1293,6 +1279,24 @@ async function nwWalletSync(){
  }
  nwRefreshVisibleDiamondBalances();
 }
+const nwInventoryMilestoneInflight=new Set();
+async function nwInventoryClaimMilestones(event,period){
+ const uid=nwCloud?.user()?.id,key=uid+':'+event+':'+period;
+ if(!uid||nwInventoryMilestoneInflight.has(key))return;
+ nwInventoryMilestoneInflight.add(key);
+ try{
+  const c=await nwCloud.get();
+  if(nwCloud?.user()?.id!==uid)return;
+  const {data,error}=await c.rpc('nw_inventory_claim_milestones',{p_event:event,p_period:period});
+  if(error)throw Error(error.message);
+  if(nwCloud?.user()?.id!==uid)return;
+  if(Object.values(data?.awarded||{}).some(n=>Number(n)>0)){
+   await nwPrizeSync();
+   if(event==='tt'&&evRoot.classList.contains('nw-triple-theme')&&!nwTriple)nwTripleHome();
+  }
+ }catch(e){console.warn('Inventory milestone sync:',e.message);}
+ finally{nwInventoryMilestoneInflight.delete(key);}
+}
 const nwWalletMilestoneInflight=new Set();
 async function nwWalletClaimMilestones(event,period){
  const uid=nwCloud?.user()?.id,key=uid+':'+event+':'+period;
@@ -1310,6 +1314,7 @@ async function nwWalletClaimMilestones(event,period){
    if(d){d.diamonds=nwWalletState.balance;nwWrite(nwTripleKey,d)}
    nwRefreshVisibleDiamondBalances();
   }
+  void nwInventoryClaimMilestones(event,period);
  }catch(e){console.warn('Verified milestone Diamonds:',e.message)}
  finally{nwWalletMilestoneInflight.delete(key)}
 }
@@ -1330,12 +1335,8 @@ async function nwWalletPurchase(item){
  if(d){d.diamonds=nwWalletState.balance;nwWrite(nwTripleKey,d)}
  nwRefreshVisibleDiamondBalances();
  try{await nwPrizeSync()}catch(e){
-  console.warn('Purchased supplies pending refresh:',e.message);
-  const event=item.startsWith('tt_')?'tt':'tg';
-  const receipt={id:data.transfer_id,event,period:nwPrizeTransferPeriod(event),item,quantity:data.quantity};
-  nwPrizeCache.transfers=[...(nwPrizeCache.transfers||[]),receipt];
-  if(event==='tt')nwPrizeApplyTTTransfers();
-  else try{document.getElementById('nwGrowingFrame')?.contentWindow?.nwGrowingApplyInventory?.()}catch{}
+  // Purchase is committed in Inventory; never fabricate a transfer to the event.
+  console.warn('Purchased Inventory balance will refresh on next sync:',e.message);
  }
  try{localStorage.removeItem(pendingKey)}catch{}
  return data;
@@ -1742,7 +1743,7 @@ function nwTTCount(d){return d.natural+d.extra}
 function nwTTSpendTicket(d,now=nwTTNow()){if(d.natural>0){if(d.natural===10||!d.next)d.next=now+3600000;d.natural--;return true;}if(d.extra>0){d.extra--;return true;}return false}
 function nwTTGrant(d,kind,n){if(kind==='diamonds'){/* Credited after server-verifiable stage completion. */}else if(kind==='ticket')d.extra+=n;else d.boosters[kind]+=n;}
 function nwTTNotice(d,title,items){d.notices.push({title,items});}
-function nwTTClear(d,stage){d.best=Math.max(d.best,stage);d.stage=Math.max(d.stage,stage+1);for(const [m,items] of nwTTMilestones){if(d.best>=m&&!d.claimed.includes(m)){d.claimed.push(m);for(const [k,n] of items)nwTTGrant(d,k,n);nwTTNotice(d,'Stage '+m+' cleared!',items);}}delete d.active;}
+function nwTTClear(d,stage){d.best=Math.max(d.best,stage);d.stage=Math.max(d.stage,stage+1);for(const [m,items] of nwTTMilestones){if(d.best>=m&&!d.claimed.includes(m)){d.claimed.push(m);/* Verified milestone supplies are credited directly to cloud Inventory. */nwTTNotice(d,'Stage '+m+' cleared!',items);}}delete d.active;}
 function nwTTWelcome(d){if(d.welcomed||!nwTripleInEvent())return false;d.welcomed=true;for(const k of ['undo','shuffle','magic'])nwTTGrant(d,k,1);nwTTNotice(d,'Welcome gifts claimed!',[['undo',1],['shuffle',1],['magic',1]]);if(d.best>0)nwTTClear(d,d.best);return true;}
 function nwTTPurchase(d,kind,source){if(!nwTripleInEvent()||source!=='diamonds')return 'Coming soon.';const cost=nwTTPrices[kind];if(!cost||d.diamonds<cost)return 'Not enough Diamonds.';if(kind==='ticket'&&d.spent+cost>10000)return 'Event ticket exchange limit reached.';d.diamonds-=cost;d.diamondDelta-=cost;if(kind==='ticket')d.spent+=cost;nwTTGrant(d,kind,1);nwTTNotice(d,'Purchase successful!',[[kind,1]]);return null;}
 
@@ -1762,7 +1763,7 @@ function nwTTBuy(kind){if(!nwTripleInEvent())return;const d=nwTripleData();const
    if(account!==nwPlayerStorageKey(nwTripleKey))return;
    const updated=nwTripleData();
    if(kind==='ticket')updated.spent+=cost;
-   nwTTNotice(updated,'Purchase successful!',[[kind,1]]);nwTripleSave(updated);redraw();
+   nwTTNotice(updated,'Added to Inventory!',[[kind,1]]);nwTripleSave(updated);redraw();
   }catch(e){nwTTModal('Purchase unavailable',`<p>${nwEscape(e.message)}</p>`,[{label:'OK'}]);}
   return;
  }
