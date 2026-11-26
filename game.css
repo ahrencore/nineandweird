@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Jost:wght@400;500;600;700&family=Cormorant+Garamond:wght@600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Special+Elite&family=Nunito:wght@500;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Barlow+Condensed:wght@500;600;700;800&family=Nunito:wght@500;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Chewy&family=Fredoka:wght@400;500;600;700&display=swap");
@@ -9534,3 +9535,162 @@ body:has(#game.theme-donttakewater:not([hidden])){background:#101D20!important;}
 #game.theme-hub .world-grid .world-donttakewater strong{
  color:#D9FF94!important;text-shadow:none!important;
 }
+
+
+/* Pâtisserie — approved wooden bakery sign makeover.
+   No ornament above Add to Fav, no board/cell/image geometry changes. */
+#game.theme-patissserie{
+ font-family:'Jost',system-ui,sans-serif!important;
+}
+#game.theme-patissserie > .ev-head > strong,
+#game.theme-patissserie :is(.difficulty-panel,.result-panel) h2{
+ color:#493021!important;
+ font-family:'DM Serif Display',Georgia,serif!important;
+ font-weight:400!important;
+ line-height:1.1!important;
+ letter-spacing:0!important;
+ text-shadow:none!important;
+}
+#game.theme-patissserie > .ev-head > strong{font-size:clamp(16px,4vw,21px)!important;}
+#game.theme-patissserie .ev-head :is(.ev-btn,.nw-shared-settings){
+ color:#493021!important;background:#F5E8D3!important;
+ border:1px solid #A87542!important;border-radius:4px!important;
+ box-shadow:none!important;
+}
+#game.theme-patissserie .ev-head{
+ background:#FFFAF1!important;border-color:#D5AD72!important;
+ border-radius:8px!important;
+}
+#game.theme-patissserie :is(.difficulty-panel,.result-panel,.ev-sudo-shell){
+ background:#F5E8D3!important;
+ color:#493021!important;
+ border:1px solid #D5AD72!important;
+ border-radius:10px!important;
+ box-shadow:0 2px 8px #A8754222!important;
+}
+#game.theme-patissserie .nw-fav-toggle{
+ background:#FFF8EC!important;border:1px solid #A87542!important;
+ border-radius:5px!important;color:#493021!important;
+ box-shadow:none!important;font-family:'Jost',system-ui,sans-serif!important;
+}
+#game.theme-patissserie .ev-sudo-stats>div{
+ background:#FFF8EC!important;color:#493021!important;
+ border-color:#D5AD72!important;border-radius:4px!important;
+}
+#game.theme-patissserie .ev-sudo-stats small,
+#game.theme-patissserie .ev-note{
+ color:#8D6846!important;font-family:'Jost',system-ui,sans-serif!important;
+}
+#game.theme-patissserie .ev-sudo-stats strong{
+ color:#493021!important;font-family:'Jost',system-ui,sans-serif!important;
+}
+#game.theme-patissserie .difficulty-list{gap:7px!important;}
+#game.theme-patissserie .difficulty-list .nw-pat-difficulty,
+#game.theme-patissserie .result-actions .nw-pat-action{
+ position:relative!important;isolation:isolate!important;
+ display:grid!important;place-items:center!important;
+ width:100%!important;height:55px!important;min-height:0!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+ overflow:visible!important;cursor:pointer!important;
+}
+#game.theme-patissserie .nw-pat-difficulty > .nw-pat-wood-svg,
+#game.theme-patissserie .result-actions .nw-pat-action > .nw-pat-wood-svg{
+ position:absolute!important;inset:0!important;
+ display:block!important;width:100%!important;height:100%!important;
+ pointer-events:none!important;
+}
+#game.theme-patissserie .nw-pat-difficulty > span,
+#game.theme-patissserie .result-actions .nw-pat-action > span{
+ position:relative!important;z-index:1!important;
+ display:block!important;max-width:76%!important;
+ padding:0!important;margin:0!important;
+ color:#FFF8EC!important;text-align:center!important;
+ font:700 clamp(14px,3vw,17px)/1 'Cormorant Garamond',Georgia,serif!important;
+ letter-spacing:.055em!important;white-space:nowrap!important;
+ text-shadow:0 1px 1px #5C3A1B!important;pointer-events:none!important;
+}
+#game.theme-patissserie .result-actions .nw-pat-action > span{
+ font-size:clamp(12px,2.6vw,15px)!important;
+ letter-spacing:.015em!important;
+}
+#game.theme-patissserie .nw-pat-difficulty:active,
+#game.theme-patissserie .result-actions .nw-pat-action:active{transform:translateY(2px)!important;}
+#game.theme-patissserie .nw-pat-difficulty:focus-visible,
+#game.theme-patissserie .result-actions .nw-pat-action:focus-visible{
+ outline:2px solid #A87542!important;outline-offset:2px!important;
+}
+/* Existing nine pastry pieces remain exactly as authored, with SVG box art underneath. */
+#game.theme-patissserie .ev-sudoku-tray button.nw-pat-tray-piece{
+ position:relative!important;isolation:isolate!important;
+ background:transparent!important;border:0!important;
+ border-radius:0!important;box-shadow:none!important;overflow:visible!important;
+}
+#game.theme-patissserie .ev-sudoku-tray button.nw-pat-tray-piece > .nw-pat-tray-svg{
+ position:absolute!important;inset:0!important;z-index:0!important;
+ display:block!important;width:100%!important;height:100%!important;
+ pointer-events:none!important;
+}
+#game.theme-patissserie .ev-sudoku-tray button.nw-pat-tray-piece > img,
+#game.theme-patissserie .ev-sudoku-tray button.nw-pat-tray-piece > .number-symbol{
+ position:relative!important;z-index:1!important;
+}
+#game.theme-patissserie .ev-sudoku-tray button.nw-pat-tray-piece.selected{
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ filter:drop-shadow(0 0 3px #A8754299)!important;
+}
+#game.theme-patissserie .ev-sudoku-tray button.nw-pat-tray-piece.selected .nw-pat-tray-base{
+ fill:#F2D2A6!important;stroke-width:3!important;
+}
+#game.theme-patissserie .ev-sudoku-tray button.nw-pat-tray-piece .ev-sudo-remain{
+ z-index:3!important;background:#A87542!important;color:#FFF8EC!important;
+ border:1px solid #A87542!important;border-radius:50%!important;
+ font:700 9px/1 'Jost',system-ui,sans-serif!important;
+}
+#game.theme-patissserie .ev-sudo-tools-clean .ev-sudo-tool{
+ background:#FFF8EC!important;color:#493021!important;
+ border:1px solid #A87542!important;border-bottom:3px solid #D5AD72!important;
+ border-radius:5px!important;box-shadow:none!important;
+}
+#game.theme-patissserie .ev-sudo-tools-clean .ev-sudo-tool.active{
+ background:#F2D2A6!important;border-color:#A87542!important;
+ box-shadow:0 0 8px #D5AD7255!important;
+}
+#game.theme-patissserie .ev-sudo-tools-clean .ev-sudo-tool-icon{
+ display:grid!important;place-items:center!important;color:#A87542!important;
+ filter:none!important;text-shadow:none!important;
+}
+#game.theme-patissserie .nw-pat-tool-svg{
+ display:block!important;width:20px!important;height:20px!important;
+}
+#game.theme-patissserie .ev-sudo-tools-clean .ev-sudo-tool-label{
+ font:600 9px/1.2 'Jost',system-ui,sans-serif!important;
+ color:#493021!important;text-shadow:none!important;
+}
+#game.theme-patissserie .result-panel .result-mark{
+ display:grid!important;place-items:center!important;
+ box-sizing:border-box!important;
+ width:67px!important;height:67px!important;
+ min-width:67px!important;min-height:67px!important;
+ max-width:67px!important;max-height:67px!important;
+ aspect-ratio:1/1!important;flex:0 0 67px!important;
+ padding:0!important;margin:7px auto 14px!important;
+ background:#FFF8EC!important;border:3px solid #A87542!important;
+ border-radius:50%!important;color:#A87542!important;box-shadow:none!important;
+}
+#game.theme-patissserie .result-panel .nw-pat-result-svg{
+ display:block!important;width:38px!important;height:38px!important;
+}
+#game.theme-patissserie .result-panel:not(:has(.result-score)) .result-mark{
+ color:#B64A43!important;border-color:#B64A43!important;
+ background:#FFEAE2!important;
+}
+#game.theme-patissserie .result-panel .result-score strong{
+ color:#A87542!important;
+ font:400 34px/1.2 'DM Serif Display',Georgia,serif!important;
+}
+#game.theme-patissserie .result-panel :is(.result-score,.result-stats){
+ color:#493021!important;
+}
+#game.theme-patissserie .result-actions{gap:7px!important;}
