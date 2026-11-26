@@ -7357,14 +7357,26 @@ html:has(#game.nw-let-shell:not([hidden])),body:has(#game.nw-let-shell:not([hidd
 #game.theme-solarsick .result-panel .result-mark{
  display:grid!important;
  place-items:center!important;
+ width:66px!important;
+ height:66px!important;
+ min-width:66px!important;
+ min-height:66px!important;
+ max-width:66px!important;
+ max-height:66px!important;
+ aspect-ratio:1 / 1!important;
+ flex:0 0 66px!important;
+ padding:0!important;
+ margin:6px auto 12px!important;
+ box-sizing:border-box!important;
  background:#211032!important;
  color:#C8FF2C!important;
  border:3px solid #FF4FD2!important;
  border-radius:50%!important;
+ box-shadow:0 0 12px #FF4FD233!important;
 }
 #game.theme-solarsick .result-panel .nw-solar-result-icon{
- width:min(64%,50px)!important;
- height:min(64%,50px)!important;
+ width:38px!important;
+ height:38px!important;
  display:block!important;
 }
 #game.theme-solarsick .result-panel:not(:has(.result-score)) .result-mark{
