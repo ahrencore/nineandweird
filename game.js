@@ -2517,20 +2517,9 @@ function evSudokuPaint(){
     const matching=s.highlight>0&&n===s.highlight&&!s.wrong.has(i);
     const matchLine=false;
     el.className='ev-sudoku-cell'+(s.givens.has(i)?' given':'')+(peer?' peer':'')+(matchLine?' match-line':'')+(matching?' same':'')+(i===s.selected?' selected':'')+(s.wrong.has(i)?' bad':'');
-    // What Am I Looking At? — force exact 3×3 boundaries at the cell edge.
-    // Inline !important defeats years of competing legacy nth-child CSS rules.
-    // The 4px hot-pink strokes exist ONLY after rows/columns 3 and 6;
-    // the rightmost and bottommost edges belong solely to the outer frame.
-    if(currentWorld==='weird'){
-      const strokeRight=c===8?'0':(c===2||c===5?'4px solid #FF399F':'1px solid #665B88');
-      const strokeBottom=r===8?'0':(r===2||r===5?'4px solid #FF399F':'1px solid #665B88');
-      el.style.setProperty('border-right',strokeRight,'important');
-      el.style.setProperty('border-bottom',strokeBottom,'important');
-      el.style.setProperty('border-top','0','important');
-      el.style.setProperty('border-left','0','important');
-    }else{
-      for(const side of ['right','bottom','top','left'])el.style.removeProperty('border-'+side);
-    }
+    // Section separators are now a continuous overlay above thin cell lines.
+    // Remove legacy per-cell inline border overrides when repainting.
+    for(const side of ['right','bottom','top','left'])el.style.removeProperty('border-'+side);
     el.innerHTML=n?sudokuSymbol(n):(s.noteMarks[i]?.length?`<span class="ev-sudo-note-marks">${s.noteMarks[i].sort((a,b)=>a-b).join(' ')}</span>`:'');
     if(!n&&s.noteMarks[i]?.length){
       const bg=getComputedStyle(el).backgroundColor.match(/[\d.]+/g);
