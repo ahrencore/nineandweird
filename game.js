@@ -1523,14 +1523,15 @@ async function nwDoubleRpc(action='snapshot',params={}){
  if(error)throw Error(error.message);
  nwDoubleSnapshot=data;return data;
 }
-function nwDoubleIdentity(person,self=false){
- if(self){const p=nwProfile();return `<div class="nw-double-person">${nwFrameArt(p.avatar,'nw-double-avatar')}<strong>${nwEscape(p.name)}</strong></div>`;}
+function nwDoubleIdentity(person,self=false,score=null){
+ const points=score===null?'':`<span>${nwDoubleFmt(score)}</span>`;
+ if(self){const p=nwProfile();return `<div class="nw-double-person">${nwFrameArt(p.avatar,'nw-double-avatar')}<strong>${nwEscape(p.name)}</strong>${points}</div>`;}
  if(!person)return '<div class="nw-double-person"><div class="nw-double-avatar unknown">?</div><strong>PARTNER</strong></div>';
  if(Number.isInteger(person.recorded_id)){
   const p=nwBattleProfiles[person.recorded_id];
-  return p?`<div class="nw-double-person">${nwBattleProfileArt(p,'nw-double-avatar')}<strong>${nwEscape(p.name)}</strong></div>`:'';
+  return p?`<div class="nw-double-person">${nwBattleProfileArt(p,'nw-double-avatar')}<strong>${nwEscape(p.name)}</strong>${points}</div>`:'';
  }
- return `<div class="nw-double-person">${nwFriendPhoto(person)}<strong>${nwEscape(person.name||'Partner')}</strong></div>`;
+ return `<div class="nw-double-person">${nwFriendPhoto(person)}<strong>${nwEscape(person.name||'Partner')}</strong>${points}</div>`;
 }
 function nwDoubleRecordPoints(id,start=Date.now(),end=Date.now()+259200000){
  const rows=nwBattlePracticeRuns.filter(r=>r.profile_id===id);
@@ -1550,7 +1551,7 @@ function nwDoubleTeams(m=nwDoubleSnapshot){
  const sc=nwDoubleScores(m),rivals=m.opponents||[],solo=!m.partner;
  const player=(p)=>`<div class="nw-double-person">${Number.isInteger(p.recorded_id)?nwBattleProfileArt(nwBattleProfiles[p.recorded_id],'nw-double-avatar'):nwFriendPhoto(p)}<strong>${nwEscape(Number.isInteger(p.recorded_id)?nwBattleProfiles[p.recorded_id]?.name||'Opponent':p.name||'Opponent')}</strong><span>${nwDoubleFmt(p.points)}</span></div>`;
  const pct=sc.ours+sc.theirs?Math.round(sc.ours/(sc.ours+sc.theirs)*100):50;
- return `<div class="nw-double-teams"><article class="nw-double-team"><div class="nw-double-team-head"><small>${solo?'SOLO':'YOUR TEAM'}</small><strong>${nwDoubleFmt(sc.ours)}</strong></div><div class="nw-double-people">${nwDoubleIdentity(null,true)}${solo?'':nwDoubleIdentity(m.partner)}</div></article><div class="nw-double-vs">VS</div><article class="nw-double-team rival"><div class="nw-double-team-head"><small>RIVAL TEAM</small><strong>${nwDoubleFmt(sc.theirs)}</strong></div><div class="nw-double-people">${rivals.map(player).join('')}</div></article><div class="nw-double-track"><i style="width:${pct}%"></i></div><div class="nw-double-margin">${sc.ours>sc.theirs?'YOUR SIDE LEADS BY '+nwDoubleFmt(sc.ours-sc.theirs):sc.ours<sc.theirs?'RIVALS LEAD BY '+nwDoubleFmt(sc.theirs-sc.ours):'TIED'}</div></div>`;
+ return `<div class="nw-double-teams"><article class="nw-double-team"><div class="nw-double-team-head"><small>${solo?'SOLO':'YOUR TEAM'}</small><strong>${nwDoubleFmt(sc.ours)}</strong></div><div class="nw-double-people">${nwDoubleIdentity(null,true,sc.mine)}${solo?'':nwDoubleIdentity(m.partner,false,sc.partner)}</div></article><div class="nw-double-vs">VS</div><article class="nw-double-team rival"><div class="nw-double-team-head"><small>RIVAL TEAM</small><strong>${nwDoubleFmt(sc.theirs)}</strong></div><div class="nw-double-people">${rivals.map(player).join('')}</div></article><div class="nw-double-track"><i style="width:${pct}%"></i></div><div class="nw-double-margin">${sc.ours>sc.theirs?'YOUR SIDE LEADS BY '+nwDoubleFmt(sc.ours-sc.theirs):sc.ours<sc.theirs?'RIVALS LEAD BY '+nwDoubleFmt(sc.theirs-sc.ours):'TIED'}</div></div>`;
 }
 function nwDoubleAlert(message){
  const el=evRoot.querySelector('#nwDoubleAlert');if(el){el.textContent=message;el.hidden=!message;}
