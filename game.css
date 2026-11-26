@@ -10034,3 +10034,51 @@ body:has(#game.theme-donttakewater:not([hidden])){background:#101D20!important;}
  display:block!important;width:80px!important;height:80px!important;
 }
 #game.theme-olympus .result-actions{gap:7px!important;}
+
+
+/* Double Trouble Partner Day — invitation list, match confirmation and badges. */
+#game.nw-double-theme .nw-double-invitations{
+ display:grid;gap:9px;margin:13px 0 16px;
+}
+#game.nw-double-theme .nw-double-invite-row{
+ display:flex;align-items:center;gap:9px;min-width:0;
+ background:#32252F;border:1px solid #A36F83;border-radius:10px;
+ padding:9px 8px;color:#FFEDE5;
+}
+#game.nw-double-theme .nw-double-invite-row .nw-friend-avatar{
+ flex:none;width:43px;height:43px;
+}
+#game.nw-double-theme .nw-double-invite-row strong{
+ flex:1;min-width:0;overflow-wrap:anywhere;
+ font:700 12px/1.3 system-ui,sans-serif;
+ text-align:left;
+}
+#game.nw-double-theme .nw-double-invite-row button{
+ border:1px solid #FFB6D0;background:#FF719C;color:#321D2A;
+ border-radius:6px;padding:8px 6px;font:700 10px/1.2 system-ui,sans-serif;
+ flex:none;cursor:pointer;
+}
+#game.nw-double-theme .nw-double-invite-row button:disabled{opacity:.6;cursor:default;}
+#game.nw-double-theme .nw-double-invitation-button{margin:12px 0;}
+#game.nw-double-theme .nw-double-invitation-button .nw-double-btn{border-radius:7px;}
+#game.nw-double-theme .nw-double-match-overlay{
+ position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+ background:#140B12D9;padding:18px;overflow-y:auto;
+}
+#game.nw-double-theme .nw-double-match-dialog{
+ background:#2C1D29;border:2px solid #FF93B5;max-width:390px;width:100%;
+ border-radius:15px;padding:22px 18px;color:#FFE8EC;text-align:center;
+ box-shadow:0 15px 50px #080207AA;
+}
+#game.nw-double-theme .nw-double-match-dialog h3{
+ margin:2px 0 13px;font:700 23px/1.2 Georgia,serif;color:#FFADC8;
+}
+#game.nw-double-theme .nw-double-match-dialog p{
+ font:500 14px/1.5 system-ui,sans-serif;margin:0 0 20px;
+}
+#game.nw-double-theme .nw-double-dialog-actions{display:grid;gap:8px;}
+#game.nw-double-theme .nw-double-note{line-height:1.4;}
+@media(max-width:360px){
+ #game.nw-double-theme .nw-double-invite-row{flex-wrap:wrap}
+ #game.nw-double-theme .nw-double-invite-row strong{flex-basis:calc(100% - 58px)}
+}
