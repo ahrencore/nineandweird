@@ -11238,3 +11238,17 @@ html:has(#game.nw-battle-theme:not([hidden])),body:has(#game.nw-battle-theme:not
  border:0;background:#0B1420;overflow:auto;
 }
 @media(prefers-reduced-motion:reduce){#game .nw-lobby-portal.aislepanic .nw-lobby-portal-disc:after{animation:none}}
+
+/* Aisle Panic: hide scrollbars in the outer shell without trapping short-screen users. */
+html:has(#game.nw-aisle-shell:not([hidden])),
+body:has(#game.nw-aisle-shell:not([hidden])),
+#game.nw-aisle-shell,
+#game.nw-aisle-shell .nw-aisle-frame-container{
+ scrollbar-width:none!important;-ms-overflow-style:none!important;
+}
+html:has(#game.nw-aisle-shell:not([hidden]))::-webkit-scrollbar,
+body:has(#game.nw-aisle-shell:not([hidden]))::-webkit-scrollbar,
+#game.nw-aisle-shell::-webkit-scrollbar,
+#game.nw-aisle-shell .nw-aisle-frame-container::-webkit-scrollbar{
+ display:none!important;width:0!important;height:0!important;
+}
