@@ -1690,7 +1690,7 @@ function nwDoublePracticeScreen(){
   const paired=!!d.partner;
   let content='';
   if(period.phase==='pair'){
-   content=`<h3>PARTNERS IN CRIME</h3><div class="nw-double-people">${nwDoubleIdentity(null,true)}${d.mode==='random'?nwDoubleIdentity(null):nwDoubleIdentity(d.partner)}</div>`;
+   content=`<h3>PARTNERS IN CRIME</h3><div class="nw-double-people">${nwDoubleIdentity(null,true)}${d.mode==='solo'?'':d.mode==='random'?nwDoubleIdentity(null):nwDoubleIdentity(d.partner)}</div>`;
    if(d.mode==='random')content+='<p class="nw-double-note">Random Match confirmed. Your partner will be revealed on Friday.</p>';
    else if(d.mode==='solo')content+='<p class="nw-double-note">SOLO ENTRY CONFIRMED. You can compete when Double Trouble begins on Friday.</p>';
    else if(paired)content+='<p class="nw-double-note">Your partnership is confirmed for Friday.</p>';
