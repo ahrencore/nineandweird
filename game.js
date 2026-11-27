@@ -1673,7 +1673,7 @@ function nwDoubleUtilityBar(){
 }
 function nwDoubleHowToPlay(){
  clearInterval(nwDoubleTimer);nwDoubleTimer=null;nwDoubleTheme();
- evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-howto"><h2 class="nw-double-subtitle">HOW TO PLAY</h2><div class="nw-double-howto-text"><p><strong>PARTNER DAY</strong> Thursday, 00:00–Friday, 00:00 UTC. Invite friends or choose Random Match. The first accepted invitation confirms your partner. Random partners are revealed when Double Trouble begins.</p><p><strong>FRIDAY–SUNDAY</strong> Complete Sudoku puzzles to earn points. Your points and your partner’s points are added together. Players without a partner compete solo.</p><p><strong>THE RACE</strong> Compete against another team. Partnerships stay locked throughout the event.</p><p><strong>THE SPOILS</strong> Earn at least 3,500 personal points to qualify for diamonds. Rewards depend on your team's result and your personal contribution. An inactive partner who doesn't qualify receives no reward.</p></div>${nwDoubleButton('nwDoubleHowToBack','BACK TO EVENT',true)}</section>`);
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-howto"><h2 class="nw-double-subtitle">HOW TO PLAY</h2><div class="nw-double-howto-text"><p><strong>MATCHING DAY</strong> Thursday, 00:00–Friday, 00:00 UTC. Invite a friend, choose Random Match, or select GO SOLO. You must enter on Thursday to compete that weekend. Random partners are revealed on Friday.</p><p><strong>FRIDAY–SUNDAY</strong> Registered players complete Sudoku puzzles to earn points. Teammates’ points are combined; registered solo players contribute their own score. Players who missed Thursday can join next week.</p><p><strong>THE RACE</strong> Solo players and two-player teams can face each other when needed. Opponents stay locked for the weekend.</p><p><strong>THE SPOILS</strong> Earn at least 3,500 personal points to qualify. Winners earn 3,000 / 2,500 Diamonds for first / second contributor; losing teams earn 1,000 / 500. Solo entrants always receive the first-contributor amount. An inactive teammate who doesn't qualify receives no reward.</p></div>${nwDoubleButton('nwDoubleHowToBack','BACK TO EVENT',true)}</section>`);
  evRoot.querySelector('#nwDoubleHowToBack').onclick=nwDoublePracticeScreen;
 }
 function nwDoublePracticeScreen(){
@@ -1692,29 +1692,34 @@ function nwDoublePracticeScreen(){
   if(period.phase==='pair'){
    content=`<h3>PARTNERS IN CRIME</h3><div class="nw-double-people">${nwDoubleIdentity(null,true)}${d.mode==='random'?nwDoubleIdentity(null):nwDoubleIdentity(d.partner)}</div>`;
    if(d.mode==='random')content+='<p class="nw-double-note">Random Match confirmed. Your partner will be revealed on Friday.</p>';
+   else if(d.mode==='solo')content+='<p class="nw-double-note">SOLO ENTRY CONFIRMED. You can compete when Double Trouble begins on Friday.</p>';
    else if(paired)content+='<p class="nw-double-note">Your partnership is confirmed for Friday.</p>';
-   else content+=nwDoubleButton('nwDoubleInvite','INVITE A FRIEND')+nwDoubleButton('nwDoubleRandom','RANDOM MATCH',true);
+   else content+=nwDoubleButton('nwDoubleInvite','INVITE A FRIEND')+nwDoubleButton('nwDoubleRandom','RANDOM MATCH',true)+nwDoubleButton('nwDoubleSolo','GO SOLO',true);
    // Pending invitations light up the compact Invitations button below.
   }else if(period.phase==='active'){
-   content=`${nwDoubleTeams(d)}<div class="nw-double-prize-progress"><div class="nw-double-prize-progress-top"><span>YOUR PROGRESS</span><strong>${nwDoubleFmt(d.points)} / 3,500</strong></div><div class="nw-double-eligibility-track"><i style="width:${Math.min(100,Number(d.points||0)/35)}%"></i></div></div>${nwDoubleButton('nwDoublePlay','▹ PLAY NOW')}`;
+   if(d.eligible===false){
+    content='<div class="nw-double-late-join" role="status"><h3>MATCHING DAY HAS ENDED!</h3><p>You missed this week’s Matching Day. Come back next Thursday to join the next Double Trouble!</p><small>YOU CAN JOIN THE NEXT EVENT</small></div>';
+   }else content=`${nwDoubleTeams(d)}<div class="nw-double-prize-progress"><div class="nw-double-prize-progress-top"><span>YOUR PROGRESS</span><strong>${nwDoubleFmt(d.points)} / 3,500</strong></div><div class="nw-double-eligibility-track"><i style="width:${Math.min(100,Number(d.points||0)/35)}%"></i></div></div>${nwDoubleButton('nwDoublePlay','▹ PLAY NOW')}`;
   }else content='<p class="nw-double-note">Partner Day begins Thursday at 00:00 UTC.</p>';
   box.innerHTML=content;
-  const invite=box.querySelector('#nwDoubleInvite'),random=box.querySelector('#nwDoubleRandom'),play=box.querySelector('#nwDoublePlay');
+  const invite=box.querySelector('#nwDoubleInvite'),random=box.querySelector('#nwDoubleRandom'),solo=box.querySelector('#nwDoubleSolo'),play=box.querySelector('#nwDoublePlay');
   const inviteIndicator=evRoot.querySelector('#nwDoubleCheckInvites');
   if(inviteIndicator){const pending=period.phase==='pair'&&(d.invitations||[]).length>0;inviteIndicator.classList.toggle('has-invitation',pending);inviteIndicator.setAttribute('aria-label',pending?'Invitations — new invitation received':'Invitations');}
-  if(invite)invite.onclick=nwDoubleInviteFriends;if(random)random.onclick=nwDoublePopup;if(play)play.onclick=nwDoubleDifficulty;
+  if(invite)invite.onclick=nwDoubleInviteFriends;if(random)random.onclick=nwDoublePopup;
+  if(solo)solo.onclick=async()=>{solo.disabled=true;try{await nwDoubleRpc('solo');nwDoublePracticeScreen();}catch(e){nwDoubleAlert(e.message);solo.disabled=false;const note=document.createElement('p');note.className='nw-double-alert';note.textContent=e.message;solo.after(note);}};
+  if(play)play.onclick=nwDoubleDifficulty;
  }catch(e){if(box.isConnected)box.innerHTML=`<p class="nw-double-alert">${nwEscape(e.message)}</p>${nwDoubleButton('nwDoubleRetry','RETRY',true)}`;const b=box.querySelector('#nwDoubleRetry');if(b)b.onclick=refresh;}};
  void refresh();
  // Periodic server refresh makes new invitations and partner scores visible without reopening.
  const holder=evRoot.querySelector('#nwDoubleLive');const polling=setInterval(()=>{if(!holder?.isConnected){clearInterval(polling);return;}void refresh();},15000);
 }
 function nwDoubleDifficulty(){
- clearInterval(nwDoubleTimer);if(nwDoublePeriod().phase!=='active'){nwDoublePracticeScreen();return;}nwDoubleTheme();
+ clearInterval(nwDoubleTimer);if(nwDoublePeriod().phase!=='active'||nwDoubleSnapshot?.eligible===false){nwDoublePracticeScreen();return;}nwDoubleTheme();
  evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double"><h2 class="nw-double-subtitle">CHOOSE YOUR DIFFICULTY</h2><div class="nw-double-levels">${Object.entries(difficulties).map(([d,v])=>`<button class="nw-double-btn nw-double-roomkey nw-double-door-sign" data-double-difficulty="${d}">${nwDoubleDoorSignSvg(false)}<span class="nw-double-key-label">${d.toUpperCase()}</span></button>`).join('')}</div></section>`);
  evRoot.querySelectorAll('[data-double-difficulty]').forEach(b=>b.onclick=()=>nwDoubleLaunch(b.dataset.doubleDifficulty));
 }
 function nwDoubleLaunch(difficulty){
- if(nwDoublePeriod().phase!=='active'){nwDoublePracticeScreen();return;}
+ if(nwDoublePeriod().phase!=='active'||nwDoubleSnapshot?.eligible===false){nwDoublePracticeScreen();return;}
  if(nwDoubleWorldBefore===null)nwDoubleWorldBefore=currentWorld;
  nwDoublePracticeActive=true;
  const pool=[...nwGroups.usual,...nwGroups.weird].filter(id=>id!=='classic'&&id!=='dark'&&worlds[id]);
@@ -1727,7 +1732,7 @@ function nwDoubleRewards(){
  const d=nwDoubleSnapshot,pts=Number(d?.points||0);
  const tier=(name,amounts,rival=false)=>`<article class="nw-double-prize-card${rival?' rival':''}"><div class="nw-double-prize-emblem" aria-hidden="true">${rival?'☾':'✦'}</div><h3>${name}</h3><div class="nw-double-prize-amount">${nwDiamondAmount(amounts[0])}</div><small>TOP CONTRIBUTOR</small><div class="nw-double-prize-divider"></div><div class="nw-double-prize-secondary">${nwDiamondAmount(amounts[1])}</div><small>OTHER TEAMMATE</small></article>`;
  const progress=`<div class="nw-double-prize-progress"><div class="nw-double-prize-progress-top"><span>YOUR PROGRESS</span><strong>${nwDoubleFmt(pts)} / 3,500</strong></div><div class="nw-double-eligibility-track"><i style="width:${Math.min(100,pts/35)}%"></i></div><small>${pts>=3500?'QUALIFIED ✓':nwDoubleFmt(3500-pts)+' more points to qualify'}</small></div>`;
- evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-reward-page nw-double-spoils"><div class="nw-double-spoils-light left" aria-hidden="true"></div><div class="nw-double-spoils-light right" aria-hidden="true"></div><div class="nw-double-spoils-content"><div class="nw-double-spoils-decor" aria-hidden="true">⋆｡☁︎｡ ﾟ☾ ﾟ⋆</div><h2 class="nw-double-spoils-title">THE SPOILS</h2><p class="nw-double-spoils-sub">DOUBLE TROUBLE · WEEKEND REWARDS</p><div class="nw-double-prize-grid">${tier('WINNERS',[1000,700])}${tier('LOSERS',[500,200],true)}</div><p class="nw-double-spoils-rule">✧ Earn 3,500 personal points to qualify.</p>${progress}<small class="nw-double-spoils-footnote">Prizes are determined when the event ends.</small>${nwDoubleButton('nwDoubleHistory','EVENT HISTORY',true)}</div></section>`);
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-reward-page nw-double-spoils"><div class="nw-double-spoils-light left" aria-hidden="true"></div><div class="nw-double-spoils-light right" aria-hidden="true"></div><div class="nw-double-spoils-content"><div class="nw-double-spoils-decor" aria-hidden="true">⋆｡☁︎｡ ﾟ☾ ﾟ⋆</div><h2 class="nw-double-spoils-title">THE SPOILS</h2><p class="nw-double-spoils-sub">DOUBLE TROUBLE · WEEKEND REWARDS</p><div class="nw-double-prize-grid">${tier('WINNERS',[3000,2500])}${tier('LOSERS',[1000,500],true)}</div><p class="nw-double-spoils-rule">✧ Earn 3,500 personal points to qualify.</p>${progress}<small class="nw-double-spoils-footnote">Prizes are determined when the event ends.</small>${nwDoubleButton('nwDoubleHistory','EVENT HISTORY',true)}</div></section>`);
  const history=evRoot.querySelector('#nwDoubleHistory');if(history)history.onclick=nwDoubleHistory;
 }
 
