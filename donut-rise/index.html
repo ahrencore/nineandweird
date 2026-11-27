@@ -541,7 +541,9 @@ async function clearLines(combo=1,full=fullRows()){
  const remaining=grid.filter((_,r)=>!full.includes(r));
  grid=Array.from({length:full.length},()=>Array(COLS).fill(null)).concat(remaining);
  const points=(full.length*100+specialCount*50)*combo;
+ const previousScore=score;
  score+=points;lines+=full.length;cleanGroups();selected=null;
+ drQueueCheckpoint(previousScore);
  announce((combo>1?'COMBO ×'+combo+'! ':'')+full.length+' FULL LINE'+(full.length>1?'S':'')+'! +'+points);
  await animateBoardMovement(before);
  const f=document.createElement('div');f.className='clear-points';f.textContent=(combo>1?'COMBO ×'+combo+'  ':'')+'+'+points;
@@ -660,11 +662,20 @@ function drSaveStatus(){
  label.textContent=(drSavePending||[...drSessions.values()].some(r=>r.finished&&!r.submitted))?'SAVING SCORE…':drSaveMessage||(
   drLive?'EVENT LIVE · FRI–SUN':'PRACTICE MODE · EVENT RETURNS FRIDAY');
 }
-function drQueueRunCompletion(){
- if(!running||!drLive)return;
+function drQueueCheckpoint(previousScore){
+ if(!running||!drLive||score<1000||!drThresholds.some(points=>previousScore<points&&score>=points))return;
  const entry=drSessions.get(drRunSeq);
  if(!entry||entry.finished)return;
- entry.finished={score,lines,moves};drSubmitSession(drRunSeq);
+ entry.pendingCheckpoint={score,lines,moves};
+ drSendCheckpoint(drRunSeq);
+}
+function drSendCheckpoint(seq){
+ const entry=drSessions.get(seq);
+ if(!entry||!entry.runId||entry.inFlight||entry.finished||!entry.pendingCheckpoint)return;
+ const stats=entry.pendingCheckpoint;
+ entry.pendingCheckpoint=null;
+ entry.inFlight=true;
+ drSignal({type:'nw-dr-checkpoint',seq,runId:entry.runId,...stats});
 }
 function drSubmitSession(seq){
  const entry=drSessions.get(seq);
@@ -677,7 +688,7 @@ const drEsc=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>'
 const drFmt=v=>Number(v||0).toLocaleString();
 function drBeginRun(){
  drRunSeq++;drRunId=null;drOverStats=null;
- drSessions.set(drRunSeq,{runId:null,finished:null,submitted:false});
+ drSessions.set(drRunSeq,{runId:null,finished:null,submitted:false,inFlight:false,pendingCheckpoint:null});
  drSignal({type:'nw-dr-start',seq:drRunSeq});
 }
 function drFinishRun(){
@@ -795,9 +806,23 @@ window.addEventListener('message',event=>{
   if(entry){entry.runId=data.run_id||null;
    if(data.seq===drRunSeq)drRunId=entry.runId;
    if(!data.live)drSessions.delete(data.seq);
-   else drSubmitSession(data.seq);
+   else{
+    drLive=true;
+    if(data.seq===drRunSeq&&score>=1000&&running){
+     entry.pendingCheckpoint={score,lines,moves};
+    }
+    drSendCheckpoint(data.seq);
+    drSubmitSession(data.seq);
+   }
    drSaveStatus();
   }
+ }
+ else if(data.type==='nw-dr-checkpoint-saved'){
+  const entry=drSessions.get(data.seq);
+  if(entry){entry.inFlight=false;drSendCheckpoint(data.seq);}
+  drPreviewMilestones(data.state);
+  drRenderMilestones(data.state);
+  if(drModalView==='rank')drSignal({type:'nw-dr-rank'});
  }
  else if(data.type==='nw-dr-finished'){
   if(drSessions.has(data.seq))drSessions.delete(data.seq);
@@ -815,6 +840,11 @@ window.addEventListener('message',event=>{
   if(data.command==='nw-dr-start'){
    drSessions.delete(data.seq);
    if(data.seq===drRunSeq){drRunId=null;drOverStats=null;}
+  }
+  if(data.command==='nw-dr-checkpoint'){
+   const entry=drSessions.get(data.seq);
+   if(entry){entry.inFlight=false;entry.pendingCheckpoint=null;}
+   if(!gameShell.hidden)announce('Could not sync milestone progress: '+(data.message||'Connection unavailable'));
   }
   if(data.command==='nw-dr-finish'){
    const entry=drSessions.get(data.seq);
