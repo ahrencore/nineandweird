@@ -1712,14 +1712,31 @@ function nwDoubleDifficulty(){
  evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double"><h2 class="nw-double-subtitle">CHOOSE YOUR DIFFICULTY</h2><div class="nw-double-levels">${Object.entries(difficulties).map(([d,v])=>`<button class="nw-double-btn nw-double-roomkey nw-double-door-sign" data-double-difficulty="${d}">${nwDoubleDoorSignSvg(false)}<span class="nw-double-key-label">${d.toUpperCase()}</span></button>`).join('')}</div></section>`);
  evRoot.querySelectorAll('[data-double-difficulty]').forEach(b=>b.onclick=()=>nwDoubleLaunch(b.dataset.doubleDifficulty));
 }
-function nwDoubleLaunch(difficulty){
+let nwDoubleStarting=false;
+async function nwDoubleLaunch(difficulty){
+ if(nwDoubleStarting)return;
  if(nwDoublePeriod().phase!=='active'||nwDoubleSnapshot?.eligible===false){nwDoublePracticeScreen();return;}
- if(nwDoubleWorldBefore===null)nwDoubleWorldBefore=currentWorld;
- nwDoublePracticeActive=true;
- const pool=[...nwGroups.usual,...nwGroups.weird].filter(id=>id!=='classic'&&id!=='dark'&&worlds[id]);
- const fresh=pool.filter(id=>id!==nwDoubleLastRoom),choices=fresh.length?fresh:pool;
- currentWorld=choices[Math.floor(Math.random()*choices.length)]||'halloween';nwDoubleLastRoom=currentWorld;
- evSudokuStart(difficulty);
+ nwDoubleStarting=true;
+ nwDoubleTheme();
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2>PREPARING YOUR PUZZLE</h2><p class="nw-double-note">Securing this Sudoku session...</p></section>`);
+ try{
+  const c=await nwCloud.get();
+  const {data,error}=await c.rpc('nw_dt_begin',{p_difficulty:difficulty});
+  if(error)throw Error(error.message);
+  if(!data?.run_id||!/^[0-9]{81}$/.test(data.puzzle||'')||!/^[1-9]{81}$/.test(data.solution||''))throw Error('Verified puzzle unavailable. Please retry.');
+  if(nwDoublePeriod().phase!=='active')throw Error('Double Trouble has ended.');
+  if(nwDoubleWorldBefore===null)nwDoubleWorldBefore=currentWorld;
+  nwDoublePracticeActive=true;
+  const pool=[...nwGroups.usual,...nwGroups.weird].filter(id=>id!=='classic'&&id!=='dark'&&worlds[id]);
+  const fresh=pool.filter(id=>id!==nwDoubleLastRoom),choices=fresh.length?fresh:pool;
+  currentWorld=choices[Math.floor(Math.random()*choices.length)]||'halloween';nwDoubleLastRoom=currentWorld;
+  evSudokuStart(difficulty,null,null,data);
+ }catch(e){
+  nwDoublePracticeActive=false;
+  evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2>PUZZLE NOT READY</h2><p class="nw-double-alert">${nwEscape(e.message)}</p>${nwDoubleButton('nwDoubleRetryBegin','TRY AGAIN')}${nwDoubleButton('nwDoubleBackBegin','BACK TO EVENT',true)}</section>`);
+  evRoot.querySelector('#nwDoubleRetryBegin').onclick=()=>nwDoubleLaunch(difficulty);
+  evRoot.querySelector('#nwDoubleBackBegin').onclick=nwDoublePracticeScreen;
+ }finally{nwDoubleStarting=false}
 }
 function nwDoubleRewards(){
  clearInterval(nwDoubleTimer);nwDoubleTheme();
@@ -1750,19 +1767,23 @@ function nwDoublePracticeAfterSudoku(s,won,pts){
  nwDoublePracticeActive=false;nwDoubleTheme();
  const credited=!!(won&&nwDoublePeriod().phase==='active'&&!s.doubleCredited);
  if(credited)s.doubleCredited=true;
- const show=(message,total)=>{const sc=nwDoubleScores();evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2 class="nw-double-result-title">${won?'NICELY DONE!':'PUZZLE NOT COMPLETED'}</h2><div class="nw-double-kicker">POINTS CONTRIBUTED</div><div class="nw-double-earned">+${nwDoubleFmt(credited?pts:0)}</div><div class="nw-double-summary"><div>YOUR CONTRIBUTION <strong>${nwDoubleFmt(total)}</strong></div><div>TEAM TOTAL <strong>${nwDoubleFmt(sc.ours)}</strong></div></div>${message?'<p class="nw-double-alert">'+nwEscape(message)+'</p>':''}${nwDoublePeriod().phase==='active'?nwDoubleButton('nwDoubleAgain','▹ '+(won?'PLAY AGAIN':'RETRY')):''}${nwDoublePeriod().phase==='active'?nwDoubleButton('nwDoubleChangeDifficulty','CHANGE DIFFICULTY',true):''}${nwDoubleButton('nwDoubleContinue','BACK TO EVENT',true)}</section>`);
+ const show=(message,total,awarded=0)=>{
+  const sc=nwDoubleScores();
+  evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2 class="nw-double-result-title">${won?'NICELY DONE!':'PUZZLE NOT COMPLETED'}</h2><div class="nw-double-kicker">POINTS CONTRIBUTED</div><div class="nw-double-earned">+${nwDoubleFmt(awarded)}</div><div class="nw-double-summary"><div>YOUR CONTRIBUTION <strong>${nwDoubleFmt(total)}</strong></div><div>TEAM TOTAL <strong>${nwDoubleFmt(sc.ours)}</strong></div></div>${message?'<p class="nw-double-alert">'+nwEscape(message)+'</p>':''}${nwDoublePeriod().phase==='active'?nwDoubleButton('nwDoubleAgain','▹ '+(won?'PLAY AGAIN':'RETRY')):''}${nwDoublePeriod().phase==='active'?nwDoubleButton('nwDoubleChangeDifficulty','CHANGE DIFFICULTY',true):''}${nwDoubleButton('nwDoubleContinue','BACK TO EVENT',true)}</section>`);
   const again=evRoot.querySelector('#nwDoubleAgain');if(again)again.onclick=()=>nwDoubleLaunch(s.difficulty);
   const change=evRoot.querySelector('#nwDoubleChangeDifficulty');if(change)change.onclick=nwDoubleDifficulty;
   evRoot.querySelector('#nwDoubleContinue').onclick=nwDoublePracticeScreen;
  };
- if(!credited){show('',nwDoubleSnapshot?.points||0);return;}
- // Store each completed event puzzle once with an idempotent run ID.
- evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2>NICELY DONE!</h2><p class="nw-double-note">Syncing your points...</p></section>`);
- const id=crypto.randomUUID();
+ if(!credited){show('',nwDoubleSnapshot?.points||0,0);return;}
+ if(!s.dtRunId){show('This puzzle did not have a verified session. Please refresh and start a new Double Trouble puzzle.',nwDoubleSnapshot?.points||0,0);return;}
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2>NICELY DONE!</h2><p class="nw-double-note">Verifying your completed puzzle...</p></section>`);
  const sync=async()=>{
   try{
-   const d=await nwDoubleRpc('score',{p_run_id:id,p_points:pts});
-   show('',d.points);
+   const c=await nwCloud.get();
+   const {data,error}=await c.rpc('nw_dt_finish',{p_run_id:s.dtRunId,p_solved:s.values.join(''),p_mistakes:s.mistakes});
+   if(error)throw Error(error.message);
+   await nwDoubleRpc('snapshot');
+   show('',Number(data.points||0),Number(data.awarded||0));
   }catch(e){
    evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2>POINTS NOT SYNCED</h2><p class="nw-double-alert">${nwEscape(e.message)}</p>${nwDoubleButton('nwDoubleRetrySync','RETRY SYNC')}</section>`);
    evRoot.querySelector('#nwDoubleRetrySync').onclick=sync;
@@ -1770,7 +1791,6 @@ function nwDoublePracticeAfterSudoku(s,won,pts){
  };
  void sync();
 }
-
 function nwShowEventDetail(type){
   if(type==='weekly'){nwShowTrophy();return}
   if(type==='double'){nwDoublePracticeScreen();return}
@@ -3131,12 +3151,12 @@ function nwMakeUniquePuzzle(difficulty){
   // Never sacrifice uniqueness just to hit a nominal difficulty clue count.
   return best;
 }
-async function evSudokuStart(difficulty,practiceOpponent=null,challengeMode=null){
+async function evSudokuStart(difficulty,practiceOpponent=null,challengeMode=null,dtChallenge=null){
   evSudokuLeave();
   applyTheme(worlds[currentWorld].theme);
-  const {answer,puzzle}=challengeMode?{answer:[...challengeMode.solution].map(Number),puzzle:[...challengeMode.puzzle].map(Number)}:practiceOpponent?{answer:[...practiceOpponent.solved_grid].map(Number),puzzle:[...practiceOpponent.puzzle_clues].map(Number)}:nwMakeUniquePuzzle(difficulty);
+  const {answer,puzzle}=dtChallenge?{answer:[...dtChallenge.solution].map(Number),puzzle:[...dtChallenge.puzzle].map(Number)}:challengeMode?{answer:[...challengeMode.solution].map(Number),puzzle:[...challengeMode.puzzle].map(Number)}:practiceOpponent?{answer:[...practiceOpponent.solved_grid].map(Number),puzzle:[...practiceOpponent.puzzle_clues].map(Number)}:nwMakeUniquePuzzle(difficulty);
   const givens=new Set(puzzle.map((n,i)=>n?i:-1).filter(i=>i>=0));
-  sudoku={answer,values:[...puzzle],givens,selected:-1,choice:0,highlight:0,mistakes:0,wrong:new Set(),notes:false,noteMarks:{},history:[],hintsLeft:1,hintStock:0,hintPending:false,start:Date.now(),difficulty,done:false,initialPuzzle:[...puzzle],reportAttempts:0,reportCorrect:0,reportHints:0,reportSaved:false,practiceOpponent,challenge:challengeMode,challengePending:false,doublePractice:!practiceOpponent&&!challengeMode&&nwDoublePracticeActive};
+  sudoku={answer,values:[...puzzle],givens,selected:-1,choice:0,highlight:0,mistakes:0,wrong:new Set(),notes:false,noteMarks:{},history:[],hintsLeft:1,hintStock:0,hintPending:false,start:Date.now(),difficulty,done:false,initialPuzzle:[...puzzle],reportAttempts:0,reportCorrect:0,reportHints:0,reportSaved:false,practiceOpponent,challenge:challengeMode,challengePending:false,dtRunId:dtChallenge?.run_id||null,doublePractice:!practiceOpponent&&!challengeMode&&nwDoublePracticeActive};
   evSudokuRender();if(nwCloud?.user()?.id){const active=sudoku;void nwPrizeSync().then(()=>{if(sudoku===active){active.hintStock=nwPrizeAvailable('sudoku_hint');evSudokuPaint();}}).catch(e=>console.warn('Sudoku hint Inventory:',e.message));}if(practiceOpponent)sudoku.start=Date.now();clearInterval(sudokuTimer);
   sudokuTimer=setInterval(()=>{if(!sudoku||sudoku.done)return;const el=evRoot.querySelector('#evSudoTime');if(el){const time=Math.floor((Date.now()-sudoku.start)/1000);el.textContent=`${String(Math.floor(time/60)).padStart(2,'0')}:${String(time%60).padStart(2,'0')}`}if(sudoku.practiceOpponent)nwBattleProgressTick(sudoku)},250);
 }
