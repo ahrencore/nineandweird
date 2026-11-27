@@ -10974,3 +10974,37 @@ body:has(#game.theme-cakes:not([hidden])){background:#FFE0E8!important}
 #game.nw-collectibles-theme .nw-collect-profile-photo .nw-equipped-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1;pointer-events:none;}
 #game.nw-collectibles-theme .nw-collectibles-actions button.nw-notification-orbit{--nw-notify:#EDB9E5;isolation:isolate;}
 @media(prefers-reduced-motion:reduce){#game.nw-collectible-piece-view .nw-collect-panel .nw-collectible-inspect .nw-collectible-name-orbit{animation:none!important;}}
+
+
+/* V38 Profile only: one-choice avatar/frame editor with unsaved live preview. */
+#game.nw-account-theme .nw-compact-editor{width:min(100%,420px);box-sizing:border-box;margin:10px auto;padding:15px 12px;border:1px solid #AABFFF55;border-radius:16px;background:#20243C;color:#F5F0FF;}
+#game.nw-account-theme .nw-compact-editor #nwName{box-sizing:border-box;width:100%;max-width:100%;margin:6px 0 12px;}
+#game.nw-account-theme .nw-edit-live-preview{display:flex;align-items:center;flex-direction:column;gap:4px;padding:12px 0 9px;}
+#game.nw-account-theme .nw-edit-live-preview .nw-profile-with-frame{width:138px;height:138px;margin:0 auto 6px;}
+#game.nw-account-theme .nw-edit-live-preview>strong{max-width:100%;overflow-wrap:anywhere;text-align:center;font:700 18px/1.2 'Pangolin',sans-serif;}
+#game.nw-account-theme .nw-edit-live-preview>small{color:#AABFFF;letter-spacing:.05em;font:11px/1.4 'Pangolin',sans-serif;}
+#game.nw-account-theme .nw-edit-tabs{display:flex;gap:8px;margin:12px auto;}
+#game.nw-account-theme .nw-edit-tabs button{flex:1;border:1px solid #AABFFF77;border-radius:10px;padding:9px 10px;background:#292D47;color:#D8DDF8;font:700 13px 'Pangolin',sans-serif;}
+#game.nw-account-theme .nw-edit-tabs button.selected{background:#414C7C;color:#fff;border-color:#D4DFFF;}
+#game.nw-account-theme .nw-edit-chooser{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:94px;margin-bottom:10px;}
+#game.nw-account-theme .nw-edit-chooser>button{width:43px;height:43px;flex:none;border:1px solid #AABFFF;border-radius:12px;background:#292D47;color:#F5F0FF;font:700 29px/1 'Pangolin',sans-serif;cursor:pointer;}
+#game.nw-account-theme .nw-edit-choice{display:flex;flex:1;min-width:0;align-items:center;flex-direction:column;gap:5px;text-align:center;}
+#game.nw-account-theme .nw-edit-choice #nwEditChoiceArt{display:grid;place-items:center;height:62px;width:62px;overflow:visible;}
+#game.nw-account-theme .nw-edit-choice-image{display:block;height:60px;width:60px;object-fit:contain;}
+#game.nw-account-theme #nwEditChoiceLabel{font:13px/1.25 'Pangolin',sans-serif;color:#F5F0FF;overflow-wrap:anywhere;}
+#game.nw-account-theme .nw-compact-editor #nwSaveProfile,#game.nw-account-theme .nw-compact-editor #nwCancelProfile{display:block;width:100%;margin:10px auto 0;}
+#game.nw-account-theme .nw-compact-editor #nwCancelProfile{background:#292D47!important;}
+/* Public profile: no extra details, actions or card grid. */
+#game.nw-account-theme .nw-public-profile .nw-friend-public-card{display:flex;align-items:center;flex-direction:column;gap:8px;padding:12px 0 10px;background:transparent;border:0;box-shadow:none;}
+#game.nw-account-theme .nw-public-profile .nw-friend-public-card .nw-collect-profile-photo{width:112px;height:112px;}
+#game.nw-account-theme .nw-public-profile .nw-friend-public-card .nw-equipped-frame{width:112px;height:112px;}
+#game.nw-account-theme .nw-public-profile .nw-friend-public-card h3{margin:4px 0;font:700 21px/1.25 'Pangolin',sans-serif;color:#F5F0FF;text-align:center;overflow-wrap:anywhere;}
+#game.nw-account-theme .nw-public-score{display:flex;align-items:center;justify-content:center;gap:9px;margin:12px auto 6px;color:#F5F0FF;}
+#game.nw-account-theme .nw-public-score-fist{display:block;width:27px;height:27px;flex:none;}
+#game.nw-account-theme .nw-public-score>strong{font:700 clamp(19px,5.5vw,27px)/1.2 'Pangolin',sans-serif;font-variant-numeric:tabular-nums;}
+#game.nw-account-theme .nw-public-score>button{display:grid;place-items:center;width:21px;height:21px;padding:0;border:1px solid #AABFFF;border-radius:50%;background:#292D47;color:#F5F0FF;font:700 12px/1 system-ui;cursor:pointer;}
+#game.nw-account-theme .nw-public-score-help{text-align:center;font:13px/1.4 'Pangolin',sans-serif;color:#D5DCFF;margin:2px 0 12px;}
+#game.nw-account-theme .nw-public-score-help[hidden]{display:none!important;}
+#game.nw-account-theme .nw-public-stat-list{display:grid;gap:0;width:min(100%,340px);margin:15px auto 0;}
+#game.nw-account-theme .nw-public-stat-list>div{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 5px;border-bottom:1px solid #AABFFF30;font:15px/1.3 'Pangolin',sans-serif;}
+#game.nw-account-theme .nw-public-stat-list>div strong{font-variant-numeric:tabular-nums;}
