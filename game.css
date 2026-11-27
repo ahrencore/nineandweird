@@ -11252,3 +11252,38 @@ body:has(#game.nw-aisle-shell:not([hidden]))::-webkit-scrollbar,
 #game.nw-aisle-shell .nw-aisle-frame-container::-webkit-scrollbar{
  display:none!important;width:0!important;height:0!important;
 }
+
+/* Donut Rise! — isolated matte hot-pink playable test-event shell. */
+#game .nw-lobby-portal.donutrise{
+ --portal-bg:#371A32;--portal-panel:#6E345E;--portal-accent:#FF91C2;--portal-ink:#FFE1F0;
+ color:#FFC1DF;
+}
+#game .nw-lobby-portal.donutrise .nw-lobby-portal-disc{
+ background:radial-gradient(circle at 35% 26%,#AE6188,#803E6E 57%,#451F42 100%);
+ border-color:#F5A2C6;
+ box-shadow:inset 0 0 13px #FBC0D237,0 0 16px #D95A9550;
+}
+#game .nw-lobby-portal.donutrise .nw-lobby-portal-decor{display:none}
+#game .nw-lobby-portal.donutrise strong{
+ font:800 clamp(17px,4.8vw,24px)/.95 'Fredoka',system-ui,sans-serif!important;
+ letter-spacing:.018em!important;color:#FFE5F0!important;
+ text-shadow:0 2px 0 #612D56,0 0 10px #FFC3E174!important;
+ white-space:normal;
+}
+#game.nw-donut-rise-shell{
+ background:#211325!important;color:#FFE4EF!important;
+ overflow-x:hidden!important;scrollbar-width:none!important;-ms-overflow-style:none!important;
+}
+#game.nw-donut-rise-shell::-webkit-scrollbar{display:none!important;width:0!important}
+#game.nw-donut-rise-shell>.ev-head{background:#3D213A!important;border-color:#BB759D!important}
+#game.nw-donut-rise-shell>.ev-head button{background:#5C3151!important;border-color:#EBA4C8!important;color:#FFE4F0!important}
+#game.nw-donut-rise-shell>.nw-donut-rise-frame-container{
+ width:100%;max-width:560px;margin:0 auto;padding:0;
+ background:#211325;min-height:calc(100dvh - 58px);
+}
+#game.nw-donut-rise-shell .nw-donut-rise-frame-container iframe{
+ display:block;width:100%;height:calc(100dvh - 58px);
+ min-height:570px;border:0;background:#211325;overflow:auto;
+ scrollbar-width:none!important;
+}
+#game.nw-donut-rise-shell .nw-donut-rise-frame-container iframe::-webkit-scrollbar{display:none;width:0}
