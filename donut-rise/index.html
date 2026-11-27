@@ -315,6 +315,17 @@ function canMove(id,r,c){
  }
  return true;
 }
+async function replenishEmptyBoard(){
+ // When every block has been cleared, introduce exactly one new bottom row.
+ // A no-op tap does not trigger this, because only successful moves resolve.
+ if(grid.some(row=>row.some(id=>id!==null)))return false;
+ grid[ROWS-1]=generateRow();
+ cleanGroups();
+ render();
+ announce('BOARD CLEARED! A NEW ROW ARRIVES');
+ await resolveBoard();
+ return true;
+}
 async function move(id,r,c){
  if(!running||paused||busy||!canMove(id,r,c))return false;
  busy=true;wrap.classList.add('is-resolving');
@@ -325,11 +336,28 @@ async function move(id,r,c){
   selected=null;hover=null;moves++;
   render();
   await resolveBoard();
-  if(running){rise();if(running)await dropWithMotion();}
+  if(running){
+   // If the whole board clears, replenish once instead of pushing an extra row.
+   const refilled=await replenishEmptyBoard();
+   if(!refilled){
+    rise();
+    // Newly generated bottom rows may complete a line or trigger a cascade.
+    if(running)await resolveBoard();
+    if(running)await replenishEmptyBoard();
+   }
+  }
   return true;
  }finally{busy=false;wrap.classList.remove('is-resolving');render()}
 }
-function render(){const frag=document.createDocumentFragment();for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const id=grid[r][c],el=document.createElement('div');el.className='cell';el.dataset.r=r;el.dataset.c=c;if(id!==null){const g=groups.get(id),pos=groupRow(id),offset=c-pos.c,d=g.donuts[offset];el.classList.add('occupied');el.dataset.id=id;if(id%2)el.classList.add('alt');el.classList.add('group-'+(offset===0?'first':offset===g.len-1?'last':'middle'));if(g.len===1)el.classList.add('group-single');el.style.setProperty('--group-color', ['#D99AAE','#E7BAC9','#D49AA6','#E4B7AF','#E1B7B9','#DDA7B8','#E8BDB1','#F0BFC9','#D1A2A9'][d.type]);if(d.special)el.classList.add('special');if(selected===id)el.classList.add('selected');const img=new Image();img.src=art[d.type];img.alt='';img.draggable=false;img.onerror=()=>{img.remove();const t=document.createElement('span');t.className='fallback';t.textContent='🍩';el.append(t)};el.append(img)}if(hover){const len=groups.get(hover.id)?.len||0;if(r===hover.r&&c>=hover.c&&c<hover.c+len)el.classList.add(hover.valid?'ghost':'invalid')}frag.append(el)}board.replaceChildren(frag);$('score').textContent=String(score).padStart(4,'0');$('lines').textContent=lines;$('countdown').textContent=moves;$('pause').textContent=paused?'RESUME':'PAUSE'}
+function reportFrameHeight(){
+ // Same-origin parent uses this to size the iframe to the full 10-row board.
+ // ResizeObserver tracks font loading, board sizing and help-panel expansion.
+ try{
+  const height=Math.ceil(Math.max(document.documentElement.scrollHeight,document.body.scrollHeight));
+  if(height>0&&window.parent!==window)window.parent.postMessage({type:'nw-donut-rise-height',height},location.origin);
+ }catch{}
+}
+function render(){const frag=document.createDocumentFragment();for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const id=grid[r][c],el=document.createElement('div');el.className='cell';el.dataset.r=r;el.dataset.c=c;if(id!==null){const g=groups.get(id),pos=groupRow(id),offset=c-pos.c,d=g.donuts[offset];el.classList.add('occupied');el.dataset.id=id;if(id%2)el.classList.add('alt');el.classList.add('group-'+(offset===0?'first':offset===g.len-1?'last':'middle'));if(g.len===1)el.classList.add('group-single');el.style.setProperty('--group-color', ['#D99AAE','#E7BAC9','#D49AA6','#E4B7AF','#E1B7B9','#DDA7B8','#E8BDB1','#F0BFC9','#D1A2A9'][d.type]);if(d.special)el.classList.add('special');if(selected===id)el.classList.add('selected');const img=new Image();img.src=art[d.type];img.alt='';img.draggable=false;img.onerror=()=>{img.remove();const t=document.createElement('span');t.className='fallback';t.textContent='🍩';el.append(t)};el.append(img)}if(hover){const len=groups.get(hover.id)?.len||0;if(r===hover.r&&c>=hover.c&&c<hover.c+len)el.classList.add(hover.valid?'ghost':'invalid')}frag.append(el)}board.replaceChildren(frag);requestAnimationFrame(reportFrameHeight);$('score').textContent=String(score).padStart(4,'0');$('lines').textContent=lines;$('countdown').textContent=moves;$('pause').textContent=paused?'RESUME':'PAUSE'}
 board.addEventListener('pointerdown',e=>{if(!running||paused||busy||e.button!==0)return;const pos=locAtPoint(e.clientX,e.clientY);if(!pos)return;const id=grid[pos.r][pos.c];if(id!==null){const start=groupRow(id);selected=id;drag={id,offset:pos.c-start.c,sx:e.clientX,sy:e.clientY,moved:false};wrap.classList.add('dragging');try{board.setPointerCapture(e.pointerId)}catch{}render()} });
 function dragTarget(e){
  if(!drag)return null;
@@ -373,6 +401,12 @@ $('reset').onclick=reset;$('again').onclick=reset;
 $('pause').onclick=()=>{if(!running)return;paused=!paused;announce(paused?'PAUSED':'BACK TO BAKING!');render()};
 $('help').onclick=()=>{$('rules').open=true;$('rules').scrollIntoView({behavior:'smooth',block:'nearest'})};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&running){paused=!paused;render()}});
+if(typeof ResizeObserver!=='undefined'){
+ const frameObserver=new ResizeObserver(reportFrameHeight);
+ frameObserver.observe(document.querySelector('.app'));
+}
+window.addEventListener('load',reportFrameHeight);
+document.fonts?.ready?.then(reportFrameHeight);
 reset();
 })();
 </script></body></html>
