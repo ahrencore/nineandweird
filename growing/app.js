@@ -140,7 +140,7 @@ const APP=(()=>{
  <div class="growing-class-photo-wrap growing-lab-promo"><div class="growing-smoke" aria-hidden="true"><i></i><i></i><i></i><i></i></div><img class="growing-class-photo growing-approved-lab-art" src="${NW_GLOOP_STINKY_ART}" alt="Gloop and Stinky in white lab coats experimenting with a bubbling green potion"></div>
   <div class="growing-event-pill"><span class="live-dot"></span>${live()?'NOW LIVE':'TUE — THU'}<span class="pill-divider">✦</span>${countdown()}</div></div>
  </section>`+
- (mode==='practice'?`${btn('START GROWING','play','main growing-start')}<p class="growing-offevent-note">No event rewards</p>`:`
+ (mode==='practice'?`<p class="growing-offevent-note">Practice mode · no event rewards</p>${btn('START GROWING','play','main growing-start')}`:`
  <section class="growing-dashboard"><div class="growing-score-block"><span class="g-label">EVENT SCORE</span><strong>${fmt(state.score)}</strong></div><div class="growing-energy-block"><span class="g-label">ENERGY</span><strong><span class="energy-glyph">ϟ</span> ${fmt(energy())}</strong><div class="g-energy-meter"><i style="width:${state.natural}%"></i></div><small>${state.natural>=100?'FULL':`+1 IN ${Math.max(0,Math.ceil((state.nextRegen-now())/60000))} MIN`}</small></div></section>
  <div class="growing-actions">${btn('♛<span>RANK</span>','rank','tiny-action')}${btn('▣<span>MISSIONS'+(ready?' <em>'+ready+'</em>':'')+'</span>','missions','tiny-action')}</div>
  ${btn(state.started?'CONTINUE GROWING':'START GROWING','play','main growing-start')}
