@@ -1818,9 +1818,19 @@ window.addEventListener('message',event=>{
  const h=Number(event.data.height);
  if(Number.isFinite(h)&&h>=300&&h<=5000)frame.style.height=Math.ceil(h)+'px';
 });
+// Back follows Donut Rise's internal navigation first, leaving the event only
+// once the user is already at its landing screen.
+function nwDonutRiseBack(){
+ const frame=evRoot.querySelector('#nwDonutRiseFrame');
+ if(frame?.contentWindow){
+  try{if(frame.contentWindow.nwDonutRiseNavigateBack?.())return;}
+  catch(err){console.warn('Donut Rise Back navigation:',err);}
+ }
+ showCategories();
+}
 function nwDonutRiseOpen(){
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-donut-rise-shell');
- evDisplay(`${evHeader('DONUT RISE!',showCategories)}<section class="nw-donut-rise-frame-container"><iframe id="nwDonutRiseFrame" title="DONUT RISE! — weekend event and practice" src="donut-rise/index.html?v=14-ranks-milestones-final" loading="eager"></iframe></section>`);
+ evDisplay(`${evHeader('DONUT RISE!',nwDonutRiseBack)}<section class="nw-donut-rise-frame-container"><iframe id="nwDonutRiseFrame" title="DONUT RISE! — weekend event and practice" src="donut-rise/index.html?v=15-pretty-milestones-back" loading="eager"></iframe></section>`);
  nwResetViewToTop();
 }
 function nwAislePanicBack(){
