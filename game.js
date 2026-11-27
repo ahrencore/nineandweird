@@ -1773,7 +1773,7 @@ window.addEventListener('message',async event=>{
 window.addEventListener('message',async event=>{
  const cmd=event.data?.type;
  if(event.origin!==location.origin||
-   !['nw-dr-start','nw-dr-finish','nw-dr-rank','nw-dr-milestones','nw-dr-claim'].includes(cmd))return;
+   !['nw-dr-start','nw-dr-finish','nw-dr-checkpoint','nw-dr-rank','nw-dr-milestones','nw-dr-claim'].includes(cmd))return;
  const frame=evRoot.querySelector('#nwDonutRiseFrame');
  if(!frame||event.source!==frame.contentWindow)return;
  const uid=nwCloud?.user()?.id,seq=event.data?.seq;
@@ -1785,12 +1785,20 @@ window.addEventListener('message',async event=>{
   if(cmd==='nw-dr-start'){
    const state=await call('nw_dr_start');
    reply({type:'nw-dr-session',...state});
-  }else if(cmd==='nw-dr-finish'){
-   if(!event.data.runId)return;
+  }else if(cmd==='nw-dr-finish'||cmd==='nw-dr-checkpoint'){
+   if(!event.data.runId)throw Error('Run session is not ready');
    const args={p_run:event.data.runId,p_score:event.data.score,p_lines:event.data.lines,p_moves:event.data.moves};
-   const result=await call('nw_dr_finish',args);
+   const result=await call(cmd==='nw-dr-checkpoint'?'nw_dr_checkpoint':'nw_dr_finish',args);
    const state=await call('nw_dr_milestone_state');
-   reply({type:'nw-dr-finished',result,state});
+   reply({type:cmd==='nw-dr-checkpoint'?'nw-dr-checkpoint-saved':'nw-dr-finished',result,state});
+   const rewards=Array.isArray(result?.awarded)?result.awarded:[];
+   if(rewards.length){
+    const amounts=new Map();
+    for(const reward of rewards)for(const [kind,qty] of nwRewardItemsFromClaim(reward))
+     amounts.set(kind,(amounts.get(kind)||0)+qty);
+    void Promise.allSettled([nwWalletSync(),nwPrizeSync()]);
+    if(amounts.size)nwRewardCelebrate([...amounts],{source:'milestone',title:'DONUT RISE MILESTONE!'});
+   }
   }else if(cmd==='nw-dr-rank'){
    const [rows,state]=await Promise.all([call('nw_dr_rank'),call('nw_dr_milestone_state')]);
    reply({type:'nw-dr-rank-data',rows,state});
