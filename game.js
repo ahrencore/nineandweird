@@ -2618,7 +2618,7 @@ const nwGalaxyColors={"classic": ["#fff", "#e3d3c7", "#111"], "dark": ["#050505"
 function nwLobbyIcon(kind){const p={shop:'<path d="M4 9h16l-1 12H5L4 9Z M8 9V6a4 4 0 0 1 8 0v3"/>',settings:'<path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/>'};return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p[kind]}</svg>`;}
 function nwLobbyUtility(kind){if(kind==='mail'){void nwPrizeMail();return;}evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-lobby-theme');evDisplay(`${evHeader(kind==='shop'?'SHOP':kind==='mail'?'MAIL':'SETTINGS',showCategories)}<section class="nw-lobby-utility">${kind==='mail'?'<h2>MAIL COMING SOON</h2>':kind==='shop'?`<div class="nw-lobby-money">${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</div><h2>COMING SOON</h2>`:`<button id="nwSettingsProfile" class="nw-lobby-nav">PROFILE / ACCOUNT</button><a href="privacy.html">Privacy Policy</a>`}</section>`);const b=evRoot.querySelector('#nwSettingsProfile');if(b)b.onclick=nwShowProfile;nwResetViewToTop();}
 function nwLobbyEventStatus(kind,now=new Date()){
-  if(kind==='donutrise'){const live=[5,6,0].includes(now.getUTCDay());return {live,label:(live?'LIVE NOW: ':'COMING SOON: ')+'FRI – SUN'};}
+  if(kind==='donutrise'){const live=[5,6,0].includes(now.getUTCDay());return {live,label:(live?'NOW LIVE: ':'COMING SOON: ')+'FRI – SUN'};}
   if(kind==='letout'||kind==='aislepanic')return {live:true,label:'MINI GAME'};
   const day=now.getUTCDay();
   if(kind==='growing'){const live=[2,3,4].includes(day);return {live,label:(live?'NOW LIVE: ':'COMING SOON: ')+'TUE – THU'};}
