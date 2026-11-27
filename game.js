@@ -784,7 +784,9 @@ const nwPrizeDefinitions=[
  {key:'tt_magic',name:'Magic Clear',event:'tt',icon:'✦'},
  {key:'tg_energy',name:'Energy',event:'tg',icon:'ϟ'},
  {key:'tg_ray',name:'Shrink Ray',event:'tg',icon:'✧'},
- {key:'tg_juice',name:'Mutation Juice',event:'tg',icon:'✿'}
+ {key:'tg_juice',name:'Mutation Juice',event:'tg',icon:'✿'},
+ {key:'dr_splitter',name:'Sugar Splitter',event:'dr',icon:'✂'},
+ {key:'dr_evictor',name:'Donut Evictor',event:'dr',icon:'♫'}
 ];
 function nwPrizeTransferPeriod(event){return event==='tt'?nwTripleWeek():new Date(Date.UTC(new Date().getUTCFullYear(),new Date().getUTCMonth(),new Date().getUTCDate())-((new Date().getUTCDay()+5)%7)*86400000).toISOString().slice(0,10);}
 function nwPrizeApplyTTTransfers(){
@@ -875,6 +877,8 @@ function nwPrizeIcon(key){
   tt_shuffle:'<path d="M5 13h7c11 0 13 22 27 22h4m-8-8 8 8-8 8M5 38h7c11 0 13-22 27-22h4m-8-8 8 8-8 8"/>',
   tt_magic:'<path d="M24 6c-21 1-24 36-4 39 22 3 25-24 10-27-13-3-19 12-10 17 8 5 14-3 9-8"/>',
   tg_energy:'<path d="M28 4 9 28h15l-5 16 20-25H24Z"/>',
+  dr_splitter:'<path d="M19 6Q29 3 37 13L26 24 15 20Q9 13 19 6ZM24 22 40 43M36 40l6-4"/>',
+  dr_evictor:'<path d="M7 18h10l23-12v35L17 29H7zM15 29l7 13h8l-5-13M43 15q6 9 0 18"/>',
   sudoku_hint:'<path d="M17 33h14M18 39h12M24 4a14 14 0 0 0-8 25v4h16v-4A14 14 0 0 0 24 4Z"/>'
  };
  return '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(paths[key]||'')+'</svg>';
@@ -887,6 +891,8 @@ tt_magic:'Available directly in Triple Trouble. Unused boosters carry over.',
 tg_energy:"Use stored Energy when you choose. Diamond-purchased Energy goes directly into the event.",
 tg_ray:"Available directly in They're Growing! Unused boosters carry over.",
 tg_juice:"Available directly in They're Growing! Unused boosters carry over.",
+dr_splitter:'Available directly in Donut Rise. Split 2–4-piece blocks. Unused boosters carry over.',
+dr_evictor:'Available directly in Donut Rise. Clears every donut of the selected type. Unused boosters carry over.',
 sudoku_hint:'Reveal a correct placement in a Sudoku puzzle.'
 };
 function nwInventoryInfoDialog(key){
@@ -920,7 +926,7 @@ function nwPrizeInventoryArt(){
   const n=nwPrizeAvailable(d.key),use=d.key==='tt_ticket'||d.key==='tg_energy',live=d.event==='tt'?nwTripleInEvent():[2,3,4].includes(new Date().getUTCDay()),displayCount=use?n:n+nwInventoryLoaded(d.key);
   return '<article class="nw-compact-item"><button type="button" class="nw-compact-info" data-prize-info="'+d.key+'" aria-label="About '+nwEscape(d.name)+'">!</button><span class="nw-compact-icon" aria-hidden="true">'+nwPrizeIcon(d.key)+'</span><strong>'+nwEscape(d.name)+'</strong><b>× '+displayCount.toLocaleString()+'</b>'+(use?'<button type="button" data-prize-use="'+d.key+'" '+(n&&live?'':'disabled')+'>USE</button>':'')+'</article>';
  }).join('');
- return '<h3>TRIPLE TROUBLE</h3><div class="nw-compact-grid">'+cards('tt')+'</div><h3>THEY\'RE GROWING!</h3><div class="nw-compact-grid">'+cards('tg')+'</div><h3>SUDOKU</h3><div class="nw-compact-grid"><article class="nw-compact-item"><button class="nw-compact-info" type="button" data-prize-info="sudoku_hint" aria-label="About Sudoku Hints">!</button><span class="nw-compact-icon">'+nwPrizeIcon('sudoku_hint')+'</span><strong>Sudoku Hints</strong><b>× '+nwPrizeAvailable('sudoku_hint').toLocaleString()+'</b></article></div>';
+ return '<h3>TRIPLE TROUBLE</h3><div class="nw-compact-grid">'+cards('tt')+'</div><h3>THEY\'RE GROWING!</h3><div class="nw-compact-grid">'+cards('tg')+'</div><h3>DONUT RISE!</h3><div class="nw-compact-grid">'+cards('dr')+'</div><h3>SUDOKU</h3><div class="nw-compact-grid"><article class="nw-compact-item"><button class="nw-compact-info" type="button" data-prize-info="sudoku_hint" aria-label="About Sudoku Hints">!</button><span class="nw-compact-icon">'+nwPrizeIcon('sudoku_hint')+'</span><strong>Sudoku Hints</strong><b>× '+nwPrizeAvailable('sudoku_hint').toLocaleString()+'</b></article></div>';
 }
 function nwPrizeQuantityDialog(key){
  if(key!=='tt_ticket'&&key!=='tg_energy')return;const item=nwPrizeDefinitions.find(d=>d.key===key),max=nwPrizeAvailable(key);if(!item||!max)return;
@@ -1726,6 +1732,40 @@ function nwLetMeOutOpen(){
  nwResetViewToTop();
 }
 
+// Donut Rise: the parent owns cloud inventory. The iframe may only request
+// balances and atomic spends; it cannot grant itself inventory items.
+let nwDonutBridgeBusy=false;
+window.addEventListener('message',async event=>{
+ if(event.origin!==location.origin||!['nw-dr-ready','nw-dr-spend'].includes(event.data?.type))return;
+ const frame=evRoot.querySelector('#nwDonutRiseFrame');
+ if(!frame||event.source!==frame.contentWindow)return;
+ const reply=data=>{if(frame.isConnected&&frame.contentWindow===event.source)frame.contentWindow.postMessage(data,location.origin)};
+ const uid=nwCloud?.user()?.id;
+ if(!uid){reply({type:'nw-dr-error',requestId:event.data.requestId||0,message:'Sign in to use event boosters.'});return;}
+ if(nwDonutBridgeBusy){reply({type:'nw-dr-error',requestId:event.data.requestId||0,message:'Still syncing boosters. Try again.'});return;}
+ nwDonutBridgeBusy=true;
+ try{
+  const c=await nwCloud.get();
+  if(event.data.type==='nw-dr-ready'){
+   const {data,error}=await c.rpc('nw_dr_welcome');
+   if(error)throw Error(error.message);
+   await nwPrizeSync();
+   if(uid!==nwCloud?.user()?.id)return;
+   reply({type:'nw-dr-state',awarded:!!data.awarded,live:!!data.live,
+    splitter:nwPrizeAvailable('dr_splitter'),evictor:nwPrizeAvailable('dr_evictor')});
+  }else{
+   const item=event.data.item;
+   if(!['dr_splitter','dr_evictor'].includes(item))throw Error('Invalid booster');
+   const {data,error}=await c.rpc('nw_dr_spend',{p_item:item});
+   if(error)throw Error(error.message);
+   if(uid!==nwCloud?.user()?.id)return;
+   nwPrizeCache.stock={...nwPrizeCache.stock,[item]:Math.max(0,Number(data)||0)};
+   reply({type:'nw-dr-spent',requestId:event.data.requestId,
+    splitter:nwPrizeAvailable('dr_splitter'),evictor:nwPrizeAvailable('dr_evictor')});
+  }
+ }catch(err){reply({type:'nw-dr-error',requestId:event.data.requestId||0,message:err.message||'Could not sync boosters.'});}
+ finally{nwDonutBridgeBusy=false;}
+});
 // DONUT RISE! — isolated test event. This build does not alter live event rewards.
 // Allow only the active, same-origin Donut Rise iframe to report its actual content height.
 window.addEventListener('message',event=>{
