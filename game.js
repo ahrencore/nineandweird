@@ -530,6 +530,7 @@ function nwShowProfile(){
   on('nwCancelProfile',()=>nwShowProfile());
   on('nwOpenFriends',()=>nwShowFriends());
   on('nwOpenTrophy',()=>nwShowTrophy());
+  if(u&&!anon)void nwAchievementHomeNotice();
   on('nwViewOwnProfile',()=>void nwFriendOpenProfile(u.id,nwShowProfile));
   on('nwEmailEntry',()=>{evRoot.querySelector('#nwEmailFields').hidden=false;evRoot.querySelector('#nwEmail').focus();});
 
@@ -1169,12 +1170,12 @@ function nwAchievementCard(item){
 }
 function nwAchievementNoticeToggle(items){
  const claimable=Array.isArray(items)&&items.some(item=>!item.finished&&Number(item.tier)<=20&&Number(item.progress)>=Number(item.target));
- const trigger=evRoot.querySelector('[data-trophy="achievements"]');
- if(trigger)trigger.classList.toggle('nw-notification-orbit',claimable);
+ for(const trigger of evRoot.querySelectorAll('[data-trophy="achievements"],#nwOpenTrophy'))
+  trigger.classList.toggle('nw-notification-orbit',claimable);
  return claimable;
 }
 async function nwAchievementHomeNotice(){
- const trigger=evRoot.querySelector('[data-trophy="achievements"]');
+ const trigger=evRoot.querySelector('[data-trophy="achievements"],#nwOpenTrophy');
  if(!trigger||!nwCloud?.user()||nwCloud.user().is_anonymous)return;
  const account=nwCloud.user().id;
  try{
