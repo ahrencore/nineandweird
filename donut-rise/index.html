@@ -178,17 +178,55 @@ header p{color:#E7BAC9;font-family:Fredoka,system-ui,sans-serif}
 }
 .board .group-tray.line-clear-tray{animation:cleanRowOut 320ms ease-in both}
 @media(prefers-reduced-motion:reduce){.board .group-tray.line-clear-tray{animation:none!important;opacity:0}}
+
+/* Compact Donut Rise controls — only this standalone game page. */
+.game-title{padding:3px 0 0}
+.game-title h1{font-size:clamp(29px,8vw,48px);margin:1px 0 0;line-height:1.2}
+.quick-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:0}
+.quick-actions button{
+ min-width:0;min-height:42px;padding:7px 3px;
+ background:#C47A92;color:#121212;border:1px solid #A85F78;
+ border-radius:11px;box-shadow:none;
+ font:600 clamp(9px,2.25vw,12px)/1.15 Fredoka,system-ui,sans-serif;
+ cursor:pointer;text-align:center;white-space:normal;
+}
+.quick-actions button:active{background:#A85F78;transform:translateY(1px)}
+.quick-actions button:focus-visible{outline:2px solid #F6EEE8;outline-offset:2px}
+.quick-actions button:disabled{opacity:.6;cursor:not-allowed}
+.stats{margin:0}
+.boardwrap{margin-top:0}
+.message{font-size:12px;min-height:18px;margin:0}
+.info-modal{max-width:350px;padding:20px 18px 18px}
+.info-modal h2{font-size:26px;margin:0 0 12px}
+.info-modal #infobody p{margin:7px 0;line-height:1.4;font-size:13px;color:#F6EEE8}
+.info-modal button{margin-top:13px}
+@media(max-width:390px){
+ .game-title h1{font-size:clamp(27px,8vw,36px)}
+ .quick-actions{gap:5px}
+ .quick-actions button{padding:7px 2px;font-size:9px;min-height:42px}
+ .app{gap:9px}
+}
 </style></head><body><main class="app">
-<div class="topline"><span class="tag">NINE & WEIRD  /  DONUT EVENT</span><div class="topbuttons"><button id="pause">PAUSE</button><button id="reset">RESTART</button></div></div>
-<header><h1>DONUT RISE<span class="punct">!</span></h1><p>Slide · Drop · Clear · Repeat</p></header>
+<header class="game-title"><h1>DONUT RISE<span class="punct">!</span></h1></header>
+<nav class="quick-actions" aria-label="Donut Rise controls">
+ <button type="button" id="reset">RESTART</button>
+ <button type="button" id="help">HOW TO PLAY</button>
+ <button type="button" id="rank">RANK</button>
+ <button type="button" id="missions">MISSIONS</button>
+</nav>
 <div class="stats"><div class="stat"><label>SCORE</label><strong id="score">0000</strong></div><div class="stat"><label>LINES</label><strong id="lines">0</strong></div><div class="stat"><label>MOVES</label><strong id="countdown">0</strong></div></div>
 
-<div class="boardwrap" id="wrap"><div class="board" id="board" aria-label="8-column by 10-row donut board"></div><div class="legend"><span>SLIDE SIDEWAYS · GRAVITY DROPS · NEW ROW RISES</span><span><span class="gold-dot"></span> +50</span></div></div>
-<div class="message" id="message">Slide a connected donut group sideways.</div>
-<div class="action"><button id="tryclear" class="secondary">TRY A LINE CLEAR</button><button id="help" class="secondary">HOW TO PLAY</button></div>
-<details class="rules" id="rules"><summary>HOW TO PLAY</summary><p>Slide the donut blocks left or right.</p><p>Fill a row to clear it.</p><p>Blocks drop automatically.</p><p>A new row rises after every move.</p><p>Donuts come in blocks of 1, 2, 3 or 4.</p></details>
-<p class="hint">TEST BUILD · Donuts World artwork · Score not yet connected to leaderboard</p>
-</main><div class="overlay" id="overlay" hidden><div class="modal"><h2 id="overlaytitle">GAME OVER!</h2><p id="overlaytext">The donuts reached the top.</p><button id="again">PLAY AGAIN</button></div></div>
+<div class="boardwrap" id="wrap"><div class="board" id="board" aria-label="8-column by 10-row donut board"></div></div>
+<div class="message" id="message" role="status" aria-live="polite">Slide a donut block sideways.</div>
+</main>
+<div class="overlay" id="infooverlay" hidden>
+ <div class="modal info-modal" role="dialog" aria-modal="true" aria-labelledby="infotitle">
+  <h2 id="infotitle"></h2>
+  <div id="infobody"></div>
+  <button type="button" id="infoclose">CLOSE</button>
+ </div>
+</div>
+<div class="overlay" id="overlay" hidden><div class="modal"><h2 id="overlaytitle">GAME OVER!</h2><p id="overlaytext">The donuts reached the top.</p><button id="again">PLAY AGAIN</button></div></div>
 <script>
 (()=>{'use strict';
 const COLS=8,ROWS=10,files=['01_pink_sprinkles.png','02_chocolate_crunch.png','03_strawberry_drizzle.png','04_lemon_coconut.png','05_aqua_cookies.png','06_blueberry.png','07_caramel_crunch.png','08_heart_candy.png','09_mint_chocolate.png'];
@@ -408,7 +446,7 @@ function buildGroupTrays(){
  }
  board.prepend(trays);
 }
-function render(){const frag=document.createDocumentFragment();for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const id=grid[r][c],el=document.createElement('div');el.className='cell';el.dataset.r=r;el.dataset.c=c;if(id!==null){const g=groups.get(id),pos=groupRow(id),offset=c-pos.c,d=g.donuts[offset];el.classList.add('occupied');el.dataset.id=id;if(id%2)el.classList.add('alt');el.classList.add('group-'+(offset===0?'first':offset===g.len-1?'last':'middle'));if(g.len===1)el.classList.add('group-single');el.style.setProperty('--group-color', ['#D99AAE','#E7BAC9','#D49AA6','#E4B7AF','#E1B7B9','#DDA7B8','#E8BDB1','#F0BFC9','#D1A2A9'][d.type]);if(d.special)el.classList.add('special');if(selected===id)el.classList.add('selected');const img=new Image();img.src=art[d.type];img.alt='';img.draggable=false;img.onerror=()=>{img.remove();const t=document.createElement('span');t.className='fallback';t.textContent='🍩';el.append(t)};el.append(img)}if(hover){const len=groups.get(hover.id)?.len||0;if(r===hover.r&&c>=hover.c&&c<hover.c+len)el.classList.add(hover.valid?'ghost':'invalid')}frag.append(el)}board.replaceChildren(frag);buildGroupTrays();requestAnimationFrame(reportFrameHeight);$('score').textContent=String(score).padStart(4,'0');$('lines').textContent=lines;$('countdown').textContent=moves;$('pause').textContent=paused?'RESUME':'PAUSE'}
+function render(){const frag=document.createDocumentFragment();for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const id=grid[r][c],el=document.createElement('div');el.className='cell';el.dataset.r=r;el.dataset.c=c;if(id!==null){const g=groups.get(id),pos=groupRow(id),offset=c-pos.c,d=g.donuts[offset];el.classList.add('occupied');el.dataset.id=id;if(id%2)el.classList.add('alt');el.classList.add('group-'+(offset===0?'first':offset===g.len-1?'last':'middle'));if(g.len===1)el.classList.add('group-single');el.style.setProperty('--group-color', ['#D99AAE','#E7BAC9','#D49AA6','#E4B7AF','#E1B7B9','#DDA7B8','#E8BDB1','#F0BFC9','#D1A2A9'][d.type]);if(d.special)el.classList.add('special');if(selected===id)el.classList.add('selected');const img=new Image();img.src=art[d.type];img.alt='';img.draggable=false;img.onerror=()=>{img.remove();const t=document.createElement('span');t.className='fallback';t.textContent='🍩';el.append(t)};el.append(img)}if(hover){const len=groups.get(hover.id)?.len||0;if(r===hover.r&&c>=hover.c&&c<hover.c+len)el.classList.add(hover.valid?'ghost':'invalid')}frag.append(el)}board.replaceChildren(frag);buildGroupTrays();requestAnimationFrame(reportFrameHeight);$('score').textContent=String(score).padStart(4,'0');$('lines').textContent=lines;$('countdown').textContent=moves;$('reset').disabled=busy}
 board.addEventListener('pointerdown',e=>{if(!running||paused||busy||e.button!==0)return;const pos=locAtPoint(e.clientX,e.clientY);if(!pos)return;const id=grid[pos.r][pos.c];if(id!==null){const start=groupRow(id);selected=id;drag={id,offset:pos.c-start.c,sx:e.clientX,sy:e.clientY,moved:false};wrap.classList.add('dragging');try{board.setPointerCapture(e.pointerId)}catch{}render()} });
 function dragTarget(e){
  if(!drag)return null;
@@ -438,20 +476,31 @@ function reset(){
  grid=empty();groups=new Map();nextId=1;score=0;lines=0;moves=0;running=true;paused=false;selected=null;drag=null;hover=null;
  initial();settleGroups();$('overlay').hidden=true;announce('Slide a group sideways; every valid move adds a new row!');render();
 }
-function tryLineClear(){
- if(busy)return;
- grid=empty();groups=new Map();nextId=1;score=0;lines=0;moves=0;running=true;paused=false;selected=null;drag=null;hover=null;
- // Lower row has a single gap at column 4; the single donut can slide on the row above and drop into it.
- seedGroup(ROWS-1,0,3);seedGroup(ROWS-1,4,4);
- seedGroup(ROWS-2,1,1,null,0);
- $('overlay').hidden=true;
- announce('TRY IT: slide the single donut 2 spaces right to fill the gap!');render();
+// Separate lightweight overlay for the four-button header.
+const infoOverlay=$('infooverlay');
+function closeInfo(){infoOverlay.hidden=true}
+function showInfo(title,body){
+ $('infotitle').textContent=title;
+ $('infobody').replaceChildren();
+ const lines=Array.isArray(body)?body:[body];
+ for(const line of lines){const p=document.createElement('p');p.textContent=line;$('infobody').append(p)}
+ infoOverlay.hidden=false;
+ $('infoclose').focus();
 }
-$('tryclear').onclick=tryLineClear;
-$('reset').onclick=reset;$('again').onclick=reset;
-$('pause').onclick=()=>{if(!running)return;paused=!paused;announce(paused?'PAUSED':'BACK TO BAKING!');render()};
-$('help').onclick=()=>{$('rules').open=true;$('rules').scrollIntoView({behavior:'smooth',block:'nearest'})};
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&running){paused=!paused;render()}});
+$('reset').onclick=reset;
+$('again').onclick=reset;
+$('help').onclick=()=>showInfo('HOW TO PLAY',[
+ 'Slide the donut blocks left or right.',
+ 'Fill a row to clear it.',
+ 'Blocks drop automatically.',
+ 'A new row rises after every move.',
+ 'Donuts come in blocks of 1, 2, 3 or 4.'
+]);
+$('rank').onclick=()=>showInfo('RANK','Leaderboards are coming soon.');
+$('missions').onclick=()=>showInfo('MISSIONS','Missions are coming soon.');
+$('infoclose').onclick=closeInfo;
+infoOverlay.addEventListener('click',e=>{if(e.target===infoOverlay)closeInfo()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!infoOverlay.hidden)closeInfo()});
 if(typeof ResizeObserver!=='undefined'){
  const frameObserver=new ResizeObserver(reportFrameHeight);
  frameObserver.observe(document.querySelector('.app'));
