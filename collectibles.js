@@ -108,7 +108,7 @@ function nwShowCollectibles(){
  evRoot.querySelectorAll('[data-nw-collectible-world]').forEach(function(button){button.onclick=function(){nwCollectibleGalleryScroll=nwCollectibleScrollElement().scrollTop;nwShowCollectibleWorld(button.dataset.nwCollectibleWorld);};});
  evRoot.querySelectorAll('[data-nw-collectible-action]').forEach(function(button){button.onclick=function(){if(button.dataset.nwCollectibleAction==='trade')void nwCollectibleInbox();else nwShowCollectibleComingSoon('buy');};});
  nwCollectibleRestore(nwCollectibleGalleryScroll);
- void nwCollectibleLoad(false);
+ void nwCollectibleLoad(true).catch(function(e){console.warn('Collectibles gallery',e.message);});
 }
 function nwShowCollectibleWorld(id){
  if(!nwCollectibleWorldIds().includes(id)){nwShowCollectibles();return;}
