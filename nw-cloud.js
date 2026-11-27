@@ -111,6 +111,17 @@
     },
     async readProfile(){const c=await get();if(!user)return null;const {data,error}=await c.from('nw_profiles').select('display_name,avatar,profile_setup_complete,equipped_frame,equipped_frame_month').eq('user_id',user.id).maybeSingle();if(error)throw new Error(error.message);return data;},
     async saveFrame(id,month=null){const c=await get();const account=user;if(!account)throw Error('Sign in to equip a frame.');if(!/^(usual|weird|monthly-(10|25|50|100|150|200))$/.test(id))throw Error('Invalid frame.');if(id.startsWith('monthly-')&&month!==new Date().toISOString().slice(0,7))throw Error('This monthly frame has expired.');const value={equipped_frame:id,equipped_frame_month:id.startsWith('monthly-')?month:null,updated_at:new Date().toISOString()};const {data,error}=await c.from('nw_profiles').update(value).eq('user_id',account.id).select('user_id').maybeSingle();if(error)throw Error(error.message);if(!data)throw Error('Profile unavailable; frame not saved.');return true;},
+    async saveProfileAppearance(name,avatar,frameId,frameMonth=null){
+      const c=await get();const account=user;
+      if(!account||account.is_anonymous)throw Error('Registered account required.');
+      if(!/^(usual|weird|monthly-(10|25|50|100|150|200))$/.test(frameId))throw Error('Invalid frame.');
+      if(frameId.startsWith('monthly-')&&frameMonth!==new Date().toISOString().slice(0,7))throw Error('This monthly frame has expired.');
+      const payload={display_name:name,avatar,equipped_frame:frameId,equipped_frame_month:frameId.startsWith('monthly-')?frameMonth:null,profile_setup_complete:true,updated_at:new Date().toISOString()};
+      const {data,error}=await c.from('nw_profiles').update(payload).eq('user_id',account.id).select('user_id').maybeSingle();
+      if(error)throw Error(error.code==='23505'?'Username is taken!':error.message);
+      if(!data)throw Error('Profile unavailable; changes were not saved.');
+      return true;
+    },
     async usernameAvailable(name){const c=await get();if(!user||user.is_anonymous)throw Error('Please sign in first.');const {data,error}=await c.rpc('nw_username_available_v36',{p_name:name});if(error)throw Error(error.message);return data===true;},
     async saveProfile(name,avatar){const c=await get();const account=user;if(!account)throw Error('Please sign in first.');if(account.is_anonymous)name='Guest_'+account.id.replace(/-/g,'').slice(0,14).toLowerCase();else if(/^guest_/i.test(name))throw Error('Guest_ is reserved.');const payload={display_name:name,avatar,updated_at:new Date().toISOString()};if(!account.is_anonymous)payload.profile_setup_complete=true;const {data,error}=await c.from('nw_profiles').update(payload).eq('user_id',account.id).select('user_id').maybeSingle();if(error)throw Error(error.code==='23505'?'That username is already taken.':error.message);if(!data){if(user?.id!==account.id)throw Error('Account changed. Please try again.');const {error:insertError}=await c.from('nw_profiles').insert({...payload,user_id:account.id});if(insertError)throw Error(insertError.code==='23505'?'That username is already taken or your profile already exists. Try again.':insertError.message);}}
 
