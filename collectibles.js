@@ -9,14 +9,15 @@ function nwCollectiblePlanet(id,i){
  const w=worlds[id],pair=nwTripleArtFiles[id],colors=nwGalaxyColors[id]||['#141A33','#8E83BE','#F8EBDD'];
  const bg=colors[0],accent=colors[1],ink=colors[2],label=w.name;
  const symbols=pair[1].map(function(file){return '<img class="nw-collectible-unowned" src="'+pair[0]+file+'" alt="" loading="lazy" draggable="false">';}).join('');
- const arc='<svg class="nw-planet-orbit" viewBox="0 0 180 180" aria-hidden="true"><defs><path id="nwCollectPlanetArc'+i+'" d="M 8,90 A 82,82 0 0,0 172,90"/></defs><circle cx="90" cy="90" r="75" fill="none" stroke="'+accent+'" opacity=".35" stroke-width=".8"/><circle cx="147" cy="41" r="3.4" fill="'+accent+'"/><path d="M27 20v9m-4.5-4.5h9" stroke="'+accent+'" stroke-width="1.2" stroke-linecap="round"/><text fill="'+accent+'" font-size="'+(label.length>26?10.2:label.length>20?11.2:12.5)+'" font-weight="700"><textPath href="#nwCollectPlanetArc'+i+'" startOffset="50%" text-anchor="middle">'+nwEscape(label)+'</textPath></text></svg>';
- return '<button type="button" class="nw-planet nw-collectible-planet" data-nw-collectible-world="'+id+'" aria-label="View '+nwEscape(label)+' collection, 0 of 9 collected" style="--planet-bg:'+bg+';--planet-accent:'+accent+';--planet-ink:'+ink+'"><span class="nw-planet-disc"><span class="nw-planet-pieces">'+symbols+'</span></span>'+arc+'<span class="nw-collectible-count" aria-hidden="true">0/9</span></button>';
+ const arc='<svg class="nw-planet-orbit" viewBox="0 0 180 180" aria-hidden="true"><defs><path id="nwCollectPlanetArc'+i+'" d="M 8,90 A 82,82 0 0,0 172,90"/><path id="nwCollectCountArc'+i+'" d="M 1,90 A 89,89 0 0,0 179,90"/></defs><circle cx="90" cy="90" r="75" fill="none" stroke="'+accent+'" opacity=".35" stroke-width=".8"/><circle cx="147" cy="41" r="3.4" fill="'+accent+'"/><path d="M27 20v9m-4.5-4.5h9" stroke="'+accent+'" stroke-width="1.2" stroke-linecap="round"/><text fill="'+accent+'" font-size="'+(label.length>26?10.2:label.length>20?11.2:12.5)+'" font-weight="700"><textPath href="#nwCollectPlanetArc'+i+'" startOffset="50%" text-anchor="middle">'+nwEscape(label)+'</textPath></text><text class="nw-collectible-count-arc" fill="'+accent+'" font-size="10"><textPath href="#nwCollectCountArc'+i+'" startOffset="50%" text-anchor="middle">0/9</textPath></text></svg>';
+ return '<button type="button" class="nw-planet nw-collectible-planet" data-nw-collectible-world="'+id+'" aria-label="View '+nwEscape(label)+' collection, 0 of 9 collected" style="--planet-bg:'+bg+';--planet-accent:'+accent+';--planet-ink:'+ink+'"><span class="nw-planet-disc"><span class="nw-planet-pieces">'+symbols+'</span></span>'+arc+'</button>';
 }
 function nwShowCollectibles(){
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-galaxy-theme','nw-collectibles-theme');
  const ids=nwCollectibleWorldIds();
- evDisplay(evHeader('COLLECTIBLES',showCategories,true)+'<div class="world-grid world-list nw-planet-grid nw-collectibles-planets">'+ids.map(nwCollectiblePlanet).join('')+'</div>');
+ evDisplay(evHeader('COLLECTIBLES',showCategories,true)+'<nav class="nw-collectibles-actions" aria-label="Collectibles actions"><button type="button" data-nw-collectible-action="trade">TRADE</button><button type="button" data-nw-collectible-action="buy">BUY</button></nav><div class="world-grid world-list nw-planet-grid nw-collectibles-planets">'+ids.map(nwCollectiblePlanet).join('')+'</div>');
  evRoot.querySelectorAll('[data-nw-collectible-world]').forEach(function(button){button.onclick=function(){nwShowCollectibleWorld(button.dataset.nwCollectibleWorld);};});
+ evRoot.querySelectorAll('[data-nw-collectible-action]').forEach(function(button){button.onclick=function(){nwShowCollectibleComingSoon(button.dataset.nwCollectibleAction);};});
  nwResetViewToTop();
 }
 function nwShowCollectibleWorld(id){
@@ -32,5 +33,14 @@ function nwShowCollectibleWorld(id){
     +'</div>';
  }).join('');
  evDisplay(evHeader(worlds[id].name,nwShowCollectibles,true)+'<section class="nw-collectible-detail" style="--collect-bg:'+colors[0]+';--collect-accent:'+colors[1]+';--collect-ink:'+colors[2]+'"><div class="nw-collectible-detail-top"><strong>0 / 9 COLLECTED</strong></div><div class="nw-collectible-piece-grid">'+pieces+'</div><p class="nw-collectible-detail-note">Your collection is waiting to begin.</p></section>');
+ nwResetViewToTop();
+}
+
+function nwShowCollectibleComingSoon(action){
+ if(action!=='trade'&&action!=='buy'){nwShowCollectibles();return;}
+ evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-galaxy-theme','nw-collectibles-theme','nw-collectibles-coming-theme');
+ const title=action==='trade'?'TRADE':'BUY';
+ const detail=action==='trade'?'Cards your friends send you will appear here.':'Blind boxes containing collectible World pieces will be available here.';
+ evDisplay(evHeader(title,nwShowCollectibles,true)+'<section class="nw-collectibles-coming"><span aria-hidden="true">✧ ✦ ✧</span><h2>COMING SOON</h2><p>'+detail+'</p></section>');
  nwResetViewToTop();
 }
