@@ -1820,7 +1820,7 @@ window.addEventListener('message',event=>{
 });
 function nwDonutRiseOpen(){
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-donut-rise-shell');
- evDisplay(`${evHeader('DONUT RISE!',showCategories)}<section class="nw-donut-rise-frame-container"><iframe id="nwDonutRiseFrame" title="DONUT RISE! — weekend event and practice" src="donut-rise/index.html?v=13-ranks-milestones" loading="eager"></iframe></section>`);
+ evDisplay(`${evHeader('DONUT RISE!',showCategories)}<section class="nw-donut-rise-frame-container"><iframe id="nwDonutRiseFrame" title="DONUT RISE! — weekend event and practice" src="donut-rise/index.html?v=14-ranks-milestones-final" loading="eager"></iframe></section>`);
  nwResetViewToTop();
 }
 function nwAislePanicBack(){
