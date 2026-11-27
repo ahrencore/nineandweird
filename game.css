@@ -904,21 +904,21 @@ body:has(#game.theme-nineties:not([hidden])) {
   justify-self:stretch;
 }
 
-/* All outside-room scrollbars use Ruby After Dark (including World Selection).
-   Individual rooms below override these colors. Does not force scrolling. */
+/* Scrollbar colors inherit the screen's palette. Ruby is the neutral lobby fallback,
+   not a forced color on popups, Trophy Case, or individual worlds. */
 :root,html,body,body *,#game,#game *{
   scrollbar-width:thin!important;
-  scrollbar-color:#F36B78 #160B0E!important;
+  scrollbar-color:var(--nw-scroll-thumb,#F36B78) var(--nw-scroll-track,#160B0E)!important;
 }
 :root::-webkit-scrollbar,html::-webkit-scrollbar,body::-webkit-scrollbar,
 body *::-webkit-scrollbar,#game::-webkit-scrollbar,#game *::-webkit-scrollbar{width:7px;height:7px}
 :root::-webkit-scrollbar-thumb,html::-webkit-scrollbar-thumb,body::-webkit-scrollbar-thumb,
 body *::-webkit-scrollbar-thumb,#game::-webkit-scrollbar-thumb,#game *::-webkit-scrollbar-thumb{
-  background:#F36B78;border-radius:99px;
+  background:var(--nw-scroll-thumb,#F36B78);border-radius:99px;
 }
 :root::-webkit-scrollbar-track,html::-webkit-scrollbar-track,body::-webkit-scrollbar-track,
 body *::-webkit-scrollbar-track,#game::-webkit-scrollbar-track,#game *::-webkit-scrollbar-track{
-  background:#160B0E;
+  background:var(--nw-scroll-track,#160B0E);
 }
 /* Theme colors only when a player is inside a specific room. */
 #game.theme-classic,#game.theme-classic *{scrollbar-color:#64748b #f4f6f8!important}
@@ -11110,3 +11110,52 @@ body:has(#game.theme-cakes:not([hidden])){background:#FFE0E8!important}
  #game .nw-diamond-icon,#game .nw-lb-reward-icon img[src*="currency/diamond"],
  #game .nw-celebrate-icon img[src*="currency/diamond"],.nw-reward-celebration .nw-reward-diamond-art{animation:none!important}
 }
+
+
+/* Scrollbar palette mappings. Kept separate from gameplay layout and scrolling. */
+#game.nw-trophy-theme,
+#game.nw-cosmic-mail-theme{--nw-scroll-thumb:#B9A0D1;--nw-scroll-track:#241F37}
+#game.nw-account-theme{--nw-scroll-thumb:#BFA8D7;--nw-scroll-track:#241B32}
+#game.nw-triple-theme{--nw-scroll-thumb:#A7A1E7;--nw-scroll-track:#20233D}
+#game.nw-double-theme{--nw-scroll-thumb:#C9ACC8;--nw-scroll-track:#251F37}
+#game.nw-battle-theme{--nw-scroll-thumb:#B4DA69;--nw-scroll-track:#1D2426}
+#game.nw-inventory-theme{--nw-scroll-thumb:#C6ACDB;--nw-scroll-track:#231D36}
+#game.nw-collectibles-theme,
+#game.nw-collectible-detail-theme,
+#game.nw-collectibles-coming-theme{--nw-scroll-thumb:#C5A6DA;--nw-scroll-track:#261D34}
+#game.nw-galaxy-theme{--nw-scroll-thumb:#E0A2BE;--nw-scroll-track:#1C1423}
+#game.nw-lobby-theme{--nw-scroll-thumb:#F36B78;--nw-scroll-track:#160B0E}
+#game.nw-growing-live-shell{--nw-scroll-thumb:#7B5D87;--nw-scroll-track:#1A0F1F}
+#game.nw-let-shell{--nw-scroll-thumb:#A989DE;--nw-scroll-track:#1B1530}
+#game.nw-daily-theme{--nw-scroll-thumb:#9E93CF;--nw-scroll-track:#191B35}
+/* The document/page scrolls outside #game on some devices; share its active theme. */
+html:has(#game.nw-trophy-theme:not([hidden])),body:has(#game.nw-trophy-theme:not([hidden])){
+ --nw-scroll-thumb:#B9A0D1;--nw-scroll-track:#241F37;
+}
+html:has(#game.nw-triple-theme:not([hidden])),body:has(#game.nw-triple-theme:not([hidden])){
+ --nw-scroll-thumb:#A7A1E7;--nw-scroll-track:#20233D;
+}
+html:has(#game.nw-double-theme:not([hidden])),body:has(#game.nw-double-theme:not([hidden])){
+ --nw-scroll-thumb:#C9ACC8;--nw-scroll-track:#251F37;
+}
+html:has(#game.nw-account-theme:not([hidden])),body:has(#game.nw-account-theme:not([hidden])){
+ --nw-scroll-thumb:#BFA8D7;--nw-scroll-track:#241B32;
+}
+html:has(#game.nw-battle-theme:not([hidden])),body:has(#game.nw-battle-theme:not([hidden])){
+ --nw-scroll-thumb:#B4DA69;--nw-scroll-track:#1D2426;
+}
+/* Reward confirmations can become taller than a short device viewport.
+   Preserve touch/keyboard scrolling when necessary, but never show an intrusive
+   colored scrollbar on the reward popup or its backdrop. */
+.nw-reward-celebration,.nw-reward-celebration .nw-celebrate-dialog{
+ scrollbar-width:none!important;
+ -ms-overflow-style:none;
+}
+.nw-reward-celebration::-webkit-scrollbar,
+.nw-reward-celebration .nw-celebrate-dialog::-webkit-scrollbar{
+ width:0!important;height:0!important;display:none!important;
+}
+/* Other scrollable popups and lists inherit their own theme instead of Ruby. */
+#game .nw-daily-dialog{--nw-scroll-thumb:#8E83BE;--nw-scroll-track:#191B35}
+#game .nw-mail-claim-dialog{--nw-scroll-thumb:#BFA4D8;--nw-scroll-track:#302B46}
+#game .nw43-dialog{--nw-scroll-thumb:#A7A1E7;--nw-scroll-track:#20253F}
