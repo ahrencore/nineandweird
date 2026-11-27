@@ -160,7 +160,7 @@ header p{color:#E7BAC9;font-family:Fredoka,system-ui,sans-serif}
 <div class="boardwrap" id="wrap"><div class="board" id="board" aria-label="8-column by 10-row donut board"></div><div class="legend"><span>SLIDE SIDEWAYS · GRAVITY DROPS · NEW ROW RISES</span><span><span class="gold-dot"></span> +50</span></div></div>
 <div class="message" id="message">Slide a connected donut group sideways.</div>
 <div class="action"><button id="tryclear" class="secondary">TRY A LINE CLEAR</button><button id="help" class="secondary">HOW TO PLAY</button></div>
-<details class="rules" id="rules"><summary>THE RULES</summary><p>Each connected strip uses <b>one donut design</b> so you can tell blocks apart. The board is <b>8 columns wide and 10 rows tall</b>. Slide a connected group of 1–4 donuts <b>left or right within its existing row</b>; you cannot lift or manually drop it. You cannot jump over other groups. After each successful slide, the whole group falls automatically as far as it can without splitting. Completed 8-donut rows clear for <b>100 points</b>, plus <b>+50 for each marked donut in the cleared row</b>. Cascades earn combo multipliers. <b>Every successful slide raises one new row from the bottom</b>; there is no timer. The game ends if the stack crosses the top.</p><p>You can drag a group or tap a group and then tap an empty cell <b>in the same row</b>.</p></details>
+<details class="rules" id="rules"><summary>HOW TO PLAY</summary><p>Slide the donut blocks left or right.</p><p>Fill a row to clear it.</p><p>Blocks drop automatically.</p><p>A new row rises after every move.</p><p>Donuts come in blocks of 1, 2, 3 or 4.</p></details>
 <p class="hint">TEST BUILD · Donuts World artwork · Score not yet connected to leaderboard</p>
 </main><div class="overlay" id="overlay" hidden><div class="modal"><h2 id="overlaytitle">GAME OVER!</h2><p id="overlaytext">The donuts reached the top.</p><button id="again">PLAY AGAIN</button></div></div>
 <script>
@@ -171,13 +171,16 @@ const $=id=>document.getElementById(id);const board=$('board'),wrap=$('wrap'),me
 const rnd=(a,b)=>Math.floor(a+Math.random()*(b-a+1));const empty=()=>Array.from({length:ROWS},()=>Array(COLS).fill(null));
 function announce(str){message.textContent=str;}
 function groupRow(id){for(let r=0;r<ROWS;r++){let c=grid[r].indexOf(id);if(c>=0)return {r,c};}return null}
-function seedGroup(r,c,len,donut=null,specialAt=-1){let id=nextId++;const kind=donut===null?rnd(0,8):donut;let ds=Array.from({length:len},(_,i)=>({type:kind,special:i===specialAt}));groups.set(id,{len,donuts:ds});for(let j=0;j<len;j++)grid[r][c+j]=id;return id}
+// Each donut artwork always represents one block length.
+const LENGTH_ART=[[0,1,2],[3,4],[5,6],[7,8]];
+function donutForLength(len){const choices=LENGTH_ART[len-1];return choices[rnd(0,choices.length-1)]}
+function seedGroup(r,c,len,donut=null,specialAt=-1){let id=nextId++;const kind=donut===null?donutForLength(len):donut;let ds=Array.from({length:len},(_,i)=>({type:kind,special:i===specialAt}));groups.set(id,{len,donuts:ds});for(let j=0;j<len;j++)grid[r][c+j]=id;return id}
 function initial(){
  // Two demonstration rows that leave space to practice sideways movement.
- seedGroup(ROWS-2,0,4,0);seedGroup(ROWS-2,6,2,1,1); // 4-00-2
- seedGroup(ROWS-1,0,1,2);seedGroup(ROWS-1,3,3,3);seedGroup(ROWS-1,6,2,4); // 1-00-3-2
+ seedGroup(ROWS-2,0,4);seedGroup(ROWS-2,6,2,null,1); // 4-00-2
+ seedGroup(ROWS-1,0,1);seedGroup(ROWS-1,3,3);seedGroup(ROWS-1,6,2); // 1-00-3-2
 }
-function generateRow(){let a=Array(COLS).fill(null),c=0,hasGap=false;while(c<COLS){if(Math.random()<.28){c+=rnd(1,Math.min(3,COLS-c));hasGap=true;continue}let len=rnd(1,Math.min(4,COLS-c));let id=nextId++;const kind=rnd(0,8);let donuts=Array.from({length:len},()=>({type:kind,special:Math.random()<.085}));groups.set(id,{len,donuts});for(let k=0;k<len;k++)a[c+k]=id;c+=len}if(!hasGap){let id=a[COLS-1];if(id!==null){let first=a.indexOf(id);for(let i=first;i<COLS;i++)a[i]=null;groups.delete(id)}}return a}
+function generateRow(){let a=Array(COLS).fill(null),c=0,hasGap=false;while(c<COLS){if(Math.random()<.28){c+=rnd(1,Math.min(3,COLS-c));hasGap=true;continue}let len=rnd(1,Math.min(4,COLS-c));let id=nextId++;const kind=donutForLength(len);let donuts=Array.from({length:len},()=>({type:kind,special:Math.random()<.085}));groups.set(id,{len,donuts});for(let k=0;k<len;k++)a[c+k]=id;c+=len}if(!hasGap){let id=a[COLS-1];if(id!==null){let first=a.indexOf(id);for(let i=first;i<COLS;i++)a[i]=null;groups.delete(id)}}return a}
 function cleanGroups(){const alive=new Set(grid.flat().filter(v=>v!==null));for(const id of groups.keys())if(!alive.has(id))groups.delete(id)}
 // Whole strips fall under gravity if EVERY square directly beneath the strip is empty.
 // They never split into individual donuts, and stop if any column is supported.
@@ -391,8 +394,8 @@ function tryLineClear(){
  if(busy)return;
  grid=empty();groups=new Map();nextId=1;score=0;lines=0;moves=0;running=true;paused=false;selected=null;drag=null;hover=null;
  // Lower row has a single gap at column 4; the single donut can slide on the row above and drop into it.
- seedGroup(ROWS-1,0,3,1);seedGroup(ROWS-1,4,4,0,-1);
- seedGroup(ROWS-2,1,1,7,0);
+ seedGroup(ROWS-1,0,3);seedGroup(ROWS-1,4,4);
+ seedGroup(ROWS-2,1,1,null,0);
  $('overlay').hidden=true;
  announce('TRY IT: slide the single donut 2 spaces right to fill the gap!');render();
 }
