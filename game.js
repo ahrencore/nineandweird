@@ -1727,9 +1727,17 @@ function nwLetMeOutOpen(){
 }
 
 // DONUT RISE! — isolated test event. This build does not alter live event rewards.
+// Allow only the active, same-origin Donut Rise iframe to report its actual content height.
+window.addEventListener('message',event=>{
+ if(event.origin!==location.origin||event.data?.type!=='nw-donut-rise-height')return;
+ const frame=evRoot.querySelector('#nwDonutRiseFrame');
+ if(!frame||event.source!==frame.contentWindow)return;
+ const h=Number(event.data.height);
+ if(Number.isFinite(h)&&h>=300&&h<=5000)frame.style.height=Math.ceil(h)+'px';
+});
 function nwDonutRiseOpen(){
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-donut-rise-shell');
- evDisplay(`${evHeader('DONUT RISE!',showCategories)}<section class="nw-donut-rise-frame-container"><iframe id="nwDonutRiseFrame" title="DONUT RISE! — playable test event" src="donut-rise/index.html?v=2-dusty-pink" loading="eager"></iframe></section>`);
+ evDisplay(`${evHeader('DONUT RISE!',showCategories)}<section class="nw-donut-rise-frame-container"><iframe id="nwDonutRiseFrame" title="DONUT RISE! — playable test event" src="donut-rise/index.html?v=3-board-and-lines" loading="eager"></iframe></section>`);
  nwResetViewToTop();
 }
 function nwAislePanicBack(){
