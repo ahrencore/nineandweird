@@ -1110,6 +1110,82 @@ async function nwPrizeMail(){
  }catch(e){if(container.isConnected)container.textContent='Could not load mail: '+e.message;}
 }
 
+
+const nwAchievementLabels={
+ puzzle:['Puzzle Addict','Complete','Sudoku puzzles'],
+ brain:['Big Brain Energy','Complete','Hard, Expert or Extreme Sudoku puzzles'],
+ flawless:['Flawless Freak','Complete','mistake-free Sudoku puzzles'],
+ pieces:['World Traveller','Discover','unique collectible pieces'],
+ battle:['Born to Battle','Win','Battles'],
+ friendly:['Friendly Fire','Win','Friendly Challenges'],
+ dt:['Double the Trouble','Win','Double Trouble competitions'],
+ tt:['Triple Threat','Clear','Triple Trouble stages'],
+ tg:['Growing Pains','Earn', "They're Growing points"],
+ lmo:['Let Me Out!','Complete','Let Me Out rounds']
+};
+let nwAchievementFetchSerial=0;
+function nwAchievementCard(item){
+ const category=nwAchievementLabels[item.category]||[item.category,'Reach','milestones'];
+ const finished=item.finished||item.tier>20;
+ if(finished)return '<article class="nw-achievement-card complete"><div class="nw-achievement-main"><strong>'+nwEscape(category[0])+'</strong><small>All 20 milestones completed ✦</small></div><span class="nw-achievement-done">COMPLETE</span></article>';
+ const progress=Math.max(0,Number(item.progress)||0),target=Math.max(1,Number(item.target)||1);
+ const canClaim=progress>=target;
+ const title=category[1]+' '+target.toLocaleString()+' '+category[2];
+ return '<article class="nw-achievement-card'+(canClaim?' ready':'')+'" data-achievement-card="'+nwEscape(item.category)+'"><div class="nw-achievement-main"><strong>'+nwEscape(title)+'</strong><small>'+nwEscape(category[0])+' · '+item.tier+' / 20</small><div class="nw-achievement-track"><i style="width:'+Math.min(100,progress/target*100).toFixed(2)+'%"></i></div><span class="nw-achievement-count">'+Math.min(progress,target).toLocaleString()+' / '+target.toLocaleString()+'</span></div><div class="nw-achievement-reward">'+nwDiamondAmount(Number(item.diamonds||0).toLocaleString())+(canClaim?'<button type="button" data-achievement-claim="'+nwEscape(item.category)+'" data-achievement-tier="'+item.tier+'">CLAIM</button>':'<span class="nw-achievement-wait">IN PROGRESS</span>')+'</div></article>';
+}
+async function nwAchievementOpen(){
+ const uid=nwCloud?.user()?.id,serial=++nwAchievementFetchSerial;
+ const root=evRoot.querySelector('#nwAchievementList');
+ if(!root)return;
+ if(!uid||nwCloud.user().is_anonymous){root.innerHTML='<p class="nw-muted">Sign in to save and claim achievements.</p>';return;}
+ root.innerHTML='<p class="nw-muted">Loading your lifetime achievements…</p>';
+ try{
+  const c=await nwCloud.get(),{data,error}=await c.rpc('nw_achievement_snapshot');
+  if(error)throw Error(error.message);
+  if(serial!==nwAchievementFetchSerial||nwCloud.user()?.id!==uid||!root.isConnected)return;
+  const items=Array.isArray(data?.items)?data.items:[];
+  if(items.length!==10)throw Error('Achievement list is unavailable');
+  root.innerHTML=items.map(nwAchievementCard).join('');
+  const summary=evRoot.querySelector('#nwAchievementSummary');
+  if(summary)summary.textContent=Number(data.claimed||0)+' / 200 CLAIMED';
+  nwAchievementBind(root,uid,serial);
+ }catch(e){if(serial===nwAchievementFetchSerial&&root.isConnected)root.innerHTML='<p class="nw-muted">Unable to load achievements: '+nwEscape(e.message)+'</p><button class="nw-achievement-retry" type="button" id="nwAchievementRetry">RETRY</button>';root.querySelector('#nwAchievementRetry')?.addEventListener('click',()=>nwAchievementOpen());}
+}
+function nwAchievementBind(root,uid,serial){
+ root.querySelectorAll('[data-achievement-claim]').forEach(button=>button.onclick=async()=>{
+  if(button.disabled||serial!==nwAchievementFetchSerial||nwCloud.user()?.id!==uid)return;
+  const category=button.dataset.achievementClaim,tier=Number(button.dataset.achievementTier);
+  button.disabled=true;button.textContent='CLAIMING…';
+  const notice=evRoot.querySelector('#nwAchievementNotice');
+  if(notice)notice.textContent='';
+  try{
+   const c=await nwCloud.get(),{data,error}=await c.rpc('nw_achievement_claim',{p_category:category,p_tier:tier});
+   if(error)throw Error(error.message);
+   if(nwCloud.user()?.id!==uid||serial!==nwAchievementFetchSerial||!root.isConnected)return;
+   const card=root.querySelector('[data-achievement-card="'+category+'"]');
+   if(card){
+    card.classList.add('nw-achievement-out');
+    const credit=Number(data?.diamonds)||0;
+    if(notice)notice.textContent='+'+credit.toLocaleString()+' DIAMONDS CLAIMED ✦';
+    try{await nwWalletSync()}catch(e){console.warn('Achievement wallet refresh:',e.message)}
+    const {data:latest,error:refreshError}=await c.rpc('nw_achievement_snapshot');
+    if(refreshError)throw Error(refreshError.message);
+    if(nwCloud.user()?.id!==uid||serial!==nwAchievementFetchSerial||!card.isConnected)return;
+    const item=latest?.items?.find(x=>x.category===category);
+    if(!item)throw Error('Next achievement unavailable');
+    const replacement=document.createElement('div');
+    replacement.innerHTML=nwAchievementCard(item);
+    const next=replacement.firstElementChild;
+    next.classList.add('nw-achievement-in');
+    card.replaceWith(next);
+    const summary=evRoot.querySelector('#nwAchievementSummary');
+    if(summary)summary.textContent=Number(latest.claimed||0)+' / 200 CLAIMED';
+    nwAchievementBind(root,uid,serial);
+   }
+  }catch(e){if(notice)notice.textContent='Claim not completed: '+e.message;button.disabled=false;button.textContent='CLAIM';}
+ });
+}
+
 function nwShowTrophy(tab='home',offset=0){
   evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-trophy-theme');const r=nwWeeklyReport(offset),prior=nwWeeklyReport(offset-1),p=nwProfile();
   const weekTitle=new Date(r.start).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
@@ -1126,9 +1202,10 @@ function nwShowTrophy(tab='home',offset=0){
   const title=`<div class="nw-trophy-heading"><i class="nw-wish-star a" aria-hidden="true">✦</i><i class="nw-wish-star b" aria-hidden="true">✧</i><h2>${label}</h2><div class="nw-trophy-doodle" aria-hidden="true">✧ ── ☆ ── ✧</div></div>`;
   const landing=`<div class="nw-trophy-intro"><strong>${nwEscape(p.name)}’s Trophy Case</strong></div><div class="nw-trophy-menu">${items.map(([id,name,desc])=>`<button type="button" data-trophy="${id}"><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${icons[id]}</svg><span><strong>${name}</strong><small>${desc}</small></span><b aria-hidden="true">›</b></button>`).join('')}</div>`;
   const report=`<div class="nw-week-nav"><button id="nwOlderWeek" aria-label="Previous week">‹</button><strong>WEEK OF ${weekTitle.toUpperCase()}</strong><button id="nwNewerWeek" aria-label="Next week" ${offset>=0?'disabled':''}>›</button></div>${brain()}`;
-  const achievements=`<div class="nw-report-head"><strong>✦ Coming soon ✦</strong><span>Your permanent milestones will appear here.</span></div>`;
+  const achievements=`<div class="nw-achievements-summary" id="nwAchievementSummary">LIFETIME MILESTONES</div><div id="nwAchievementList" class="nw-achievement-list"><p class="nw-muted">Loading achievements…</p></div><p class="nw-achievement-notice" id="nwAchievementNotice" role="status"></p>`;
   evDisplay(`${evHeader('TROPHY CASE',tab==='home'?nwShowProfile:()=>nwShowTrophy())}<section class="nw-new-panel nw-trophy-panel">${title}${tab==='brain'?report:tab==='battle'?battle():tab==='achievements'?achievements:landing}</section>`);
   evRoot.querySelectorAll('[data-trophy]').forEach(b=>b.onclick=async()=>{nwShowTrophy(b.dataset.trophy)});
+  if(tab==='achievements')void nwAchievementOpen();
   evRoot.querySelectorAll('[data-prize-use]').forEach(b=>b.onclick=()=>nwPrizeQuantityDialog(b.dataset.prizeUse));
   if(tab==='brain'){evRoot.querySelector('#nwOlderWeek').onclick=()=>nwShowTrophy('brain',offset-1);evRoot.querySelector('#nwNewerWeek').onclick=()=>nwShowTrophy('brain',offset+1)}
 }
