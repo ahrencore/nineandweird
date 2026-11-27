@@ -1803,7 +1803,25 @@ window.addEventListener('message',async event=>{
    const [rows,state]=await Promise.all([call('nw_dr_rank'),call('nw_dr_milestone_state')]);
    reply({type:'nw-dr-rank-data',rows,state});
   }else if(cmd==='nw-dr-milestones'){
-   const state=await call('nw_dr_milestone_state');
+   // Reconcile any earned milestone from an earlier interrupted session.
+   // Claims are idempotent server-side and use the verified best single run.
+   let state=await call('nw_dr_milestone_state');
+   const thresholds=[1000,2000,3000,6000,8000,10000,12000,14000,16000,20000,22000,24000,26000,28000,30000];
+   const claimed=new Set((state?.claimed||[]).map(Number));
+   const awards=[];
+   if(state?.live)for(let i=0;i<thresholds.length;i++){
+    if(thresholds[i]>Number(state.best||0)||claimed.has(i+1))continue;
+    const reward=await call('nw_dr_milestone_claim',{p_milestone:i+1});
+    if(!reward?.already_claimed)awards.push(reward);
+   }
+   if(awards.length){
+    state=await call('nw_dr_milestone_state');
+    const items=new Map();
+    for(const reward of awards)for(const [item,qty] of nwRewardItemsFromClaim(reward))
+     items.set(item,(items.get(item)||0)+qty);
+    void Promise.allSettled([nwWalletSync(),nwPrizeSync()]);
+    if(items.size)nwRewardCelebrate([...items],{source:'milestone',title:'DONUT RISE MILESTONE!'});
+   }
    reply({type:'nw-dr-milestone-data',state});
   }else if(cmd==='nw-dr-claim'){
    const tier=Number(event.data.tier);
