@@ -10636,3 +10636,92 @@ body:has(#game.theme-cakes:not([hidden])){background:#FFE0E8!important}
  display:block!important;width:76px!important;height:76px!important;
 }
 #game.theme-donuts .result-panel :is(h2,.result-stats,.result-score){color:#823956!important;}
+
+/* CAKES World only — piped icing SVG controls; existing puzzle and cake PNGs remain intact. */
+#game.theme-cakes .difficulty-list .nw-cakes-difficulty,
+#game.theme-cakes .result-actions .nw-cakes-action{
+ position:relative!important;display:flex!important;align-items:center!important;
+ justify-content:center!important;isolation:isolate!important;overflow:visible!important;
+ min-height:56px!important;padding:8px 14px!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;text-shadow:none!important;color:#79354F!important;
+}
+#game.theme-cakes .nw-cakes-difficulty>.nw-cakes-icing-svg,
+#game.theme-cakes .result-actions .nw-cakes-action>.nw-cakes-icing-svg{
+ position:absolute!important;inset:0!important;z-index:0!important;
+ display:block!important;width:100%!important;height:100%!important;
+ pointer-events:none!important;
+}
+#game.theme-cakes .nw-cakes-difficulty>span,
+#game.theme-cakes .result-actions .nw-cakes-action>span{
+ position:relative!important;z-index:1!important;
+ display:block!important;color:#79354F!important;
+ font:800 clamp(14px,3.5vw,18px)/1.15 'Fredoka',system-ui,sans-serif!important;
+ letter-spacing:.035em!important;text-align:center!important;
+ text-shadow:none!important;white-space:nowrap!important;pointer-events:none!important;
+}
+#game.theme-cakes .result-actions .nw-cakes-action>span{
+ font-size:clamp(12px,2.9vw,15px)!important;
+}
+#game.theme-cakes .nw-cakes-difficulty:active,
+#game.theme-cakes .result-actions .nw-cakes-action:active{transform:translateY(2px)!important;}
+#game.theme-cakes .nw-cakes-difficulty:focus-visible,
+#game.theme-cakes .result-actions .nw-cakes-action:focus-visible{
+ outline:2px solid #B65C7C!important;outline-offset:3px!important;
+}
+#game.theme-cakes .ev-sudoku-tray button.nw-cakes-tray-piece{
+ position:relative!important;isolation:isolate!important;
+ overflow:visible!important;padding:0!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
+#game.theme-cakes .ev-sudoku-tray button.nw-cakes-tray-piece>.nw-cakes-tray-svg{
+ position:absolute!important;inset:0!important;z-index:0!important;
+ display:block!important;width:100%!important;height:100%!important;
+ pointer-events:none!important;
+}
+#game.theme-cakes .ev-sudoku-tray button.nw-cakes-tray-piece>img,
+#game.theme-cakes .ev-sudoku-tray button.nw-cakes-tray-piece>.number-symbol{
+ position:relative!important;z-index:1!important;
+ max-width:84%!important;max-height:84%!important;object-fit:contain!important;
+}
+#game.theme-cakes .ev-sudoku-tray button.nw-cakes-tray-piece.selected{
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ filter:drop-shadow(0 0 3px #CF3D7299)!important;
+}
+#game.theme-cakes .ev-sudoku-tray button.nw-cakes-tray-piece.selected .nw-cakes-tray-base{
+ fill:#FFE3A5!important;stroke:#A3476B!important;stroke-width:3!important;
+}
+#game.theme-cakes .ev-sudoku-tray button.nw-cakes-tray-piece .ev-sudo-remain{
+ position:absolute!important;z-index:3!important;
+ background:#BC5B80!important;color:#FFF9EF!important;border-radius:50%!important;
+}
+#game.theme-cakes .ev-sudo-tools-clean .ev-sudo-tool{
+ background:#FFF1E3!important;border:2px solid #D37D9A!important;
+ border-bottom:4px solid #B95F82!important;border-radius:17px 17px 10px 10px!important;
+ box-shadow:none!important;color:#79354F!important;text-shadow:none!important;
+}
+#game.theme-cakes .ev-sudo-tools-clean .ev-sudo-tool.active{
+ background:#FFF0BB!important;border-color:#B95F82!important;
+}
+#game.theme-cakes .ev-sudo-tools-clean .ev-sudo-tool-icon{color:#A74B70!important;}
+#game.theme-cakes .ev-sudo-tools-clean .nw-cakes-tool-svg{
+ display:block!important;width:21px!important;height:21px!important;
+}
+#game.theme-cakes .ev-sudo-tools-clean .ev-sudo-tool-label{
+ color:#79354F!important;font:700 10px/1.2 'Fredoka',system-ui,sans-serif!important;
+}
+#game.theme-cakes .ev-sudo-tools-clean #evSudoHint .nw-sudoku-hint-counter{
+ color:#A3476B!important;font-size:9px!important;font-weight:800!important;
+}
+#game.theme-cakes .result-panel .result-mark{
+ display:grid!important;place-items:center!important;
+ width:78px!important;height:78px!important;min-width:78px!important;
+ min-height:78px!important;max-width:78px!important;max-height:78px!important;
+ aspect-ratio:1!important;margin:7px auto 14px!important;padding:0!important;
+ background:transparent!important;border:0!important;border-radius:50%!important;
+ box-shadow:none!important;color:#79354F!important;
+}
+#game.theme-cakes .result-panel .nw-cakes-result-svg{
+ display:block!important;width:76px!important;height:76px!important;
+}
+#game.theme-cakes .result-panel :is(h2,.result-stats,.result-score){color:#79354F!important;}
