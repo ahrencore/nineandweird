@@ -215,6 +215,34 @@ header p{color:#E7BAC9;font-family:Fredoka,system-ui,sans-serif}
 }
 
 
+
+/* Donut Rise rankings, milestone claims, practice state. */
+.dr-event-status{font:700 10px/1.4 Fredoka,system-ui;letter-spacing:.1em;color:#E7BAC9;text-align:center;margin:4px auto}
+.dr-milestones-open{display:flex;align-items:center;justify-content:center;gap:12px;width:min(260px,84%);margin:4px auto 5px;min-height:42px;border:1px solid #A85F78;border-radius:12px;background:#252023;color:#F6EEE8;font:700 12px Fredoka;cursor:pointer}
+.dr-milestones-open span{color:#E7BAC9;font-size:10px}
+.dr-event-modal{max-width:450px!important;max-height:85vh;display:flex;flex-direction:column;gap:9px;padding:16px 12px!important}
+.dr-event-modal h2{font-size:clamp(24px,6vw,32px)!important;margin:0!important}
+.dr-event-content{overflow-y:auto;overscroll-behavior:contain;min-height:45px;max-height:65vh;padding:2px 5px;scrollbar-width:thin;scrollbar-color:#A85F78 #1C1C1C}
+.dr-event-note{font:500 12px/1.45 Fredoka;color:#E7BAC9;margin:5px 0 12px}
+.dr-rank-line{display:flex;align-items:center;gap:8px;padding:7px 5px;border-bottom:1px solid #493941;font:600 12px Fredoka;color:#F6EEE8}
+.dr-rank-line.is-me{background:#38262E;border-radius:9px}
+.dr-rank-place{flex:none;width:26px;color:#E7BAC9;font-weight:700}
+.dr-rank-avatar{position:relative;flex:none;width:42px;height:42px}
+.dr-rank-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.dr-rank-name{min-width:0;flex:1;text-align:left;overflow-wrap:anywhere}
+.dr-rank-score{font:700 11px 'Space Mono',monospace;color:#F6EEE8;text-align:right}
+.dr-event-action{border:1px solid #A85F78!important;border-radius:10px!important;background:#30242B!important;color:#E7BAC9!important;font:700 12px Fredoka!important;padding:8px 12px!important;margin:4px!important;cursor:pointer}
+.dr-milestone-line{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:7px;align-items:center;padding:9px 4px;border-bottom:1px solid #493941;text-align:left;font-family:Fredoka;color:#F6EEE8}
+.dr-milestone-tier{color:#E7BAC9;font-size:12px;font-weight:700}
+.dr-milestone-content{display:grid;gap:3px;font-size:11px}
+.dr-milestone-content strong{font-size:12px}
+.dr-milestone-content small{color:#E7BAC9}
+.dr-milestone-line button{margin:0!important;font:700 10px Fredoka!important;padding:6px 8px!important;border-radius:8px!important}
+.dr-milestone-line button:disabled{background:#333;color:#C6A8B4;border-color:#58424B}
+.dr-prize-line{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #493941;padding:10px 5px;text-align:left;font:600 11px/1.4 Fredoka;color:#F6EEE8}
+.dr-prize-line b{color:#E7BAC9}
+@media(max-width:370px){.dr-rank-line{gap:5px}.dr-rank-avatar{width:35px;height:35px}.dr-rank-score{font-size:10px}}
+
 /* Hand-drawn Donut Rise landing and gameplay controls */
 .dr-landing-tools,.dr-play-tools{display:flex;align-items:flex-start;justify-content:center;gap:clamp(8px,3vw,20px);width:100%;margin:3px 0 2px}
 .dr-icon-button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;width:clamp(85px,25vw,110px);min-height:89px;border:1px solid #A85F78;border-radius:14px;background:#292126;color:#F6EEE8;padding:8px 4px 5px;cursor:pointer;font-family:Fredoka,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
@@ -285,7 +313,9 @@ html,body,.app,.app *{-webkit-user-select:none;user-select:none;-webkit-touch-ca
   </svg>
   <span>START</span>
  </button>
+ <div class="dr-event-status" id="drEventStatus">LOADING EVENT STATUS…</div>
  <nav class="dr-landing-tools" aria-label="Donut Rise information"><button type="button" id="drLandingHelp" class="dr-icon-button dr-help" aria-label="HOW TO PLAY"><span class="dr-icon-art"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 18Q22 12 11 18L11 50Q22 45 32 52Q43 45 54 50V18Q42 12 32 18Z" fill="#30242B" stroke="#E7BAC9" stroke-width="2.8" stroke-linejoin="round"/><path d="M32 18V52M16 26Q23 23 27 27M16 34Q23 31 27 35M39 28Q40 22 46 27Q50 31 44 36L43 39M43 44v1" fill="none" stroke="#F6EEE8" stroke-width="2.6" stroke-linecap="round"/></svg></span><span class="dr-icon-caption">HOW TO PLAY</span></button><button type="button" id="drLandingRank" class="dr-icon-button dr-rank" aria-label="RANK"><span class="dr-icon-art"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M19 13H45L42 37Q40 44 32 46Q24 44 22 37Z" fill="#30242B" stroke="#E7BAC9" stroke-width="2.6" stroke-linejoin="round"/><path d="M19 21H11Q12 37 24 37M45 21H53Q52 37 40 37M32 46v8M21 57Q32 51 43 57" fill="none" stroke="#E7BAC9" stroke-width="2.6" stroke-linecap="round"/><path d="M32 21l3 6 6 1-5 5 1 7-5-3-5 3 1-7-5-5 6-1z" fill="#C47A92"/></svg></span><span class="dr-icon-caption">RANK</span></button></nav>
+ <button type="button" id="drMilestonesOpen" class="dr-milestones-open">MILESTONES <span>15 REWARDS</span></button>
 </section>
 <section class="dr-game-shell" id="drGameShell" hidden>
 <header class="game-title"><h1>DONUT RISE<span class="punct">!</span></h1></header>
@@ -303,6 +333,7 @@ html,body,.app,.app *{-webkit-user-select:none;user-select:none;-webkit-touch-ca
   <button type="button" id="infoclose">CLOSE</button>
  </div>
 </div>
+<div class="overlay" id="drEventOverlay" hidden><div class="modal dr-event-modal" role="dialog" aria-modal="true" aria-labelledby="drEventTitle"><h2 id="drEventTitle">DONUT RISE!</h2><div id="drEventBody" class="dr-event-content"></div><button type="button" id="drEventClose">CLOSE</button></div></div>
 <div class="overlay" id="drWelcome" hidden><div class="modal dr-welcome-card"><h2>YOUR FREE BOOSTERS!</h2><p>One of each to get you started. They're safely stored in Inventory.</p><div class="dr-welcome-items"><span><svg viewBox="0 0 64 64" aria-hidden="true"><g class="dr-booster-art"><path d="M25 21L44 53Q48 59 52 55L53 52L34 17" fill="#A85F78" stroke="#E7BAC9" stroke-width="2.5" stroke-linejoin="round"/><path d="M13 16Q24 6 35 17L41 28Q25 26 19 40Q12 31 13 16Z" fill="#F6EEE8" stroke="#C47A92" stroke-width="2.8" stroke-linejoin="round"/><path d="M18 18Q25 13 30 18M44 47l5-3" fill="none" stroke="#E7BAC9" stroke-width="2.1" stroke-linecap="round"/></g></svg><b>SUGAR SPLITTER ×1</b></span><span><svg viewBox="0 0 64 64" aria-hidden="true"><g class="dr-booster-art"><path d="M12 27Q7 24 7 33Q8 39 14 37L22 36L44 48Q48 50 48 44L47 17Q47 12 43 15L22 26Z" fill="#C47A92" stroke="#E7BAC9" stroke-width="2.5" stroke-linejoin="round"/><path d="M17 38L23 55Q27 59 31 54L34 50L28 39" fill="#A85F78" stroke="#E7BAC9" stroke-width="2.5" stroke-linejoin="round"/><path d="M42 21Q45 31 43 42M54 24Q60 32 54 40" fill="none" stroke="#F6EEE8" stroke-width="2.8" stroke-linecap="round"/></g></svg><b>DONUT EVICTOR ×1</b></span></div><button type="button" id="drWelcomeClose">AWESOME!</button></div></div>
 <div class="overlay" id="overlay" hidden><div class="modal"><h2 id="overlaytitle">GAME OVER!</h2><p id="overlaytext">The donuts reached the top.</p><button id="again">PLAY AGAIN</button><button type="button" id="leaveGame">LEAVE GAME</button></div></div>
 <script>
@@ -526,6 +557,71 @@ function buildGroupTrays(){
 }
 function render(){const frag=document.createDocumentFragment();for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const id=grid[r][c],el=document.createElement('div');el.className='cell';el.dataset.r=r;el.dataset.c=c;if(id!==null){const g=groups.get(id),pos=groupRow(id),offset=c-pos.c,d=g.donuts[offset];el.classList.add('occupied');el.dataset.id=id;if(id%2)el.classList.add('alt');el.classList.add('group-'+(offset===0?'first':offset===g.len-1?'last':'middle'));if(g.len===1)el.classList.add('group-single');el.style.setProperty('--group-color', ['#D99AAE','#E7BAC9','#D49AA6','#E4B7AF','#E1B7B9','#DDA7B8','#E8BDB1','#F0BFC9','#D1A2A9'][d.type]);if(d.special)el.classList.add('special');const img=new Image();img.src=art[d.type];img.alt='';img.draggable=false;img.onerror=()=>{img.remove();const t=document.createElement('span');t.className='fallback';t.textContent='🍩';el.append(t)};el.append(img)}if(hover){const len=groups.get(hover.id)?.len||0;if(r===hover.r&&c>=hover.c&&c<hover.c+len)el.classList.add(hover.valid?'ghost':'invalid')}frag.append(el)}board.replaceChildren(frag);buildGroupTrays();requestAnimationFrame(reportFrameHeight);$('score').textContent=String(score).padStart(4,'0');$('lines').textContent=lines;$('countdown').textContent=moves;updateBoosterButtons()}
 
+
+const drThresholds=[1000,2000,3000,6000,8000,10000,12000,14000,16000,20000,22000,24000,26000,28000,30000];
+const drRewards=[['diamonds',50],['diamonds',50],['diamonds',50],['diamonds',50],['diamonds',50],['diamonds',50],['splitter',1],['diamonds',50],['diamonds',50],['diamonds',50],['evictor',1],['diamonds',100],['splitter',1],['diamonds',100],['diamonds',100]];
+const drRankRewards=['2,000 Diamonds · 2 Splitters · 2 Evictors','1,500 Diamonds · 2 Splitters · 1 Evictor','1,000 Diamonds · 1 Splitter · 1 Evictor','700 Diamonds · 1 Evictor','500 Diamonds · 1 Splitter','200 Diamonds each'];
+let drLive=false,drRunSeq=0,drRunId=null,drOverStats=null,drModalView=null,drMilestoneState=null;
+const drEsc=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const drFmt=v=>Number(v||0).toLocaleString();
+function drBeginRun(){drRunSeq++;drRunId=null;drOverStats=null;if(drLive)drSignal({type:'nw-dr-start',seq:drRunSeq})}
+function drFinishRun(){if(!drLive)return;drOverStats={score,lines,moves};drSendFinished()}
+function drSendFinished(){if(!drRunId||!drOverStats)return;const stats=drOverStats;drOverStats=null;drSignal({type:'nw-dr-finish',seq:drRunSeq,runId:drRunId,...stats})}
+function drOpenModal(view){
+ drModalView=view;$('drEventOverlay').hidden=false;
+ $('drEventTitle').textContent=view==='rank'?'LEADERBOARD':view==='rewards'?'RANK REWARDS':'MILESTONES';
+ $('drEventBody').innerHTML='<p class="dr-event-note">LOADING…</p>';
+ if(view==='rewards')drRenderRewards();
+ else drSignal({type:view==='rank'?'nw-dr-rank':'nw-dr-milestones'});
+ requestAnimationFrame(reportFrameHeight);
+}
+function drRenderRewards(){
+ $('drEventBody').innerHTML=drRankRewards.map((reward,i)=>'<div class="dr-prize-line"><b>'+(i===5?'#6–10':'#'+(i+1))+'</b><span>'+reward+'</span></div>').join('');
+}
+function drRenderRank(rows,state){
+ if(drModalView!=='rank')return;
+ const body=$('drEventBody'),best=Number(state?.best)||0;
+ if(drLive&&best<1000){body.innerHTML='<p class="dr-event-note">Reach 1,000 points in one run to unlock the leaderboard.</p><button class="dr-event-action" data-prizes>VIEW REWARDS</button>';body.querySelector('[data-prizes]').onclick=()=>drOpenModal('rewards');return}
+ const all=Array.isArray(rows)?rows:[];
+ body.innerHTML='<p class="dr-event-note">'+(drLive?'FRIDAY–SUNDAY · HIGHEST SINGLE-RUN SCORE':'PRACTICE MODE · LAST EVENT RESULTS')+'</p><button class="dr-event-action" data-prizes>VIEW REWARDS</button>'+
+ (all.length?all.map(r=>{
+  const avatar=/^[a-z0-9_/-]+\.png$/i.test(r.avatar||'')?'../'+r.avatar:'../growing/assets/01_gloop.png';
+  const frame=/^(usual|weird|monthly-(10|25|50|100|150|200))$/.test(r.frame||'')?r.frame:'usual';
+  const frameUrl=frame==='usual'?'../frames/nw-free-usual.png?v=42':frame==='weird'?'../frames/nw-free-weird.png?v=42':'../frames/nw-'+frame+'.png';
+  return '<div class="dr-rank-line'+(r.is_me?' is-me':'')+'"><span class="dr-rank-place">#'+Number(r.place)+'</span><span class="dr-rank-avatar"><img src="'+drEsc(avatar)+'" alt=""><img src="'+drEsc(frameUrl)+'" alt=""></span><span class="dr-rank-name">'+drEsc(r.username)+(r.is_me?' (YOU)':'')+'</span><span class="dr-rank-score">'+drFmt(r.score)+'</span></div>';
+ }).join(''):'<p class="dr-event-note">No leaderboard entries yet.</p>');
+ body.querySelector('[data-prizes]').onclick=()=>drOpenModal('rewards');
+}
+function drRenderMilestones(state){
+ if(drModalView!=='milestones')return;
+ drMilestoneState=state||drMilestoneState||{};
+ const best=Number(drMilestoneState.best)||0,claimed=new Set((drMilestoneState.claimed||[]).map(Number));
+ $('drEventBody').innerHTML='<p class="dr-event-note">BEST RUN: '+drFmt(best)+' · '+(drLive?'EVENT LIVE':'PREVIOUS EVENT REWARDS')+'</p>'+
+ drThresholds.map((threshold,i)=>{
+  const done=claimed.has(i+1),ready=best>=threshold;
+  const [kind,qty]=drRewards[i],name=kind==='diamonds'?'Diamonds':kind==='splitter'?'Sugar Splitter':'Donut Evictor';
+  return '<div class="dr-milestone-line"><span class="dr-milestone-tier">#'+(i+1)+'</span><span class="dr-milestone-content"><strong>'+drFmt(threshold)+' POINTS</strong><small>'+qty+' × '+name+'</small></span><button data-dr-claim="'+(i+1)+'" '+(!ready||done?'disabled':'')+'>'+(done?'CLAIMED':ready?'CLAIM':'LOCKED')+'</button></div>';
+ }).join('');
+ $('drEventBody').querySelectorAll('[data-dr-claim]:not(:disabled)').forEach(btn=>btn.onclick=()=>{btn.disabled=true;btn.textContent='CLAIMING…';drSignal({type:'nw-dr-claim',tier:Number(btn.dataset.drClaim)})});
+}
+function drCloseModal(){drModalView=null;$('drEventOverlay').hidden=true;requestAnimationFrame(reportFrameHeight)}
+window.addEventListener('message',event=>{
+ if(event.origin!==location.origin||event.source!==window.parent)return;
+ const data=event.data||{};
+ if(data.type==='nw-dr-session'&&data.seq===drRunSeq){drRunId=data.run_id||null;drSendFinished()}
+ else if(data.type==='nw-dr-finished'&&data.seq===drRunSeq){drMilestoneState=data.state;if(data.result?.rank_unlocked)announce('Your best run was recorded!')}
+ else if(data.type==='nw-dr-rank-data')drRenderRank(data.rows,data.state);
+ else if(data.type==='nw-dr-milestone-data')drRenderMilestones(data.state);
+ else if(data.type==='nw-dr-milestone-claimed'){drMilestoneState=data.state;drRenderMilestones(data.state);drSignal({type:'nw-dr-ready'})}
+ else if(data.type==='nw-dr-event-error'){
+  if(data.command==='nw-dr-start'&&data.seq===drRunSeq){drRunId=null;drOverStats=null}
+  if(['nw-dr-rank','nw-dr-milestones','nw-dr-claim'].includes(data.command)&&drModalView){
+   const el=$('drEventBody');if(el)el.insertAdjacentHTML('afterbegin','<p class="dr-event-note">'+drEsc(data.message||'Could not load event data')+'</p>');
+  }
+  if(data.command==='nw-dr-finish')announce('Could not save event score: '+(data.message||'Unknown error'));
+ }
+});
+
 /* Parent-owned cloud Inventory bridge. No booster stock is stored locally here. */
 let drBalances={splitter:0,evictor:0},drLoaded=false,activeBooster=null,drRequest=0,drPending=null;
 function drSignal(message){if(window.parent!==window)window.parent.postMessage(message,location.origin)}
@@ -554,6 +650,7 @@ window.addEventListener('message',event=>{
  if(event.origin!==location.origin||event.source!==window.parent)return;
  const data=event.data||{};
  if(data.type==='nw-dr-state'){
+  drLive=!!data.live;$('drEventStatus').textContent=drLive?'EVENT LIVE · FRI–SUN':'PRACTICE MODE · EVENT RETURNS FRIDAY';
   drLoaded=true;drBalances={splitter:Math.max(0,Number(data.splitter)||0),evictor:Math.max(0,Number(data.evictor)||0)};
   updateBoosterButtons();
   if(data.awarded){$('drWelcome').hidden=false;requestAnimationFrame(reportFrameHeight)}
@@ -683,7 +780,7 @@ board.addEventListener('pointerup',e=>{
 });
 board.addEventListener('pointercancel',e=>{if(drag?.pointerId===e.pointerId){clearDragState();if(!busy)render()}});
 board.addEventListener('lostpointercapture',e=>{if(drag?.pointerId===e.pointerId){clearDragState();if(!busy)render()}});
-function end(){running=false;$('overlay').hidden=false;$('overlaytitle').textContent='GAME OVER!';$('overlaytext').textContent='The donuts reached the top. Final score: '+score+' · Lines cleared: '+lines+' · Moves: '+moves;render()}
+function end(){running=false;drFinishRun();$('overlay').hidden=false;$('overlaytitle').textContent='GAME OVER!';$('overlaytext').textContent='The donuts reached the top. Final score: '+score+' · Lines cleared: '+lines+' · Moves: '+moves;render()}
 function reset(){
  if(busy)return;
  grid=empty();groups=new Map();nextId=1;score=0;lines=0;moves=0;running=true;paused=false;selected=null;drag=null;hover=null;
@@ -717,17 +814,19 @@ function showLanding(){
 }
 function startGameplay(){
  cancelBooster();landing.hidden=true;gameShell.hidden=false;
- reset();
+ reset();drBeginRun();
  requestAnimationFrame(reportFrameHeight);
 }
 $('drStartButton').onclick=startGameplay;
 $('drLandingHelp').onclick=showHowToPlay;
 $('drPlayHelp').onclick=showHowToPlay;
-$('drLandingRank').onclick=()=>showInfo('RANK','Leaderboards are coming soon.');
+$('drLandingRank').onclick=()=>drOpenModal('rank');
+$('drMilestonesOpen').onclick=()=>drOpenModal('milestones');
+$('drEventClose').onclick=drCloseModal;
 $('drSplitter').onclick=()=>toggleBooster('splitter');
 $('drEvictor').onclick=()=>toggleBooster('evictor');
 $('drWelcomeClose').onclick=()=>{$('drWelcome').hidden=true};
-$('again').onclick=()=>{reset();requestAnimationFrame(reportFrameHeight)};
+$('again').onclick=()=>{reset();drBeginRun();requestAnimationFrame(reportFrameHeight)};
 $('leaveGame').onclick=()=>{cancelBooster();$('overlay').hidden=true;showLanding()};
 function showHowToPlay(){showInfo('HOW TO PLAY',[
  'Slide the donut blocks left or right.',
