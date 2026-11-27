@@ -11210,3 +11210,31 @@ html:has(#game.nw-battle-theme:not([hidden])),body:has(#game.nw-battle-theme:not
  #game.nw-double-theme .nw-double-verified .nw-double-summary{animation:none!important}
  #game.nw-double-theme .nw-dt-sync-bar span{width:100%}
 }
+
+/* AISLE PANIC! — isolated permanent mini-game, without changing any other event. */
+#game .nw-lobby-portal.aislepanic{--portal-bg:#0B1420;--portal-panel:#153242;--portal-accent:#5BFFD8;--portal-ink:#B9FFF1;color:#5BFFD8}
+#game .nw-lobby-portal.aislepanic .nw-lobby-portal-disc{
+ background:radial-gradient(circle at 35% 27%,#255A6B,#152F44 66%,#0B1420);
+ border-color:#5BFFD8;box-shadow:inset 0 0 13px #5BFFD82C,0 0 14px #5BFFD821;
+}
+#game .nw-lobby-portal.aislepanic .nw-lobby-portal-decor{display:none}
+#game .nw-lobby-portal.aislepanic strong{
+ font:400 clamp(18px,4.6vw,24px)/.97 'Rubik Glitch','Bricolage Grotesque',system-ui,sans-serif!important;
+ color:#D7FFF4!important;text-shadow:0 0 12px #5BFFD870!important;
+ letter-spacing:.015em!important;white-space:normal;
+}
+#game .nw-lobby-portal.aislepanic .nw-lobby-portal-disc:after{
+ content:"";position:absolute;width:9px;height:17px;bottom:11%;left:calc(50% - 4.5px);
+ background:#5BFFD8;clip-path:polygon(50% 0,100% 70%,50% 100%,0 70%);
+ opacity:.52;animation:nwAisleShipIdle 2.8s ease-in-out infinite;pointer-events:none;
+}
+@keyframes nwAisleShipIdle{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+#game.nw-aisle-shell{background:#0B1420!important;color:#EAFBFF!important;overflow-x:hidden!important}
+#game.nw-aisle-shell>.ev-head{background:#101F2D!important;border-color:#3F7D86!important}
+#game.nw-aisle-shell>.ev-head button{background:#152D3B!important;border-color:#5BFFD8!important;color:#DDFEF7!important}
+#game.nw-aisle-shell>.nw-aisle-frame-container{width:100%;max-width:560px;margin:0 auto;padding:0;min-height:calc(100dvh - 58px);background:#0B1420}
+#game.nw-aisle-shell .nw-aisle-frame-container iframe{
+ display:block;width:100%;height:calc(100dvh - 58px);min-height:600px;
+ border:0;background:#0B1420;overflow:auto;
+}
+@media(prefers-reduced-motion:reduce){#game .nw-lobby-portal.aislepanic .nw-lobby-portal-disc:after{animation:none}}
