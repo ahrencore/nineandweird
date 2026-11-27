@@ -624,7 +624,7 @@ const drSessions=new Map();
 let drSavePending=0,drSaveMessage='';
 function drSaveStatus(){
  const label=$('drEventStatus');if(!label)return;
- label.textContent=drSavePending?'SAVING SCORE…':drSaveMessage||(
+ label.textContent=(drSavePending||[...drSessions.values()].some(r=>r.finished&&!r.submitted))?'SAVING SCORE…':drSaveMessage||(
   drLive?'EVENT LIVE · FRI–SUN':'PRACTICE MODE · EVENT RETURNS FRIDAY');
 }
 function drQueueRunCompletion(){
@@ -648,10 +648,12 @@ function drBeginRun(){
  drSignal({type:'nw-dr-start',seq:drRunSeq});
 }
 function drFinishRun(){
- if(drLive){const entry=drSessions.get(drRunSeq);if(entry&&!entry.finished){
+ const entry=drSessions.get(drRunSeq);
+ if(entry&&!entry.finished){
   entry.finished={score,lines,moves};
+  drSaveStatus();
   drSubmitSession(drRunSeq);
- }}
+ }
 }
 // Reuse the actual small icons already drawn for Donut Rise gameplay and currency.
 function drRewardIcon(kind){
@@ -705,7 +707,7 @@ function drRenderRewards(){
 function drRenderRank(rows,state){
  if(drModalView!=='rank')return;
  const body=$('drEventBody'),best=Number(state?.best)||0;
- if(drLive&&best<1000){body.innerHTML='<p class="dr-event-note">Reach 1,000 points in one run to unlock the leaderboard.</p><button class="dr-event-action" data-prizes>VIEW REWARDS</button>';body.querySelector('[data-prizes]').onclick=()=>drOpenModal('rewards');return}
+ if(drLive&&best<1000){body.innerHTML='<p class="dr-event-note">'+(drSavePending||[...drSessions.values()].some(r=>r.finished&&!r.submitted)?'Saving your latest run…':'Reach 1,000 points in one run to unlock the leaderboard.')+'</p><button class="dr-event-action" data-prizes>VIEW REWARDS</button>';body.querySelector('[data-prizes]').onclick=()=>drOpenModal('rewards');return}
  const all=Array.isArray(rows)?rows:[];
  body.innerHTML='<p class="dr-event-note">'+(drLive?'FRIDAY–SUNDAY · HIGHEST SINGLE-RUN SCORE':'PRACTICE MODE · LAST EVENT RESULTS')+'</p><button class="dr-event-action" data-prizes>VIEW REWARDS</button>'+
  (all.length?all.map(r=>{
@@ -761,6 +763,7 @@ window.addEventListener('message',event=>{
    if(data.seq===drRunSeq)drRunId=entry.runId;
    if(!data.live)drSessions.delete(data.seq);
    else drSubmitSession(data.seq);
+   drSaveStatus();
   }
  }
  else if(data.type==='nw-dr-finished'){
@@ -769,6 +772,7 @@ window.addEventListener('message',event=>{
   drSaveMessage=data.result?.accepted?'SCORE SAVED · '+drFmt(data.result.best??data.result.score):'SCORE NOT SAVED';
   drSaveStatus();
   drPreviewMilestones(data.state);
+  if(drModalView==='rank')drSignal({type:'nw-dr-rank'});
   if(data.seq===drRunSeq&&data.result?.rank_unlocked)announce('Your best run was recorded!');
  }
  else if(data.type==='nw-dr-rank-data')drRenderRank(data.rows,data.state);
