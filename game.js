@@ -667,7 +667,7 @@ function nwShowSetup(data){
   const say=(m)=>{msg.textContent=m;msg.hidden=!m};
   input.oninput=()=>say('');
   evRoot.querySelectorAll('[data-setup-avatar]').forEach(b=>b.onclick=()=>{avatar=b.dataset.setupAvatar;evRoot.querySelectorAll('[data-setup-avatar]').forEach(x=>{x.classList.toggle('chosen',x===b);x.setAttribute('aria-pressed',String(x===b));});});
-  async function verify(name){if(!nwUsernameValid(name))throw Error('Choose 3–20 letters, numbers, dots or underscores. Guest_ and recorded opponent names are reserved.');if(!await nwCloud.usernameAvailable(name))throw Error('That username is already taken.');}
+  async function verify(name){if(!nwUsernameValid(name))throw Error(nwBattleProfiles.some(p=>p.name.toLowerCase()===name.toLowerCase())?'Username is taken!':'Choose 3–20 letters, numbers, dots or underscores.');if(!await nwCloud.usernameAvailable(name))throw Error('Username is taken!');}
   async function action(doSave){const name=input.value;check.disabled=save.disabled=out.disabled=input.disabled=true;try{await verify(name);if(nwCloud.user()?.id!==accountId||!form.isConnected)return;if(!doSave){say('Username available!');return;}await nwCloud.saveProfile(name,avatar);if(nwCloud.user()?.id!==accountId||!form.isConnected)return;nwWrite(nwProfileKey,{name,avatar});nwVerifiedAccount=accountId;showCategories();}catch(e){say(e.message||'Please try again.');}finally{check.disabled=save.disabled=out.disabled=input.disabled=false;}}
   check.onclick=()=>void action(false);form.onsubmit=e=>{e.preventDefault();void action(true);};out.onclick=async()=>{try{await nwCloud.signOut();await nwRouteAccount();}catch(e){say(e.message);}};
 }
