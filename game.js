@@ -1130,9 +1130,10 @@ async function nwPrizeMail(){
       await c.rpc('nw_mail_claim',{p_message_id:Number(claim.dataset.mailClaim)});
      if(response.error)throw Error(response.error.message);
      confirmed=true;claim.textContent='CLAIMED';
-     try{await Promise.all([nwWalletSync(),nwPrizeSync()])}catch(e){console.warn('Claim confirmed; balance refresh pending:',e.message)}
-     await nwPrizeMail();
-     if(evRoot.querySelector('#nwPrizeMailBody'))nwPrizeClaimConfirmation(response.data);
+     // The claim RPC has confirmed delivery; don't block the reward reveal on refreshes.
+      nwPrizeClaimConfirmation(response.data);
+      void Promise.allSettled([nwWalletSync(),nwPrizeSync()]);
+      void nwPrizeMail().catch(e=>console.warn('Mail refresh after claim:',e.message));
     }catch(e){
      if(confirmed){claim.textContent='CLAIMED';return}
      claim.disabled=false;claim.textContent='CLAIM REWARDS ✦';
@@ -1429,7 +1430,7 @@ async function nwBattleFinish(s,won,points,elapsed){
   const opponent=s.practiceOpponent,account=nwCloud?.user()?.id;
   evSudokuLeave();
   applyTheme('hub');evRoot.classList.add('nw-battle-theme');
-  evDisplay(`${evHeader('BATTLE',nwBattleReturn)}<section class="nw-battle nw-battle-ready nw-battle-finish"><h2 class="nw-victory-title">VERIFYING RESULT…</h2><p>Your Battle result is syncing.</p></section>`);
+  evDisplay(`${evHeader('BATTLE',nwBattleReturn)}<section class="nw-battle nw-battle-ready nw-battle-finish"><h2 class="nw-victory-title">${won?'PUZZLE COMPLETED!':'PUZZLE FINISHED'}</h2><p>Saving your Battle result…</p><p class="nw-muted">Your verified match result will appear here.</p></section>`);
   let verified;
   try{
     if(!account||!opponent?.battleAttemptId)throw Error('Missing registered Battle match');
@@ -1995,8 +1996,9 @@ function nwDoublePracticeAfterSudoku(s,won,pts){
    const c=await nwCloud.get();
    const {data,error}=await c.rpc('nw_dt_finish',{p_run_id:s.dtRunId,p_solved:s.values.join(''),p_mistakes:s.mistakes});
    if(error)throw Error(error.message);
-   await nwDoubleRpc('snapshot');
    show('',Number(data.points||0),Number(data.awarded||0));
+    // Server has confirmed the score: refresh team snapshot without blocking the result.
+    void nwDoubleRpc('snapshot').catch(e=>console.warn('Double Trouble refresh:',e.message));
   }catch(e){
    evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2>POINTS NOT SYNCED</h2><p class="nw-double-alert">${nwEscape(e.message)}</p>${nwDoubleButton('nwDoubleRetrySync','RETRY SYNC')}</section>`);
    evRoot.querySelector('#nwDoubleRetrySync').onclick=sync;
@@ -2624,13 +2626,13 @@ function nwDailyBindClaim(status,root,popup=false){
    if(nwCloud?.user()?.id!==status.account||!root.isConnected)return;
    if(popup){
     if(!root.classList.contains('nw-daily-popover'))return;
-    if(data.claimed)await Promise.allSettled([nwWalletSync(),nwPrizeSync()]);
     nwDailyClosePopup();
+     if(data.claimed)void Promise.allSettled([nwWalletSync(),nwPrizeSync()]);
    }else{
     if(!evRoot.classList.contains('nw-daily-theme'))return;
     if(data.claimed){
-     await Promise.allSettled([nwWalletSync(),nwPrizeSync()]);
      nwDailyRender({...status,day:data.next_day,can_claim:false},'DAY '+data.day+' CLAIMED! ✦');
+      void Promise.allSettled([nwWalletSync(),nwPrizeSync()]);
     }else nwDailyRender({...status,day:data.next_day||status.day,can_claim:false},'Already claimed today.');
    }
    if(data.claimed&&!data.already_claimed&&nwCloud?.user()?.id===status.account){
