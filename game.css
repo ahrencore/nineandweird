@@ -10795,3 +10795,72 @@ body:has(#game.theme-cakes:not([hidden])){background:#FFE0E8!important}
 #game.theme-cakes .result-panel .nw-cakes-result-svg{
  display:block!important;width:92px!important;height:92px!important;
 }
+
+/* Shared confirmed-reward celebration: actual existing Diamond PNG, resource PNGs
+   and the game's own SVG booster/hint icons; never stretch the artwork. */
+.nw-reward-celebration{
+ position:fixed;inset:0;z-index:200000;box-sizing:border-box;
+ display:grid;place-items:center;overflow-y:auto;overscroll-behavior:contain;
+ background:#0A0715E8;backdrop-filter:blur(7px);
+ padding:max(16px,env(safe-area-inset-top,0px)) 14px max(16px,env(safe-area-inset-bottom,0px));
+}
+.nw-celebrate-dialog{
+ --reveal-accent:#F7A4D6;--reveal-gold:#FFE3A1;
+ box-sizing:border-box;position:relative;isolation:isolate;overflow:hidden;
+ width:min(100%,390px);max-height:calc(100dvh - 32px);
+ overflow-y:auto;scrollbar-width:thin;
+ display:flex;flex-direction:column;align-items:center;gap:13px;
+ text-align:center;color:#FAF1FF;
+ border:2px solid #A47AB8;border-radius:24px;
+ padding:25px 17px 20px;
+ background:radial-gradient(ellipse at 50% 4%,#57366F 0%,#30213F 52%,#1C1730 100%);
+ box-shadow:0 18px 60px #05030BCC,0 0 32px #D98BE74D,inset 0 1px #FFFFFF33;
+ animation:nwCelebrateAppear .38s cubic-bezier(.17,1.12,.29,1) both;
+}
+.nw-reward-battle .nw-celebrate-dialog{--reveal-accent:#B9F25A;--reveal-gold:#E4FFC7;border-color:#9CC861;background:radial-gradient(ellipse at 50% 4%,#3C4E3D 0%,#252A35 54%,#191929 100%)}
+.nw-reward-milestone .nw-celebrate-dialog{--reveal-accent:#B8AFF9;--reveal-gold:#FFE3A1;border-color:#B8AFF9}
+.nw-celebrate-dialog::before{
+ content:"";position:absolute;inset:-65% -40% auto;aspect-ratio:1;
+ border-radius:50%;pointer-events:none;z-index:-1;
+ background:conic-gradient(from 12deg,transparent 0 18deg,#F5D9FF1C 18deg 24deg,transparent 24deg 45deg,#F8E3AE22 45deg 51deg,transparent 51deg 75deg);
+ animation:nwCelebrateRays 16s linear infinite;
+}
+.nw-celebrate-burst{font-size:19px;letter-spacing:.21em;color:var(--reveal-gold);text-shadow:0 0 12px #FFDE9E99;animation:nwCelebrateTwinkle 2.2s ease-in-out infinite}
+.nw-celebrate-gift{height:65px;width:65px;display:grid;place-items:center;color:var(--reveal-accent);filter:drop-shadow(0 0 12px #F5A9E999);animation:nwCelebrateGift .75s ease-out both}
+.nw-celebrate-gift svg{display:block;width:60px;height:60px;max-width:100%;max-height:100%}
+.nw-celebrate-dialog h2{margin:0;color:var(--reveal-gold);font:800 clamp(21px,5vw,28px)/1.13 'Fredoka',system-ui,sans-serif;text-shadow:0 2px 12px #0009;letter-spacing:.025em}
+.nw-celebrate-items{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:stretch;width:100%;margin:4px 0 6px}
+.nw-celebrate-reward{
+ box-sizing:border-box;min-width:0;flex:1 1 108px;max-width:180px;
+ display:flex;flex-direction:column;align-items:center;gap:6px;justify-content:center;
+ padding:15px 7px 12px;border:1.5px solid #A98DBD;background:#120F24B8;
+ border-radius:16px;box-shadow:inset 0 1px #FFFFFF17;
+ animation:nwCelebrateCard .5s .16s cubic-bezier(.2,1.3,.3,1) both;
+}
+.nw-celebrate-reward .nw-celebrate-icon{
+ box-sizing:border-box;width:75px;height:75px;max-width:100%;
+ display:grid;place-items:center;margin:auto;color:var(--reveal-accent);
+ filter:drop-shadow(0 3px 9px #FFD1FF50);
+}
+.nw-celebrate-icon img,.nw-celebrate-icon svg{
+ display:block;width:65px;height:65px;max-width:100%;max-height:100%;
+ object-fit:contain;object-position:center;overflow:visible;
+}
+.nw-celebrate-reward b{color:var(--reveal-gold);font:800 25px/1 'Fredoka',system-ui,sans-serif}
+.nw-celebrate-reward small{color:#F6E9FF;font:600 12px/1.25 'Fredoka',system-ui,sans-serif;overflow-wrap:anywhere}
+.nw-celebrate-dismiss{
+ width:min(100%,290px);min-height:48px;padding:10px 18px;
+ border:2px solid #F6C1E1;border-bottom-width:4px;border-radius:13px;
+ background:linear-gradient(180deg,#EF9CC9,#C65C9E);color:#251529;
+ font:800 17px 'Fredoka',system-ui,sans-serif;letter-spacing:.035em;cursor:pointer;
+}
+.nw-reward-battle .nw-celebrate-dismiss{background:linear-gradient(180deg,#D5FC98,#8ECC55);border-color:#E5FFBC;color:#243112}
+.nw-celebrate-dismiss:focus-visible{outline:3px solid #FFF7CE;outline-offset:3px}
+.nw-celebrate-dismiss:active{transform:translateY(2px)}
+@keyframes nwCelebrateAppear{from{opacity:0;transform:translateY(22px) scale(.89)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes nwCelebrateCard{from{opacity:0;transform:translateY(18px) scale(.75)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes nwCelebrateGift{from{opacity:0;transform:scale(.4) rotate(-14deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes nwCelebrateRays{to{transform:rotate(360deg)}}
+@keyframes nwCelebrateTwinkle{50%{opacity:.55;filter:brightness(1.5)}}
+@media(max-width:360px){.nw-celebrate-reward{flex-basis:95px;padding:11px 4px}.nw-celebrate-icon img,.nw-celebrate-icon svg{width:53px;height:53px}}
+@media(prefers-reduced-motion:reduce){.nw-celebrate-dialog,.nw-celebrate-gift,.nw-celebrate-reward,.nw-celebrate-burst,.nw-celebrate-dialog::before{animation:none!important}}
