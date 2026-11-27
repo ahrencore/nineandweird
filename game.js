@@ -556,7 +556,7 @@ function nwShowProfile(){
   save.onclick=async()=>{
     if(!window.nwCloud?.user())return;
     const accountId=window.nwCloud.user().id;const name=anon?nwGuestName(accountId):evRoot.querySelector('#nwName').value;
-    if(!anon&&!nwUsernameValid(name)){profileNotice('Choose 3–20 letters, numbers, dots or underscores.');return;}
+    if(!anon&&!nwUsernameValid(name)){profileNotice(nwBattleProfiles.some(x=>x.name.toLowerCase()===name.toLowerCase())?'Username is taken!':'Choose 3–20 letters, numbers, dots or underscores.');return;}
     if(!anon&&name==='Guest Player'){profileNotice('Choose a valid username before saving.');return;}
     save.disabled=true;
     try{
