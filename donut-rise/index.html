@@ -525,6 +525,112 @@ function buildGroupTrays(){
  board.prepend(trays);
 }
 function render(){const frag=document.createDocumentFragment();for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const id=grid[r][c],el=document.createElement('div');el.className='cell';el.dataset.r=r;el.dataset.c=c;if(id!==null){const g=groups.get(id),pos=groupRow(id),offset=c-pos.c,d=g.donuts[offset];el.classList.add('occupied');el.dataset.id=id;if(id%2)el.classList.add('alt');el.classList.add('group-'+(offset===0?'first':offset===g.len-1?'last':'middle'));if(g.len===1)el.classList.add('group-single');el.style.setProperty('--group-color', ['#D99AAE','#E7BAC9','#D49AA6','#E4B7AF','#E1B7B9','#DDA7B8','#E8BDB1','#F0BFC9','#D1A2A9'][d.type]);if(d.special)el.classList.add('special');const img=new Image();img.src=art[d.type];img.alt='';img.draggable=false;img.onerror=()=>{img.remove();const t=document.createElement('span');t.className='fallback';t.textContent='🍩';el.append(t)};el.append(img)}if(hover){const len=groups.get(hover.id)?.len||0;if(r===hover.r&&c>=hover.c&&c<hover.c+len)el.classList.add(hover.valid?'ghost':'invalid')}frag.append(el)}board.replaceChildren(frag);buildGroupTrays();requestAnimationFrame(reportFrameHeight);$('score').textContent=String(score).padStart(4,'0');$('lines').textContent=lines;$('countdown').textContent=moves;updateBoosterButtons()}
+
+/* Parent-owned cloud Inventory bridge. No booster stock is stored locally here. */
+let drBalances={splitter:0,evictor:0},drLoaded=false,activeBooster=null,drRequest=0,drPending=null;
+function drSignal(message){if(window.parent!==window)window.parent.postMessage(message,location.origin)}
+function updateBoosterButtons(){
+ for(const kind of ['splitter','evictor']){
+  const btn=$(kind==='splitter'?'drSplitter':'drEvictor');
+  if(!btn)return;
+  const active=activeBooster===kind;
+  btn.classList.toggle('is-active',active);
+  btn.setAttribute('aria-pressed',String(active));
+  btn.disabled=busy||!running||!drLoaded||drBalances[kind]<=0;
+  btn.querySelector('.dr-count b').textContent=drLoaded?drBalances[kind]:'…';
+ }
+ board.classList.toggle('dr-target-splitter',activeBooster==='splitter');
+ board.classList.toggle('dr-target-evictor',activeBooster==='evictor');
+}
+function cancelBooster(){activeBooster=null;updateBoosterButtons()}
+function toggleBooster(kind){
+ if(busy||!running||!drLoaded)return;
+ if(activeBooster===kind){cancelBooster();announce('Booster cancelled.');return}
+ if(!drBalances[kind]){announce('No '+(kind==='splitter'?'Sugar Splitters':'Donut Evictors')+' left in Inventory.');return}
+ activeBooster=kind;hover=null;drag=null;
+ updateBoosterButtons();announce(kind==='splitter'?'Tap a connected block of 2–4 donuts to split it.':'Tap any donut to evict every donut of its type.');
+}
+window.addEventListener('message',event=>{
+ if(event.origin!==location.origin||event.source!==window.parent)return;
+ const data=event.data||{};
+ if(data.type==='nw-dr-state'){
+  drLoaded=true;drBalances={splitter:Math.max(0,Number(data.splitter)||0),evictor:Math.max(0,Number(data.evictor)||0)};
+  updateBoosterButtons();
+  if(data.awarded){$('drWelcome').hidden=false;requestAnimationFrame(reportFrameHeight)}
+ }else if(['nw-dr-spent','nw-dr-error'].includes(data.type)){
+  if(data.type==='nw-dr-spent'){
+   drBalances={splitter:Math.max(0,Number(data.splitter)||0),evictor:Math.max(0,Number(data.evictor)||0)};
+   updateBoosterButtons();
+  }
+  if(drPending&&data.requestId===drPending.id){
+   const pending=drPending;drPending=null;
+   if(data.type==='nw-dr-spent')pending.resolve();else pending.reject(Error(data.message||'Booster unavailable.'));
+  }else if(data.type==='nw-dr-error'&&!data.requestId){announce(data.message||'Could not sync booster Inventory.')}
+ }
+});
+function drSpend(kind){
+ return new Promise((resolve,reject)=>{
+  if(drPending){reject(Error('Another booster is still syncing.'));return}
+  if(window.parent===window){reject(Error('Open Donut Rise from Nine & Weird to use Inventory boosters.'));return}
+  const id=++drRequest;
+  drPending={id,resolve,reject};
+  drSignal({type:'nw-dr-spend',requestId:id,item:'dr_'+kind});
+ });
+}
+function drSplitGroup(id){
+ const p=groupRow(id),group=groups.get(id);
+ if(!p||!group||group.len<2||group.len>4)return false;
+ for(let k=0;k<group.len;k++){
+  const single=nextId++;
+  groups.set(single,{len:1,donuts:[{...group.donuts[k]}]});
+  grid[p.r][p.c+k]=single;
+ }
+ groups.delete(id);return true;
+}
+function drEvictType(type){
+ let removed=0;
+ // Each surviving horizontal segment gets its own group so gravity stays valid.
+ for(const [id,group] of [...groups]){
+  const p=groupRow(id);if(!p)continue;
+  const original=group.donuts.map(d=>({...d}));
+  if(!original.some(d=>d.type===type))continue;
+  for(let k=0;k<original.length;k++){grid[p.r][p.c+k]=null;if(original[k].type===type)removed++}
+  groups.delete(id);
+  let k=0;
+  while(k<original.length){
+   if(original[k].type===type){k++;continue}
+   const start=k,segment=[];
+   while(k<original.length&&original[k].type!==type)segment.push(original[k++]);
+   const replacement=nextId++;
+   groups.set(replacement,{len:segment.length,donuts:segment});
+   for(let j=0;j<segment.length;j++)grid[p.r][p.c+start+j]=replacement;
+  }
+ }
+ return removed;
+}
+async function drUseBooster(r,c){
+ const kind=activeBooster;
+ if(!kind||busy||!running||grid[r][c]===null)return;
+ const id=grid[r][c],group=groups.get(id),pos=groupRow(id);
+ if(!group||!pos)return;
+ if(kind==='splitter'&&(group.len<2||group.len>4)){announce('Choose a connected block of 2–4 donuts.');return}
+ const selectedType=group.donuts[c-pos.c]?.type;
+ if(kind==='evictor'&&!Number.isInteger(selectedType))return;
+ busy=true;cancelBooster();wrap.classList.add('is-resolving');updateBoosterButtons();
+ try{
+  await drSpend(kind);
+  // The board cannot change while waiting for an atomic cloud deduction.
+  if(kind==='splitter')drSplitGroup(id);
+  else drEvictType(selectedType);
+  const button=$(kind==='splitter'?'drSplitter':'drEvictor');
+  button.classList.add('is-animating');setTimeout(()=>button.classList.remove('is-animating'),600);
+  render();await resolveBoard(); // Normal completed rows earn their normal score.
+  announce(kind==='splitter'?'SUGAR SPLITTER! Pieces set free.':'DONUT EVICTOR! All matching donuts cleared.');
+  // Deliberately no rise(), no replenishEmptyBoard() and no moves++.
+ }catch(error){announce(error.message||'Booster could not be used. Your board is unchanged.')}
+ finally{busy=false;wrap.classList.remove('is-resolving');render()}
+}
+
 // Keep interaction purely drag-to-move. Prevent native text/image selection and
 // release pointer state cleanly on cancel/lost capture.
 board.addEventListener('dragstart',e=>e.preventDefault());
@@ -535,6 +641,7 @@ board.addEventListener('pointerdown',e=>{
  const pos=locAtPoint(e.clientX,e.clientY);if(!pos)return;
  const id=grid[pos.r][pos.c];if(id===null)return;
  e.preventDefault();
+ if(activeBooster){void drUseBooster(pos.r,pos.c);return;}
  const start=groupRow(id);if(!start)return;
  selected=null;hover=null;
  drag={id,pointerId:e.pointerId,offset:pos.c-start.c,sx:e.clientX,sy:e.clientY,moved:false};
@@ -605,11 +712,11 @@ function buildLandingDonuts(){
  });
 }
 function showLanding(){
- landing.hidden=false;gameShell.hidden=true;
+ cancelBooster();landing.hidden=false;gameShell.hidden=true;
  requestAnimationFrame(reportFrameHeight);
 }
 function startGameplay(){
- landing.hidden=true;gameShell.hidden=false;
+ cancelBooster();landing.hidden=true;gameShell.hidden=false;
  reset();
  requestAnimationFrame(reportFrameHeight);
 }
@@ -641,5 +748,6 @@ document.fonts?.ready?.then(reportFrameHeight);
 document.addEventListener('dragstart',e=>{if(e.target.closest('.app'))e.preventDefault()});
 buildLandingDonuts();
 showLanding();
+drSignal({type:'nw-dr-ready'});
 })();
 </script></body></html>
