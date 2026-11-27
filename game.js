@@ -316,6 +316,9 @@ function nwFrameArt(avatar,extraClass=''){
   const f=nwSelectedFrame();
   return `<span class="nw-equipped-frame ${f.monthly?'nw-monthly-art-frame':''} ${extraClass}">${nwAvatarImg(avatar,'nw-equipped-avatar')}${f.src?`<img src="${f.src}" class="nw-equipped-art" alt="">`:`<span class="nw-season-frame-ring">✧</span><strong class="nw-season-frame-title">${nwEscape(f.title)}</strong>`}</span>`;
 }
+function nwFrameArtPreview(avatar,frame){
+ return '<span class="nw-equipped-frame '+(frame.monthly?'nw-monthly-art-frame':'')+'">'+nwAvatarImg(avatar,'nw-equipped-avatar')+(frame.src?'<img src="'+nwEscape(frame.src)+'" class="nw-equipped-art" alt="">':'')+'</span>';
+}
 function nwFrameRemark(frame){return frame.monthly?'Resets every 1st of the month (UTC).':'Permanent frame.';}
 function nwFramePicker(){
  const equipped=nwSelectedFrame();
@@ -454,7 +457,27 @@ function nwShowProfile(){
   const u=window.nwCloud?.user();const anon=!!u?.is_anonymous;const p=nwProfile();const recovery=!!window.nwCloud?.isRecovering?.();const profileLocked=!u;
   if(recovery&&u&&!anon){nwShowRecovery();return;}
 
-  const lockedEditor=`<div class="nw-profile-editor ${profileLocked?'nw-profile-locked':''}"><label class="nw-new-label" for="nwName">USERNAME</label><input id="nwName" maxlength="20" value="${nwEscape(p.name)}" autocomplete="username" ${profileLocked||anon?'disabled':''}><p class="nw-muted">${anon?'Register to choose your own username.':'3–20 letters, numbers, dots or underscores. No spaces. Guest_ is reserved.'}</p><label class="nw-new-label">CHOOSE AN AVATAR</label><div class="nw-avatar-grid">${nwAvatarChoices.map((a,i)=>`<button class="nw-avatar-choice ${a===p.avatar?'chosen':''}" data-avatar="${a}" aria-label="Choose avatar ${i+1}" ${profileLocked?'disabled':''}>${nwAvatarImg(a,'nw-avatar-choice-img')}</button>`).join('')}</div><button class="nw-action" id="nwSaveProfile" ${profileLocked?'disabled':''}>SAVE PROFILE</button><p id="nwProfileNotice" role="status" hidden></p></div>`;
+  const frameChoices=nwAvailableFrames();
+  const editAvatar=nwAvatarChoices.indexOf(p.avatar);
+  const editFrame=nwSelectedFrame();
+  const lockedEditor=`<div class="nw-profile-editor nw-compact-editor ${profileLocked?'nw-profile-locked':''}">
+    <label class="nw-new-label" for="nwName">USERNAME</label>
+    <input id="nwName" maxlength="20" value="${nwEscape(p.name)}" autocomplete="username" ${profileLocked||anon?'disabled':''}>
+    <div class="nw-edit-live-preview" aria-label="Live avatar and frame preview">
+      <div id="nwEditPreviewFrame" class="nw-profile-avatar nw-profile-with-frame">${nwFrameArt(p.avatar)}</div>
+      <strong id="nwEditPreviewName">${nwEscape(p.name)}</strong><small>LIVE PREVIEW · NOT SAVED</small>
+    </div>
+    <div class="nw-edit-tabs"><button type="button" id="nwEditAvatarTab" class="selected">AVATAR</button><button type="button" id="nwEditFrameTab">FRAME</button></div>
+    <div class="nw-edit-chooser">
+      <button type="button" id="nwEditPrevious" aria-label="Previous choice">‹</button>
+      <div class="nw-edit-choice"><div id="nwEditChoiceArt">${nwAvatarImg(p.avatar)}</div><span id="nwEditChoiceLabel">Avatar ${Math.max(0,editAvatar)+1} / ${nwAvatarChoices.length}</span></div>
+      <button type="button" id="nwEditNext" aria-label="Next choice">›</button>
+    </div>
+    <p id="nwEditFrameHint" class="nw-muted" hidden></p>
+    <button class="nw-action" id="nwSaveProfile" ${profileLocked?'disabled':''}>SAVE CHANGES</button>
+    <button type="button" class="nw-action nw-auth-secondary" id="nwCancelProfile">BACK</button>
+    <p id="nwProfileNotice" role="status" hidden></p>
+  </div>`;
 
   let authBlock='';
   if(!u){
@@ -465,10 +488,11 @@ function nwShowProfile(){
     authBlock=`<div class="nw-auth-card"><h3>ACCOUNT</h3><button class="nw-action nw-auth-secondary" id="nwSignOut">SIGN OUT</button><p id="nwAuthNotice" hidden></p></div>`;
   }
 
-  evDisplay(`${u?evHeader('PLAYER PROFILE',showCategories):'<header class="ev-head"><span></span><strong class="nw-brand-title">NINE & WEIRD</strong><span></span></header>'}<section class="nw-new-panel ${u?'':'nw-account-welcome'}">${u?nwAccountHeading('MY PROFILE'): ''}<div class="nw-profile-avatar nw-profile-with-frame">${nwFrameArt(p.avatar)}</div><h2>${nwEscape(p.name)}</h2><p class="nw-muted" id="nwAccountStatus">${anon?'Guest':u?'Signed in: '+nwEscape(u.email||'Account'):'Guest'}</p>${u?`<div class="nw-account-nav"><button id="nwViewOwnProfile" class="nw-action nw-auth-secondary" ${anon?'disabled':''}>VIEW MY PROFILE</button><button id="nwOpenAvatars" class="nw-action nw-auth-secondary">EDIT PROFILE</button></div><button id="nwOpenFriends" class="nw-action nw-auth-secondary nw-friends-entry">FRIENDS <span>›</span></button><button id="nwOpenTrophy" class="nw-action nw-auth-secondary nw-friends-entry">TROPHY CASE <span>›</span></button>`:''}<div id="nwProfileEdit" ${u?'hidden':''}>${lockedEditor}<div id="nwProfileFrames">${nwFramePicker()}</div></div>${authBlock}${!u?'<p class="nw-auth-switch"><a href="privacy.html">Privacy Policy</a></p>':''}</section>`);nwBindFramePicker();
+  evDisplay(`${u?evHeader('PLAYER PROFILE',showCategories):'<header class="ev-head"><span></span><strong class="nw-brand-title">NINE & WEIRD</strong><span></span></header>'}<section class="nw-new-panel ${u?'':'nw-account-welcome'}">${u?nwAccountHeading('MY PROFILE'): ''}<div class="nw-profile-avatar nw-profile-with-frame">${nwFrameArt(p.avatar)}</div><h2>${nwEscape(p.name)}</h2><p class="nw-muted" id="nwAccountStatus">${anon?'Guest':u?'Signed in: '+nwEscape(u.email||'Account'):'Guest'}</p>${u?`<div class="nw-account-nav"><button id="nwViewOwnProfile" class="nw-action nw-auth-secondary" ${anon?'disabled':''}>VIEW MY PROFILE</button><button id="nwOpenAvatars" class="nw-action nw-auth-secondary">EDIT PROFILE</button></div><button id="nwOpenFriends" class="nw-action nw-auth-secondary nw-friends-entry">FRIENDS <span>›</span></button><button id="nwOpenTrophy" class="nw-action nw-auth-secondary nw-friends-entry">TROPHY CASE <span>›</span></button>`:''}<div id="nwProfileEdit" ${u?'hidden':''}>${lockedEditor}</div>${authBlock}${!u?'<p class="nw-auth-switch"><a href="privacy.html">Privacy Policy</a></p>':''}</section>`);
   const on=(id,fn)=>{const b=evRoot.querySelector('#'+id);if(b)b.onclick=fn;};
   if(u&&!anon&&p.name==='Guest Player'){evRoot.querySelector('#nwProfileEdit').hidden=false;}
-  on('nwOpenAvatars',()=>{evRoot.querySelector('#nwProfileEdit').hidden=false;});
+  on('nwOpenAvatars',()=>{evRoot.querySelector('#nwProfileEdit').hidden=false;nwResetViewToTop();});
+  on('nwCancelProfile',()=>nwShowProfile());
   on('nwOpenFriends',()=>nwShowFriends());
   on('nwOpenTrophy',()=>nwShowTrophy());
   on('nwViewOwnProfile',()=>void nwFriendOpenProfile(u.id,nwShowProfile));
@@ -476,7 +500,46 @@ function nwShowProfile(){
 
   if(!u && window.nwCloud){const captcha=evRoot.querySelector('.nw-captcha');if(captcha)nwCloud.mountCaptcha(captcha)}
   let avatar=p.avatar;
-  evRoot.querySelectorAll('[data-avatar]').forEach(b=>b.onclick=()=>{avatar=b.dataset.avatar;evRoot.querySelectorAll('[data-avatar]').forEach(x=>x.classList.toggle('chosen',x===b))});
+  let selectedFrame=editFrame;
+  let editMode='avatar';
+  const choiceArt=evRoot.querySelector('#nwEditChoiceArt');
+  const choiceLabel=evRoot.querySelector('#nwEditChoiceLabel');
+  const previewFrame=evRoot.querySelector('#nwEditPreviewFrame');
+  const frameHint=evRoot.querySelector('#nwEditFrameHint');
+  const drawEditor=()=>{
+    if(!choiceArt)return;
+    previewFrame.innerHTML=nwFrameArtPreview(avatar,selectedFrame);
+    if(editMode==='avatar'){
+      const index=nwAvatarChoices.indexOf(avatar);
+      choiceArt.innerHTML=nwAvatarImg(avatar,'nw-edit-choice-image');
+      choiceLabel.textContent='Avatar '+(index+1)+' / '+nwAvatarChoices.length;
+      frameHint.hidden=true;
+    }else{
+      const index=frameChoices.findIndex(f=>f.id===selectedFrame.id);
+      choiceArt.innerHTML=selectedFrame.src?'<img src="'+nwEscape(selectedFrame.src)+'" class="nw-edit-choice-image" alt="">':'';
+      choiceLabel.textContent=selectedFrame.title+' · '+(index+1)+' / '+frameChoices.length;
+      frameHint.hidden=false;frameHint.textContent=nwFrameRemark(selectedFrame);
+    }
+    evRoot.querySelector('#nwEditAvatarTab').classList.toggle('selected',editMode==='avatar');
+    evRoot.querySelector('#nwEditFrameTab').classList.toggle('selected',editMode==='frame');
+  };
+  on('nwEditAvatarTab',()=>{editMode='avatar';drawEditor()});
+  on('nwEditFrameTab',()=>{editMode='frame';drawEditor()});
+  const shiftChoice=delta=>{
+    if(editMode==='avatar'){
+      const i=nwAvatarChoices.indexOf(avatar);
+      avatar=nwAvatarChoices[(i+delta+nwAvatarChoices.length)%nwAvatarChoices.length];
+    }else{
+      const i=frameChoices.findIndex(f=>f.id===selectedFrame.id);
+      selectedFrame=frameChoices[(i+delta+frameChoices.length)%frameChoices.length];
+    }
+    drawEditor();
+  };
+  on('nwEditPrevious',()=>shiftChoice(-1));
+  on('nwEditNext',()=>shiftChoice(1));
+  const nameInput=evRoot.querySelector('#nwName');
+  if(nameInput)nameInput.addEventListener('input',()=>{const preview=evRoot.querySelector('#nwEditPreviewName');if(preview)preview.textContent=nameInput.value||p.name;});
+  drawEditor();
   const notice=(s)=>{const el=evRoot.querySelector('#nwAuthNotice');if(el){el.textContent=s;el.hidden=!s}};
   const profileNotice=(s)=>{const el=evRoot.querySelector('#nwProfileNotice');if(el){el.textContent=s;el.hidden=!s}};
   for(const [id,provider] of [['nwGoogle','google'],['nwDiscord','discord']]){
@@ -493,13 +556,13 @@ function nwShowProfile(){
   save.onclick=async()=>{
     if(!window.nwCloud?.user())return;
     const accountId=window.nwCloud.user().id;const name=anon?nwGuestName(accountId):evRoot.querySelector('#nwName').value;
-    if(!anon&&!nwUsernameValid(name)){profileNotice('Choose 3–20 letters, numbers, dots or underscores. Guest_ and recorded opponent names are reserved.');return;}
+    if(!anon&&!nwUsernameValid(name)){profileNotice('Choose 3–20 letters, numbers, dots or underscores.');return;}
     if(!anon&&name==='Guest Player'){profileNotice('Choose a valid username before saving.');return;}
     save.disabled=true;
     try{
-      if(window.nwCloud?.user()){if(!anon&&!(await nwCloud.usernameAvailable(name)))throw new Error('That username is already taken.');await nwCloud.saveProfile(name,avatar);}
-      if(nwCloud.user()?.id!==accountId)return;nwWrite(nwProfileKey,{name,avatar});nwShowProfile();
-    }catch(e){profileNotice('Could not save profile: '+e.message);save.disabled=false;}
+      if(window.nwCloud?.user()){if(!anon&&name!==p.name&&!(await nwCloud.usernameAvailable(name)))throw new Error('Username is taken!');if(!anon)await nwCloud.saveProfileAppearance(name,avatar,selectedFrame.id,selectedFrame.monthly?nwSeasonId():null);else await nwCloud.saveProfile(name,avatar);}
+      if(nwCloud.user()?.id!==accountId)return;nwWrite(nwProfileKey,{name,avatar});if(!anon)nwWrite(nwFrameKey,{id:selectedFrame.id,month:selectedFrame.monthly?nwSeasonId():null});nwShowProfile();
+    }catch(e){profileNotice(e.message==='Username is taken!'?'Username is taken!':'Could not save profile: '+e.message);save.disabled=false;}
   };
   if(u){
     evRoot.querySelector('#nwSignOut').onclick=async()=>{
