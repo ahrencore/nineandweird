@@ -620,11 +620,39 @@ const drRankRewards=[
  {diamonds:500,splitter:1,evictor:0},{diamonds:200,splitter:0,evictor:0}
 ];
 let drLive=false,drRunSeq=0,drRunId=null,drOverStats=null,drModalView=null,drModalPrevious=null,drMilestoneState=null;
+const drSessions=new Map();
+let drSavePending=0,drSaveMessage='';
+function drSaveStatus(){
+ const label=$('drEventStatus');if(!label)return;
+ label.textContent=drSavePending?'SAVING SCORE…':drSaveMessage||(
+  drLive?'EVENT LIVE · FRI–SUN':'PRACTICE MODE · EVENT RETURNS FRIDAY');
+}
+function drQueueRunCompletion(){
+ if(!running||!drLive)return;
+ const entry=drSessions.get(drRunSeq);
+ if(!entry||entry.finished)return;
+ entry.finished={score,lines,moves};drSubmitSession(drRunSeq);
+}
+function drSubmitSession(seq){
+ const entry=drSessions.get(seq);
+ if(!entry||!entry.runId||!entry.finished||entry.submitted)return;
+ entry.submitted=true;drSavePending++;drSaveMessage='';
+ drSaveStatus();
+ drSignal({type:'nw-dr-finish',seq,runId:entry.runId,...entry.finished});
+}
 const drEsc=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const drFmt=v=>Number(v||0).toLocaleString();
-function drBeginRun(){drRunSeq++;drRunId=null;drOverStats=null;drSignal({type:'nw-dr-start',seq:drRunSeq})}
-function drFinishRun(){drOverStats={score,lines,moves};drSendFinished()}
-function drSendFinished(){if(!drRunId||!drOverStats)return;const stats=drOverStats;drOverStats=null;drSignal({type:'nw-dr-finish',seq:drRunSeq,runId:drRunId,...stats})}
+function drBeginRun(){
+ drRunSeq++;drRunId=null;drOverStats=null;
+ drSessions.set(drRunSeq,{runId:null,finished:null,submitted:false});
+ drSignal({type:'nw-dr-start',seq:drRunSeq});
+}
+function drFinishRun(){
+ if(drLive){const entry=drSessions.get(drRunSeq);if(entry&&!entry.finished){
+  entry.finished={score,lines,moves};
+  drSubmitSession(drRunSeq);
+ }}
+}
 // Reuse the actual small icons already drawn for Donut Rise gameplay and currency.
 function drRewardIcon(kind){
  if(kind==='diamonds')return '<img class="dr-reward-gem" src="../assets/currency/diamond.png" alt="Diamonds">';
@@ -727,13 +755,36 @@ function drCloseModal(){
 window.addEventListener('message',event=>{
  if(event.origin!==location.origin||event.source!==window.parent)return;
  const data=event.data||{};
- if(data.type==='nw-dr-session'&&data.seq===drRunSeq){drRunId=data.run_id||null;drSendFinished()}
- else if(data.type==='nw-dr-finished'&&data.seq===drRunSeq){drPreviewMilestones(data.state);if(data.result?.rank_unlocked)announce('Your best run was recorded!')}
+ if(data.type==='nw-dr-session'){
+  const entry=drSessions.get(data.seq);
+  if(entry){entry.runId=data.run_id||null;
+   if(data.seq===drRunSeq)drRunId=entry.runId;
+   if(!data.live)drSessions.delete(data.seq);
+   else drSubmitSession(data.seq);
+  }
+ }
+ else if(data.type==='nw-dr-finished'){
+  if(drSessions.has(data.seq))drSessions.delete(data.seq);
+  drSavePending=Math.max(0,drSavePending-1);
+  drSaveMessage=data.result?.accepted?'SCORE SAVED · '+drFmt(data.result.best??data.result.score):'SCORE NOT SAVED';
+  drSaveStatus();
+  drPreviewMilestones(data.state);
+  if(data.seq===drRunSeq&&data.result?.rank_unlocked)announce('Your best run was recorded!');
+ }
  else if(data.type==='nw-dr-rank-data')drRenderRank(data.rows,data.state);
  else if(data.type==='nw-dr-milestone-data'){drPreviewMilestones(data.state);drRenderMilestones(data.state);}
  else if(data.type==='nw-dr-milestone-claimed'){drPreviewMilestones(data.state);drRenderMilestones(data.state);drSignal({type:'nw-dr-ready'})}
  else if(data.type==='nw-dr-event-error'){
-  if(data.command==='nw-dr-start'&&data.seq===drRunSeq){drRunId=null;drOverStats=null}
+  if(data.command==='nw-dr-start'){
+   drSessions.delete(data.seq);
+   if(data.seq===drRunSeq){drRunId=null;drOverStats=null;}
+  }
+  if(data.command==='nw-dr-finish'){
+   const entry=drSessions.get(data.seq);
+   if(entry){entry.submitted=false;drSavePending=Math.max(0,drSavePending-1)}
+   drSaveMessage='SCORE NOT SAVED · RETRY';
+   drSaveStatus();
+  }
   if(['nw-dr-rank','nw-dr-milestones','nw-dr-claim'].includes(data.command)&&drModalView){
    const el=$('drEventBody');if(el)el.insertAdjacentHTML('afterbegin','<p class="dr-event-note">'+drEsc(data.message||'Could not load event data')+'</p>');
   }
@@ -769,7 +820,7 @@ window.addEventListener('message',event=>{
  if(event.origin!==location.origin||event.source!==window.parent)return;
  const data=event.data||{};
  if(data.type==='nw-dr-state'){
-  drLive=!!data.live;$('drEventStatus').textContent=drLive?'EVENT LIVE · FRI–SUN':'PRACTICE MODE · EVENT RETURNS FRIDAY';
+  drLive=!!data.live;drSaveStatus();
   drSignal({type:'nw-dr-milestones'});
   drLoaded=true;drBalances={splitter:Math.max(0,Number(data.splitter)||0),evictor:Math.max(0,Number(data.evictor)||0)};
   updateBoosterButtons();
@@ -929,8 +980,9 @@ function buildLandingDonuts(){
  });
 }
 function showLanding(){
- cancelBooster();landing.hidden=false;gameShell.hidden=true;
- requestAnimationFrame(reportFrameHeight);
+ if(!gameShell.hidden&&running)drFinishRun();
+ running=false;cancelBooster();landing.hidden=false;gameShell.hidden=true;
+ drSaveStatus();requestAnimationFrame(reportFrameHeight);
 }
 function startGameplay(){
  cancelBooster();landing.hidden=true;gameShell.hidden=false;
