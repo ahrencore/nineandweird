@@ -821,6 +821,7 @@ window.addEventListener('message',event=>{
    if(entry){entry.submitted=false;drSavePending=Math.max(0,drSavePending-1)}
    drSaveMessage='SCORE NOT SAVED · RETRY';
    drSaveStatus();
+   if(!gameShell.hidden)announce('Could not save score. Return to the landing screen to retry.');
   }
   if(['nw-dr-rank','nw-dr-milestones','nw-dr-claim'].includes(data.command)&&drModalView){
    const el=$('drEventBody');if(el)el.insertAdjacentHTML('afterbegin','<p class="dr-event-note">'+drEsc(data.message||'Could not load event data')+'</p>');
@@ -1067,7 +1068,15 @@ window.nwDonutRiseNavigateBack=()=>{
  if(!$('drWelcome').hidden){$('drWelcome').hidden=true;return true;}
  if(!$('drEndConfirm').hidden){drContinueRun();return true;}
  if(!$('overlay').hidden){$('overlay').hidden=true;showLanding();return true;}
- if(!landing.hidden)return false;
+ if(!landing.hidden){
+  if(drSavePending){drSaveStatus();return true;}
+  const pending=[...drSessions.entries()].filter(([,r])=>r.finished&&!r.submitted);
+  if(pending.length){
+   for(const [seq] of pending)drSubmitSession(seq);
+   drSaveStatus();return true; // Reuse the original server run ID on retries.
+  }
+  return false;
+ }
  drAskEndRun();return true;
 };
 document.addEventListener('keydown',event=>{
