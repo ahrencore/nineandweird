@@ -1352,8 +1352,9 @@ async function nwInventoryClaimMilestones(event,period){
   if(error)throw Error(error.message);
   if(nwCloud?.user()?.id!==uid)return;
   if(Object.values(data?.awarded||{}).some(n=>Number(n)>0)){
-   await nwPrizeSync();
+   try{await nwPrizeSync()}catch(e){console.warn('Milestone Inventory refresh:',e.message)}
    if(event==='tt'&&evRoot.classList.contains('nw-triple-theme')&&!nwTriple)nwTripleHome();
+   if(uid===nwCloud?.user()?.id)nwRewardCelebrate(Object.entries(data.awarded),{source:'milestone',title:'MILESTONE REWARDS!'});
   }
  }catch(e){console.warn('Inventory milestone sync:',e.message);}
  finally{nwInventoryMilestoneInflight.delete(key);}
@@ -1374,6 +1375,9 @@ async function nwWalletClaimMilestones(event,period){
    const d=nwRead(nwTripleKey,null);
    if(d){d.diamonds=nwWalletState.balance;nwWrite(nwTripleKey,d)}
    nwRefreshVisibleDiamondBalances();
+  }
+  if(uid===nwCloud?.user()?.id&&Number.isSafeInteger(Number(data?.awarded))&&Number(data.awarded)>0){
+   nwRewardCelebrate([['diamonds',Number(data.awarded)]],{source:'milestone',title:'MILESTONE REWARDS!'});
   }
  }catch(e){console.warn('Verified milestone Diamonds:',e.message)}
  finally{nwWalletMilestoneInflight.delete(key)}
