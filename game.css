@@ -11273,7 +11273,9 @@ body:has(#game.nw-aisle-shell:not([hidden]))::-webkit-scrollbar,
 }
 #game.nw-donut-rise-shell{
  background:#121212!important;color:#F6EEE8!important;
- overflow-x:hidden!important;scrollbar-width:none!important;-ms-overflow-style:none!important;
+ overflow-x:hidden!important;overflow-y:auto!important;
+ height:auto!important;max-height:none!important;
+ scrollbar-width:none!important;-ms-overflow-style:none!important;
 }
 #game.nw-donut-rise-shell::-webkit-scrollbar{display:none!important;width:0!important}
 #game.nw-donut-rise-shell>.ev-head{
@@ -11290,7 +11292,7 @@ body:has(#game.nw-aisle-shell:not([hidden]))::-webkit-scrollbar,
 }
 #game.nw-donut-rise-shell .nw-donut-rise-frame-container iframe{
  display:block;width:100%;height:calc(100dvh - 58px);
- min-height:570px;border:0;background:#121212;overflow:auto;
+ min-height:0;border:0;background:#121212;overflow:hidden;
  scrollbar-width:none!important;
 }
 #game.nw-donut-rise-shell .nw-donut-rise-frame-container iframe::-webkit-scrollbar{display:none!important;width:0!important}
