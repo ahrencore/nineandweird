@@ -10725,3 +10725,73 @@ body:has(#game.theme-cakes:not([hidden])){background:#FFE0E8!important}
  display:block!important;width:76px!important;height:76px!important;
 }
 #game.theme-cakes .result-panel :is(h2,.result-stats,.result-score){color:#79354F!important;}
+
+/* Cakes celebration shop: layered mini-cake buttons, scalloped serving plates,
+   decorated cake-board tools, pearl medal. No copy or Sudoku changes. */
+#game.theme-cakes .difficulty-list .nw-cakes-difficulty,
+#game.theme-cakes .result-actions .nw-cakes-action{
+ min-height:64px!important;height:64px!important;padding:4px 12px!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;filter:drop-shadow(0 2px 1px #A1547655)!important;
+}
+#game.theme-cakes .difficulty-list .nw-cakes-difficulty>.nw-cakes-icing-svg,
+#game.theme-cakes .result-actions .nw-cakes-action>.nw-cakes-icing-svg{
+ inset:0!important;width:100%!important;height:100%!important;
+}
+#game.theme-cakes .difficulty-list .nw-cakes-difficulty>span,
+#game.theme-cakes .result-actions .nw-cakes-action>span{
+ position:relative!important;z-index:2!important;margin-top:-8px!important;
+ font:850 clamp(13px,3.6vw,17px)/1.1 'Fredoka',system-ui,sans-serif!important;
+ letter-spacing:.045em!important;color:#6A3452!important;
+ white-space:nowrap!important;text-shadow:0 1px #FFF9F1!important;
+}
+#game.theme-cakes .result-actions .nw-cakes-action>span{
+ font-size:clamp(12px,3.2vw,15px)!important;
+}
+#game.theme-cakes .ev-sudoku-tray button.nw-cakes-tray-piece{
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;overflow:visible!important;
+}
+#game.theme-cakes .ev-sudoku-tray button.nw-cakes-tray-piece>.nw-cakes-tray-svg{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+}
+#game.theme-cakes .ev-sudoku-tray button.nw-cakes-tray-piece>img{
+ width:78%!important;height:78%!important;max-width:78%!important;
+ max-height:78%!important;object-fit:contain!important;z-index:1!important;
+}
+#game.theme-cakes .ev-sudoku-tray button.nw-cakes-tray-piece.selected .nw-cakes-tray-base{
+ fill:#FFE1A2!important;stroke:#AF4C75!important;stroke-width:2.8!important;
+}
+#game.theme-cakes .ev-sudo-tools-clean .ev-sudo-tool{
+ position:relative!important;isolation:isolate!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;padding:8px 2px!important;overflow:visible!important;
+ min-height:76px!important;color:#934365!important;
+}
+#game.theme-cakes .ev-sudo-tools-clean .ev-sudo-tool.active{
+ background:transparent!important;filter:drop-shadow(0 0 3px #C76B9799)!important;
+}
+#game.theme-cakes .ev-sudo-tools-clean .ev-sudo-tool>.nw-cakes-tool-board-svg{
+ display:block!important;position:absolute!important;inset:0!important;z-index:0!important;
+ width:100%!important;height:100%!important;pointer-events:none!important;
+}
+#game.theme-cakes .ev-sudo-tools-clean .ev-sudo-tool .ev-sudo-tool-icon,
+#game.theme-cakes .ev-sudo-tools-clean .ev-sudo-tool .ev-sudo-tool-label,
+#game.theme-cakes .ev-sudo-tools-clean .ev-sudo-tool .nw-sudoku-hint-counter{
+ position:relative!important;z-index:1!important;
+ color:#934365!important;text-shadow:none!important;
+}
+#game.theme-cakes .ev-sudo-tools-clean .nw-cakes-tool-svg{
+ display:block!important;width:22px!important;height:22px!important;
+}
+#game.theme-cakes .ev-sudo-tools-clean .ev-sudo-tool-label{
+ font:800 10px/1.2 'Fredoka',system-ui,sans-serif!important;
+}
+#game.theme-cakes .result-panel .result-mark{
+ background:transparent!important;border:0!important;border-radius:50%!important;
+ width:94px!important;height:94px!important;min-width:94px!important;min-height:94px!important;
+ max-width:94px!important;max-height:94px!important;box-shadow:none!important;
+}
+#game.theme-cakes .result-panel .nw-cakes-result-svg{
+ display:block!important;width:92px!important;height:92px!important;
+}
