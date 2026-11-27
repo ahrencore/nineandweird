@@ -564,8 +564,8 @@ const drRankRewards=['2,000 Diamonds · 2 Splitters · 2 Evictors','1,500 Diamon
 let drLive=false,drRunSeq=0,drRunId=null,drOverStats=null,drModalView=null,drMilestoneState=null;
 const drEsc=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const drFmt=v=>Number(v||0).toLocaleString();
-function drBeginRun(){drRunSeq++;drRunId=null;drOverStats=null;if(drLive)drSignal({type:'nw-dr-start',seq:drRunSeq})}
-function drFinishRun(){if(!drLive)return;drOverStats={score,lines,moves};drSendFinished()}
+function drBeginRun(){drRunSeq++;drRunId=null;drOverStats=null;drSignal({type:'nw-dr-start',seq:drRunSeq})}
+function drFinishRun(){drOverStats={score,lines,moves};drSendFinished()}
 function drSendFinished(){if(!drRunId||!drOverStats)return;const stats=drOverStats;drOverStats=null;drSignal({type:'nw-dr-finish',seq:drRunSeq,runId:drRunId,...stats})}
 function drOpenModal(view){
  drModalView=view;$('drEventOverlay').hidden=false;
