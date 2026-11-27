@@ -10960,3 +10960,17 @@ body:has(#game.theme-cakes:not([hidden])){background:#FFE0E8!important}
 #game.nw-collectibles-theme .nw-collect-congrats button{min-width:150px}
 #game.nw-collectibles-theme .nw-collect-error{color:#FF8B9C!important;font-size:13px;overflow-wrap:anywhere}
 #game.nw-lobby-theme .nw-lobby-bottom #nwCollectibles.nw-notification-orbit{--nw-notify:#F5BEDD}
+
+
+/* Collectibles only: match the 128px source art and its original rotating-name preview. */
+#game.nw-collectible-piece-view .nw-collect-panel-art{width:min(68vw,210px);height:min(68vw,210px);max-width:210px;max-height:210px;margin:10px auto 13px;display:block;}
+#game.nw-collectible-piece-view .nw-collectible-inspect{position:relative;display:block;width:100%;height:100%;aspect-ratio:1;color:var(--collect-accent);isolation:isolate;}
+#game.nw-collectible-piece-view .nw-collectible-inspect .nw-collectible-float{inset:12%;}
+#game.nw-collectible-piece-view .nw-collect-panel-art .nw-collectible-piece-image{display:block;width:85%;height:85%;max-width:128px;max-height:128px;object-fit:contain;}
+#game.nw-collectible-piece-view .nw-collect-panel .nw-collectible-inspect .nw-collectible-name-orbit{display:block;width:100%;height:100%;animation:nwCollectibleNameOrbit var(--orbit-time) linear infinite;overflow:visible;}
+#game.nw-collectible-piece-view .nw-collect-panel .nw-collectible-inspect .nw-collectible-duplicates{background:color-mix(in srgb,var(--collect-bg) 88%,var(--collect-accent));color:var(--collect-ink);border-color:var(--collect-accent);}
+#game.nw-collectibles-theme .nw-collect-profile-photo .nw-equipped-frame{position:relative;display:grid;place-items:center;width:52px;height:52px;overflow:visible;background:transparent;border:0;box-shadow:none;}
+#game.nw-collectibles-theme .nw-collect-profile-photo .nw-equipped-avatar{position:absolute;inset:16%;width:68%;height:68%;border-radius:50%;object-fit:cover;}
+#game.nw-collectibles-theme .nw-collect-profile-photo .nw-equipped-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1;pointer-events:none;}
+#game.nw-collectibles-theme .nw-collectibles-actions button.nw-notification-orbit{--nw-notify:#EDB9E5;isolation:isolate;}
+@media(prefers-reduced-motion:reduce){#game.nw-collectible-piece-view .nw-collect-panel .nw-collectible-inspect .nw-collectible-name-orbit{animation:none!important;}}
