@@ -11015,3 +11015,30 @@ body:has(#game.theme-cakes:not([hidden])){background:#FFE0E8!important}
 #game.nw-account-theme .nw-public-profile .nw-collect-profile-photo .nw-equipped-frame{position:relative;display:grid;place-items:center;width:100%;height:100%;overflow:visible;background:transparent!important;border:0!important;box-shadow:none!important;}
 #game.nw-account-theme .nw-public-profile .nw-collect-profile-photo .nw-equipped-avatar{position:absolute;inset:16%;width:68%;height:68%;border-radius:50%;object-fit:cover;z-index:0;}
 #game.nw-account-theme .nw-public-profile .nw-collect-profile-photo .nw-equipped-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1;pointer-events:none;}
+
+
+/* Lifetime achievements: ten direct, compact, accessible cards. */
+.nw-trophy-panel .nw-achievements-summary{font:700 .69rem/1.3 inherit;letter-spacing:.16em;text-align:center;color:#b998ac;margin:0 0 14px}
+.nw-trophy-panel .nw-achievement-list{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;width:100%;max-width:620px;margin:0 auto}
+.nw-trophy-panel .nw-achievement-card{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;padding:15px 14px;border:1px solid rgba(245,157,196,.28);border-radius:15px;background:linear-gradient(115deg,rgba(58,32,51,.88),rgba(29,21,38,.9));box-shadow:0 4px 17px rgba(8,3,12,.12)}
+.nw-trophy-panel .nw-achievement-card.ready{border-color:rgba(255,176,211,.75);box-shadow:0 0 16px rgba(242,124,177,.12)}
+.nw-trophy-panel .nw-achievement-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px}
+.nw-trophy-panel .nw-achievement-main>strong{font-size:.89rem;font-weight:750;line-height:1.35;color:#ffe6ef;overflow-wrap:anywhere}
+.nw-trophy-panel .nw-achievement-main>small{font-size:.7rem;letter-spacing:.03em;color:#c5a4b7}
+.nw-trophy-panel .nw-achievement-track{height:6px;border-radius:20px;overflow:hidden;background:#3c2b43;width:100%}
+.nw-trophy-panel .nw-achievement-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#d776a1,#f9bfd7);transition:width .45s ease}
+.nw-trophy-panel .nw-achievement-count{font-size:.72rem;color:#dac9d5;font-variant-numeric:tabular-nums}
+.nw-trophy-panel .nw-achievement-reward{display:flex;flex:0 0 auto;flex-direction:column;align-items:center;gap:9px;min-width:86px;max-width:100px}
+.nw-trophy-panel .nw-achievement-reward .nw-diamond-amount{font-size:.83rem;font-weight:800;color:#e7f8ff;white-space:nowrap}
+.nw-trophy-panel .nw-achievement-reward .nw-diamond-icon{width:19px;height:19px;object-fit:contain;vertical-align:middle}
+.nw-trophy-panel .nw-achievement-reward button,.nw-trophy-panel .nw-achievement-retry{cursor:pointer;background:#eaa3bd;color:#3b162e;font-size:.75rem;font-weight:900;letter-spacing:.04em;border:0;border-radius:9px;padding:9px 13px;min-height:34px;max-width:100%}
+.nw-trophy-panel .nw-achievement-reward button:disabled{opacity:.65;cursor:wait}
+.nw-trophy-panel .nw-achievement-wait,.nw-trophy-panel .nw-achievement-done{font-size:.62rem;font-weight:800;letter-spacing:.04em;color:#b69db1;text-align:center}
+.nw-trophy-panel .nw-achievement-done{color:#e5b1c9}
+.nw-trophy-panel .nw-achievement-notice{min-height:1.5em;margin:12px auto;text-align:center;max-width:620px;color:#ffd1e3;font-size:.83rem}
+.nw-trophy-panel .nw-achievement-out{animation:nwAchOld .24s ease both}
+.nw-trophy-panel .nw-achievement-in{animation:nwAchNew .48s cubic-bezier(.2,.85,.2,1) both}
+@keyframes nwAchOld{to{opacity:0;transform:translateY(-9px) scale(.98)}}
+@keyframes nwAchNew{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:390px){.nw-trophy-panel .nw-achievement-card{padding:12px 10px;gap:9px}.nw-trophy-panel .nw-achievement-reward{min-width:74px}.nw-trophy-panel .nw-achievement-main>strong{font-size:.8rem}}
+@media(prefers-reduced-motion:reduce){.nw-trophy-panel .nw-achievement-in,.nw-trophy-panel .nw-achievement-out{animation:none}.nw-trophy-panel .nw-achievement-track i{transition:none}}
