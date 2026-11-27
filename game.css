@@ -10907,3 +10907,14 @@ body:has(#game.theme-cakes:not([hidden])){background:#FFE0E8!important}
 @keyframes nwCollectibleNameOrbit{to{transform:rotate(360deg)}}
 @media(max-width:370px){#game.nw-collectible-detail-theme .nw-collectible-piece-grid{gap:10px 0;}#game.nw-collectible-detail-theme .nw-collectible-detail{padding-left:1px;padding-right:1px;}}
 @media(prefers-reduced-motion:reduce){#game.nw-collectible-detail-theme .nw-collectible-float,#game.nw-collectible-detail-theme .nw-collectible-name-orbit{animation:none!important;}}
+
+/* Collectibles header actions and curved planet progress, isolated from Worlds. */
+#game.nw-collectibles-theme .nw-collectibles-actions{display:flex;justify-content:center;align-items:center;gap:10px;margin:12px auto 2px;padding:0 12px;width:min(100%,520px);box-sizing:border-box;}
+#game.nw-collectibles-theme .nw-collectibles-actions button{min-width:78px;min-height:34px;padding:5px 16px;border:1px solid #DAB9E7;border-radius:13px;background:#24213E;color:#F8EBDD;box-shadow:0 0 9px #8E83BE36;font:400 13px/1.25 'Finger Paint',cursive;cursor:pointer;}
+#game.nw-collectibles-theme .nw-collectibles-actions button:focus-visible{outline:2px solid #FFF1E5;outline-offset:3px;}
+#game.nw-collectibles-theme .nw-collectible-count{display:none!important;}
+#game.nw-collectibles-theme .nw-collectible-count-arc{font-family:'Finger Paint',cursive;font-weight:400;letter-spacing:.2px;paint-order:stroke;stroke:#0B1020;stroke-width:1.5px;stroke-linejoin:round;}
+#game.nw-collectibles-coming-theme .nw-collectibles-coming{box-sizing:border-box;width:min(90%,420px);margin:45px auto 0;padding:30px 20px;text-align:center;border:1px solid #8E83BE;border-radius:20px;background:#141A33;color:#F8EBDD;box-shadow:0 12px 30px #05061266;}
+#game.nw-collectibles-coming-theme .nw-collectibles-coming>span{color:#F08BC2;font-size:25px;letter-spacing:8px;}
+#game.nw-collectibles-coming-theme .nw-collectibles-coming h2{font:400 clamp(23px,7vw,34px)/1.2 'Finger Paint',cursive;color:#FFE4B7;margin:15px 0;}
+#game.nw-collectibles-coming-theme .nw-collectibles-coming p{font:400 15px/1.5 'Pangolin',system-ui,sans-serif;color:#DDD3F5;margin:0;}
