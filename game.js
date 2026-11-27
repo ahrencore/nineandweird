@@ -1996,9 +1996,15 @@ function nwDoublePracticeAfterSudoku(s,won,pts){
    const c=await nwCloud.get();
    const {data,error}=await c.rpc('nw_dt_finish',{p_run_id:s.dtRunId,p_solved:s.values.join(''),p_mistakes:s.mistakes});
    if(error)throw Error(error.message);
-   show('',Number(data.points||0),Number(data.awarded||0));
-    // Server has confirmed the score: refresh team snapshot without blocking the result.
-    void nwDoubleRpc('snapshot').catch(e=>console.warn('Double Trouble refresh:',e.message));
+   if(nwDoubleSnapshot)nwDoubleSnapshot={...nwDoubleSnapshot,points:Number(data.points||0)};
+    show('',Number(data.points||0),Number(data.awarded||0));
+    // The finish RPC already confirmed this player's total; fetch teammate scores separately.
+    const completionPanel=evRoot.querySelector('.nw-double-completion');
+    void nwDoubleRpc('snapshot').then(()=>{
+     if(!completionPanel?.isConnected)return;
+     const teamTotal=completionPanel.querySelector('.nw-double-summary > div:nth-child(2) strong');
+     if(teamTotal)teamTotal.textContent=nwDoubleFmt(nwDoubleScores().ours);
+    }).catch(e=>console.warn('Double Trouble refresh:',e.message));
   }catch(e){
    evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2>POINTS NOT SYNCED</h2><p class="nw-double-alert">${nwEscape(e.message)}</p>${nwDoubleButton('nwDoubleRetrySync','RETRY SYNC')}</section>`);
    evRoot.querySelector('#nwDoubleRetrySync').onclick=sync;
