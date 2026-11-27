@@ -3525,10 +3525,12 @@ async function nwFriendOpenProfile(id,back=nwShowProfile){
  try{
   const p=await nwFriendsRpc('nw_friend_profile',{p_target:id});
   if(!evRoot.querySelector('.nw-social-panel')||nwCloud?.user()?.id==null)return;
-  const fields=[['PUZZLES COMPLETED',p.puzzles],['TOTAL POINTS',Number(p.points).toLocaleString()],['BATTLE WINS',p.battle_wins],['BATTLE LOSSES',p.battle_losses],['BATTLE DRAWS',p.battle_draws],['FRIENDLY WINS',p.challenge_wins],['FRIENDLY LOSSES',p.challenge_losses],['FRIENDLY DRAWS',p.challenge_draws]];
+  const count=n=>Number(n||0).toLocaleString();
+  const stats=[['Puzzles Completed',p.puzzles],['Battles Won',p.battle_wins],['Friendly Won',p.challenge_wins]];
   nwAccountTheme();
-  evDisplay(`${evHeader(heading,returnTo)}<section class="nw-new-panel nw-social-panel">${nwAccountHeading(heading)}<div class="nw-friend-public-card">${nwFriendPhoto(p)}<h3>${nwEscape(p.name)}</h3></div><div class="nw-friend-profile-stats">${fields.map(([label,value])=>`<div><small>${label}</small><strong>${nwEscape(value)}</strong></div>`).join('')}</div>${own?'':'<button class="nw-action" id="nwProfileSocialAction">CHALLENGE TO SUDOKU</button>'}</section>`);
-  if(!own)evRoot.querySelector('#nwProfileSocialAction').onclick=()=>nwChallengeChoose(id,back);
+  const fist='<svg class="nw-public-score-fist" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M7 16V12a2 2 0 0 1 4 0v-3a2 2 0 0 1 4 0V7a2 2 0 0 1 4 0v3a2 2 0 0 1 4 0v8l2-2a2.5 2.5 0 0 1 3 4l-7 8H12l-7-8a2 2 0 0 1 2-3Z" fill="#F0B4C7" stroke="#9F537C" stroke-width="1.4" stroke-linejoin="round"/><path d="M10 22h11" stroke="#9F537C" stroke-width="1.3" stroke-linecap="round"/></svg>';
+  evDisplay(`${evHeader(heading,returnTo)}<section class="nw-new-panel nw-social-panel nw-public-profile"><div class="nw-friend-public-card">${nwCollectiblePhoto(p)}<h3>${nwEscape(p.name)}</h3></div><div class="nw-public-score">${fist}<strong>${count(p.points)}</strong><button type="button" id="nwScoreInfo" aria-label="Explain total puzzle scores">!</button></div><div id="nwScoreExplanation" class="nw-public-score-help" hidden>Total puzzle scores</div><div class="nw-public-stat-list">${stats.map(([label,value])=>`<div><span>${label}</span><strong>${count(value)}</strong></div>`).join('')}</div></section>`);
+  evRoot.querySelector('#nwScoreInfo').onclick=()=>{const el=evRoot.querySelector('#nwScoreExplanation');el.hidden=!el.hidden;};
  }catch(e){
   nwAccountTheme();evDisplay(`${evHeader(heading,returnTo)}<section class="nw-new-panel nw-social-panel"><p role="alert">${nwEscape(e.message)}</p></section>`);
  }
