@@ -36,10 +36,15 @@ async function nwCollectibleLoad(redraw){
  return nwCollectibleLoading;
 }
 function nwCollectibleUpdateNotice(){
- const btn=evRoot.querySelector('#nwCollectibles');if(!btn)return;
- const active=(nwCollectibleState.inbox||[]).length>0||(nwCollectibleState.unseen||[]).length>0;
- btn.classList.toggle('nw-notification-orbit',active);
- btn.classList.toggle('nw-mail-unclaimed',active);
+ const incoming=(nwCollectibleState.inbox||[]).length>0;
+ const btn=evRoot.querySelector('#nwCollectibles');
+ if(btn){
+  const active=incoming||(nwCollectibleState.unseen||[]).length>0;
+  btn.classList.toggle('nw-notification-orbit',active);
+  btn.classList.toggle('nw-mail-unclaimed',active);
+ }
+ const trade=evRoot.querySelector('[data-nw-collectible-action="trade"]');
+ if(trade)trade.classList.toggle('nw-notification-orbit',incoming);
 }
 async function nwCollectibleRefreshNotice(force){
  const acc=nwCloud?.user();if(!acc||acc.is_anonymous)return;
@@ -51,14 +56,24 @@ async function nwCollectibleRefreshNotice(force){
 async function nwCollectibleSeen(world){
  try{const c=await nwCloud.get();const r=await c.rpc('nw_collectible_seen',{p_world:world});if(r.error)throw Error(r.error.message);nwCollectibleState.unseen=(nwCollectibleState.unseen||[]).filter(function(id){return id!==world;});nwCollectibleUnseen=nwCollectibleState.unseen; nwCollectibleUpdateNotice();}catch(e){console.warn('Collectible seen',e.message);}
 }
-function nwCollectiblePhoto(p){return '<span class="nw-collect-profile-photo">'+nwFriendPhoto(p)+'</span>';}
+function nwCollectiblePhoto(p){
+ // Match the established equipped-frame markup: the monthly orbit CSS targets
+ // .nw-monthly-art-frame and .nw-equipped-art, not the static Friends thumbnail.
+ const allowed=['usual','weird',...nwSeasonFrameTiers.map(function(t){return 'monthly-'+t.wins;})];
+ const id=allowed.includes(p.frame)?p.frame:'usual';
+ const src=id==='usual'?'frames/nw-free-usual.png?v=42':id==='weird'?'frames/nw-free-weird.png?v=42':'frames/nw-'+id+'.png';
+ return '<span class="nw-collect-profile-photo nw-double-invite-row"><span class="nw-equipped-frame '+(id.startsWith('monthly-')?'nw-monthly-art-frame':'')+'">'+nwAvatarImg(p.avatar,'nw-equipped-avatar')+'<img class="nw-equipped-art" src="'+nwEscape(src)+'" alt=""></span></span>';
+}
 function nwCollectibleAsset(world,piece){const pair=nwTripleArtFiles[world];return pair&&piece>=1&&piece<=9?pair[0]+pair[1][piece-1]:'';}
 function nwCollectiblePieceLabel(world,piece){const pair=nwTripleArtFiles[world];if(!pair||piece<1||piece>9)return '';if(world==='cakefail')return ['PIPING BAG DISASTER','OVERFLOWING CUPCAKE','RUNAWAY STRAWBERRY','FROSTING SPATULA','SPILLED SPRINKLES','SQUASHED FROSTING FLOWERS','OVERFLOWING MIXING BOWL','MELTING STRIPED CANDLE','COLLAPSING CHERRY CAKE'][piece-1];if(world==='baggagehell'&&piece===5)return 'LEAKING PURPLE GOO';return nwCollectiblePieceName(pair[1][piece-1]);}
 function nwCollectibleBackAlbum(world){nwShowCollectibleWorld(world);nwCollectibleRestore(nwCollectibleAlbumScroll);}
 function nwShowCollectiblePiece(world,index){
  const piece=index+1,count=nwCollectibleCount(world,piece),name=nwCollectiblePieceLabel(world,piece);
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-galaxy-theme','nw-collectibles-theme','nw-collectible-detail-theme','nw-collectible-piece-view');
- evDisplay(evHeader(name,function(){nwCollectibleBackAlbum(world);},true)+'<section class="nw-collect-panel"><h2>'+nwEscape(name)+'</h2><p>'+nwEscape(worlds[world].name)+'</p><div class="nw-collect-panel-art"><img src="'+nwCollectibleAsset(world,piece)+'" class="'+(count?'':'nw-collectible-unowned')+'" alt=""></div>'+(count>1?'<strong class="nw-collect-extra">+'+(count-1)+' EXTRA</strong>':'')+'<button type="button" data-nw-send '+(count<=1?'disabled':'')+'>SEND</button><button type="button" data-nw-back>BACK</button><p class="nw-collect-error" role="status"></p></section>');
+ const colors=nwGalaxyColors[world]||['#141A33','#8E83BE','#F8EBDD'];
+ const speed=18+((piece-1)%4)*3.5;
+ const orbit='<div class="nw-collectible-piece nw-collectible-inspect" style="--piece-index:'+(piece-1)+';--orbit-time:'+speed+'s"><div class="nw-collectible-float"><span class="nw-collectible-piece-disc"><img src="'+nwCollectibleAsset(world,piece)+'" class="nw-collectible-piece-image '+(count?'':'nw-collectible-unowned')+'" alt="" draggable="false"></span>'+(count>1?'<span class="nw-collectible-duplicates">+'+(count-1)+'</span>':'')+'</div><svg class="nw-collectible-name-orbit" viewBox="0 0 120 120" aria-hidden="true"><defs><path id="nwCollectInspectOrbit" d="M60,60 m-49,0 a49,49 0 1,1 98,0 a49,49 0 1,1 -98,0"/></defs><circle cx="60" cy="60" r="49" fill="none" stroke="currentColor" stroke-opacity=".22" stroke-dasharray="2 5"/><text font-size="'+(name.length>24?7:name.length>18?8:9)+'" fill="currentColor" letter-spacing=".3"><textPath href="#nwCollectInspectOrbit" startOffset="0%">'+nwEscape(name)+' ✧</textPath></text></svg></div>';
+ evDisplay(evHeader(name,function(){nwCollectibleBackAlbum(world);},true)+'<section class="nw-collect-panel" style="--collect-bg:'+colors[0]+';--collect-accent:'+colors[1]+';--collect-ink:'+colors[2]+'"><p>'+nwEscape(worlds[world].name)+'</p><div class="nw-collect-panel-art">'+orbit+'</div>'+(count>1?'<strong class="nw-collect-extra">+'+(count-1)+' EXTRA</strong>':'')+'<button type="button" data-nw-send '+(count<=1?'disabled':'')+'>SEND</button><button type="button" data-nw-back>BACK</button><p class="nw-collect-error" role="status"></p></section>');
  evRoot.querySelector('[data-nw-back]').onclick=function(){nwCollectibleBackAlbum(world);};
  evRoot.querySelector('[data-nw-send]').onclick=function(){void nwCollectibleFriends(world,piece);};
  nwResetViewToTop();
@@ -104,7 +119,7 @@ function nwShowCollectibles(){
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-galaxy-theme','nw-collectibles-theme');
  const ids=nwCollectibleWorldIds();
  nwCollectibleGalleryScroll=nwCollectibleGalleryScroll||0;
- evDisplay(evHeader('COLLECTIBLES',showCategories,true)+'<nav class="nw-collectibles-actions" aria-label="Collectibles actions"><button type="button" data-nw-collectible-action="trade">TRADE</button><button type="button" data-nw-collectible-action="buy">BUY</button></nav><div class="world-grid world-list nw-planet-grid nw-collectibles-planets">'+ids.map(nwCollectiblePlanet).join('')+'</div>');
+ evDisplay(evHeader('COLLECTIBLES',showCategories,true)+'<nav class="nw-collectibles-actions" aria-label="Collectibles actions"><button type="button" data-nw-collectible-action="trade" class="'+((nwCollectibleState.inbox||[]).length?'nw-notification-orbit':'')+'">TRADE</button><button type="button" data-nw-collectible-action="buy">BUY</button></nav><div class="world-grid world-list nw-planet-grid nw-collectibles-planets">'+ids.map(nwCollectiblePlanet).join('')+'</div>');
  evRoot.querySelectorAll('[data-nw-collectible-world]').forEach(function(button){button.onclick=function(){nwCollectibleGalleryScroll=nwCollectibleScrollElement().scrollTop;nwShowCollectibleWorld(button.dataset.nwCollectibleWorld);};});
  evRoot.querySelectorAll('[data-nw-collectible-action]').forEach(function(button){button.onclick=function(){if(button.dataset.nwCollectibleAction==='trade')void nwCollectibleInbox();else nwShowCollectibleComingSoon('buy');};});
  nwCollectibleRestore(nwCollectibleGalleryScroll);
