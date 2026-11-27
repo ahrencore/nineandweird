@@ -951,10 +951,11 @@ function nwPrizeQuantityDialog(key){
  input.focus();
 }
 
-const nwRankDiamonds=[3000,2000,1000,700,500,200,200,200,200,200];
+const nwRankDiamonds=[2000,1500,1000,700,500,200,200,200,200,200];
 const nwRankSupplies={
  tt:{tt_ticket:[20,15,10,8,5,3,3,3,3,3],tt_undo:[5,4,3,2,2,1,1,1,1,1],tt_shuffle:[3,3,2,2,2,1,1,1,1,1],tt_magic:[3,3,2,2,2,1,1,1,1,1]},
- tg:{tg_energy:[100,75,50,40,30,20,20,20,20,20],tg_ray:[5,4,3,2,1,1,1,1,1,1],tg_juice:[2,2,1,1,1,0,0,0,0,0]}
+ tg:{tg_energy:[100,75,50,40,30,20,20,20,20,20],tg_ray:[5,4,3,2,1,1,1,1,1,1],tg_juice:[2,2,1,1,1,0,0,0,0,0]},
+ dr:{dr_splitter:[2,2,1,0,1,0,0,0,0,0],dr_evictor:[2,1,1,1,0,0,0,0,0,0]}
 };
 function nwRankRewardItems(event,rank){
  const i=Number(rank)-1;
@@ -973,7 +974,7 @@ function nwRankRewardArt(event,rank){
  }).join('')+'</div>';
 }
 function nwLbRewardsMarkup(event){
- return '<div class="nw-lb-prizes"><h3>'+(event==='tg'?"THEY'RE GROWING!":'TRIPLE TROUBLE')+' PRIZES</h3>'+
+ return '<div class="nw-lb-prizes"><h3>'+(event==='tg'?"THEY'RE GROWING!":event==='dr'?'DONUT RISE!':'TRIPLE TROUBLE')+' PRIZES</h3>'+
  [1,2,3,4,5,6].map(n=>'<section class="nw-lb-prize-tier"><strong>'+(n===6?'6TH–10TH':'#'+n)+'</strong>'+nwRankRewardArt(event,n)+'</section>').join('')+'</div>';
 }
 function nwPrizeSetMailNotice(unclaimed){
@@ -1094,7 +1095,7 @@ async function nwPrizeMail(){
   function renderInbox(){
    if(!container.isConnected)return;
    container.innerHTML=rows.length?rows.map((r,i)=>{
-    const sender=r.kind==='letter'?'NINE & WEIRD TEAM':r.event==='tt'?'TRIPLE TROUBLE':"THEY'RE GROWING!";
+    const sender=r.kind==='letter'?'NINE & WEIRD TEAM':r.event==='tt'?'TRIPLE TROUBLE':r.event==='dr'?'DONUT RISE!':"THEY'RE GROWING!";
     const subject=r.kind==='letter'?String(r.subject||'MESSAGE'):'Tournament rewards · #'+Number(r.rank);
     return `<button type="button" class="nw-mail-inbox-item ${r.claimed?'is-claimed':'is-new'}" data-open-mail="${i}" style="--mail-index:${Math.min(i,8)}">
       <span class="nw-mail-inbox-icon" aria-hidden="true">${r.claimed?'✉':'✦'}</span>
@@ -1117,7 +1118,7 @@ async function nwPrizeMail(){
      <div class="nw-cosmic-prizes nw-mail-gift-prizes">${nwPrizeClaimArt({diamonds:r.diamonds,supplies:r.supplies||{}})}</div>
      ${claimed?'<span class="nw-mail-collected">REWARDS CLAIMED ✓</span>':`<button class="nw-mail-claim-button" type="button" data-mail-claim="${Number(r.id)}">CLAIM REWARDS ✦</button>`}`;
    }else{
-    const eventName=r.event==='tt'?'TRIPLE TROUBLE':"THEY'RE GROWING!",rank=Number(r.rank),code=r.event==='tt'?'tt':'tg';
+    const eventName=r.event==='tt'?'TRIPLE TROUBLE':r.event==='dr'?'DONUT RISE!':"THEY'RE GROWING!",rank=Number(r.rank),code=r.event==='tt'?'tt':r.event==='dr'?'dr':'tg';
     details=`<div class="nw-mail-letter-top"><div><span class="nw-mail-letter-event">✦ ${eventName}</span><small>TOURNAMENT REWARDS · ${nwEscape(String(r.period||''))}</small></div><span class="nw-mail-postal-stamp ${claimed?'stamp-claimed':''}">${claimed?'CLAIMED ✓':'NEW'}</span></div>
      <strong class="nw-mail-finish">You finished #${rank}!</strong><p class="nw-mail-letter-subtitle">${claimed?'Your rewards have been collected.':'A little something for your clever brain.'}</p>
      <div class="nw-cosmic-prizes">${nwRankRewardArt(code,rank)}</div>
@@ -1766,7 +1767,49 @@ window.addEventListener('message',async event=>{
  }catch(err){reply({type:'nw-dr-error',requestId:event.data.requestId||0,message:err.message||'Could not sync boosters.'});}
  finally{nwDonutBridgeBusy=false;}
 });
-// DONUT RISE! — isolated test event. This build does not alter live event rewards.
+
+// Donut Rise tournament bridge, independent from the existing booster bridge.
+// The parent owns all authenticated database access and validates iframe origin.
+window.addEventListener('message',async event=>{
+ const cmd=event.data?.type;
+ if(event.origin!==location.origin||
+   !['nw-dr-start','nw-dr-finish','nw-dr-rank','nw-dr-milestones','nw-dr-claim'].includes(cmd))return;
+ const frame=evRoot.querySelector('#nwDonutRiseFrame');
+ if(!frame||event.source!==frame.contentWindow)return;
+ const uid=nwCloud?.user()?.id,seq=event.data?.seq;
+ const reply=data=>{if(frame.isConnected&&frame.contentWindow===event.source&&uid===nwCloud?.user()?.id)frame.contentWindow.postMessage({...data,seq},location.origin)};
+ if(!uid){reply({type:'nw-dr-event-error',command:cmd,message:'Sign in to use event features.'});return;}
+ try{
+  const client=await nwCloud.get();
+  const call=async(fn,args={})=>{const {data,error}=await client.rpc(fn,args);if(error)throw Error(error.message);return data};
+  if(cmd==='nw-dr-start'){
+   const state=await call('nw_dr_start');
+   reply({type:'nw-dr-session',...state});
+  }else if(cmd==='nw-dr-finish'){
+   if(!event.data.runId)return;
+   const args={p_run:event.data.runId,p_score:event.data.score,p_lines:event.data.lines,p_moves:event.data.moves};
+   const result=await call('nw_dr_finish',args);
+   const state=await call('nw_dr_milestone_state');
+   reply({type:'nw-dr-finished',result,state});
+  }else if(cmd==='nw-dr-rank'){
+   const [rows,state]=await Promise.all([call('nw_dr_rank'),call('nw_dr_milestone_state')]);
+   reply({type:'nw-dr-rank-data',rows,state});
+  }else if(cmd==='nw-dr-milestones'){
+   const state=await call('nw_dr_milestone_state');
+   reply({type:'nw-dr-milestone-data',state});
+  }else if(cmd==='nw-dr-claim'){
+   const tier=Number(event.data.tier);
+   if(!Number.isInteger(tier)||tier<1||tier>15)throw Error('Invalid milestone');
+   const result=await call('nw_dr_milestone_claim',{p_milestone:tier});
+   const state=await call('nw_dr_milestone_state');
+   reply({type:'nw-dr-milestone-claimed',state,result});
+   void Promise.allSettled([nwWalletSync(),nwPrizeSync()]);
+   if(!result.already_claimed)nwRewardCelebrate(nwRewardItemsFromClaim(result),{source:'milestone',title:'DONUT RISE REWARD!'});
+  }
+ }catch(e){reply({type:'nw-dr-event-error',command:cmd,message:e.message||'Event request failed.'});}
+});
+
+// DONUT RISE! — isolated event. Tournament records are kept server-side.
 // Allow only the active, same-origin Donut Rise iframe to report its actual content height.
 window.addEventListener('message',event=>{
  if(event.origin!==location.origin||event.data?.type!=='nw-donut-rise-height')return;
@@ -1777,7 +1820,7 @@ window.addEventListener('message',event=>{
 });
 function nwDonutRiseOpen(){
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-donut-rise-shell');
- evDisplay(`${evHeader('DONUT RISE!',showCategories)}<section class="nw-donut-rise-frame-container"><iframe id="nwDonutRiseFrame" title="DONUT RISE! — playable test event" src="donut-rise/index.html?v=12-cloud-boosters" loading="eager"></iframe></section>`);
+ evDisplay(`${evHeader('DONUT RISE!',showCategories)}<section class="nw-donut-rise-frame-container"><iframe id="nwDonutRiseFrame" title="DONUT RISE! — playable test event" src="donut-rise/index.html?v=13-ranks-milestones" loading="eager"></iframe></section>`);
  nwResetViewToTop();
 }
 function nwAislePanicBack(){
