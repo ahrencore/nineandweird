@@ -152,6 +152,63 @@ header p{color:#E7BAC9;font-family:Fredoka,system-ui,sans-serif}
  font-family:Fredoka,system-ui,sans-serif;
 }
 
+
+/* Connected matte dusty-pink tray backings — visual only, no gameplay changes. */
+.board .cell.occupied,
+.board .cell.occupied.alt{
+  background:#744B58;
+  border:1px solid #AF7E8B;
+  border-radius:0;
+  box-shadow:0 3px 7px #00000032,inset 0 1px 0 #D6A3B035;
+  position:relative;
+}
+/* A single capsule per block, with rounded ends and no interior seams. */
+.board .cell.occupied.group-first:not(.group-single){
+  border-radius:13px 0 0 13px;
+  border-right:0;
+}
+.board .cell.occupied.group-middle{
+  border-radius:0;
+  border-left:0;
+  border-right:0;
+}
+.board .cell.occupied.group-last{
+  border-radius:0 13px 13px 0;
+  border-left:0;
+}
+.board .cell.occupied.group-single{
+  border-radius:13px;
+  border:1px solid #AF7E8B;
+}
+/* Bridge the existing 2–3px board grid gap without altering layout,
+   hitboxes, drag detection, or animated cell positions. */
+.board .cell.occupied.group-first:not(.group-single)::before,
+.board .cell.occupied.group-middle::before{
+  content:"";
+  position:absolute;top:-1px;bottom:-1px;right:calc(-1 * (var(--block-gap, 3px) + 1px));
+  width:calc(var(--block-gap, 3px) + 2px);
+  background:#744B58;
+  border-top:1px solid #AF7E8B;
+  border-bottom:1px solid #AF7E8B;
+  pointer-events:none;
+}
+/* Use the same colour across all cells and bridges on selection. */
+.board .cell.occupied.selected{
+  outline:none;
+  background:#885767;
+  border-color:#E7BAC9;
+  box-shadow:0 4px 10px #00000040,inset 0 1px 0 #E7BAC94D;
+}
+.board .cell.occupied.selected.group-first:not(.group-single)::before,
+.board .cell.occupied.selected.group-middle::before{
+  background:#885767;
+  border-top-color:#E7BAC9;
+  border-bottom-color:#E7BAC9;
+}
+.board .cell.occupied img{position:relative;z-index:1}
+/* The board already adjusts its gap for small screens. */
+.board{--block-gap:3px}
+@media(max-width:390px){.board{--block-gap:2px}}
 </style></head><body><main class="app">
 <div class="topline"><span class="tag">NINE & WEIRD  /  DONUT EVENT</span><div class="topbuttons"><button id="pause">PAUSE</button><button id="reset">RESTART</button></div></div>
 <header><h1>DONUT RISE<span class="punct">!</span></h1><p>Slide · Drop · Clear · Repeat</p></header>
