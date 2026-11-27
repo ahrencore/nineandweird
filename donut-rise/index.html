@@ -213,7 +213,50 @@ header p{color:#E7BAC9;font-family:Fredoka,system-ui,sans-serif}
  .quick-actions button{padding:7px 2px;font-size:9px;min-height:42px}
  .app{gap:9px}
 }
+
+/* Donut Rise landing: scoped, responsive and non-selectable like the game board. */
+html,body,.app,.app *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.app img{-webkit-user-drag:none;user-drag:none}
+.dr-landing{display:flex;flex-direction:column;align-items:center;gap:16px;padding:17px 2px 12px;text-align:center;min-height:min(720px,calc(100dvh - 90px));justify-content:center}
+.dr-symbol{font:400 27px/1.3 'Fredoka',system-ui,sans-serif;color:#E7BAC9;white-space:nowrap}
+.dr-landing-title{padding:0}
+.dr-landing-title h1{margin:0}
+.dr-donut-showcase{width:100%;max-width:400px;display:flex;flex-direction:column;align-items:center;gap:11px;padding:10px 0;margin:0 auto}
+.dr-donut-row{display:flex;justify-content:center;gap:clamp(4px,1.8vw,11px);width:100%}
+.dr-donut-card{position:relative;width:clamp(42px,14.5vw,64px);height:clamp(42px,14.5vw,64px);display:grid;place-items:center;isolation:isolate;animation:drShowcaseFloat 3.6s ease-in-out infinite;animation-delay:calc(var(--i) * -0.17s)}
+.dr-donut-card img{width:100%;height:100%;object-fit:contain;pointer-events:none;position:relative;z-index:1;filter:drop-shadow(0 3px 3px #0008);animation:drShowcaseWobble 4s ease-in-out infinite,drDonutPop 9s ease-in-out infinite;animation-delay:calc(var(--i) * -0.27s),calc(var(--i) * 1s)}
+.dr-donut-card:after{content:"";position:absolute;inset:-10%;z-index:2;pointer-events:none;border-radius:50%;background:radial-gradient(circle,#FFF9F0B8 0%,#E7BAC96D 24%,transparent 67%);mix-blend-mode:screen;opacity:0;animation:drPaparazziFlash 9s ease-out infinite;animation-delay:calc(var(--i) * 1s)}
+@keyframes drShowcaseFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-4px) rotate(2deg)}}
+@keyframes drShowcaseWobble{0%,100%{transform:rotate(0deg)}25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
+@keyframes drPaparazziFlash{0%,7%,17%,100%{opacity:0;transform:scale(.78)}9%,11%{opacity:.85;transform:scale(1.06)}}
+@keyframes drDonutPop{0%,7%,17%,100%{scale:1}10%{scale:1.12}}
+.dr-start-button{position:relative;display:grid;place-items:center;width:min(290px,90%);padding:0;border:0;background:none;cursor:pointer;margin:7px 0 4px;color:#F6EEE8;transition:transform .16s ease}
+.dr-start-button svg{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 4px 4px #00000055)}
+.dr-start-button span{position:absolute;top:46%;left:50%;transform:translate(-50%,-50%);font:700 24px/1 Fredoka,system-ui,sans-serif;letter-spacing:.09em}
+.dr-start-button:hover{transform:translateY(-2px)}
+.dr-start-button:active{transform:translateY(2px)}
+.dr-start-button:focus-visible{outline:2px solid #F6EEE8;outline-offset:4px;border-radius:17px}
+.dr-game-shell{display:flex;flex-direction:column;gap:12px}
+.dr-game-shell[hidden],.dr-landing[hidden]{display:none!important}
+@media(max-width:390px){.dr-landing{gap:12px;padding:12px 0;min-height:calc(100dvh - 48px)}.dr-donut-showcase{gap:8px}.dr-game-shell{gap:9px}}
+@media(prefers-reduced-motion:reduce){.dr-donut-card,.dr-donut-card img,.dr-donut-card:after{animation:none!important}.dr-start-button{transition:none}}
 </style></head><body><main class="app">
+<section class="dr-landing" id="drLanding" aria-label="Donut Rise introduction">
+ <div class="dr-symbol" aria-hidden="true">𑣲ᢉ𐭩</div>
+ <header class="game-title dr-landing-title"><h1>DONUT RISE<span class="punct">!</span></h1></header>
+ <div class="dr-donut-showcase" aria-label="Nine donuts">
+  <div class="dr-donut-row" id="drDonutRowTop"></div>
+  <div class="dr-donut-row" id="drDonutRowBottom"></div>
+ </div>
+ <button type="button" id="drStartButton" class="dr-start-button" aria-label="Start Donut Rise">
+  <svg viewBox="0 0 320 84" aria-hidden="true" focusable="false">
+   <path d="M30 8 Q160 3 290 8 Q311 9 312 28 L312 51 Q310 71 287 72 Q160 79 33 72 Q8 70 8 51 L8 29 Q9 10 30 8Z" fill="#C47A92" stroke="#A85F78" stroke-width="3"/>
+   <path d="M31 14 Q160 10 288 14 Q304 15 305 30 L305 49 Q304 64 286 66 Q160 72 34 66 Q15 64 15 48 L15 30 Q16 16 31 14Z" fill="none" stroke="#E7BAC9" stroke-width="1.7" opacity=".78"/>
+  </svg>
+  <span>START</span>
+ </button>
+</section>
+<section class="dr-game-shell" id="drGameShell" hidden>
 <header class="game-title"><h1>DONUT RISE<span class="punct">!</span></h1></header>
 <nav class="quick-actions" aria-label="Donut Rise controls">
  <button type="button" id="reset">RESTART</button>
@@ -225,6 +268,7 @@ header p{color:#E7BAC9;font-family:Fredoka,system-ui,sans-serif}
 
 <div class="boardwrap" id="wrap"><div class="board" id="board" aria-label="8-column by 10-row donut board"></div></div>
 <div class="message" id="message" role="status" aria-live="polite">Slide a donut block sideways.</div>
+</section>
 </main>
 <div class="overlay" id="infooverlay" hidden>
  <div class="modal info-modal" role="dialog" aria-modal="true" aria-labelledby="infotitle">
@@ -238,7 +282,7 @@ header p{color:#E7BAC9;font-family:Fredoka,system-ui,sans-serif}
 (()=>{'use strict';
 const COLS=8,ROWS=10,files=['01_pink_sprinkles.png','02_chocolate_crunch.png','03_strawberry_drizzle.png','04_lemon_coconut.png','05_aqua_cookies.png','06_blueberry.png','07_caramel_crunch.png','08_heart_candy.png','09_mint_chocolate.png'];
 const art=files.map(f=>'../assets/donuts/'+f);
-const $=id=>document.getElementById(id);const board=$('board'),wrap=$('wrap'),message=$('message');let grid=[],groups=new Map(),nextId=1,score=0,lines=0,moves=0,running=true,paused=false,selected=null,drag=null,hover=null,busy=false;
+const $=id=>document.getElementById(id);const board=$('board'),wrap=$('wrap'),message=$('message'),landing=$('drLanding'),gameShell=$('drGameShell');let grid=[],groups=new Map(),nextId=1,score=0,lines=0,moves=0,running=true,paused=false,selected=null,drag=null,hover=null,busy=false;
 const rnd=(a,b)=>Math.floor(a+Math.random()*(b-a+1));const empty=()=>Array.from({length:ROWS},()=>Array(COLS).fill(null));
 function announce(str){message.textContent=str;}
 function groupRow(id){for(let r=0;r<ROWS;r++){let c=grid[r].indexOf(id);if(c>=0)return {r,c};}return null}
@@ -443,7 +487,7 @@ function buildGroupTrays(){
   const last=board.querySelector('.cell[data-r="'+pos.r+'"][data-c="'+(pos.c+g.len-1)+'"]');
   if(!first||!last)continue;
   const tray=document.createElement('div');
-  tray.className='group-tray'+(selected===id?' is-selected':'');
+  tray.className='group-tray';
   tray.dataset.id=id;tray.dataset.r=pos.r;
   tray.style.left=first.offsetLeft+'px';
   tray.style.top=first.offsetTop+'px';
@@ -453,30 +497,58 @@ function buildGroupTrays(){
  }
  board.prepend(trays);
 }
-function render(){const frag=document.createDocumentFragment();for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const id=grid[r][c],el=document.createElement('div');el.className='cell';el.dataset.r=r;el.dataset.c=c;if(id!==null){const g=groups.get(id),pos=groupRow(id),offset=c-pos.c,d=g.donuts[offset];el.classList.add('occupied');el.dataset.id=id;if(id%2)el.classList.add('alt');el.classList.add('group-'+(offset===0?'first':offset===g.len-1?'last':'middle'));if(g.len===1)el.classList.add('group-single');el.style.setProperty('--group-color', ['#D99AAE','#E7BAC9','#D49AA6','#E4B7AF','#E1B7B9','#DDA7B8','#E8BDB1','#F0BFC9','#D1A2A9'][d.type]);if(d.special)el.classList.add('special');if(selected===id)el.classList.add('selected');const img=new Image();img.src=art[d.type];img.alt='';img.draggable=false;img.onerror=()=>{img.remove();const t=document.createElement('span');t.className='fallback';t.textContent='🍩';el.append(t)};el.append(img)}if(hover){const len=groups.get(hover.id)?.len||0;if(r===hover.r&&c>=hover.c&&c<hover.c+len)el.classList.add(hover.valid?'ghost':'invalid')}frag.append(el)}board.replaceChildren(frag);buildGroupTrays();requestAnimationFrame(reportFrameHeight);$('score').textContent=String(score).padStart(4,'0');$('lines').textContent=lines;$('countdown').textContent=moves;$('reset').disabled=busy}
-board.addEventListener('pointerdown',e=>{if(!running||paused||busy||e.button!==0)return;const pos=locAtPoint(e.clientX,e.clientY);if(!pos)return;const id=grid[pos.r][pos.c];if(id!==null){const start=groupRow(id);selected=id;drag={id,offset:pos.c-start.c,sx:e.clientX,sy:e.clientY,moved:false};wrap.classList.add('dragging');try{board.setPointerCapture(e.pointerId)}catch{}render()} });
+function render(){const frag=document.createDocumentFragment();for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const id=grid[r][c],el=document.createElement('div');el.className='cell';el.dataset.r=r;el.dataset.c=c;if(id!==null){const g=groups.get(id),pos=groupRow(id),offset=c-pos.c,d=g.donuts[offset];el.classList.add('occupied');el.dataset.id=id;if(id%2)el.classList.add('alt');el.classList.add('group-'+(offset===0?'first':offset===g.len-1?'last':'middle'));if(g.len===1)el.classList.add('group-single');el.style.setProperty('--group-color', ['#D99AAE','#E7BAC9','#D49AA6','#E4B7AF','#E1B7B9','#DDA7B8','#E8BDB1','#F0BFC9','#D1A2A9'][d.type]);if(d.special)el.classList.add('special');const img=new Image();img.src=art[d.type];img.alt='';img.draggable=false;img.onerror=()=>{img.remove();const t=document.createElement('span');t.className='fallback';t.textContent='🍩';el.append(t)};el.append(img)}if(hover){const len=groups.get(hover.id)?.len||0;if(r===hover.r&&c>=hover.c&&c<hover.c+len)el.classList.add(hover.valid?'ghost':'invalid')}frag.append(el)}board.replaceChildren(frag);buildGroupTrays();requestAnimationFrame(reportFrameHeight);$('score').textContent=String(score).padStart(4,'0');$('lines').textContent=lines;$('countdown').textContent=moves;$('reset').disabled=busy}
+// Keep interaction purely drag-to-move. Prevent native text/image selection and
+// release pointer state cleanly on cancel/lost capture.
+board.addEventListener('dragstart',e=>e.preventDefault());
+board.addEventListener('selectstart',e=>e.preventDefault());
+board.addEventListener('contextmenu',e=>e.preventDefault());
+board.addEventListener('pointerdown',e=>{
+ if(!running||paused||busy||e.button!==0||drag)return;
+ const pos=locAtPoint(e.clientX,e.clientY);if(!pos)return;
+ const id=grid[pos.r][pos.c];if(id===null)return;
+ e.preventDefault();
+ const start=groupRow(id);if(!start)return;
+ selected=null;hover=null;
+ drag={id,pointerId:e.pointerId,offset:pos.c-start.c,sx:e.clientX,sy:e.clientY,moved:false};
+ wrap.classList.add('dragging');
+ try{board.setPointerCapture(e.pointerId)}catch{}
+});
 function dragTarget(e){
- if(!drag)return null;
+ if(!drag||drag.pointerId!==e.pointerId)return null;
  const pos=groupRow(drag.id);if(!pos)return null;
- const w=board.getBoundingClientRect().width/COLS;
- const delta=Math.round((e.clientX-drag.sx)/w);
+ const sample=board.querySelector('.cell');if(!sample)return null;
+ const style=getComputedStyle(board),step=sample.getBoundingClientRect().width+(parseFloat(style.columnGap)||0);
+ const delta=Math.round((e.clientX-drag.sx)/Math.max(1,step));
  return {r:pos.r,c:Math.max(0,Math.min(COLS-groups.get(drag.id).len,pos.c+delta))};
 }
+function clearDragState(){
+ drag=null;hover=null;selected=null;wrap.classList.remove('dragging');
+}
 board.addEventListener('pointermove',e=>{
- if(!drag||!running||paused||busy)return;
+ if(!drag||e.pointerId!==drag.pointerId||!running||paused||busy)return;
+ e.preventDefault();
  const target=dragTarget(e);if(!target)return;
  if(Math.abs(e.clientX-drag.sx)>7)drag.moved=true;
- if(drag.moved){const valid=canMove(drag.id,target.r,target.c);if(!hover||hover.c!==target.c||hover.valid!==valid){hover={...target,id:drag.id,valid};render()}}
+ if(drag.moved){
+  const valid=canMove(drag.id,target.r,target.c);
+  if(!hover||hover.c!==target.c||hover.valid!==valid){hover={...target,id:drag.id,valid};render()}
+ }
 });
 board.addEventListener('pointerup',e=>{
- if(!drag)return;
- const target=dragTarget(e);
- if(drag.moved&&target){if(!canMove(drag.id,target.r,target.c))announce('That space is occupied. Slide into another gap.');else void move(drag.id,target.r,target.c);}
- else if(!drag.moved){selected=drag.id}
- drag=null;hover=null;wrap.classList.remove('dragging');if(!busy)render();
+ if(!drag||e.pointerId!==drag.pointerId)return;
+ e.preventDefault();
+ const id=drag.id,target=dragTarget(e),moved=drag.moved;
+ clearDragState();
+ try{if(board.hasPointerCapture(e.pointerId))board.releasePointerCapture(e.pointerId)}catch{}
+ if(moved&&target){
+  if(!canMove(id,target.r,target.c))announce('That space is occupied. Slide into another gap.');
+  else {void move(id,target.r,target.c);return;}
+ }
+ if(!busy)render();
 });
-board.addEventListener('pointercancel',()=>{drag=null;hover=null;wrap.classList.remove('dragging');render()});
-board.addEventListener('click',e=>{if(!running||paused||busy||drag)return;const el=e.target.closest('.cell');if(!el)return;const r=+el.dataset.r,c=+el.dataset.c;const id=grid[r][c];if(id!==null){selected=id;render();return}if(selected!==null){const g=groups.get(selected);if(r!==groupRow(selected)?.r){announce('You can only slide within the same row.');return}let start=Math.min(COLS-g.len,c);if(!canMove(selected,groupRow(selected)?.r,start))announce('Slide left or right into a free space in that row.');else void move(selected,groupRow(selected)?.r,start)}});
+board.addEventListener('pointercancel',e=>{if(drag?.pointerId===e.pointerId){clearDragState();if(!busy)render()}});
+board.addEventListener('lostpointercapture',e=>{if(drag?.pointerId===e.pointerId){clearDragState();if(!busy)render()}});
 function end(){running=false;$('overlay').hidden=false;$('overlaytitle').textContent='GAME OVER!';$('overlaytext').textContent='The donuts reached the top. Final score: '+score+' · Lines cleared: '+lines+' · Moves: '+moves;render()}
 function reset(){
  if(busy)return;
@@ -494,6 +566,27 @@ function showInfo(title,body){
  infoOverlay.hidden=false;
  $('infoclose').focus();
 }
+function buildLandingDonuts(){
+ const top=$('drDonutRowTop'),bottom=$('drDonutRowBottom');
+ top.replaceChildren();bottom.replaceChildren();
+ art.forEach((src,i)=>{
+  const holder=document.createElement('div');
+  holder.className='dr-donut-card';holder.style.setProperty('--i',i);
+  const img=new Image();img.src=src;img.alt='';img.draggable=false;
+  img.onerror=()=>{img.remove();const fallback=document.createElement('span');fallback.textContent='🍩';fallback.setAttribute('aria-hidden','true');holder.append(fallback)};
+  holder.append(img);(i<4?top:bottom).append(holder);
+ });
+}
+function showLanding(){
+ landing.hidden=false;gameShell.hidden=true;
+ requestAnimationFrame(reportFrameHeight);
+}
+function startGameplay(){
+ landing.hidden=true;gameShell.hidden=false;
+ reset();
+ requestAnimationFrame(reportFrameHeight);
+}
+$('drStartButton').onclick=startGameplay;
 $('reset').onclick=reset;
 $('again').onclick=reset;
 $('help').onclick=()=>showInfo('HOW TO PLAY',[
@@ -514,6 +607,8 @@ if(typeof ResizeObserver!=='undefined'){
 }
 window.addEventListener('load',reportFrameHeight);
 document.fonts?.ready?.then(reportFrameHeight);
-reset();
+document.addEventListener('dragstart',e=>{if(e.target.closest('.app'))e.preventDefault()});
+buildLandingDonuts();
+showLanding();
 })();
 </script></body></html>
