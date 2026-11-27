@@ -11042,3 +11042,71 @@ body:has(#game.theme-cakes:not([hidden])){background:#FFE0E8!important}
 @keyframes nwAchNew{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(max-width:390px){.nw-trophy-panel .nw-achievement-card{padding:12px 10px;gap:9px}.nw-trophy-panel .nw-achievement-reward{min-width:74px}.nw-trophy-panel .nw-achievement-main>strong{font-size:.8rem}}
 @media(prefers-reduced-motion:reduce){.nw-trophy-panel .nw-achievement-in,.nw-trophy-panel .nw-achievement-out{animation:none}.nw-trophy-panel .nw-achievement-track i{transition:none}}
+
+
+/* Achievement and confirmed-reward polish: Trophy Case palette; no 4-point decorations. */
+#game.nw-trophy-theme .nw-trophy-panel .nw-achievement-card{
+ border-color:#DFCAFF88!important;
+ background:linear-gradient(125deg,#302B46,#201C33)!important;
+ box-shadow:0 3px 14px #100D1C55!important;
+}
+#game.nw-trophy-theme .nw-trophy-panel .nw-achievement-card.ready{
+ border-color:#F4ED91!important;
+ box-shadow:0 0 17px #F4ED9127,inset 0 0 13px #F4ED9109!important;
+}
+#game.nw-trophy-theme .nw-trophy-panel .nw-achievement-main>strong{color:#F9F2FF!important}
+#game.nw-trophy-theme .nw-trophy-panel .nw-achievement-main>small,
+#game.nw-trophy-theme .nw-trophy-panel .nw-achievement-count,
+#game.nw-trophy-theme .nw-trophy-panel .nw-achievements-summary{color:#DFCAFF!important}
+#game.nw-trophy-theme .nw-trophy-panel .nw-achievement-track{background:#171527!important}
+#game.nw-trophy-theme .nw-trophy-panel .nw-achievement-track i{background:#F4ED91!important}
+#game.nw-trophy-theme .nw-trophy-panel .nw-achievement-reward .nw-diamond-amount{color:#F4ED91!important}
+#game.nw-trophy-theme .nw-trophy-panel .nw-achievement-reward button,
+#game.nw-trophy-theme .nw-trophy-panel .nw-achievement-retry{
+ background:linear-gradient(180deg,#403754,#302B46)!important;
+ border:1.5px solid #F4ED91!important;
+ color:#F4ED91!important;border-radius:12px;
+ box-shadow:inset 0 1px #FFFFFF18,0 3px 0 #151123,0 0 14px #F4ED9120!important;
+ font:800 12px 'Fredoka',system-ui,sans-serif;letter-spacing:.045em;transition:background .2s,transform .15s;
+}
+#game.nw-trophy-theme .nw-trophy-panel .nw-achievement-reward button:hover,
+#game.nw-trophy-theme .nw-trophy-panel .nw-achievement-retry:hover{background:#514263!important}
+#game.nw-trophy-theme .nw-trophy-panel .nw-achievement-reward button:active{transform:translateY(2px)}
+#game.nw-trophy-theme .nw-trophy-panel .nw-achievement-wait{color:#DFCAFF!important}
+#game.nw-trophy-theme .nw-trophy-panel .nw-achievement-notice{color:#F4ED91!important}
+/* Shared diamonds sparkle without covering the approved blue currency artwork. */
+#game .nw-diamond-icon,#game .nw-lb-reward-icon img[src*="currency/diamond"],
+#game .nw-celebrate-icon img[src*="currency/diamond"],
+.nw-reward-celebration .nw-reward-diamond-art{
+ animation:nwDiamondBrightGlint 2.7s ease-in-out infinite;
+ filter:drop-shadow(0 0 5px #82D9FF85);
+}
+@keyframes nwDiamondBrightGlint{
+ 0%,100%{filter:brightness(1) drop-shadow(0 0 3px #7EDAFF60)}
+ 40%{filter:brightness(1.45) drop-shadow(0 0 10px #B2F2FFB8)}
+ 60%{filter:brightness(1.06) drop-shadow(0 0 4px #7EDAFF75)}
+}
+/* Universal reward confirmations: jewel-toned button instead of the pink bar. */
+.nw-reward-celebration .nw-celebrate-dismiss,
+.nw-reward-battle .nw-celebrate-dismiss{
+ width:min(100%,290px);min-height:54px;
+ border:2px solid #F4ED91!important;border-bottom-width:3px!important;
+ border-radius:15px!important;
+ background:linear-gradient(180deg,#493D63,#302B46)!important;
+ color:#F4ED91!important;
+ font:800 18px 'Fredoka',system-ui,sans-serif!important;
+ letter-spacing:.06em!important;
+ box-shadow:0 4px 0 #130F23,0 0 17px #F4ED9124,inset 0 1px 0 #FFFFFF26!important;
+ transition:transform .16s,box-shadow .16s,background .16s;
+}
+.nw-reward-celebration .nw-celebrate-dismiss:hover{
+ background:linear-gradient(180deg,#635175,#403653)!important;
+ box-shadow:0 4px 0 #130F23,0 0 22px #F4ED9145!important;
+}
+.nw-reward-celebration .nw-celebrate-dismiss:active{transform:translateY(3px);box-shadow:0 1px 0 #130F23!important}
+.nw-reward-celebration .nw-celebrate-burst{letter-spacing:.45em;font-size:16px;color:#F4ED91}
+.nw-reward-celebration .nw-celebrate-icon img[src*="currency/diamond"]{animation:nwDiamondBrightGlint 2.7s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){
+ #game .nw-diamond-icon,#game .nw-lb-reward-icon img[src*="currency/diamond"],
+ #game .nw-celebrate-icon img[src*="currency/diamond"],.nw-reward-celebration .nw-reward-diamond-art{animation:none!important}
+}
