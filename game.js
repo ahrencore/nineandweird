@@ -1735,7 +1735,7 @@ function nwAislePanicBack(){
 function nwAislePanicOpen(){
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-aisle-shell');
  const uid=encodeURIComponent(nwCloud?.user()?.id||'guest');
- evDisplay(`${evHeader('AISLE PANIC!',nwAislePanicBack)}<section class="nw-aisle-frame-container"><iframe id="nwAisleFrame" title="AISLE PANIC! — alien supermarket arcade shooter" src="aisle-panic/index.html?player=${uid}&v=5" loading="eager"></iframe></section>`);
+ evDisplay(`${evHeader('AISLE PANIC!',nwAislePanicBack)}<section class="nw-aisle-frame-container"><iframe id="nwAisleFrame" title="AISLE PANIC! — alien supermarket arcade shooter" src="aisle-panic/index.html?player=${uid}&v=6" loading="eager"></iframe></section>`);
  nwResetViewToTop();
 }
 window.addEventListener('message',e=>{
