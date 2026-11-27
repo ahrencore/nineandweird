@@ -1729,7 +1729,7 @@ function nwLetMeOutOpen(){
 // DONUT RISE! — isolated test event. This build does not alter live event rewards.
 function nwDonutRiseOpen(){
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-donut-rise-shell');
- evDisplay(`${evHeader('DONUT RISE!',showCategories)}<section class="nw-donut-rise-frame-container"><iframe id="nwDonutRiseFrame" title="DONUT RISE! — playable test event" src="donut-rise/index.html?v=1" loading="eager"></iframe></section>`);
+ evDisplay(`${evHeader('DONUT RISE!',showCategories)}<section class="nw-donut-rise-frame-container"><iframe id="nwDonutRiseFrame" title="DONUT RISE! — playable test event" src="donut-rise/index.html?v=2-dusty-pink" loading="eager"></iframe></section>`);
  nwResetViewToTop();
 }
 function nwAislePanicBack(){
