@@ -10551,3 +10551,88 @@ body:has(#game.theme-cakes:not([hidden])){background:#FFE0E8!important}
 #game:is(.theme-donuts,.theme-cakes) .result-panel .result-score strong{
  color:var(--accent)!important;
 }
+
+/* DONUTS only: frosting label SVGs, pastel tray tiles and illustrated tools.
+   Keep the game's existing 9×9 grid geometry, symbol PNG sizing and mechanics. */
+#game.theme-donuts .difficulty-list .nw-donut-difficulty,
+#game.theme-donuts .result-actions .nw-donut-action{
+ position:relative!important;display:flex!important;align-items:center!important;
+ justify-content:center!important;overflow:visible!important;isolation:isolate!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+ box-shadow:none!important;text-shadow:none!important;min-height:54px!important;
+ padding:8px 16px!important;color:#823956!important;
+}
+#game.theme-donuts .nw-donut-difficulty>.nw-donut-label-svg,
+#game.theme-donuts .result-actions .nw-donut-action>.nw-donut-label-svg{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ display:block!important;pointer-events:none!important;z-index:0!important;
+}
+#game.theme-donuts .nw-donut-difficulty>span,
+#game.theme-donuts .result-actions .nw-donut-action>span{
+ display:block!important;position:relative!important;z-index:1!important;
+ color:#823956!important;font:800 clamp(13px,3.6vw,18px)/1.15 'Fredoka',system-ui,sans-serif!important;
+ letter-spacing:.035em!important;text-shadow:none!important;text-align:center!important;
+ white-space:nowrap!important;pointer-events:none!important;
+}
+#game.theme-donuts .result-actions .nw-donut-action>span{font-size:clamp(12px,3vw,15px)!important;}
+#game.theme-donuts .nw-donut-difficulty:active,
+#game.theme-donuts .result-actions .nw-donut-action:active{transform:translateY(2px)!important;}
+#game.theme-donuts .nw-donut-difficulty:focus-visible,
+#game.theme-donuts .result-actions .nw-donut-action:focus-visible{
+ outline:2px solid #A3476D!important;outline-offset:3px!important;
+}
+#game.theme-donuts .ev-sudoku-tray button.nw-donut-tray-piece{
+ position:relative!important;isolation:isolate!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;
+ overflow:visible!important;padding:0!important;
+}
+#game.theme-donuts .ev-sudoku-tray button.nw-donut-tray-piece>.nw-donut-tray-svg{
+ position:absolute!important;inset:0!important;display:block!important;
+ width:100%!important;height:100%!important;pointer-events:none!important;z-index:0!important;
+}
+#game.theme-donuts .ev-sudoku-tray button.nw-donut-tray-piece>img,
+#game.theme-donuts .ev-sudoku-tray button.nw-donut-tray-piece>.number-symbol{
+ position:relative!important;z-index:1!important;max-width:84%!important;
+ max-height:84%!important;object-fit:contain!important;
+}
+#game.theme-donuts .ev-sudoku-tray button.nw-donut-tray-piece.selected{
+ background:transparent!important;box-shadow:none!important;
+ filter:drop-shadow(0 0 3px #D15A80AA)!important;
+}
+#game.theme-donuts .ev-sudoku-tray button.nw-donut-tray-piece.selected .nw-donut-tray-base{
+ fill:#FFE28C!important;stroke:#AF4672!important;stroke-width:3!important;
+}
+#game.theme-donuts .ev-sudoku-tray button.nw-donut-tray-piece .ev-sudo-remain{
+ position:absolute!important;z-index:3!important;
+ background:#B34E72!important;color:#FFF9ED!important;border-radius:50%!important;
+}
+#game.theme-donuts .ev-sudo-tools-clean .ev-sudo-tool{
+ background:#FFF0D9!important;border:2px solid #C86A8B!important;
+ border-bottom:4px solid #B35479!important;border-radius:16px 16px 11px 11px!important;
+ color:#823956!important;box-shadow:none!important;text-shadow:none!important;
+}
+#game.theme-donuts .ev-sudo-tools-clean .ev-sudo-tool.active{
+ background:#FFE29D!important;border-color:#AB4E73!important;
+}
+#game.theme-donuts .ev-sudo-tools-clean .ev-sudo-tool-icon{color:#9E476A!important;}
+#game.theme-donuts .ev-sudo-tools-clean .nw-donut-tool-svg{
+ display:block!important;width:21px!important;height:21px!important;
+}
+#game.theme-donuts .ev-sudo-tools-clean .ev-sudo-tool-label{
+ color:#823956!important;font:700 10px/1.2 'Fredoka',system-ui,sans-serif!important;
+}
+#game.theme-donuts .ev-sudo-tools-clean #evSudoHint .nw-sudoku-hint-counter{
+ color:#A3476D!important;font-size:9px!important;font-weight:800!important;
+}
+#game.theme-donuts .result-panel .result-mark{
+ display:grid!important;place-items:center!important;
+ width:78px!important;height:78px!important;min-width:78px!important;
+ min-height:78px!important;max-width:78px!important;max-height:78px!important;
+ aspect-ratio:1!important;margin:7px auto 14px!important;padding:0!important;
+ background:transparent!important;border:0!important;border-radius:50%!important;
+ box-shadow:none!important;color:#823956!important;
+}
+#game.theme-donuts .result-panel .nw-donut-result-svg{
+ display:block!important;width:76px!important;height:76px!important;
+}
+#game.theme-donuts .result-panel :is(h2,.result-stats,.result-score){color:#823956!important;}
