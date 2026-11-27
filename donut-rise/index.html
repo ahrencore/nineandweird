@@ -214,6 +214,36 @@ header p{color:#E7BAC9;font-family:Fredoka,system-ui,sans-serif}
  .app{gap:9px}
 }
 
+
+/* Hand-drawn Donut Rise landing and gameplay controls */
+.dr-landing-tools,.dr-play-tools{display:flex;align-items:flex-start;justify-content:center;gap:clamp(8px,3vw,20px);width:100%;margin:3px 0 2px}
+.dr-icon-button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;width:clamp(85px,25vw,110px);min-height:89px;border:1px solid #A85F78;border-radius:14px;background:#292126;color:#F6EEE8;padding:8px 4px 5px;cursor:pointer;font-family:Fredoka,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+.dr-landing-tools .dr-icon-button{width:77px;min-height:75px;padding:5px 3px 4px}
+.dr-icon-art{display:grid;place-items:center;width:43px;height:43px}
+.dr-icon-art svg{width:100%;height:100%;overflow:visible}
+.dr-landing-tools .dr-icon-art{width:40px;height:40px}
+.dr-icon-caption{font-size:clamp(9px,2.6vw,11px);line-height:1.08;font-weight:700;letter-spacing:.02em;text-align:center}
+.dr-landing-tools .dr-icon-caption{font-size:9px}
+.dr-count{position:absolute;right:5px;top:4px;min-width:26px;border-radius:8px;background:#A85F78;color:#F6EEE8;font:700 10px/1.3 Fredoka,system-ui;text-align:center;padding:2px 3px}
+.dr-icon-button:active{transform:translateY(1px)}
+.dr-icon-button:focus-visible{outline:2px solid #F6EEE8;outline-offset:2px}
+.dr-icon-button.is-active{border-color:#F6EEE8;box-shadow:inset 0 0 0 1px #E7BAC9}
+.dr-icon-button.is-active .dr-icon-caption{color:#E7BAC9}
+.dr-icon-button.is-active .dr-icon-caption:after{content:" — CANCEL";color:#F6EEE8}
+.dr-icon-button:disabled{opacity:.58;cursor:default}
+.dr-icon-button.is-animating .dr-booster-art{transform-origin:50% 60%;animation:drBoosterCheeky .56s ease-in-out}
+@keyframes drBoosterCheeky{0%,100%{transform:rotate(0)}35%{transform:rotate(-22deg) scale(1.08)}63%{transform:rotate(9deg)}}
+.board.dr-target-splitter .cell.occupied,.board.dr-target-evictor .cell.occupied{cursor:crosshair}
+.board.dr-target-splitter .cell.occupied:active,.board.dr-target-evictor .cell.occupied:active{filter:brightness(1.12)}
+.dr-welcome-items{display:flex;justify-content:center;gap:14px;margin:15px auto}
+.dr-welcome-items span{display:flex;flex-direction:column;align-items:center;gap:6px;color:#F6EEE8;font:700 10px/1.2 Fredoka;max-width:125px}
+.dr-welcome-items svg{width:66px;height:66px}
+#overlay .modal{display:flex;flex-direction:column;align-items:center;gap:8px}
+#overlay .modal button{margin-top:3px;min-width:165px}
+#leaveGame{background:#282326;color:#F6EEE8;border-color:#A85F78}
+@media(max-width:390px){.dr-play-tools{gap:6px}.dr-icon-button{width:30%;min-height:81px;padding:6px 2px 4px}.dr-icon-art{width:38px;height:38px}.dr-icon-caption{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.dr-icon-button.is-animating .dr-booster-art{animation:none!important}}
+
 /* Donut Rise landing: scoped, responsive and non-selectable like the game board. */
 html,body,.app,.app *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .app img{-webkit-user-drag:none;user-drag:none}
@@ -255,18 +285,14 @@ html,body,.app,.app *{-webkit-user-select:none;user-select:none;-webkit-touch-ca
   </svg>
   <span>START</span>
  </button>
+ <nav class="dr-landing-tools" aria-label="Donut Rise information"><button type="button" id="drLandingHelp" class="dr-icon-button dr-help" aria-label="HOW TO PLAY"><span class="dr-icon-art"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 18Q22 12 11 18L11 50Q22 45 32 52Q43 45 54 50V18Q42 12 32 18Z" fill="#30242B" stroke="#E7BAC9" stroke-width="2.8" stroke-linejoin="round"/><path d="M32 18V52M16 26Q23 23 27 27M16 34Q23 31 27 35M39 28Q40 22 46 27Q50 31 44 36L43 39M43 44v1" fill="none" stroke="#F6EEE8" stroke-width="2.6" stroke-linecap="round"/></svg></span><span class="dr-icon-caption">HOW TO PLAY</span></button><button type="button" id="drLandingRank" class="dr-icon-button dr-rank" aria-label="RANK"><span class="dr-icon-art"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M19 13H45L42 37Q40 44 32 46Q24 44 22 37Z" fill="#30242B" stroke="#E7BAC9" stroke-width="2.6" stroke-linejoin="round"/><path d="M19 21H11Q12 37 24 37M45 21H53Q52 37 40 37M32 46v8M21 57Q32 51 43 57" fill="none" stroke="#E7BAC9" stroke-width="2.6" stroke-linecap="round"/><path d="M32 21l3 6 6 1-5 5 1 7-5-3-5 3 1-7-5-5 6-1z" fill="#C47A92"/></svg></span><span class="dr-icon-caption">RANK</span></button></nav>
 </section>
 <section class="dr-game-shell" id="drGameShell" hidden>
 <header class="game-title"><h1>DONUT RISE<span class="punct">!</span></h1></header>
-<nav class="quick-actions" aria-label="Donut Rise controls">
- <button type="button" id="reset">RESTART</button>
- <button type="button" id="help">HOW TO PLAY</button>
- <button type="button" id="rank">RANK</button>
- <button type="button" id="missions">MISSIONS</button>
-</nav>
 <div class="stats"><div class="stat"><label>SCORE</label><strong id="score">0000</strong></div><div class="stat"><label>LINES</label><strong id="lines">0</strong></div><div class="stat"><label>MOVES</label><strong id="countdown">0</strong></div></div>
 
 <div class="boardwrap" id="wrap"><div class="board" id="board" aria-label="8-column by 10-row donut board"></div></div>
+<nav class="dr-play-tools" aria-label="Donut Rise boosters"><button type="button" id="drSplitter" class="dr-icon-button dr-splitter" aria-label="SUGAR SPLITTER"><span class="dr-icon-art"><svg viewBox="0 0 64 64" aria-hidden="true"><g class="dr-booster-art"><path d="M25 21L44 53Q48 59 52 55L53 52L34 17" fill="#A85F78" stroke="#E7BAC9" stroke-width="2.5" stroke-linejoin="round"/><path d="M13 16Q24 6 35 17L41 28Q25 26 19 40Q12 31 13 16Z" fill="#F6EEE8" stroke="#C47A92" stroke-width="2.8" stroke-linejoin="round"/><path d="M18 18Q25 13 30 18M44 47l5-3" fill="none" stroke="#E7BAC9" stroke-width="2.1" stroke-linecap="round"/></g></svg></span><span class="dr-icon-caption">SUGAR SPLITTER</span><span class="dr-count">×<b>0</b></span></button><button type="button" id="drEvictor" class="dr-icon-button dr-evictor" aria-label="DONUT EVICTOR"><span class="dr-icon-art"><svg viewBox="0 0 64 64" aria-hidden="true"><g class="dr-booster-art"><path d="M12 27Q7 24 7 33Q8 39 14 37L22 36L44 48Q48 50 48 44L47 17Q47 12 43 15L22 26Z" fill="#C47A92" stroke="#E7BAC9" stroke-width="2.5" stroke-linejoin="round"/><path d="M17 38L23 55Q27 59 31 54L34 50L28 39" fill="#A85F78" stroke="#E7BAC9" stroke-width="2.5" stroke-linejoin="round"/><path d="M42 21Q45 31 43 42M54 24Q60 32 54 40" fill="none" stroke="#F6EEE8" stroke-width="2.8" stroke-linecap="round"/></g></svg></span><span class="dr-icon-caption">DONUT EVICTOR</span><span class="dr-count">×<b>0</b></span></button><button type="button" id="drPlayHelp" class="dr-icon-button dr-help" aria-label="HOW TO PLAY"><span class="dr-icon-art"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 18Q22 12 11 18L11 50Q22 45 32 52Q43 45 54 50V18Q42 12 32 18Z" fill="#30242B" stroke="#E7BAC9" stroke-width="2.8" stroke-linejoin="round"/><path d="M32 18V52M16 26Q23 23 27 27M16 34Q23 31 27 35M39 28Q40 22 46 27Q50 31 44 36L43 39M43 44v1" fill="none" stroke="#F6EEE8" stroke-width="2.6" stroke-linecap="round"/></svg></span><span class="dr-icon-caption">HOW TO PLAY</span></button></nav>
 <div class="message" id="message" role="status" aria-live="polite">Slide a donut block sideways.</div>
 </section>
 </main>
@@ -277,7 +303,8 @@ html,body,.app,.app *{-webkit-user-select:none;user-select:none;-webkit-touch-ca
   <button type="button" id="infoclose">CLOSE</button>
  </div>
 </div>
-<div class="overlay" id="overlay" hidden><div class="modal"><h2 id="overlaytitle">GAME OVER!</h2><p id="overlaytext">The donuts reached the top.</p><button id="again">PLAY AGAIN</button></div></div>
+<div class="overlay" id="drWelcome" hidden><div class="modal dr-welcome-card"><h2>YOUR FREE BOOSTERS!</h2><p>One of each to get you started. They're safely stored in Inventory.</p><div class="dr-welcome-items"><span><svg viewBox="0 0 64 64" aria-hidden="true"><g class="dr-booster-art"><path d="M25 21L44 53Q48 59 52 55L53 52L34 17" fill="#A85F78" stroke="#E7BAC9" stroke-width="2.5" stroke-linejoin="round"/><path d="M13 16Q24 6 35 17L41 28Q25 26 19 40Q12 31 13 16Z" fill="#F6EEE8" stroke="#C47A92" stroke-width="2.8" stroke-linejoin="round"/><path d="M18 18Q25 13 30 18M44 47l5-3" fill="none" stroke="#E7BAC9" stroke-width="2.1" stroke-linecap="round"/></g></svg><b>SUGAR SPLITTER ×1</b></span><span><svg viewBox="0 0 64 64" aria-hidden="true"><g class="dr-booster-art"><path d="M12 27Q7 24 7 33Q8 39 14 37L22 36L44 48Q48 50 48 44L47 17Q47 12 43 15L22 26Z" fill="#C47A92" stroke="#E7BAC9" stroke-width="2.5" stroke-linejoin="round"/><path d="M17 38L23 55Q27 59 31 54L34 50L28 39" fill="#A85F78" stroke="#E7BAC9" stroke-width="2.5" stroke-linejoin="round"/><path d="M42 21Q45 31 43 42M54 24Q60 32 54 40" fill="none" stroke="#F6EEE8" stroke-width="2.8" stroke-linecap="round"/></g></svg><b>DONUT EVICTOR ×1</b></span></div><button type="button" id="drWelcomeClose">AWESOME!</button></div></div>
+<div class="overlay" id="overlay" hidden><div class="modal"><h2 id="overlaytitle">GAME OVER!</h2><p id="overlaytext">The donuts reached the top.</p><button id="again">PLAY AGAIN</button><button type="button" id="leaveGame">LEAVE GAME</button></div></div>
 <script>
 (()=>{'use strict';
 const COLS=8,ROWS=10,files=['01_pink_sprinkles.png','02_chocolate_crunch.png','03_strawberry_drizzle.png','04_lemon_coconut.png','05_aqua_cookies.png','06_blueberry.png','07_caramel_crunch.png','08_heart_candy.png','09_mint_chocolate.png'];
@@ -497,7 +524,7 @@ function buildGroupTrays(){
  }
  board.prepend(trays);
 }
-function render(){const frag=document.createDocumentFragment();for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const id=grid[r][c],el=document.createElement('div');el.className='cell';el.dataset.r=r;el.dataset.c=c;if(id!==null){const g=groups.get(id),pos=groupRow(id),offset=c-pos.c,d=g.donuts[offset];el.classList.add('occupied');el.dataset.id=id;if(id%2)el.classList.add('alt');el.classList.add('group-'+(offset===0?'first':offset===g.len-1?'last':'middle'));if(g.len===1)el.classList.add('group-single');el.style.setProperty('--group-color', ['#D99AAE','#E7BAC9','#D49AA6','#E4B7AF','#E1B7B9','#DDA7B8','#E8BDB1','#F0BFC9','#D1A2A9'][d.type]);if(d.special)el.classList.add('special');const img=new Image();img.src=art[d.type];img.alt='';img.draggable=false;img.onerror=()=>{img.remove();const t=document.createElement('span');t.className='fallback';t.textContent='🍩';el.append(t)};el.append(img)}if(hover){const len=groups.get(hover.id)?.len||0;if(r===hover.r&&c>=hover.c&&c<hover.c+len)el.classList.add(hover.valid?'ghost':'invalid')}frag.append(el)}board.replaceChildren(frag);buildGroupTrays();requestAnimationFrame(reportFrameHeight);$('score').textContent=String(score).padStart(4,'0');$('lines').textContent=lines;$('countdown').textContent=moves;$('reset').disabled=busy}
+function render(){const frag=document.createDocumentFragment();for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const id=grid[r][c],el=document.createElement('div');el.className='cell';el.dataset.r=r;el.dataset.c=c;if(id!==null){const g=groups.get(id),pos=groupRow(id),offset=c-pos.c,d=g.donuts[offset];el.classList.add('occupied');el.dataset.id=id;if(id%2)el.classList.add('alt');el.classList.add('group-'+(offset===0?'first':offset===g.len-1?'last':'middle'));if(g.len===1)el.classList.add('group-single');el.style.setProperty('--group-color', ['#D99AAE','#E7BAC9','#D49AA6','#E4B7AF','#E1B7B9','#DDA7B8','#E8BDB1','#F0BFC9','#D1A2A9'][d.type]);if(d.special)el.classList.add('special');const img=new Image();img.src=art[d.type];img.alt='';img.draggable=false;img.onerror=()=>{img.remove();const t=document.createElement('span');t.className='fallback';t.textContent='🍩';el.append(t)};el.append(img)}if(hover){const len=groups.get(hover.id)?.len||0;if(r===hover.r&&c>=hover.c&&c<hover.c+len)el.classList.add(hover.valid?'ghost':'invalid')}frag.append(el)}board.replaceChildren(frag);buildGroupTrays();requestAnimationFrame(reportFrameHeight);$('score').textContent=String(score).padStart(4,'0');$('lines').textContent=lines;$('countdown').textContent=moves;updateBoosterButtons()}
 // Keep interaction purely drag-to-move. Prevent native text/image selection and
 // release pointer state cleanly on cancel/lost capture.
 board.addEventListener('dragstart',e=>e.preventDefault());
@@ -587,17 +614,21 @@ function startGameplay(){
  requestAnimationFrame(reportFrameHeight);
 }
 $('drStartButton').onclick=startGameplay;
-$('reset').onclick=reset;
-$('again').onclick=reset;
-$('help').onclick=()=>showInfo('HOW TO PLAY',[
+$('drLandingHelp').onclick=showHowToPlay;
+$('drPlayHelp').onclick=showHowToPlay;
+$('drLandingRank').onclick=()=>showInfo('RANK','Leaderboards are coming soon.');
+$('drSplitter').onclick=()=>toggleBooster('splitter');
+$('drEvictor').onclick=()=>toggleBooster('evictor');
+$('drWelcomeClose').onclick=()=>{$('drWelcome').hidden=true};
+$('again').onclick=()=>{reset();requestAnimationFrame(reportFrameHeight)};
+$('leaveGame').onclick=()=>{cancelBooster();$('overlay').hidden=true;showLanding()};
+function showHowToPlay(){showInfo('HOW TO PLAY',[
  'Slide the donut blocks left or right.',
  'Fill a row to clear it.',
  'Blocks drop automatically.',
  'A new row rises after every move.',
  'Donuts come in blocks of 1, 2, 3 or 4.'
-]);
-$('rank').onclick=()=>showInfo('RANK','Leaderboards are coming soon.');
-$('missions').onclick=()=>showInfo('MISSIONS','Missions are coming soon.');
+]);}
 $('infoclose').onclick=closeInfo;
 infoOverlay.addEventListener('click',e=>{if(e.target===infoOverlay)closeInfo()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!infoOverlay.hidden)closeInfo()});
