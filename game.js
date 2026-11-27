@@ -1726,6 +1726,12 @@ function nwLetMeOutOpen(){
  nwResetViewToTop();
 }
 
+// DONUT RISE! — isolated test event. This build does not alter live event rewards.
+function nwDonutRiseOpen(){
+ evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-donut-rise-shell');
+ evDisplay(`${evHeader('DONUT RISE!',showCategories)}<section class="nw-donut-rise-frame-container"><iframe id="nwDonutRiseFrame" title="DONUT RISE! — playable test event" src="donut-rise/index.html?v=1" loading="eager"></iframe></section>`);
+ nwResetViewToTop();
+}
 function nwAislePanicBack(){
  const frame=evRoot.querySelector('#nwAisleFrame');
  if(!frame?.contentWindow){showCategories();return}
@@ -2604,6 +2610,7 @@ const nwGalaxyColors={"classic": ["#fff", "#e3d3c7", "#111"], "dark": ["#050505"
 function nwLobbyIcon(kind){const p={shop:'<path d="M4 9h16l-1 12H5L4 9Z M8 9V6a4 4 0 0 1 8 0v3"/>',settings:'<path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/>'};return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p[kind]}</svg>`;}
 function nwLobbyUtility(kind){if(kind==='mail'){void nwPrizeMail();return;}evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-lobby-theme');evDisplay(`${evHeader(kind==='shop'?'SHOP':kind==='mail'?'MAIL':'SETTINGS',showCategories)}<section class="nw-lobby-utility">${kind==='mail'?'<h2>MAIL COMING SOON</h2>':kind==='shop'?`<div class="nw-lobby-money">${nwDiamondAmount(nwDiamondBalance().toLocaleString())}</div><h2>COMING SOON</h2>`:`<button id="nwSettingsProfile" class="nw-lobby-nav">PROFILE / ACCOUNT</button><a href="privacy.html">Privacy Policy</a>`}</section>`);const b=evRoot.querySelector('#nwSettingsProfile');if(b)b.onclick=nwShowProfile;nwResetViewToTop();}
 function nwLobbyEventStatus(kind,now=new Date()){
+  if(kind==='donutrise')return {live:true,label:'TEST EVENT'};
   if(kind==='letout'||kind==='aislepanic')return {live:true,label:'MINI GAME'};
   const day=now.getUTCDay();
   if(kind==='growing'){const live=[2,3,4].includes(day);return {live,label:(live?'NOW LIVE: ':'COMING SOON: ')+'TUE – THU'};}
@@ -2784,11 +2791,12 @@ function showCategories(){
     ${portal('nwBattle','battle','BATTLE','ϟ ☢ ϟ')}
     ${portal('nwLetMeOutPortal','letout','LET ME<br>OUT!','')}
      ${portal('nwAislePanicPortal','aislepanic','AISLE<br>PANIC!','')}
+     ${portal('nwDonutRisePortal','donutrise','DONUT<br>RISE!','')}
     </div></div><div class="nw-event-controls"><button type="button" class="nw-event-prev" aria-label="Previous event">‹</button><div class="nw-event-dots"></div><button type="button" class="nw-event-next" aria-label="Next event">›</button></div></section>
     <div class="nw-lobby-bottom">${nav('nwMail','MAIL',`<span class="nw-lobby-nav-art nw-lobby-mail" aria-hidden="true"><svg viewBox="0 0 80 70" aria-hidden="true"><g fill="none" stroke="#F08BC2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 19Q12 16 17 16H63Q68 16 68 21V51Q68 55 63 55H17Q12 55 12 50V21Q12 20 13 19Z"/><path d="M15 20Q27 31 39 40Q41 42 43 40L65 20"/></g></svg></span>`)}${nav('nwCollectibles','COLLECTIBLES',`<span class="nw-lobby-nav-art nw-lobby-collectibles"><svg viewBox="0 0 80 70" aria-hidden="true"><g fill="none" stroke="#ffcf9a" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="40" cy="35" r="25" stroke-dasharray="3 6"/><path d="M40 16l4.5 11 11 4.5-11 4.5L40 48l-4.5-12-11-4.5 11-4.5Z" fill="#ffe6bb"/><path d="M13 9v12M7 15h12M65 46v12M59 52h12"/></g></svg></span>`)}${nav('nwLobbyShop','SHOP',`<span class="nw-lobby-nav-art nw-lobby-shop"><svg viewBox="0 0 80 70" aria-hidden="true"><g fill="none" stroke="#F8EBDD" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 27Q15 27 15 31L17 56Q17 59 21 59H59Q63 59 63 55L65 31Q65 27 61 27H17Z"/><path d="M30 29V18Q30 9 40 9Q50 9 50 18V29"/></g></svg></span>`)}</div></section>`);
   const by=id=>evRoot.querySelector('#'+id);const openRooms=collection=>{roomCollection=collection;nwScroll[collection]=0;nwRoomPages[collection]=0;showRooms(0)};
   nwLastMailNoticeCheck=Date.now();void nwPrizeRefreshMailNotice();void nwCollectibleRefreshNotice(true);
-  by('nwDailyPortal').onclick=nwDailyScreen;by('nwInventoryPortal').onclick=nwShowInventory;by('nwWorlds').onclick=()=>openRooms('all');by('nwMail').onclick=()=>nwLobbyUtility('mail');by('nwTriplePortal').onclick=nwTripleHome;by('nwDoublePortal').onclick=nwDoublePracticeScreen;by('nwGrowingPortal').onclick=nwGrowingOpen;by('nwLetMeOutPortal').onclick=nwLetMeOutOpen;by('nwAislePanicPortal').onclick=nwAislePanicOpen;by('nwBattle').onclick=showBattle;by('nwCollectibles').onclick=nwShowCollectibles;by('nwProfileButton').onclick=nwShowProfile;by('nwLobbyShop').onclick=()=>nwLobbyUtility('shop');by('nwLobbySettings').onclick=()=>nwLobbyUtility('settings');if(nwLobbyClock===null)nwLobbyClock=setInterval(()=>{if(evRoot.hidden||!evRoot.querySelector('[data-lobby-event]')){clearInterval(nwLobbyClock);nwLobbyClock=null;return;}nwLobbyUpdateEventStatus();if(Date.now()-nwLastMailNoticeCheck>=30000){nwLastMailNoticeCheck=Date.now();void nwPrizeRefreshMailNotice();void nwCollectibleRefreshNotice(false);}},1000);nwBindEventCarousel();nwResetViewToTop();requestAnimationFrame(()=>requestAnimationFrame(()=>{void nwDailyAutoCheck();}));
+  by('nwDailyPortal').onclick=nwDailyScreen;by('nwInventoryPortal').onclick=nwShowInventory;by('nwWorlds').onclick=()=>openRooms('all');by('nwMail').onclick=()=>nwLobbyUtility('mail');by('nwTriplePortal').onclick=nwTripleHome;by('nwDoublePortal').onclick=nwDoublePracticeScreen;by('nwGrowingPortal').onclick=nwGrowingOpen;by('nwLetMeOutPortal').onclick=nwLetMeOutOpen;by('nwAislePanicPortal').onclick=nwAislePanicOpen;by('nwDonutRisePortal').onclick=nwDonutRiseOpen;by('nwBattle').onclick=showBattle;by('nwCollectibles').onclick=nwShowCollectibles;by('nwProfileButton').onclick=nwShowProfile;by('nwLobbyShop').onclick=()=>nwLobbyUtility('shop');by('nwLobbySettings').onclick=()=>nwLobbyUtility('settings');if(nwLobbyClock===null)nwLobbyClock=setInterval(()=>{if(evRoot.hidden||!evRoot.querySelector('[data-lobby-event]')){clearInterval(nwLobbyClock);nwLobbyClock=null;return;}nwLobbyUpdateEventStatus();if(Date.now()-nwLastMailNoticeCheck>=30000){nwLastMailNoticeCheck=Date.now();void nwPrizeRefreshMailNotice();void nwCollectibleRefreshNotice(false);}},1000);nwBindEventCarousel();nwResetViewToTop();requestAnimationFrame(()=>requestAnimationFrame(()=>{void nwDailyAutoCheck();}));
 }
 function showRooms(page=0){
   const ids=roomCollection==='fav'?nwFavs():['favorites',...nwGalaxyOrder];
