@@ -243,6 +243,57 @@ header p{color:#E7BAC9;font-family:Fredoka,system-ui,sans-serif}
 .dr-prize-line b{color:#E7BAC9}
 @media(max-width:370px){.dr-rank-line{gap:5px}.dr-rank-avatar{width:35px;height:35px}.dr-rank-score{font-size:10px}}
 
+
+/* The milestone journey is a reward display (not a wall of buttons). */
+.dr-milestone-preview{width:min(100%,440px);margin:7px auto 6px;padding:10px 9px 8px;border-radius:15px;background:linear-gradient(150deg,#30252B,#221B20);border:1px solid #805061;box-shadow:0 6px 18px #180A1022}
+.dr-milestone-preview-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:9px;color:#F6EEE8;letter-spacing:.055em;font:700 12px/1.3 Fredoka,system-ui}
+.dr-preview-link{background:none!important;border:0!important;border-bottom:1px solid #D9A2B3!important;border-radius:0!important;padding:2px 0!important;margin:0!important;color:#E7BAC9!important;font:700 11px/1.2 Fredoka,system-ui!important;white-space:nowrap;cursor:pointer}
+.dr-preview-strip{display:flex;align-items:stretch;gap:8px;overflow-x:auto;overscroll-behavior-x:contain;padding:0 0 9px;scrollbar-width:thin;scrollbar-color:#A85F78 transparent}
+.dr-preview-stop{position:relative;flex:0 0 73px;min-height:79px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:#3D2B34;border:1px solid #795162;border-radius:12px;color:#F6EEE8;padding:5px 3px}
+.dr-preview-stop.is-earned{border-color:#DDAABB;background:#51313E}
+.dr-preview-stop.is-ready{border-color:#F0C4CF;box-shadow:inset 0 0 0 1px #D9A2B3}
+.dr-preview-stop small{font:700 10px Fredoka;color:#F6EEE8}
+.dr-preview-mark{position:absolute;top:4px;left:5px;font:700 9px Fredoka;color:#E7BAC9}
+.dr-preview-prize{display:flex;align-items:center;justify-content:center;flex:1}
+.dr-reward-token{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:0;color:#F6EEE8;font:700 11px/1.2 Fredoka,system-ui;white-space:nowrap}
+.dr-reward-token .dr-reward-art{flex:none;display:grid;place-items:center;width:29px;height:29px}
+.dr-reward-token .dr-reward-art img,.dr-reward-token .dr-reward-art svg{display:block;width:100%;height:100%;object-fit:contain}
+.dr-reward-token .dr-reward-name{font-size:9px;color:#E7BAC9;white-space:normal}
+.dr-reward-token.is-tiny{flex-direction:column;gap:1px}
+.dr-reward-token.is-tiny .dr-reward-art{width:27px;height:27px}
+.dr-reward-token.is-tiny .dr-reward-name{display:none}
+.dr-reward-token.is-tiny b{font-size:10px}
+.dr-prize-card{display:flex;align-items:center;gap:9px;border:1px solid #795363;border-radius:13px;background:linear-gradient(130deg,#3A2832,#291F25);margin:7px 0;padding:9px 8px;min-height:63px}
+.dr-prize-placement{font:700 13px Fredoka;color:#E7BAC9;flex:none;width:40px;text-align:center}
+.dr-prize-items{display:flex;flex:1;flex-wrap:wrap;justify-content:flex-start;gap:7px 10px;align-items:center}
+.dr-prize-items .dr-reward-token .dr-reward-art{width:25px;height:25px}
+.dr-prize-items .dr-reward-token .dr-reward-name{display:none}
+.dr-prize-items .dr-reward-token b{font-size:12px}
+.dr-journey-summary{display:flex;flex-direction:column;gap:3px;align-items:center;margin:5px 0 10px;color:#F6EEE8;font:700 12px Fredoka}
+.dr-journey-summary strong span{color:#F2C4D1;font-size:15px}
+.dr-journey-summary small{color:#E7BAC9;font-size:10px}
+.dr-reward-journey{position:relative;display:flex;gap:11px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#A85F78 transparent;padding:10px 9px 14px;margin:0 -1px}
+.dr-journey-rail{position:absolute;left:10px;right:10px;top:111px;height:3px;border-radius:3px;background:#8A536C}
+.dr-journey-stop{position:relative;z-index:1;scroll-snap-align:center;flex:0 0 112px;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;color:#F6EEE8}
+.dr-journey-prize{display:flex;align-items:center;justify-content:center;width:104px;height:95px;padding:8px 5px;background:linear-gradient(150deg,#49303C,#2E222A);border:1px solid #845366;border-radius:15px;box-shadow:inset 0 1px 0 #FFFFFF15,0 5px 12px #180A1020}
+.dr-journey-prize .dr-reward-token{flex-direction:column;gap:4px}
+.dr-journey-prize .dr-reward-art{width:42px;height:42px}
+.dr-journey-prize .dr-reward-token b{font-size:13px}
+.dr-journey-prize .dr-reward-name{display:none}
+.dr-journey-stop.is-ready .dr-journey-prize{border-color:#E7BAC9;box-shadow:0 0 13px #E7BAC930,inset 0 1px 0 #FFFFFF1B}
+.dr-journey-stop.is-earned .dr-journey-prize{border-color:#A9788E;background:#3D2E36}
+.dr-journey-node{display:grid;place-items:center;width:23px;height:23px;flex:none;background:#8F5770;color:#F6EEE8;border:2px solid #DCA5BA;border-radius:50%;font:700 10px Fredoka}
+.dr-journey-stop.is-ready .dr-journey-node,.dr-journey-stop.is-earned .dr-journey-node{background:#E7BAC9;color:#44212F}
+.dr-journey-stop>strong{font:700 12px Fredoka;color:#F6EEE8}
+.dr-journey-status{font:700 9px Fredoka;color:#BA91A0;min-height:26px;display:grid;place-items:center}
+.dr-journey-status.is-claimed{color:#E7BAC9}
+.dr-journey-claim{font:700 10px Fredoka,system-ui!important;background:#E7BAC9!important;color:#4C2838!important;padding:5px 11px!important;border:0!important;border-radius:9px!important;margin:0!important;min-height:26px}
+.dr-journey-help{margin-top:12px!important;text-align:center}
+#drEventOverlay .dr-event-modal{background:linear-gradient(155deg,#402D37,#241C23)!important;border:1px solid #AC7089!important;box-shadow:0 15px 45px #14070D66!important}
+#drEventOverlay .dr-event-modal>button{background:#DCA5B8!important;color:#40222F!important;border:1px solid #E8BED0!important;border-radius:11px!important;padding:9px 18px!important;font:700 12px Fredoka!important;align-self:center;min-width:105px;min-height:36px}
+#drEventOverlay .dr-event-modal h2{color:#F6EEE8!important}
+@media(max-width:370px){.dr-prize-items{gap:5px}.dr-prize-card{padding:8px 5px}.dr-reward-journey{gap:8px}}
+
 /* Hand-drawn Donut Rise landing and gameplay controls */
 .dr-landing-tools,.dr-play-tools{display:flex;align-items:flex-start;justify-content:center;gap:clamp(8px,3vw,20px);width:100%;margin:3px 0 2px}
 .dr-icon-button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;width:clamp(85px,25vw,110px);min-height:89px;border:1px solid #A85F78;border-radius:14px;background:#292126;color:#F6EEE8;padding:8px 4px 5px;cursor:pointer;font-family:Fredoka,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
@@ -315,7 +366,10 @@ html,body,.app,.app *{-webkit-user-select:none;user-select:none;-webkit-touch-ca
  </button>
  <div class="dr-event-status" id="drEventStatus">LOADING EVENT STATUS…</div>
  <nav class="dr-landing-tools" aria-label="Donut Rise information"><button type="button" id="drLandingHelp" class="dr-icon-button dr-help" aria-label="HOW TO PLAY"><span class="dr-icon-art"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 18Q22 12 11 18L11 50Q22 45 32 52Q43 45 54 50V18Q42 12 32 18Z" fill="#30242B" stroke="#E7BAC9" stroke-width="2.8" stroke-linejoin="round"/><path d="M32 18V52M16 26Q23 23 27 27M16 34Q23 31 27 35M39 28Q40 22 46 27Q50 31 44 36L43 39M43 44v1" fill="none" stroke="#F6EEE8" stroke-width="2.6" stroke-linecap="round"/></svg></span><span class="dr-icon-caption">HOW TO PLAY</span></button><button type="button" id="drLandingRank" class="dr-icon-button dr-rank" aria-label="RANK"><span class="dr-icon-art"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M19 13H45L42 37Q40 44 32 46Q24 44 22 37Z" fill="#30242B" stroke="#E7BAC9" stroke-width="2.6" stroke-linejoin="round"/><path d="M19 21H11Q12 37 24 37M45 21H53Q52 37 40 37M32 46v8M21 57Q32 51 43 57" fill="none" stroke="#E7BAC9" stroke-width="2.6" stroke-linecap="round"/><path d="M32 21l3 6 6 1-5 5 1 7-5-3-5 3 1-7-5-5 6-1z" fill="#C47A92"/></svg></span><span class="dr-icon-caption">RANK</span></button></nav>
- <button type="button" id="drMilestonesOpen" class="dr-milestones-open">MILESTONES <span>15 REWARDS</span></button>
+ <section class="dr-milestone-preview" aria-label="Donut Rise milestone rewards">
+  <div class="dr-milestone-preview-head"><strong>MILESTONE REWARDS</strong><button type="button" id="drMilestonesOpen" class="dr-preview-link">VIEW ALL ›</button></div>
+  <div id="drMilestonePreview" class="dr-preview-strip" aria-live="polite"></div>
+ </section>
 </section>
 <section class="dr-game-shell" id="drGameShell" hidden>
 <header class="game-title"><h1>DONUT RISE<span class="punct">!</span></h1></header>
@@ -560,23 +614,65 @@ function render(){const frag=document.createDocumentFragment();for(let r=0;r<ROW
 
 const drThresholds=[1000,2000,3000,6000,8000,10000,12000,14000,16000,20000,22000,24000,26000,28000,30000];
 const drRewards=[['diamonds',50],['diamonds',50],['diamonds',50],['diamonds',50],['diamonds',50],['diamonds',50],['splitter',1],['diamonds',50],['diamonds',50],['diamonds',50],['evictor',1],['diamonds',100],['splitter',1],['diamonds',100],['diamonds',100]];
-const drRankRewards=['2,000 Diamonds · 2 Splitters · 2 Evictors','1,500 Diamonds · 2 Splitters · 1 Evictor','1,000 Diamonds · 1 Splitter · 1 Evictor','700 Diamonds · 1 Evictor','500 Diamonds · 1 Splitter','200 Diamonds each'];
-let drLive=false,drRunSeq=0,drRunId=null,drOverStats=null,drModalView=null,drMilestoneState=null;
+const drRankRewards=[
+ {diamonds:2000,splitter:2,evictor:2},{diamonds:1500,splitter:2,evictor:1},
+ {diamonds:1000,splitter:1,evictor:1},{diamonds:700,splitter:0,evictor:1},
+ {diamonds:500,splitter:1,evictor:0},{diamonds:200,splitter:0,evictor:0}
+];
+let drLive=false,drRunSeq=0,drRunId=null,drOverStats=null,drModalView=null,drModalPrevious=null,drMilestoneState=null;
 const drEsc=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const drFmt=v=>Number(v||0).toLocaleString();
 function drBeginRun(){drRunSeq++;drRunId=null;drOverStats=null;drSignal({type:'nw-dr-start',seq:drRunSeq})}
 function drFinishRun(){drOverStats={score,lines,moves};drSendFinished()}
 function drSendFinished(){if(!drRunId||!drOverStats)return;const stats=drOverStats;drOverStats=null;drSignal({type:'nw-dr-finish',seq:drRunSeq,runId:drRunId,...stats})}
+// Reuse the actual small icons already drawn for Donut Rise gameplay and currency.
+function drRewardIcon(kind){
+ if(kind==='diamonds')return '<img class="dr-reward-gem" src="../assets/currency/diamond.png" alt="Diamonds">';
+ const button=$(kind==='splitter'?'drSplitter':'drEvictor');
+ const svg=button?.querySelector('.dr-icon-art svg');
+ return svg?svg.outerHTML:'';
+}
+function drRewardToken(kind,amount,compact=false){
+ const name=kind==='diamonds'?'Diamonds':kind==='splitter'?'Sugar Splitter':'Donut Evictor';
+ return '<span class="dr-reward-token'+(compact?' is-tiny':'')+'" title="'+drEsc(name)+'">'+
+  '<span class="dr-reward-art" aria-hidden="true">'+drRewardIcon(kind)+'</span>'+
+  '<b>×'+drFmt(amount)+'</b><span class="dr-reward-name">'+name+'</span></span>';
+}
+function drPreviewMilestones(state){
+ drMilestoneState=state||drMilestoneState;
+ const best=Math.max(0,Number(drMilestoneState?.best)||0);
+ const claimed=new Set((drMilestoneState?.claimed||[]).map(Number));
+ const strip=$('drMilestonePreview');
+ if(!strip)return;
+ strip.innerHTML=drThresholds.map((points,i)=>{
+  const done=claimed.has(i+1),ready=best>=points;
+  const [kind,qty]=drRewards[i];
+  return '<div class="dr-preview-stop '+(done?'is-earned':ready?'is-ready':'is-locked')+'">'+
+   '<span class="dr-preview-mark">'+(done?'✓':i+1)+'</span>'+
+   '<span class="dr-preview-prize">'+drRewardToken(kind,qty,true)+'</span>'+
+   '<small>'+drFmt(points)+'</small></div>';
+ }).join('');
+}
 function drOpenModal(view){
+ if(view==='rewards'&&drModalView==='rank')drModalPrevious='rank';
+ else if(view!=='rewards')drModalPrevious=null;
  drModalView=view;$('drEventOverlay').hidden=false;
  $('drEventTitle').textContent=view==='rank'?'LEADERBOARD':view==='rewards'?'RANK REWARDS':'MILESTONES';
  $('drEventBody').innerHTML='<p class="dr-event-note">LOADING…</p>';
+ $('drEventClose').textContent=view==='rewards'&&drModalPrevious==='rank'?'BACK TO RANK':'BACK';
  if(view==='rewards')drRenderRewards();
  else drSignal({type:view==='rank'?'nw-dr-rank':'nw-dr-milestones'});
  requestAnimationFrame(reportFrameHeight);
 }
 function drRenderRewards(){
- $('drEventBody').innerHTML=drRankRewards.map((reward,i)=>'<div class="dr-prize-line"><b>'+(i===5?'#6–10':'#'+(i+1))+'</b><span>'+reward+'</span></div>').join('');
+ $('drEventBody').innerHTML='<p class="dr-event-note">FRIDAY–SUNDAY · TOP 10 REWARDS</p>'+
+ drRankRewards.map((reward,i)=>{
+  const parts=[drRewardToken('diamonds',reward.diamonds)];
+  if(reward.splitter)parts.push(drRewardToken('splitter',reward.splitter));
+  if(reward.evictor)parts.push(drRewardToken('evictor',reward.evictor));
+  return '<article class="dr-prize-card"><span class="dr-prize-placement">'+
+   (i===5?'#6–10':'#'+(i+1))+'</span><div class="dr-prize-items">'+parts.join('')+'</div></article>';
+ }).join('');
 }
 function drRenderRank(rows,state){
  if(drModalView!=='rank')return;
@@ -593,26 +689,49 @@ function drRenderRank(rows,state){
  body.querySelector('[data-prizes]').onclick=()=>drOpenModal('rewards');
 }
 function drRenderMilestones(state){
- if(drModalView!=='milestones')return;
  drMilestoneState=state||drMilestoneState||{};
+ drPreviewMilestones(drMilestoneState);
+ if(drModalView!=='milestones')return;
  const best=Number(drMilestoneState.best)||0,claimed=new Set((drMilestoneState.claimed||[]).map(Number));
- $('drEventBody').innerHTML='<p class="dr-event-note">BEST RUN: '+drFmt(best)+' · '+(drLive?'EVENT LIVE':'PREVIOUS EVENT REWARDS')+'</p>'+
+ $('drEventBody').innerHTML='<div class="dr-journey-summary"><strong>BEST RUN <span>'+drFmt(best)+'</span></strong>'+
+ '<small>'+(drLive?'FRIDAY–SUNDAY EVENT':'PRACTICE MODE · EVENT PROGRESS PAUSED')+'</small></div>'+
+ '<div class="dr-reward-journey" tabindex="0" role="region" aria-label="15 Donut Rise reward milestones">'+
+ '<div class="dr-journey-rail" aria-hidden="true"></div>'+
  drThresholds.map((threshold,i)=>{
   const done=claimed.has(i+1),ready=best>=threshold;
-  const [kind,qty]=drRewards[i],name=kind==='diamonds'?'Diamonds':kind==='splitter'?'Sugar Splitter':'Donut Evictor';
-  return '<div class="dr-milestone-line"><span class="dr-milestone-tier">#'+(i+1)+'</span><span class="dr-milestone-content"><strong>'+drFmt(threshold)+' POINTS</strong><small>'+qty+' × '+name+'</small></span><button data-dr-claim="'+(i+1)+'" '+(!ready||done?'disabled':'')+'>'+(done?'CLAIMED':ready?'CLAIM':'LOCKED')+'</button></div>';
- }).join('');
- $('drEventBody').querySelectorAll('[data-dr-claim]:not(:disabled)').forEach(btn=>btn.onclick=()=>{btn.disabled=true;btn.textContent='CLAIMING…';drSignal({type:'nw-dr-claim',tier:Number(btn.dataset.drClaim)})});
+  const [kind,qty]=drRewards[i];
+  return '<article class="dr-journey-stop '+(done?'is-earned':ready?'is-ready':'is-locked')+'" aria-label="Milestone '+(i+1)+', '+drFmt(threshold)+' points">'+
+   '<span class="dr-journey-prize">'+drRewardToken(kind,qty)+'</span>'+
+   '<span class="dr-journey-node">'+(done?'✓':i+1)+'</span>'+
+   '<strong>'+drFmt(threshold)+'</strong>'+
+   (done?'<span class="dr-journey-status is-claimed">CLAIMED</span>':
+    ready?'<button type="button" class="dr-journey-claim" data-dr-claim="'+(i+1)+'">CLAIM</button>':
+    '<span class="dr-journey-status">LOCKED</span>')+
+   '</article>';
+ }).join('')+'</div>'+
+ '<p class="dr-event-note dr-journey-help">Swipe sideways to explore all 15 rewards. Reach each score in one run.</p>';
+ $('drEventBody').querySelectorAll('[data-dr-claim]').forEach(btn=>btn.onclick=()=>{
+  btn.disabled=true;btn.textContent='CLAIMING…';
+  drSignal({type:'nw-dr-claim',tier:Number(btn.dataset.drClaim)});
+ });
+ const next=$('drEventBody').querySelector('.dr-journey-stop.is-ready')||$('drEventBody').querySelector('.dr-journey-stop.is-locked');
+ const rail=$('drEventBody').querySelector('.dr-reward-journey');
+ if(next&&rail)rail.scrollLeft=Math.max(0,next.offsetLeft-(rail.clientWidth-next.offsetWidth)/2);
 }
-function drCloseModal(){drModalView=null;$('drEventOverlay').hidden=true;requestAnimationFrame(reportFrameHeight)}
+function drCloseModal(){
+ if(drModalView==='rewards'&&drModalPrevious==='rank'){
+  drModalPrevious=null;drOpenModal('rank');return;
+ }
+ drModalPrevious=null;drModalView=null;$('drEventOverlay').hidden=true;requestAnimationFrame(reportFrameHeight);
+}
 window.addEventListener('message',event=>{
  if(event.origin!==location.origin||event.source!==window.parent)return;
  const data=event.data||{};
  if(data.type==='nw-dr-session'&&data.seq===drRunSeq){drRunId=data.run_id||null;drSendFinished()}
- else if(data.type==='nw-dr-finished'&&data.seq===drRunSeq){drMilestoneState=data.state;if(data.result?.rank_unlocked)announce('Your best run was recorded!')}
+ else if(data.type==='nw-dr-finished'&&data.seq===drRunSeq){drPreviewMilestones(data.state);if(data.result?.rank_unlocked)announce('Your best run was recorded!')}
  else if(data.type==='nw-dr-rank-data')drRenderRank(data.rows,data.state);
- else if(data.type==='nw-dr-milestone-data')drRenderMilestones(data.state);
- else if(data.type==='nw-dr-milestone-claimed'){drMilestoneState=data.state;drRenderMilestones(data.state);drSignal({type:'nw-dr-ready'})}
+ else if(data.type==='nw-dr-milestone-data'){drPreviewMilestones(data.state);drRenderMilestones(data.state);}
+ else if(data.type==='nw-dr-milestone-claimed'){drPreviewMilestones(data.state);drRenderMilestones(data.state);drSignal({type:'nw-dr-ready'})}
  else if(data.type==='nw-dr-event-error'){
   if(data.command==='nw-dr-start'&&data.seq===drRunSeq){drRunId=null;drOverStats=null}
   if(['nw-dr-rank','nw-dr-milestones','nw-dr-claim'].includes(data.command)&&drModalView){
@@ -651,6 +770,7 @@ window.addEventListener('message',event=>{
  const data=event.data||{};
  if(data.type==='nw-dr-state'){
   drLive=!!data.live;$('drEventStatus').textContent=drLive?'EVENT LIVE · FRI–SUN':'PRACTICE MODE · EVENT RETURNS FRIDAY';
+  drSignal({type:'nw-dr-milestones'});
   drLoaded=true;drBalances={splitter:Math.max(0,Number(data.splitter)||0),evictor:Math.max(0,Number(data.evictor)||0)};
   updateBoosterButtons();
   if(data.awarded){$('drWelcome').hidden=false;requestAnimationFrame(reportFrameHeight)}
@@ -823,6 +943,22 @@ $('drPlayHelp').onclick=showHowToPlay;
 $('drLandingRank').onclick=()=>drOpenModal('rank');
 $('drMilestonesOpen').onclick=()=>drOpenModal('milestones');
 $('drEventClose').onclick=drCloseModal;
+// Return to the screen immediately above the current Donut Rise screen.
+// The parent app Back button calls this instead of always opening the main menu.
+window.nwDonutRiseNavigateBack=()=>{
+ if(!$('drEventOverlay').hidden){drCloseModal();return true;}
+ if(!infoOverlay.hidden){closeInfo();return true;}
+ if(!$('drWelcome').hidden){$('drWelcome').hidden=true;return true;}
+ if(!$('overlay').hidden){$('overlay').hidden=true;showLanding();return true;}
+ if(!landing.hidden)return false;
+ showLanding();return true;
+};
+document.addEventListener('keydown',event=>{
+ if(event.key!=='Escape'||$('drWelcome').hidden===false)return;
+ if(!$('drEventOverlay').hidden){event.preventDefault();drCloseModal();}
+ else if($('overlay').hidden===false){event.preventDefault();$('overlay').hidden=true;showLanding();}
+});
+
 $('drSplitter').onclick=()=>toggleBooster('splitter');
 $('drEvictor').onclick=()=>toggleBooster('evictor');
 $('drWelcomeClose').onclick=()=>{$('drWelcome').hidden=true};
