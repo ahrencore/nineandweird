@@ -11008,3 +11008,10 @@ body:has(#game.theme-cakes:not([hidden])){background:#FFE0E8!important}
 #game.nw-account-theme .nw-public-stat-list{display:grid;gap:0;width:min(100%,340px);margin:15px auto 0;}
 #game.nw-account-theme .nw-public-stat-list>div{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 5px;border-bottom:1px solid #AABFFF30;font:15px/1.3 'Pangolin',sans-serif;}
 #game.nw-account-theme .nw-public-stat-list>div strong{font-variant-numeric:tabular-nums;}
+
+
+/* Public profile framed portrait: full-size art with the existing monthly orbit. */
+#game.nw-account-theme .nw-public-profile .nw-collect-profile-photo{display:grid;place-items:center;position:relative;overflow:visible;}
+#game.nw-account-theme .nw-public-profile .nw-collect-profile-photo .nw-equipped-frame{position:relative;display:grid;place-items:center;width:100%;height:100%;overflow:visible;background:transparent!important;border:0!important;box-shadow:none!important;}
+#game.nw-account-theme .nw-public-profile .nw-collect-profile-photo .nw-equipped-avatar{position:absolute;inset:16%;width:68%;height:68%;border-radius:50%;object-fit:cover;z-index:0;}
+#game.nw-account-theme .nw-public-profile .nw-collect-profile-photo .nw-equipped-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1;pointer-events:none;}
