@@ -1717,12 +1717,15 @@ async function nwDoubleLaunch(difficulty){
  if(nwDoubleStarting)return;
  if(nwDoublePeriod().phase!=='active'||nwDoubleSnapshot?.eligible===false){nwDoublePracticeScreen();return;}
  nwDoubleStarting=true;
+ const sessionUid=nwCloud?.user()?.id;
  nwDoubleTheme();
  evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2>PREPARING YOUR PUZZLE</h2><p class="nw-double-note">Securing this Sudoku session...</p></section>`);
+ const waitingPanel=evRoot.querySelector('.nw-double-completion');
  try{
   const c=await nwCloud.get();
   const {data,error}=await c.rpc('nw_dt_begin',{p_difficulty:difficulty});
   if(error)throw Error(error.message);
+  if(!waitingPanel?.isConnected||nwCloud?.user()?.id!==sessionUid)return;
   if(!data?.run_id||!/^[0-9]{81}$/.test(data.puzzle||'')||!/^[1-9]{81}$/.test(data.solution||''))throw Error('Verified puzzle unavailable. Please retry.');
   if(nwDoublePeriod().phase!=='active')throw Error('Double Trouble has ended.');
   if(nwDoubleWorldBefore===null)nwDoubleWorldBefore=currentWorld;
@@ -1733,6 +1736,7 @@ async function nwDoubleLaunch(difficulty){
   evSudokuStart(difficulty,null,null,data);
  }catch(e){
   nwDoublePracticeActive=false;
+  if(!waitingPanel?.isConnected||nwCloud?.user()?.id!==sessionUid)return;
   evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2>PUZZLE NOT READY</h2><p class="nw-double-alert">${nwEscape(e.message)}</p>${nwDoubleButton('nwDoubleRetryBegin','TRY AGAIN')}${nwDoubleButton('nwDoubleBackBegin','BACK TO EVENT',true)}</section>`);
   evRoot.querySelector('#nwDoubleRetryBegin').onclick=()=>nwDoubleLaunch(difficulty);
   evRoot.querySelector('#nwDoubleBackBegin').onclick=nwDoublePracticeScreen;
