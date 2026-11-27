@@ -295,7 +295,7 @@ function nwAvailableFrames(){
 }
 function nwSelectedFrame(){
   const saved=nwRead(nwFrameKey,{id:'usual'});
-  const id=saved?.month&&saved.month!==nwSeasonId()?'usual':saved?.id||'usual';
+  const id=String(saved?.id||'usual').startsWith('monthly-')&&saved?.month!==nwSeasonId()?'usual':saved?.id||'usual';
   return nwAvailableFrames().find(f=>f.id===id)||nwAvailableFrames()[0];
 }
 async function nwHydrateFrame(data){
