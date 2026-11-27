@@ -254,10 +254,43 @@ function nwEscape(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&
 function nwGuestName(id){return 'Guest_'+String(id).replace(/-/g,'').slice(0,14).toLowerCase();}
 function nwProfile(){const p=nwRead(nwProfileKey,{}),u=window.nwCloud?.user();return {name:u?.is_anonymous?nwGuestName(u.id):typeof p.name==='string'?p.name:'Guest Player',avatar:nwAvatarValue(p.avatar)}}
 function nwResults(){const v=nwRead(nwResultsKey,[]);return Array.isArray(v)?v.filter(x=>x&&Number.isFinite(x.started)&&typeof x.difficulty==='string').slice(-2500):[]}
+
+async function nwAchievementSudokuBegin(session){
+ const uid=nwCloud?.user()?.id;
+ if(!uid||nwCloud.user()?.is_anonymous||!session?.initialPuzzle)return null;
+ try{
+  const c=await nwCloud.get();
+  if(nwCloud.user()?.id!==uid)return null;
+  const {data,error}=await c.rpc('nw_achievement_sudoku_start',{
+   p_clues:session.initialPuzzle.join(''),p_difficulty:session.difficulty
+  });
+  if(error)throw Error(error.message);
+  return nwCloud.user()?.id===uid?data:null;
+ }catch(e){console.warn('Sudoku achievement start not recorded:',e.message);return null;}
+}
+async function nwAchievementSudokuComplete(session){
+ const uid=nwCloud?.user()?.id;
+ if(!uid||nwCloud.user()?.is_anonymous||!session?.achievementPromise)return;
+ const runId=await session.achievementPromise;
+ if(!runId||nwCloud.user()?.id!==uid)return;
+ try{
+  const c=await nwCloud.get();
+  if(nwCloud.user()?.id!==uid)return;
+  const {error}=await c.rpc('nw_achievement_sudoku_finish',{
+   p_session:runId,
+   p_solution:session.answer.join(''),
+   p_mistakes:session.mistakes,
+   p_room:session.achievementRoom
+  });
+  if(error)throw Error(error.message);
+ }catch(e){console.warn('Sudoku achievement result not recorded:',e.message);}
+}
+
 function nwSaveResult(s,won){
   if(!s||s.reportSaved)return;s.reportSaved=true;
   const a=nwResults();a.push({started:s.start,ended:Date.now(),world:currentWorld,difficulty:s.difficulty,won:!!won,seconds:Math.max(1,Math.round((Date.now()-s.start)/1000)),attempts:s.reportAttempts||0,correct:s.reportCorrect||0,hints:s.reportHints||0,mistakes:s.mistakes});
   nwWrite(nwResultsKey,a.slice(-2500));
+  if(won&&!s.practiceOpponent&&!s.challenge)void nwAchievementSudokuComplete(s);
   if(won&&!s.practiceOpponent&&!s.doublePractice)nwGrowingActivity('worlds');
 }
 function nwWeekStart(t){const d=new Date(t);d.setHours(0,0,0,0);const dow=(d.getDay()+6)%7;d.setDate(d.getDate()-dow);return d.getTime()}
@@ -3304,6 +3337,7 @@ async function evSudokuStart(difficulty,practiceOpponent=null,challengeMode=null
   const {answer,puzzle}=dtChallenge?{answer:[...dtChallenge.solution].map(Number),puzzle:[...dtChallenge.puzzle].map(Number)}:challengeMode?{answer:[...challengeMode.solution].map(Number),puzzle:[...challengeMode.puzzle].map(Number)}:practiceOpponent?{answer:[...practiceOpponent.solved_grid].map(Number),puzzle:[...practiceOpponent.puzzle_clues].map(Number)}:nwMakeUniquePuzzle(difficulty);
   const givens=new Set(puzzle.map((n,i)=>n?i:-1).filter(i=>i>=0));
   sudoku={answer,values:[...puzzle],givens,selected:-1,choice:0,highlight:0,mistakes:0,wrong:new Set(),notes:false,noteMarks:{},history:[],hintsLeft:1,hintStock:0,hintPending:false,start:Date.now(),difficulty,done:false,initialPuzzle:[...puzzle],reportAttempts:0,reportCorrect:0,reportHints:0,reportSaved:false,practiceOpponent,challenge:challengeMode,challengePending:false,dtRunId:dtChallenge?.run_id||null,doublePractice:!practiceOpponent&&!challengeMode&&nwDoublePracticeActive};
+  if(!practiceOpponent&&!challengeMode&&nwCloud?.user()&&!nwCloud.user().is_anonymous){sudoku.achievementRoom=currentWorld;sudoku.achievementPromise=nwAchievementSudokuBegin(sudoku);}
   evSudokuRender();if(nwCloud?.user()?.id){const active=sudoku;void nwPrizeSync().then(()=>{if(sudoku===active){active.hintStock=nwPrizeAvailable('sudoku_hint');evSudokuPaint();}}).catch(e=>console.warn('Sudoku hint Inventory:',e.message));}if(practiceOpponent)sudoku.start=Date.now();clearInterval(sudokuTimer);
   sudokuTimer=setInterval(()=>{if(!sudoku||sudoku.done)return;const el=evRoot.querySelector('#evSudoTime');if(el){const time=Math.floor((Date.now()-sudoku.start)/1000);el.textContent=`${String(Math.floor(time/60)).padStart(2,'0')}:${String(time%60).padStart(2,'0')}`}if(sudoku.practiceOpponent)nwBattleProgressTick(sudoku)},250);
 }
