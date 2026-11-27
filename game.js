@@ -900,14 +900,57 @@ function nwPrizeClaimArt(data){
   return '<span class="nw-lb-reward-entry"><span class="nw-lb-reward-icon" aria-hidden="true">'+art+'</span><b>×'+qty.toLocaleString()+'</b><small>'+nwEscape(key==='diamonds'?'Diamonds':key==='sudoku_hint'?'Sudoku Hints':def?.name||key)+'</small></span>';
  }).join('')+'</div>';
 }
+/* Shared celebration for confirmed rewards only. Uses the game's existing resource art. */
+const nwRewardRevealQueue=[];
+let nwRewardRevealActive=false;
+function nwRewardItemsFromClaim(data){
+ const supplies=data?.supplies||data?.reward?.supplies||{};
+ const diamonds=Number(data?.diamonds??data?.reward?.diamonds)||0;
+ return [['diamonds',diamonds],...Object.entries(supplies||{})]
+  .filter(([key,amount])=>['diamonds','sudoku_hint',...nwPrizeDefinitions.map(d=>d.key)].includes(key)&&Number.isSafeInteger(Number(amount))&&Number(amount)>0)
+  .map(([key,amount])=>[key,Number(amount)]);
+}
+function nwRewardCelebrate(items,{source='reward',title='REWARDS CLAIMED!'}={}){
+ const allowed=new Set(['diamonds','sudoku_hint',...nwPrizeDefinitions.map(d=>d.key)]);
+ const safe=(Array.isArray(items)?items:[])
+  .filter(([key,amount])=>allowed.has(key)&&Number.isSafeInteger(Number(amount))&&Number(amount)>0)
+  .map(([key,amount])=>[key,Number(amount)]);
+ if(!safe.length)return;
+ const uid=nwCloud?.user()?.id;
+ if(!uid)return;
+ nwRewardRevealQueue.push({uid,items:safe,source,title});
+ nwRewardRevealNext();
+}
+function nwRewardRevealNext(){
+ if(nwRewardRevealActive)return;
+ const request=nwRewardRevealQueue.shift();if(!request)return;
+ if(request.uid!==nwCloud?.user()?.id){nwRewardRevealNext();return;}
+ nwRewardRevealActive=true;
+ const o=document.createElement('div');o.className='nw-reward-celebration nw-reward-'+(request.source==='battle'?'battle':request.source==='daily'?'daily':request.source==='milestone'?'milestone':'mail');
+ const cards=request.items.map(([key,amount])=>{
+  const def=nwPrizeDefinitions.find(d=>d.key===key);
+  const label=key==='diamonds'?'Diamonds':key==='sudoku_hint'?'Sudoku Hints':def?.name||key;
+  const art=key==='diamonds'?'<img src="assets/currency/diamond.png" alt="">':nwPrizeIcon(key);
+  return '<div class="nw-celebrate-reward"><span class="nw-celebrate-icon" aria-hidden="true">'+art+'</span><b>+'+amount.toLocaleString()+'</b><small>'+nwEscape(label)+'</small></div>';
+ }).join('');
+ o.innerHTML='<section class="nw-celebrate-dialog" role="dialog" aria-modal="true" aria-labelledby="nwCelebrateTitle" tabindex="-1">'+
+  '<div class="nw-celebrate-burst" aria-hidden="true">✦ ✧ ✦ ⋆ ✧ ✦</div>'+
+  '<div class="nw-celebrate-gift" aria-hidden="true">'+nwDailyGiftArt()+'</div>'+
+  '<h2 id="nwCelebrateTitle">'+nwEscape(request.title)+'</h2>'+
+  '<div class="nw-celebrate-items">'+cards+'</div>'+
+  '<button type="button" class="nw-celebrate-dismiss">AWESOME!</button></section>';
+ const close=()=>{
+  if(!o.isConnected)return;
+  o.remove();nwRewardRevealActive=false;
+  nwRewardRevealNext();
+ };
+ o.querySelector('.nw-celebrate-dismiss').onclick=close;
+ o.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();close()}});
+ document.body.appendChild(o);
+ o.querySelector('.nw-celebrate-dismiss').focus({preventScroll:true});
+}
 function nwPrizeClaimConfirmation(data){
- const overlay=document.createElement('div');
- overlay.className='nw-mail-claim-overlay';
- overlay.innerHTML='<section class="nw-mail-claim-dialog" role="dialog" aria-modal="true" aria-label="Rewards claimed"><span class="nw-mail-claim-stars" aria-hidden="true">✦ ✧ ✦</span><h2>REWARDS CLAIMED!</h2>'+nwPrizeClaimArt(data)+'<p>Your rewards are now in Inventory!</p><p class="nw-mail-claim-directions">To check, go to <strong>TROPHY → INVENTORY</strong>.</p><button type="button" class="nw-mail-claim-ok">AWESOME!</button></section>';
- evRoot.appendChild(overlay);
- const close=()=>overlay.remove();
- overlay.querySelector('.nw-mail-claim-ok').onclick=close;
- overlay.querySelector('.nw-mail-claim-ok').focus();
+ nwRewardCelebrate(nwRewardItemsFromClaim(data),{source:'mail'});
 }
 
 async function nwPrizeMail(){
@@ -1410,6 +1453,9 @@ function nwBattleRewards(){
     nwRefreshVisibleDiamondBalances();
    }
    if(b.isConnected)nwBattleRewards();
+   if(data?.claimed===true&&!data?.already_claimed&&Number(data?.amount)>0&&nwCloud?.user()?.id===uid){
+    nwRewardCelebrate([['diamonds',Number(data.amount)]],{source:'battle',title:'BATTLE REWARD CLAIMED!'});
+   }
   }catch(e){
    if(!b.isConnected)return;
    b.disabled=false;b.textContent='CLAIM';
@@ -2350,6 +2396,9 @@ function nwDailyBindClaim(status,root,popup=false){
      await Promise.allSettled([nwWalletSync(),nwPrizeSync()]);
      nwDailyRender({...status,day:data.next_day,can_claim:false},'DAY '+data.day+' CLAIMED! ✦');
     }else nwDailyRender({...status,day:data.next_day||status.day,can_claim:false},'Already claimed today.');
+   }
+   if(data.claimed&&!data.already_claimed&&nwCloud?.user()?.id===status.account){
+    nwRewardCelebrate(nwRewardItemsFromClaim(data),{source:'daily',title:'DAY '+data.day+' REWARD CLAIMED!'});
    }
   }catch(e){
    if(root.isConnected){b.disabled=false;b.textContent='TRY AGAIN';const info=root.querySelector('.nw-daily-status');if(info)info.textContent=e.message||'Claim failed. Please try again.';}
