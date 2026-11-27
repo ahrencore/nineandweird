@@ -216,6 +216,29 @@ header p{color:#E7BAC9;font-family:Fredoka,system-ui,sans-serif}
 
 
 
+
+/* Confirm ending a run without sacrificing score or accidentally leaving gameplay. */
+#drEndConfirm{background:#120C10CB;backdrop-filter:blur(5px)}
+#drEndConfirm .dr-end-confirm{
+ border:1px solid #AD7890!important;
+ background:linear-gradient(155deg,#40303A,#211C22)!important;
+ box-shadow:0 15px 45px #11090B80!important;
+ padding:22px 16px!important;
+ max-width:360px;
+}
+#drEndConfirm .dr-end-confirm h2{font:700 clamp(23px,6vw,29px)/1.1 Fredoka,system-ui!important;color:#F6EEE8!important}
+#drEndConfirm .dr-end-confirm p{font:500 13px/1.5 Fredoka,system-ui!important;color:#E7BAC9!important}
+#drEndConfirm .dr-end-confirm p strong{color:#F6EEE8;font-size:16px}
+.dr-end-confirm-actions{display:grid;gap:9px;margin-top:17px}
+#drEndConfirm .dr-end-confirm-actions button{
+ margin:0!important;min-height:43px!important;padding:9px 14px!important;
+ font:700 13px Fredoka,system-ui!important;
+ border-radius:12px!important;cursor:pointer;
+}
+#drContinuePlaying{background:#E7BAC9!important;color:#38232C!important;border:1px solid #F6EEE8!important}
+#drConfirmEndRun{background:#30252C!important;color:#F6EEE8!important;border:1px solid #B87C91!important}
+#drEndConfirm .dr-end-confirm-actions button:focus-visible{outline:2px solid #F6EEE8;outline-offset:3px}
+
 /* Donut Rise rankings, milestone claims, practice state. */
 .dr-event-status{font:700 10px/1.4 Fredoka,system-ui;letter-spacing:.1em;color:#E7BAC9;text-align:center;margin:4px auto}
 .dr-milestones-open{display:flex;align-items:center;justify-content:center;gap:12px;width:min(260px,84%);margin:4px auto 5px;min-height:42px;border:1px solid #A85F78;border-radius:12px;background:#252023;color:#F6EEE8;font:700 12px Fredoka;cursor:pointer}
@@ -385,6 +408,16 @@ html,body,.app,.app *{-webkit-user-select:none;user-select:none;-webkit-touch-ca
   <h2 id="infotitle"></h2>
   <div id="infobody"></div>
   <button type="button" id="infoclose">CLOSE</button>
+ </div>
+</div>
+<div class="overlay" id="drEndConfirm" hidden>
+ <div class="modal dr-end-confirm" role="dialog" aria-modal="true" aria-labelledby="drEndConfirmTitle">
+  <h2 id="drEndConfirmTitle">END THIS RUN?</h2>
+  <p>Your current score is <strong id="drEndCurrentScore">0</strong>. Ending this run will open Game Over and submit your score if the event is live.</p>
+  <div class="dr-end-confirm-actions">
+   <button type="button" id="drContinuePlaying">CONTINUE PLAYING</button>
+   <button type="button" id="drConfirmEndRun">END RUN</button>
+  </div>
  </div>
 </div>
 <div class="overlay" id="drEventOverlay" hidden><div class="modal dr-event-modal" role="dialog" aria-modal="true" aria-labelledby="drEventTitle"><h2 id="drEventTitle">DONUT RISE!</h2><div id="drEventBody" class="dr-event-content"></div><button type="button" id="drEventClose">CLOSE</button></div></div>
@@ -955,7 +988,15 @@ board.addEventListener('pointerup',e=>{
 });
 board.addEventListener('pointercancel',e=>{if(drag?.pointerId===e.pointerId){clearDragState();if(!busy)render()}});
 board.addEventListener('lostpointercapture',e=>{if(drag?.pointerId===e.pointerId){clearDragState();if(!busy)render()}});
-function end(){running=false;drFinishRun();$('overlay').hidden=false;$('overlaytitle').textContent='GAME OVER!';$('overlaytext').textContent='The donuts reached the top. Final score: '+score+' · Lines cleared: '+lines+' · Moves: '+moves;render()}
+function end(reason='full'){
+ if(!running)return;
+ running=false;paused=false;drFinishRun();
+ $('drEndConfirm').hidden=true;
+ $('overlay').hidden=false;
+ $('overlaytitle').textContent='GAME OVER!';
+ $('overlaytext').textContent=(reason==='quit'?'You ended this run. Final score: ':'The donuts reached the top. Final score: ')+score+' · Lines cleared: '+lines+' · Moves: '+moves;
+ render();
+}
 function reset(){
  if(busy)return;
  grid=empty();groups=new Map();nextId=1;score=0;lines=0;moves=0;running=true;paused=false;selected=null;drag=null;hover=null;
@@ -984,9 +1025,26 @@ function buildLandingDonuts(){
  });
 }
 function showLanding(){
- if(!gameShell.hidden&&running)drFinishRun();
+ if(!gameShell.hidden&&running)return; // Never discard a live run without confirmation.
  running=false;cancelBooster();landing.hidden=false;gameShell.hidden=true;
+ $('drEndConfirm').hidden=true;
  drSaveStatus();requestAnimationFrame(reportFrameHeight);
+}
+function drAskEndRun(){
+ if(landing.hidden===false||!running)return;
+ if(busy){announce('Complete this move before ending your run.');return}
+ $('drEndCurrentScore').textContent=drFmt(score);
+ $('drEndConfirm').hidden=false;
+ $('drContinuePlaying').focus();
+}
+function drContinueRun(){
+ $('drEndConfirm').hidden=true;
+ requestAnimationFrame(reportFrameHeight);
+}
+function drConfirmEnd(){
+ if($('drEndConfirm').hidden||!running)return;
+ if(busy){drContinueRun();return}
+ end('quit');
 }
 function startGameplay(){
  cancelBooster();landing.hidden=true;gameShell.hidden=false;
@@ -999,20 +1057,25 @@ $('drPlayHelp').onclick=showHowToPlay;
 $('drLandingRank').onclick=()=>drOpenModal('rank');
 $('drMilestonesOpen').onclick=()=>drOpenModal('milestones');
 $('drEventClose').onclick=drCloseModal;
+$('drContinuePlaying').onclick=drContinueRun;
+$('drConfirmEndRun').onclick=drConfirmEnd;
 // Return to the screen immediately above the current Donut Rise screen.
 // The parent app Back button calls this instead of always opening the main menu.
 window.nwDonutRiseNavigateBack=()=>{
  if(!$('drEventOverlay').hidden){drCloseModal();return true;}
  if(!infoOverlay.hidden){closeInfo();return true;}
  if(!$('drWelcome').hidden){$('drWelcome').hidden=true;return true;}
+ if(!$('drEndConfirm').hidden){drContinueRun();return true;}
  if(!$('overlay').hidden){$('overlay').hidden=true;showLanding();return true;}
  if(!landing.hidden)return false;
- showLanding();return true;
+ drAskEndRun();return true;
 };
 document.addEventListener('keydown',event=>{
  if(event.key!=='Escape'||$('drWelcome').hidden===false)return;
  if(!$('drEventOverlay').hidden){event.preventDefault();drCloseModal();}
+ else if(!$('drEndConfirm').hidden){event.preventDefault();drContinueRun();}
  else if($('overlay').hidden===false){event.preventDefault();$('overlay').hidden=true;showLanding();}
+ else if(landing.hidden){event.preventDefault();drAskEndRun();}
 });
 
 $('drSplitter').onclick=()=>toggleBooster('splitter');
