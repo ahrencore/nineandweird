@@ -1981,33 +1981,53 @@ function nwDoublePracticeAfterSudoku(s,won,pts){
  nwDoublePracticeActive=false;nwDoubleTheme();
  const credited=!!(won&&nwDoublePeriod().phase==='active'&&!s.doubleCredited);
  if(credited)s.doubleCredited=true;
+ const account=nwCloud?.user()?.id;
+ let waitingPanel=null;
  const show=(message,total,awarded=0)=>{
+  if(account&&nwCloud?.user()?.id!==account)return;
   const sc=nwDoubleScores();
-  evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2 class="nw-double-result-title">${won?'NICELY DONE!':'PUZZLE NOT COMPLETED'}</h2><div class="nw-double-kicker">POINTS CONTRIBUTED</div><div class="nw-double-earned">+${nwDoubleFmt(awarded)}</div><div class="nw-double-summary"><div>YOUR CONTRIBUTION <strong>${nwDoubleFmt(total)}</strong></div><div>TEAM TOTAL <strong>${nwDoubleFmt(sc.ours)}</strong></div></div>${message?'<p class="nw-double-alert">'+nwEscape(message)+'</p>':''}${nwDoublePeriod().phase==='active'?nwDoubleButton('nwDoubleAgain','▹ '+(won?'PLAY AGAIN':'RETRY')):''}${nwDoublePeriod().phase==='active'?nwDoubleButton('nwDoubleChangeDifficulty','CHANGE DIFFICULTY',true):''}${nwDoubleButton('nwDoubleContinue','BACK TO EVENT',true)}</section>`);
+  const body=`<h2 class="nw-double-result-title">${won?'NICELY DONE!':'PUZZLE NOT COMPLETED'}</h2><div class="nw-double-kicker">POINTS CONTRIBUTED</div><div class="nw-double-earned">+${nwDoubleFmt(awarded)}</div><div class="nw-double-summary"><div>YOUR CONTRIBUTION <strong>${nwDoubleFmt(total)}</strong></div><div>TEAM TOTAL <strong>${nwDoubleFmt(sc.ours)}</strong></div></div>${message?'<p class="nw-double-alert">'+nwEscape(message)+'</p>':''}${nwDoublePeriod().phase==='active'?nwDoubleButton('nwDoubleAgain','▹ '+(won?'PLAY AGAIN':'RETRY')):''}${nwDoublePeriod().phase==='active'?nwDoubleButton('nwDoubleChangeDifficulty','CHANGE DIFFICULTY',true):''}${nwDoubleButton('nwDoubleContinue','BACK TO EVENT',true)}`;
+  if(waitingPanel?.isConnected){
+   waitingPanel.classList.remove('nw-double-verifying');
+   waitingPanel.classList.add('nw-double-verified');
+   waitingPanel.innerHTML=body;
+  }else{
+   evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion nw-double-verified">${body}</section>`);
+  }
   const again=evRoot.querySelector('#nwDoubleAgain');if(again)again.onclick=()=>nwDoubleLaunch(s.difficulty);
   const change=evRoot.querySelector('#nwDoubleChangeDifficulty');if(change)change.onclick=nwDoubleDifficulty;
-  evRoot.querySelector('#nwDoubleContinue').onclick=nwDoublePracticeScreen;
+  const back=evRoot.querySelector('#nwDoubleContinue');if(back)back.onclick=nwDoublePracticeScreen;
  };
  if(!credited){show('',nwDoubleSnapshot?.points||0,0);return;}
  if(!s.dtRunId){show('This puzzle did not have a verified session. Please refresh and start a new Double Trouble puzzle.',nwDoubleSnapshot?.points||0,0);return;}
- evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2>NICELY DONE!</h2><p class="nw-double-note">Verifying your completed puzzle...</p></section>`);
+ // Give completion feedback before awaiting network confirmation. No unverified points are shown.
+ evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion nw-double-verifying" aria-live="polite"><h2 class="nw-double-result-title">NICELY DONE!</h2><div class="nw-dt-sync-emblem" aria-hidden="true"><span class="nw-dt-sync-ring"></span><svg viewBox="0 0 80 80" fill="none"><path d="M21 40 L34 53 L59 27" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p class="nw-double-note nw-dt-sync-label">Saving your contribution<span class="nw-dt-sync-dots" aria-hidden="true"></span></p><div class="nw-dt-sync-bar" aria-hidden="true"><span></span></div><p class="nw-dt-sync-caption">Puzzle completed. Points will appear once confirmed.</p></section>`);
+ waitingPanel=evRoot.querySelector('.nw-double-verifying');
  const sync=async()=>{
   try{
    const c=await nwCloud.get();
    const {data,error}=await c.rpc('nw_dt_finish',{p_run_id:s.dtRunId,p_solved:s.values.join(''),p_mistakes:s.mistakes});
    if(error)throw Error(error.message);
+   if(!waitingPanel?.isConnected||nwCloud?.user()?.id!==account)return;
    if(nwDoubleSnapshot)nwDoubleSnapshot={...nwDoubleSnapshot,points:Number(data.points||0)};
-    show('',Number(data.points||0),Number(data.awarded||0));
-    // The finish RPC already confirmed this player's total; fetch teammate scores separately.
-    const completionPanel=evRoot.querySelector('.nw-double-completion');
-    void nwDoubleRpc('snapshot').then(()=>{
-     if(!completionPanel?.isConnected)return;
-     const teamTotal=completionPanel.querySelector('.nw-double-summary > div:nth-child(2) strong');
-     if(teamTotal)teamTotal.textContent=nwDoubleFmt(nwDoubleScores().ours);
-    }).catch(e=>console.warn('Double Trouble refresh:',e.message));
+   show('',Number(data.points||0),Number(data.awarded||0));
+   const completionPanel=waitingPanel;
+   void nwDoubleRpc('snapshot').then(()=>{
+    if(!completionPanel?.isConnected||nwCloud?.user()?.id!==account)return;
+    const teamTotal=completionPanel.querySelector('.nw-double-summary > div:nth-child(2) strong');
+    if(teamTotal)teamTotal.textContent=nwDoubleFmt(nwDoubleScores().ours);
+   }).catch(e=>console.warn('Double Trouble refresh:',e.message));
   }catch(e){
-   evDisplay(`${evHeader('',nwDoublePracticeScreen)}<section class="nw-double nw-double-completion"><h2>POINTS NOT SYNCED</h2><p class="nw-double-alert">${nwEscape(e.message)}</p>${nwDoubleButton('nwDoubleRetrySync','RETRY SYNC')}</section>`);
-   evRoot.querySelector('#nwDoubleRetrySync').onclick=sync;
+   if(!waitingPanel?.isConnected||nwCloud?.user()?.id!==account)return;
+   waitingPanel.classList.remove('nw-double-verifying');
+   waitingPanel.innerHTML=`<h2 class="nw-double-result-title">PUZZLE COMPLETED!</h2><p class="nw-double-note">Your result has not been confirmed yet.</p><p class="nw-double-alert">${nwEscape(e.message)}</p>${nwDoubleButton('nwDoubleRetrySync','RETRY SYNC')}`;
+   const retry=waitingPanel.querySelector('#nwDoubleRetrySync');
+   if(retry)retry.onclick=()=>{
+    retry.disabled=true;
+    waitingPanel.classList.add('nw-double-verifying');
+    waitingPanel.innerHTML=`<h2 class="nw-double-result-title">NICELY DONE!</h2><div class="nw-dt-sync-emblem" aria-hidden="true"><span class="nw-dt-sync-ring"></span><svg viewBox="0 0 80 80" fill="none"><path d="M21 40 L34 53 L59 27" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><p class="nw-double-note nw-dt-sync-label">Retrying verification<span class="nw-dt-sync-dots" aria-hidden="true"></span></p><div class="nw-dt-sync-bar" aria-hidden="true"><span></span></div>`;
+    void sync();
+   };
   }
  };
  void sync();
