@@ -11159,3 +11159,54 @@ html:has(#game.nw-battle-theme:not([hidden])),body:has(#game.nw-battle-theme:not
 #game .nw-daily-dialog{--nw-scroll-thumb:#8E83BE;--nw-scroll-track:#191B35}
 #game .nw-mail-claim-dialog{--nw-scroll-thumb:#BFA4D8;--nw-scroll-track:#302B46}
 #game .nw43-dialog{--nw-scroll-thumb:#A7A1E7;--nw-scroll-track:#20253F}
+
+/* Double Trouble: animated, non-blocking verification with existing icy corridor palette. */
+#game.nw-double-theme .nw-double-completion.nw-double-verifying{
+ min-height:min(440px,65dvh);justify-content:center;align-items:center;text-align:center;
+ padding:28px 18px;gap:16px;
+}
+#game.nw-double-theme .nw-double-verifying .nw-double-result-title{
+ animation:nwDtDoneArrive .55s cubic-bezier(.2,.85,.25,1) both;
+}
+#game.nw-double-theme .nw-dt-sync-emblem{
+ width:110px;height:110px;position:relative;display:grid;place-items:center;
+ color:#DDF2FB;filter:drop-shadow(0 0 13px #9CCBE35B);
+ animation:nwDtDoneArrive .7s ease-out both;
+}
+#game.nw-double-theme .nw-dt-sync-emblem svg{width:75px;height:75px;position:relative;z-index:1}
+#game.nw-double-theme .nw-dt-sync-ring{
+ position:absolute;width:100px;height:100px;inset:5px;
+ border:4px solid #7198AE70;border-top-color:#DDF2FB;border-right-color:#B9DDF2;
+ border-radius:50%;animation:nwDtRingSpin 1.8s linear infinite;
+}
+#game.nw-double-theme .nw-dt-sync-label{font-weight:750;font-size:15px;color:#DDF2FB!important}
+#game.nw-double-theme .nw-dt-sync-dots:after{content:"";animation:nwDtDots 1.2s steps(4,end) infinite}
+#game.nw-double-theme .nw-dt-sync-bar{
+ width:min(84%,290px);height:7px;border-radius:99px;overflow:hidden;
+ background:#354E63;border:1px solid #7198AE50;position:relative;
+}
+#game.nw-double-theme .nw-dt-sync-bar span{
+ display:block;height:100%;width:38%;border-radius:inherit;
+ background:linear-gradient(90deg,#7DB9DC,#E3F7FF,#9CCBE3);
+ animation:nwDtBarTravel 1.55s ease-in-out infinite;
+}
+#game.nw-double-theme .nw-dt-sync-caption{max-width:280px;font-size:12px;line-height:1.5;color:#B9DDF2;margin:0}
+#game.nw-double-theme .nw-double-verified .nw-double-earned,
+#game.nw-double-theme .nw-double-verified .nw-double-summary{
+ animation:nwDtResultReveal .45s cubic-bezier(.2,.85,.25,1) both;
+}
+@keyframes nwDtRingSpin{to{transform:rotate(360deg)}}
+@keyframes nwDtBarTravel{0%{transform:translateX(-110%)}100%{transform:translateX(280%)}}
+@keyframes nwDtDots{0%{content:""}25%{content:"."}50%{content:".."}75%,100%{content:"..."}}
+@keyframes nwDtDoneArrive{from{opacity:0;transform:translateY(12px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes nwDtResultReveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){
+ #game.nw-double-theme .nw-double-verifying .nw-double-result-title,
+ #game.nw-double-theme .nw-dt-sync-emblem,
+ #game.nw-double-theme .nw-dt-sync-ring,
+ #game.nw-double-theme .nw-dt-sync-dots:after,
+ #game.nw-double-theme .nw-dt-sync-bar span,
+ #game.nw-double-theme .nw-double-verified .nw-double-earned,
+ #game.nw-double-theme .nw-double-verified .nw-double-summary{animation:none!important}
+ #game.nw-double-theme .nw-dt-sync-bar span{width:100%}
+}
