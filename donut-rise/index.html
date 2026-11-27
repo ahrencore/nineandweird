@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Donut Rise! — Nine & Weird Test Event</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#ff7cb1;--cream:#fff4e6;--rose:#d94c88;--dark:#2b1528;--border:#7e4166}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#1c1021;color:var(--cream);font-family:Fredoka,system-ui,sans-serif}body{background:radial-gradient(ellipse at 50% 0,#57304e 0%,#2e1933 45%,#1d1124 95%)}.app{max-width:550px;min-height:100dvh;margin:auto;padding:18px 13px 28px;display:flex;flex-direction:column;gap:13px}.topline{display:flex;justify-content:space-between;align-items:center;gap:8px}.tag{font:700 10px 'Space Mono',monospace;letter-spacing:.13em;color:#ffbbd6}.topbuttons{display:flex;gap:7px}.topbuttons button,.smallbutton{border:1px solid #ad638a;background:#4d2947;color:#ffe2ee;border-radius:10px;padding:9px 11px;font-weight:700;cursor:pointer}header{text-align:center}header h1{font-size:clamp(37px,9vw,53px);letter-spacing:.04em;line-height:1;margin:2px 0 6px;color:#ffbad5;text-shadow:3px 4px #62294d,0 0 20px #fa60a25a}header p{margin:0;font-size:12px;color:#eec9dc}.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.stat{border:1px solid #81516d;background:#3e2440bb;border-radius:13px;padding:9px 7px;text-align:center}.stat label{display:block;color:#dbaaC5;font:700 9px 'Space Mono',monospace;letter-spacing:.07em}.stat strong{display:block;font:700 19px 'Space Mono',monospace;color:#fff0e6;margin-top:2px}.progress{height:7px;border-radius:20px;background:#56344b;overflow:hidden;border:1px solid #805270}.progress div{height:100%;width:0;background:linear-gradient(90deg,#ffacd2,#ffdf9f);transition:width .12s linear}.boardwrap{background:linear-gradient(155deg,#583451,#26182e);padding:8px;border:2px solid #ae688f;border-radius:20px;box-shadow:0 12px 35px #0d0518b8,inset 0 0 26px #ffffff0a}.board{--n:8;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:2px;user-select:none;touch-action:none;position:relative}.cell{aspect-ratio:1/1;min-width:0;border-radius:4px;border:1px solid #74435c80;background:#2b1b31;position:relative;display:grid;place-items:center;transition:background .08s,outline .08s}.cell:nth-child(8n + 1){border-left-color:#945d73}.cell.occupied{background:#63354c;border-color:#9f6284}.cell.occupied.alt{background:#76465d}.cell img{width:96%;height:96%;object-fit:contain;pointer-events:none;filter:drop-shadow(0 1px 2px #12081377)}.cell .fallback{font-size:clamp(9px,2.6vw,21px);line-height:1}.cell.special:after{content:'+50';position:absolute;right:-1px;top:-3px;font:700 clamp(4px,1.3vw,8px) 'Space Mono',monospace;color:#372214;background:#ffe297;border-radius:5px;padding:1px 2px;z-index:2;box-shadow:0 0 6px #ffdf94}.cell.selected{outline:2px solid #ffe3a7;outline-offset:-1px;z-index:2}.cell.ghost{background:#90f1c579;outline:1px solid #c6ffdf;z-index:3}.cell.invalid{background:#f3547890;outline:1px solid #ffb4c3}.boardwrap.dragging .occupied{cursor:grabbing}.board .cell.occupied{cursor:grab}.legend{display:flex;justify-content:space-between;gap:8px;color:#eabfd3;font-size:10px;margin:9px 2px 1px}.legend span:last-child{color:#ffdc95}.action{display:grid;grid-template-columns:1fr;gap:9px}.action button{padding:12px;border:1px solid #ef91b5;border-bottom:3px solid #b4477f;background:linear-gradient(#ad4b83,#79355f);border-radius:13px;color:white;font:700 14px Fredoka;cursor:pointer}.action button.secondary{background:#422c43;border-color:#896582;border-bottom-color:#654262}.action button:disabled{opacity:.45}.message{min-height:26px;text-align:center;color:#ffe0a9;font-size:13px;font-weight:600}.rules{border:1px solid #74425b;border-radius:14px;background:#2f1c31;padding:14px 16px;font-size:12px;line-height:1.55;color:#f6d9e6}.rules summary{font-weight:700;font-size:14px;cursor:pointer;color:#ffc3d8}.rules p{margin:8px 0 0}.overlay{position:fixed;inset:0;z-index:10;background:#140a1bd9;display:grid;place-items:center;padding:20px;backdrop-filter:blur(6px)}.overlay[hidden]{display:none}.modal{max-width:380px;width:100%;text-align:center;background:linear-gradient(#5a3052,#2e1b35);border:2px solid #ff94c4;box-shadow:0 0 40px #ff90c33b;border-radius:22px;padding:27px 18px}.modal h2{font-size:32px;color:#ffe0ec;margin:4px 0 10px}.modal p{font-size:14px;color:#ffdcf0;line-height:1.5}.modal button{margin-top:12px;background:#ff98c0;border:0;border-bottom:4px solid #c95089;color:#47203b;border-radius:12px;padding:13px 25px;font:700 17px Fredoka;cursor:pointer}.hint{font-size:11px;color:#dfafc4;text-align:center}.float{position:fixed;z-index:20;pointer-events:none;color:#ffe4a3;font:700 24px Fredoka;text-shadow:0 0 12px #ffc760;animation:fly .9s ease-out forwards}@keyframes fly{to{transform:translateY(-50px) scale(1.15);opacity:0}}@media(max-width:390px){.app{gap:10px;padding:12px 8px 21px}.boardwrap{padding:6px;border-radius:14px}.board{gap:1px}.cell{border-radius:3px}.stat strong{font-size:16px}.legend{font-size:9px}}@media(prefers-reduced-motion:reduce){*,*:after{animation:none!important;transition:none!important}}
+
+/* Matte Hot Pink — actual DOM/CSS game styling, not generated concept art. */
+:root{--pink:#e65c91;--cream:#fff4ee;--rose:#ed83aa;--dark:#361b33;--border:#b94f7b}
+html,body{background:#e790ad!important;color:#fff5ee;scrollbar-width:none}
+html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}
+body{background:radial-gradient(ellipse at 12% 2%,#f4acc3 0%,transparent 42%),radial-gradient(ellipse at 95% 75%,#da7e9e,transparent 55%),#e48eab!important}
+.app{max-width:510px;padding:16px 15px 24px;gap:12px;min-height:100dvh;background:linear-gradient(170deg,#ed9db7 0%,#de86a4 100%);box-shadow:0 0 45px #5c1e4b22}
+.topline{gap:8px}.tag{color:#682c4d;font-size:10px;letter-spacing:.08em}.topbuttons button,.smallbutton{border:1px solid #bc6888;background:#f6bdd0;color:#712a4c;border-radius:12px;padding:8px 10px;box-shadow:0 2px 0 #ad5779;font-size:11px}
+header{padding:4px 0 5px}header h1{font-size:clamp(33px,9vw,53px);font-weight:700;color:#fff7ed;text-shadow:0 3px 0 #ad517e,0 7px 16px #8a395f44;margin:1px 0 4px;letter-spacing:.045em}
+header h1 .punct{color:#75284e}header p{color:#783350;font-size:12px;font-weight:700;letter-spacing:.04em}
+.stats{grid-template-columns:1.2fr 1fr 1fr;gap:8px}.stat{background:#f2bbcb;border:1.5px solid #c87997;border-radius:14px;padding:9px 4px;box-shadow:0 3px 0 #ab55796b}.stat label{color:#923d65;font-size:9px}.stat strong{color:#762d50;font-size:20px;font-weight:700}
+.boardwrap{padding:11px 10px 9px;border-radius:23px;border:2px solid #ad547d;background:#7b3659;box-shadow:0 7px 0 #ad5d80,0 19px 28px #6f274b34,inset 0 1px 0 #ffbdd2}
+.board{gap:3px}.cell{border:1px solid #a36887;border-radius:8px;background:#53263f;transition:background .13s,box-shadow .13s,transform .13s}.cell:nth-child(8n + 1){border-left-color:#a36887}
+.cell.occupied,.cell.occupied.alt{background:var(--group-color,#edabc7);border-color:#ffe1e7;box-shadow:inset 0 1px 1px #fff9,0 2px 0 #4a18394d;border-radius:4px;position:relative}
+.cell.occupied.group-first{border-radius:9px 2px 2px 9px;border-right-color:transparent}
+.cell.occupied.group-middle{border-radius:2px;border-left-color:transparent;border-right-color:transparent}
+.cell.occupied.group-last{border-radius:2px 9px 9px 2px;border-left-color:transparent}
+.cell.occupied.group-single{border-radius:9px;border-left-color:#ffe1e7;border-right-color:#ffe1e7}
+.cell.occupied img{width:100%;height:100%;padding:2px;filter:drop-shadow(0 2px 2px #53263f55)}
+.cell.selected{z-index:4;outline:2px solid #fff1a9;outline-offset:0;box-shadow:0 0 0 2px #fff0aa55,inset 0 1px 1px #fff9}
+.cell.ghost{background:#f4d2de!important;outline:2px solid #fff1bb;z-index:4}
+.cell.invalid{background:#dd668d!important;outline:2px solid #fce6ec}
+.cell.special:after{font-size:clamp(7px,1.9vw,11px);right:0;top:-4px;background:#ffe3ab;color:#733b26;border:1px solid #fff4c7;border-radius:6px;box-shadow:0 1px 5px #9a5c26aa;padding:1px 2px}
+.legend{margin:11px 1px 0;align-items:center;gap:4px;color:#ffe2e8;font-weight:700;font-size:9px}.legend span:last-child{white-space:nowrap;color:#ffe9af}.gold-dot{display:inline-block;width:8px;height:8px;background:#ffe19c;border-radius:50%;box-shadow:0 0 6px #ffe4a3}
+.message{color:#6e2850;min-height:20px;font-size:13px}.action button{background:#f7c1d3;color:#73314f;border:1px solid #bb6b8c;border-bottom:3px solid #af5a7d}.action button.secondary{background:#f6c0d1;border-color:#c47897;border-bottom-color:#ae597b}.rules{background:#b96086;border:1px solid #eaa9bf;color:#fff5ed}.rules summary{color:#fff1dc}.hint{color:#753b55;font-size:10px;line-height:1.5;margin:0}.overlay{background:#50263dbb}.modal{background:#f2bed0;border:2px solid #fff0e7;box-shadow:0 15px 40px #5b1c3c66}.modal h2,.modal p{color:#792b53}.modal button{background:#dd6593;border-bottom-color:#9c3f68;color:#fffaf6}
+@media(max-width:390px){.app{padding:10px 9px 17px;gap:9px}.boardwrap{padding:7px;border-radius:17px}.board{gap:2px}.cell{border-radius:6px}.stat strong{font-size:17px}.legend{font-size:8px}.topbuttons button{font-size:10px;padding:7px 8px}}
+
+/* Restrained game feedback: clean row dissolve and physical piece drops. */
+.action{grid-template-columns:repeat(2,minmax(0,1fr))}
+.action button{font-size:12px;padding:12px 6px}
+.boardwrap{position:relative;overflow:visible}
+.board.is-resolving .cell.occupied{cursor:default}
+.cell.line-clear{z-index:3!important;background:#f1a6bc!important;border-color:#ffe3ec!important;box-shadow:none!important;animation:cleanRowOut 320ms ease-in both}
+.cell.line-clear img,.cell.line-clear .fallback,.cell.line-clear.special:after{animation:cleanDonutOut 320ms ease-in both}
+@keyframes cleanRowOut{0%,20%{opacity:1}45%{background:#f5c5d2;opacity:1}100%{opacity:0;transform:scaleY(.25)}}
+@keyframes cleanDonutOut{0%,30%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.84)}}
+/* Soft landing feedback for donuts after falling. The fall itself is WAAPI position interpolation. */
+.cell.just-landed{animation:landSettle 150ms ease-out both}
+@keyframes landSettle{0%{filter:brightness(1.07)}100%{filter:brightness(1)}}
+.clear-points{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);z-index:12;white-space:nowrap;color:#fff4ec;background:#7a365c;padding:6px 13px;border:1px solid #e6a2bd;border-radius:10px;font:700 17px Fredoka,system-ui;box-shadow:0 3px 7px #38152e55;pointer-events:none;animation:cleanPoints 850ms ease-out both}
+@keyframes cleanPoints{0%{opacity:0;transform:translate(-50%,0)}15%,70%{opacity:1;transform:translate(-50%,-12px)}100%{opacity:0;transform:translate(-50%,-25px)}}
+@media(prefers-reduced-motion:reduce){.cell.line-clear,.cell.line-clear img,.cell.just-landed,.clear-points{animation:none!important}}
+</style></head><body><main class="app">
+<div class="topline"><span class="tag">NINE & WEIRD  /  DONUT EVENT</span><div class="topbuttons"><button id="pause">PAUSE</button><button id="reset">RESTART</button></div></div>
+<header><h1>DONUT RISE<span class="punct">!</span></h1><p>Slide · Drop · Clear · Repeat</p></header>
+<div class="stats"><div class="stat"><label>SCORE</label><strong id="score">0000</strong></div><div class="stat"><label>LINES</label><strong id="lines">0</strong></div><div class="stat"><label>MOVES</label><strong id="countdown">0</strong></div></div>
+
+<div class="boardwrap" id="wrap"><div class="board" id="board" aria-label="8-column by 10-row donut board"></div><div class="legend"><span>SLIDE SIDEWAYS · GRAVITY DROPS · NEW ROW RISES</span><span><span class="gold-dot"></span> +50</span></div></div>
+<div class="message" id="message">Slide a connected donut group sideways.</div>
+<div class="action"><button id="tryclear" class="secondary">TRY A LINE CLEAR</button><button id="help" class="secondary">HOW TO PLAY</button></div>
+<details class="rules" id="rules"><summary>THE RULES</summary><p>Each connected strip uses <b>one donut design</b> so you can tell blocks apart. The board is <b>8 columns wide and 10 rows tall</b>. Slide a connected group of 1–4 donuts <b>left or right within its existing row</b>; you cannot lift or manually drop it. You cannot jump over other groups. After each successful slide, the whole group falls automatically as far as it can without splitting. Completed 8-donut rows clear for <b>100 points</b>, plus <b>+50 for each marked donut in the cleared row</b>. Cascades earn combo multipliers. <b>Every successful slide raises one new row from the bottom</b>; there is no timer. The game ends if the stack crosses the top.</p><p>You can drag a group or tap a group and then tap an empty cell <b>in the same row</b>.</p></details>
+<p class="hint">TEST BUILD · Donuts World artwork · Score not yet connected to leaderboard</p>
+</main><div class="overlay" id="overlay" hidden><div class="modal"><h2 id="overlaytitle">GAME OVER!</h2><p id="overlaytext">The donuts reached the top.</p><button id="again">PLAY AGAIN</button></div></div>
+<script>
+(()=>{'use strict';
+const COLS=8,ROWS=10,files=['01_pink_sprinkles.png','02_chocolate_crunch.png','03_strawberry_drizzle.png','04_lemon_coconut.png','05_aqua_cookies.png','06_blueberry.png','07_caramel_crunch.png','08_heart_candy.png','09_mint_chocolate.png'];
+const art=files.map(f=>'../assets/donuts/'+f);
+const $=id=>document.getElementById(id);const board=$('board'),wrap=$('wrap'),message=$('message');let grid=[],groups=new Map(),nextId=1,score=0,lines=0,moves=0,running=true,paused=false,selected=null,drag=null,hover=null,busy=false;
+const rnd=(a,b)=>Math.floor(a+Math.random()*(b-a+1));const empty=()=>Array.from({length:ROWS},()=>Array(COLS).fill(null));
+function announce(str){message.textContent=str;}
+function groupRow(id){for(let r=0;r<ROWS;r++){let c=grid[r].indexOf(id);if(c>=0)return {r,c};}return null}
+function seedGroup(r,c,len,donut=null,specialAt=-1){let id=nextId++;const kind=donut===null?rnd(0,8):donut;let ds=Array.from({length:len},(_,i)=>({type:kind,special:i===specialAt}));groups.set(id,{len,donuts:ds});for(let j=0;j<len;j++)grid[r][c+j]=id;return id}
+function initial(){
+ // Two demonstration rows that leave space to practice sideways movement.
+ seedGroup(ROWS-2,0,4,0);seedGroup(ROWS-2,6,2,1,1); // 4-00-2
+ seedGroup(ROWS-1,0,1,2);seedGroup(ROWS-1,3,3,3);seedGroup(ROWS-1,6,2,4); // 1-00-3-2
+}
+function generateRow(){let a=Array(COLS).fill(null),c=0,hasGap=false;while(c<COLS){if(Math.random()<.28){c+=rnd(1,Math.min(3,COLS-c));hasGap=true;continue}let len=rnd(1,Math.min(4,COLS-c));let id=nextId++;const kind=rnd(0,8);let donuts=Array.from({length:len},()=>({type:kind,special:Math.random()<.085}));groups.set(id,{len,donuts});for(let k=0;k<len;k++)a[c+k]=id;c+=len}if(!hasGap){let id=a[COLS-1];if(id!==null){let first=a.indexOf(id);for(let i=first;i<COLS;i++)a[i]=null;groups.delete(id)}}return a}
+function cleanGroups(){const alive=new Set(grid.flat().filter(v=>v!==null));for(const id of groups.keys())if(!alive.has(id))groups.delete(id)}
+// Whole strips fall under gravity if EVERY square directly beneath the strip is empty.
+// They never split into individual donuts, and stop if any column is supported.
+function settleGroups(){
+ let moved=false,passes=0;
+ do{
+  moved=false;
+  const positions=[];
+  for(const id of groups.keys()){
+   const p=groupRow(id);if(p)positions.push({id,...p});
+  }
+  // Bottom-up lets upper groups drop into space freed by lower groups.
+  positions.sort((a,b)=>b.r-a.r||a.c-b.c);
+  for(const {id} of positions){
+   const pos=groupRow(id),g=groups.get(id);
+   if(!pos||!g)continue;
+   let bottom=pos.r;
+   while(bottom<ROWS-1){
+    let space=true;
+    for(let k=0;k<g.len;k++){
+     const other=grid[bottom+1][pos.c+k];
+     if(other!==null&&other!==id){space=false;break;}
+    }
+    if(!space)break;
+    bottom++;
+   }
+   if(bottom!==pos.r){
+    for(let k=0;k<g.len;k++){grid[pos.r][pos.c+k]=null;grid[bottom][pos.c+k]=id;}
+    moved=true;
+   }
+  }
+  if(moved)cleanGroups();
+ }while(moved&&++passes<ROWS*ROWS);
+}
+const nap=ms=>new Promise(done=>setTimeout(done,ms));
+function fullRows(){const rows=[];for(let r=0;r<ROWS;r++)if(grid[r].every(id=>id!==null))rows.push(r);return rows}
+function snapshotPositions(){
+ const old=new Map();
+ for(const id of groups.keys()){
+  const pos=groupRow(id);if(pos)old.set(id,pos);
+ }
+ return old;
+}
+async function animateBoardMovement(before){
+ // Move actual blocks from prior grid positions to their new coordinates.
+ // This also handles the physical downshift of rows after a full line disappears.
+ render();
+ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const sample=board.querySelector('.cell');if(!sample)return;
+ const style=getComputedStyle(board);
+ const stepX=sample.getBoundingClientRect().width+(parseFloat(style.columnGap)||0);
+ const stepY=sample.getBoundingClientRect().height+(parseFloat(style.rowGap)||0);
+ const animations=[];
+ for(const [id,pos] of before){
+  const after=groupRow(id);
+  if(!after)continue;
+  const dx=(pos.c-after.c)*stepX,dy=(pos.r-after.r)*stepY;
+  if(!dx&&!dy)continue;
+  const duration=Math.min(680,Math.max(260,260+Math.abs(after.r-pos.r)*78));
+  const cells=board.querySelectorAll('.cell[data-id="'+id+'"]');
+  cells.forEach(el=>{
+   el.style.zIndex='5';
+   const keyframes=[
+    {transform:'translate('+dx+'px,'+dy+'px)'},
+    {transform:'translate('+dx*.18+'px,'+dy*.18+'px)',offset:.79},
+    {transform:'translate(0px,0px)',offset:1}
+   ];
+   const animation=el.animate(keyframes,{duration,easing:'cubic-bezier(.34,.01,.28,1)',fill:'both'});
+   animations.push(animation.finished.catch(()=>{}));
+  });
+ }
+ if(animations.length)await Promise.all(animations);
+}
+async function dropWithMotion(){
+ const before=snapshotPositions();
+ settleGroups();
+ await animateBoardMovement(before);
+}
+async function showLineEffect(rows,combo){
+ // Only full rows are allowed to use this animation; nothing else changes.
+ render();
+ for(const r of rows)board.querySelectorAll('.cell[data-r="'+r+'"]').forEach(el=>el.classList.add('line-clear'));
+ announce(combo===1?'FULL LINE!':'COMBO ×'+combo+'!');
+ await nap(window.matchMedia('(prefers-reduced-motion: reduce)').matches?90:340);
+}
+async function clearLines(combo=1,full=fullRows()){
+ if(!full.length)return 0;
+ let specialCount=0;
+ // Score only the actual occupied cells of 100%-complete 8-donut rows.
+ for(const r of full){for(let c=0;c<COLS;c++){
+  const id=grid[r][c],g=groups.get(id),pos=groupRow(id);
+  if(g&&pos&&g.donuts[c-pos.c]?.special)specialCount++;
+ }}
+ const before=snapshotPositions();
+ const remaining=grid.filter((_,r)=>!full.includes(r));
+ grid=Array.from({length:full.length},()=>Array(COLS).fill(null)).concat(remaining);
+ const points=(full.length*100+specialCount*50)*combo;
+ score+=points;lines+=full.length;cleanGroups();selected=null;
+ announce((combo>1?'COMBO ×'+combo+'! ':'')+full.length+' FULL LINE'+(full.length>1?'S':'')+'! +'+points);
+ await animateBoardMovement(before);
+ const f=document.createElement('div');f.className='clear-points';f.textContent=(combo>1?'COMBO ×'+combo+'  ':'')+'+'+points;
+ wrap.append(f);setTimeout(()=>f.remove(),1050);
+ return full.length;
+}
+async function resolveBoard(){
+ let combo=1;
+ for(let i=0;i<ROWS;i++){
+  await dropWithMotion();
+  const full=fullRows();
+  if(!full.length)break;
+  await showLineEffect(full,combo);
+  await clearLines(combo,full);
+  combo++;
+ }
+ await dropWithMotion();
+}
+function rise(){
+ if(!running||paused)return;
+ if(grid[0].some(v=>v!==null)){end();return;}
+ grid.shift();grid.push(generateRow());selected=null;cleanGroups();
+ render();
+ if(running)announce('A NEW ROW ROSE FROM BELOW ↑');
+}
+function locAtPoint(x,y){const el=document.elementFromPoint(x,y)?.closest('.cell');if(!el||!board.contains(el))return null;return {r:+el.dataset.r,c:+el.dataset.c}}
+function canMove(id,r,c){
+ const g=groups.get(id),pos=groupRow(id);
+ if(!g||!pos||r!==pos.r||c<0||c+g.len>COLS||c===pos.c)return false;
+ // Horizontal slide must be unobstructed along its entire path, not a teleport.
+ const direction=c>pos.c?1:-1;
+ for(let step=pos.c+direction;direction>0?step<=c:step>=c;step+=direction){
+  for(let k=0;k<g.len;k++){
+   const cell=grid[r][step+k];
+   if(cell!==null&&cell!==id)return false;
+  }
+ }
+ return true;
+}
+async function move(id,r,c){
+ if(!running||paused||busy||!canMove(id,r,c))return false;
+ busy=true;wrap.classList.add('is-resolving');
+ try{
+  const pos=groupRow(id),g=groups.get(id);
+  for(let k=0;k<g.len;k++)grid[pos.r][pos.c+k]=null;
+  for(let k=0;k<g.len;k++)grid[r][c+k]=id;
+  selected=null;hover=null;moves++;
+  render();
+  await resolveBoard();
+  if(running){rise();if(running)await dropWithMotion();}
+  return true;
+ }finally{busy=false;wrap.classList.remove('is-resolving');render()}
+}
+function render(){const frag=document.createDocumentFragment();for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const id=grid[r][c],el=document.createElement('div');el.className='cell';el.dataset.r=r;el.dataset.c=c;if(id!==null){const g=groups.get(id),pos=groupRow(id),offset=c-pos.c,d=g.donuts[offset];el.classList.add('occupied');el.dataset.id=id;if(id%2)el.classList.add('alt');el.classList.add('group-'+(offset===0?'first':offset===g.len-1?'last':'middle'));if(g.len===1)el.classList.add('group-single');el.style.setProperty('--group-color', ['#eab0c6','#c99cbd','#edb9a9','#e3b58d','#afd9cf','#c8b4e2','#e4c1a4','#f2aac1','#c1d9b5'][d.type]);if(d.special)el.classList.add('special');if(selected===id)el.classList.add('selected');const img=new Image();img.src=art[d.type];img.alt='';img.draggable=false;img.onerror=()=>{img.remove();const t=document.createElement('span');t.className='fallback';t.textContent='🍩';el.append(t)};el.append(img)}if(hover){const len=groups.get(hover.id)?.len||0;if(r===hover.r&&c>=hover.c&&c<hover.c+len)el.classList.add(hover.valid?'ghost':'invalid')}frag.append(el)}board.replaceChildren(frag);$('score').textContent=String(score).padStart(4,'0');$('lines').textContent=lines;$('countdown').textContent=moves;$('pause').textContent=paused?'RESUME':'PAUSE'}
+board.addEventListener('pointerdown',e=>{if(!running||paused||busy||e.button!==0)return;const pos=locAtPoint(e.clientX,e.clientY);if(!pos)return;const id=grid[pos.r][pos.c];if(id!==null){const start=groupRow(id);selected=id;drag={id,offset:pos.c-start.c,sx:e.clientX,sy:e.clientY,moved:false};wrap.classList.add('dragging');try{board.setPointerCapture(e.pointerId)}catch{}render()} });
+function dragTarget(e){
+ if(!drag)return null;
+ const pos=groupRow(drag.id);if(!pos)return null;
+ const w=board.getBoundingClientRect().width/COLS;
+ const delta=Math.round((e.clientX-drag.sx)/w);
+ return {r:pos.r,c:Math.max(0,Math.min(COLS-groups.get(drag.id).len,pos.c+delta))};
+}
+board.addEventListener('pointermove',e=>{
+ if(!drag||!running||paused||busy)return;
+ const target=dragTarget(e);if(!target)return;
+ if(Math.abs(e.clientX-drag.sx)>7)drag.moved=true;
+ if(drag.moved){const valid=canMove(drag.id,target.r,target.c);if(!hover||hover.c!==target.c||hover.valid!==valid){hover={...target,id:drag.id,valid};render()}}
+});
+board.addEventListener('pointerup',e=>{
+ if(!drag)return;
+ const target=dragTarget(e);
+ if(drag.moved&&target){if(!canMove(drag.id,target.r,target.c))announce('That space is occupied. Slide into another gap.');else void move(drag.id,target.r,target.c);}
+ else if(!drag.moved){selected=drag.id}
+ drag=null;hover=null;wrap.classList.remove('dragging');if(!busy)render();
+});
+board.addEventListener('pointercancel',()=>{drag=null;hover=null;wrap.classList.remove('dragging');render()});
+board.addEventListener('click',e=>{if(!running||paused||busy||drag)return;const el=e.target.closest('.cell');if(!el)return;const r=+el.dataset.r,c=+el.dataset.c;const id=grid[r][c];if(id!==null){selected=id;render();return}if(selected!==null){const g=groups.get(selected);if(r!==groupRow(selected)?.r){announce('You can only slide within the same row.');return}let start=Math.min(COLS-g.len,c);if(!canMove(selected,groupRow(selected)?.r,start))announce('Slide left or right into a free space in that row.');else void move(selected,groupRow(selected)?.r,start)}});
+function end(){running=false;$('overlay').hidden=false;$('overlaytitle').textContent='GAME OVER!';$('overlaytext').textContent='The donuts reached the top. Final score: '+score+' · Lines cleared: '+lines+' · Moves: '+moves;render()}
+function reset(){
+ if(busy)return;
+ grid=empty();groups=new Map();nextId=1;score=0;lines=0;moves=0;running=true;paused=false;selected=null;drag=null;hover=null;
+ initial();settleGroups();$('overlay').hidden=true;announce('Slide a group sideways; every valid move adds a new row!');render();
+}
+function tryLineClear(){
+ if(busy)return;
+ grid=empty();groups=new Map();nextId=1;score=0;lines=0;moves=0;running=true;paused=false;selected=null;drag=null;hover=null;
+ // Lower row has a single gap at column 4; the single donut can slide on the row above and drop into it.
+ seedGroup(ROWS-1,0,3,1);seedGroup(ROWS-1,4,4,0,-1);
+ seedGroup(ROWS-2,1,1,7,0);
+ $('overlay').hidden=true;
+ announce('TRY IT: slide the single donut 2 spaces right to fill the gap!');render();
+}
+$('tryclear').onclick=tryLineClear;
+$('reset').onclick=reset;$('again').onclick=reset;
+$('pause').onclick=()=>{if(!running)return;paused=!paused;announce(paused?'PAUSED':'BACK TO BAKING!');render()};
+$('help').onclick=()=>{$('rules').open=true;$('rules').scrollIntoView({behavior:'smooth',block:'nearest'})};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&running){paused=!paused;render()}});
+reset();
+})();
+</script></body></html>
