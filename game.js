@@ -1615,16 +1615,10 @@ function nwDoubleIdentity(person,self=false,score=null){
  }
  return `<div class="nw-double-person">${nwDoublePhoto(person)}<strong>${nwEscape(person.name||'Partner')}</strong>${points}</div>`;
 }
-function nwDoubleRecordPoints(id,start=Date.now(),end=Date.now()+259200000){
- const rows=nwBattlePracticeRuns.filter(r=>r.profile_id===id);
- const max=rows.reduce((sum,r)=>sum+Number(r.points||0),0);
- const fraction=Math.max(0,Math.min(1,(Date.now()-start)/Math.max(1,end-start)));
- return Math.floor(max*fraction);
-}
 function nwDoubleScores(m=nwDoubleSnapshot){
  if(!m)return {ours:0,theirs:0,mine:0,partner:0};
  const mine=Number(m.points||0);
- const partner=m.partner?(Number.isInteger(m.partner.recorded_id)?nwDoubleRecordPoints(m.partner.recorded_id,Date.parse(m.start_at),Date.parse(m.end_at)):Number(m.partner.points||0)):0;
+ const partner=m.partner?Number(m.partner.points||0):0;
  const theirs=(m.opponents||[]).reduce((sum,p)=>sum+Number(p.points||0),0);
  return {ours:mine+partner,theirs,mine,partner};
 }
