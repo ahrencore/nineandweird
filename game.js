@@ -427,11 +427,13 @@ function nwFriendsDraw(tab='list',back=nwShowProfile){
    if(!/^[A-Za-z0-9._]{3,20}$/.test(name)){out.textContent='Enter a valid username (3–20 characters).';return}
    searchBtn.disabled=true;out.textContent='Searching...';
    try{
-    const match=await nwFriendsRpc('nw_friend_search',{p_name:name});
-    if(!match){out.textContent='No available player with that username.';return}
-    const related=friends.some(f=>f.id===match.id),sent=outgoing.some(f=>f.id===match.id),received=incoming.some(f=>f.id===match.id);
-    out.innerHTML=item(match,related?'FRIENDS':sent?'REQUEST SENT':received?'CHECK REQUESTS':pill('ADD FRIEND','send',match.id));
-    out.querySelectorAll('[data-social-action]').forEach(b=>b.onclick=()=>nwSocialAction('send',match.id,tab,back));
+    const matches=await nwFriendsRpc('nw_friend_search_matches',{p_name:name});
+    if(!Array.isArray(matches)||!matches.length){out.textContent='No available player with that username.';return}
+    out.innerHTML=matches.map(match=>{
+      const related=friends.some(f=>f.id===match.id),sent=outgoing.some(f=>f.id===match.id),received=incoming.some(f=>f.id===match.id);
+      return item(match,related?'FRIENDS':sent?'REQUEST SENT':received?'CHECK REQUESTS':pill('ADD FRIEND','send',match.id));
+    }).join('');
+    out.querySelectorAll('[data-social-action]').forEach(b=>b.onclick=()=>nwSocialAction('send',b.dataset.socialId,tab,back));
    }catch(e){out.textContent=e.message}
    finally{searchBtn.disabled=false}
   };
