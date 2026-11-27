@@ -10885,3 +10885,25 @@ body:has(#game.theme-cakes:not([hidden])){background:#FFE0E8!important}
  display:block;font:700 11px/1.2 'Pangolin',system-ui,sans-serif;
  letter-spacing:.1em;color:#A6D5F0;
 }
+
+
+/* Collectibles: reuse existing Worlds galaxy and planets; scoped to new screens. */
+#game.nw-collectibles-theme .nw-collectibles-planets{padding-bottom:24px!important;row-gap:16px!important;}
+#game.nw-collectibles-theme .nw-collectible-planet{overflow:visible;}
+#game.nw-collectibles-theme .nw-collectible-planet .nw-planet-pieces img.nw-collectible-unowned{filter:grayscale(1) brightness(.23);opacity:.52;}
+#game.nw-collectibles-theme .nw-collectible-count{position:absolute;z-index:2;bottom:-8px;left:50%;transform:translateX(-50%);padding:2px 7px;border:1px solid var(--planet-accent);border-radius:14px;background:#101225;color:var(--planet-accent);font:700 clamp(10px,2.7vw,13px)/1.3 'Finger Paint',cursive;white-space:nowrap;box-shadow:0 2px 8px #05051399;}
+#game.nw-collectible-detail-theme .nw-collectible-detail{box-sizing:border-box;width:min(100%,560px);margin:4px auto 28px;padding:10px 5px 22px;color:var(--collect-ink);background:transparent;text-align:center;}
+#game.nw-collectible-detail-theme .nw-collectible-detail-top{display:flex;align-items:center;justify-content:center;min-height:34px;}
+#game.nw-collectible-detail-theme .nw-collectible-detail-top strong{font:400 clamp(15px,4vw,20px)/1.3 'Finger Paint',cursive;color:var(--collect-accent);}
+#game.nw-collectible-detail-theme .nw-collectible-piece-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 0;align-items:center;justify-items:center;width:100%;margin:12px auto 8px;}
+#game.nw-collectible-detail-theme .nw-collectible-piece{position:relative;width:min(100%,164px);aspect-ratio:1;min-width:0;isolation:isolate;color:var(--collect-accent);}
+#game.nw-collectible-detail-theme .nw-collectible-float{position:absolute;inset:12%;display:grid;place-items:center;animation:nwCollectibleFloat 4.8s ease-in-out infinite;animation-delay:calc(var(--piece-index) * -0.52s);}
+#game.nw-collectible-detail-theme .nw-collectible-piece-disc{display:grid;place-items:center;width:72%;height:72%;border-radius:50%;border:1px solid color-mix(in srgb,var(--collect-accent) 65%,transparent);background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--collect-bg) 75%,white),var(--collect-bg));box-shadow:0 0 15px color-mix(in srgb,var(--collect-accent) 18%,transparent);overflow:visible;}
+#game.nw-collectible-detail-theme .nw-collectible-piece-image{width:85%;height:85%;object-fit:contain;display:block;}
+#game.nw-collectible-detail-theme .nw-collectible-piece-image.nw-collectible-unowned{filter:grayscale(1) brightness(.17);opacity:.66;}
+#game.nw-collectible-detail-theme .nw-collectible-name-orbit{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;transform-origin:center;animation:nwCollectibleNameOrbit var(--orbit-time) linear infinite;font-family:'Finger Paint',cursive;}
+#game.nw-collectible-detail-theme .nw-collectible-detail-note{margin:16px auto 8px;color:#F8EBDD;opacity:.8;font:400 14px/1.4 'Finger Paint',cursive;}
+@keyframes nwCollectibleFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes nwCollectibleNameOrbit{to{transform:rotate(360deg)}}
+@media(max-width:370px){#game.nw-collectible-detail-theme .nw-collectible-piece-grid{gap:10px 0;}#game.nw-collectible-detail-theme .nw-collectible-detail{padding-left:1px;padding-right:1px;}}
+@media(prefers-reduced-motion:reduce){#game.nw-collectible-detail-theme .nw-collectible-float,#game.nw-collectible-detail-theme .nw-collectible-name-orbit{animation:none!important;}}
