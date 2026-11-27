@@ -25,7 +25,7 @@ function nwShowCollectibleWorld(id){
  const colors=nwGalaxyColors[id]||['#141A33','#8E83BE','#F8EBDD'];
  const folder=nwTripleArtFiles[id][0],files=nwTripleArtFiles[id][1];
  const pieces=files.map(function(filename,i){
-  const name=id==='cakefail'?["PIPING BAG DISASTER","OVERFLOWING CUPCAKE","RUNAWAY STRAWBERRY","FROSTING SPATULA","SPILLED SPRINKLES","SQUASHED FROSTING FLOWERS","OVERFLOWING MIXING BOWL","MELTING STRIPED CANDLE","COLLAPSING CHERRY CAKE"][i]:nwCollectiblePieceName(filename),speed=18+(i%4)*3.5;
+  const name=id==='cakefail'?["PIPING BAG DISASTER","OVERFLOWING CUPCAKE","RUNAWAY STRAWBERRY","FROSTING SPATULA","SPILLED SPRINKLES","SQUASHED FROSTING FLOWERS","OVERFLOWING MIXING BOWL","MELTING STRIPED CANDLE","COLLAPSING CHERRY CAKE"][i]:id==='baggagehell'&&i===4?'LEAKING PURPLE GOO':nwCollectiblePieceName(filename),speed=18+(i%4)*3.5;
   return '<div class="nw-collectible-piece" style="--piece-index:'+i+';--orbit-time:'+speed+'s" role="img" aria-label="'+nwEscape(name)+', not collected">'
     +'<div class="nw-collectible-float"><span class="nw-collectible-piece-disc"><img src="'+folder+filename+'" alt="" class="nw-collectible-piece-image nw-collectible-unowned" draggable="false" loading="lazy"></span></div>'
     +'<svg class="nw-collectible-name-orbit" viewBox="0 0 120 120" aria-hidden="true"><defs><path id="nwCollectPieceOrbit'+i+'" d="M60,60 m-49,0 a49,49 0 1,1 98,0 a49,49 0 1,1 -98,0"/></defs><circle cx="60" cy="60" r="49" fill="none" stroke="currentColor" stroke-opacity=".22" stroke-dasharray="2 5"/><text font-size="'+(name.length>24?7:name.length>18?8:9)+'" fill="currentColor" letter-spacing=".3"><textPath href="#nwCollectPieceOrbit'+i+'" startOffset="0%">'+nwEscape(name)+' ✧</textPath></text></svg>'
