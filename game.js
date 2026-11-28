@@ -1856,7 +1856,7 @@ function nwDonutRiseBack(){
 }
 function nwDonutRiseOpen(){
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-donut-rise-shell');
- evDisplay(`${evHeader('DONUT RISE!',nwDonutRiseBack)}<section class="nw-donut-rise-frame-container"><iframe id="nwDonutRiseFrame" title="DONUT RISE! — weekend event and practice" src="donut-rise/index.html?v=18-scarce-single-blocks" loading="eager"></iframe></section>`);
+ evDisplay(`${evHeader('DONUT RISE!',nwDonutRiseBack)}<section class="nw-donut-rise-frame-container"><iframe id="nwDonutRiseFrame" title="DONUT RISE! — weekend event and practice" src="donut-rise/index.html?v=19-scattered-row-spawn" loading="eager"></iframe></section>`);
  nwResetViewToTop();
 }
 function nwAislePanicBack(){
