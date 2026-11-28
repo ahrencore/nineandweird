@@ -11412,14 +11412,14 @@ body:has(#game.nw-aisle-shell:not([hidden]))::-webkit-scrollbar,
 
 /* Matte Velvet Sweep: only the five fixed-rarity capsules, never Mystery. */
 #game.nw-capsule-shop-theme .nw-capsule-visual:not(.nw-capsule-icy) .nw-capsule-velvet-sweep{
-  animation:nwCapsuleVelvetSweep 5.4s ease-in-out infinite;
+  animation:nwCapsuleVelvetSweep 2.8s ease-in-out infinite;
   pointer-events:none;
 }
 @keyframes nwCapsuleVelvetSweep{
-  0%,14%{transform:translateX(-110px);opacity:0}
-  24%{opacity:.45}
-  45%{opacity:.6}
-  62%{transform:translateX(230px);opacity:0}
+  0%{transform:translateX(-110px);opacity:0}
+  8%{opacity:.55}
+  28%{opacity:.65}
+  48%{transform:translateX(230px);opacity:0}
   100%{transform:translateX(230px);opacity:0}
 }
 /* Accessible, tap-to-expand information beside each capsule's short description. */
@@ -11450,4 +11450,25 @@ body:has(#game.nw-aisle-shell:not([hidden]))::-webkit-scrollbar,
 }
 @media(prefers-reduced-motion:reduce){
   #game.nw-capsule-shop-theme .nw-capsule-visual:not(.nw-capsule-icy) .nw-capsule-velvet-sweep{animation:none!important;opacity:.35;transform:translateX(80px)}
+}
+
+/* Capsule-store alignment: Mystery reserves the same star-row height as other tiers. */
+#game.nw-capsule-shop-theme .nw-capsule-tier-card .nw-capsule-tier-stars-spacer{visibility:hidden!important;pointer-events:none}
+#game.nw-capsule-shop-theme .nw-capsule-tier-card .nw-capsule-tier-price{
+  display:flex;align-items:center;justify-content:center;
+}
+#game.nw-capsule-shop-theme .nw-capsule-confirm-price{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  margin:12px auto;color:inherit;
+  font:400 16px/1.4 'Finger Paint',cursive;
+}
+#game.nw-capsule-shop-theme .nw-capsule-confirm-price .nw-diamond-amount{
+  display:inline-flex!important;align-items:center!important;gap:5px;
+  line-height:1.4;vertical-align:middle;
+}
+#game.nw-capsule-shop-theme .nw-capsule-confirm-price .nw-diamond-icon{
+  display:block;flex:none;object-fit:contain;vertical-align:middle;
+}
+#game.nw-capsule-shop-theme .nw-capsule-confirm-price .nw-diamond-amount>span{
+  display:block;line-height:1.4;
 }
