@@ -12,7 +12,7 @@ function nwCollectiblePlanet(id,i){
  const bg=colors[0],accent=colors[1],ink=colors[2],label=w.name;
  const symbols=pair[1].map(function(file,index){const num=nwCollectibleCount(id,index+1);return '<span class="nw-collect-planet-item"><img class="'+(num?'':'nw-collectible-unowned')+'" src="'+pair[0]+file+'" alt="" loading="lazy" draggable="false"></span>';}).join('');
  const arc='<svg class="nw-planet-orbit" viewBox="0 0 180 180" aria-hidden="true"><defs><path id="nwCollectPlanetArc'+i+'" d="M 8,90 A 82,82 0 0,0 172,90"/></defs><circle cx="90" cy="90" r="75" fill="none" stroke="'+accent+'" opacity=".35" stroke-width=".8"/><circle cx="147" cy="41" r="3.4" fill="'+accent+'"/><path d="M27 20v9m-4.5-4.5h9" stroke="'+accent+'" stroke-width="1.2" stroke-linecap="round"/><text fill="'+accent+'" font-size="'+(label.length>26?10.2:label.length>20?11.2:12.5)+'" font-weight="700"><textPath href="#nwCollectPlanetArc'+i+'" startOffset="50%" text-anchor="middle">'+nwEscape(label)+'</textPath></text></svg>';
- return '<button type="button" class="nw-planet nw-collectible-planet '+(nwCollectibleUnseen.includes(id)?'nw-notification-orbit':'')+'" data-nw-collectible-world="'+id+'" aria-label="View '+nwEscape(label)+' collection" style="--planet-bg:'+bg+';--planet-accent:'+accent+';--planet-ink:'+ink+'"><span class="nw-planet-disc"><span class="nw-planet-pieces">'+symbols+'</span></span>'+arc+'</button>';
+ return '<button type="button" class="nw-planet nw-collectible-planet" data-nw-collectible-world="'+id+'" aria-label="View '+nwEscape(label)+' collection" style="--planet-bg:'+bg+';--planet-accent:'+accent+';--planet-ink:'+ink+'"><span class="nw-planet-disc '+(nwCollectibleUnseen.includes(id)?'nw-notification-orbit':'')+'"><span class="nw-planet-pieces">'+symbols+'</span></span>'+arc+'</button>';
 }
 
 let nwCollectibleState={pieces:[],inbox:[],friends:[],unseen:[],sent_today:0};
@@ -175,8 +175,8 @@ function nwCapsuleDemoSvg(tier){
  +'<path class="nw-capsule-base" d="M25 100 A75 75 0 0 0 175 100 Z" fill="var(--capsule-color)" stroke="#2b1929" stroke-width="5"/>'
  +'<g class="nw-capsule-lid"><path d="M25 100 A75 75 0 0 1 175 100 Z" fill="var(--capsule-color)" stroke="#2b1929" stroke-width="5"/><path d="M25 100H175" stroke="#2b1929" stroke-width="4"/></g>'
  +'<circle class="nw-capsule-outline" cx="100" cy="100" r="75" fill="none" stroke="#2b1929" stroke-width="5"/>'
- +'</g></svg><span class="nw-capsule-spark-orbit" aria-hidden="true"><i></i></span>'
- +(cfg.id==='mystery'?'<span class="nw-capsule-frost" aria-hidden="true"></span>':'')+'</div>';
+ +(cfg.id==='mystery'?'<g class="nw-capsule-ice-shimmer" aria-hidden="true"><defs><clipPath id="nwIceSurface"><circle cx="100" cy="100" r="72"/></clipPath></defs><g clip-path="url(#nwIceSurface)"><path class="nw-ice-glint nw-ice-glint-a" d="M72 56l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#fff"/><path class="nw-ice-glint nw-ice-glint-b" d="M129 82l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" fill="#f8ffff"/><path class="nw-ice-glint nw-ice-glint-c" d="M82 128l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#fff"/><circle class="nw-ice-speck nw-ice-glint-d" cx="117" cy="50" r="2" fill="#fff"/><circle class="nw-ice-speck nw-ice-glint-e" cx="55" cy="104" r="1.6" fill="#fff"/></g></g>':'')
+ +'</g></svg>'+(cfg.id==='mystery'?'':'<span class="nw-capsule-spark-orbit" aria-hidden="true"><i></i></span>')+'</div>';
 }
 function nwCollectibleBuyPage(tab){
  const market=tab==='market';
@@ -242,7 +242,7 @@ function nwCapsuleOpenReward(prize){
  evDisplay(evHeader('CAPSULE OPENING',function(){nwCollectibleBuyPage('capsules');},true)
   +'<main class="nw-capsule-shop"><section class="nw-capsule-opening"><h2>'+tier.name+' CAPSULE</h2>'
   +'<div class="nw-capsule-demo-animation">'+nwCapsuleDemoSvg(tier.id)+'</div>'
-  +'<div class="nw-capsule-sample-reveal"><div class="nw-capsule-sample-piece"><img src="'+nwEscape(pic)+'" alt="'+nwEscape(name)+'" draggable="false"><svg viewBox="0 0 160 160" aria-hidden="true"><defs><path id="nwCapsuleSampleArc" d="M80 80m-68 0a68 68 0 1 1 136 0a68 68 0 1 1 -136 0"/></defs><text fill="currentColor" font-size="'+(name.length>20?'8':'10')+'"><textPath href="#nwCapsuleSampleArc">'+orbitName+' · '+orbitName+' ·</textPath></text></svg></div>'
+  +'<div class="nw-capsule-sample-reveal"><div class="nw-capsule-sample-piece"><img src="'+nwEscape(pic)+'" alt="'+nwEscape(name)+'" draggable="false"><svg viewBox="0 0 160 160" aria-hidden="true"><defs><path id="nwCapsuleSampleArc" d="M80 80m-68 0a68 68 0 1 1 136 0a68 68 0 1 1 -136 0"/></defs><text fill="currentColor" font-size="'+(name.length>20?'8':'10')+'"><textPath href="#nwCapsuleSampleArc">'+orbitName+'</textPath></text></svg></div>'
   +'<strong>'+(prize.is_new?'NEW COLLECTIBLE!':'EXTRA PIECE!')+'</strong><p>'+nwEscape(worlds[prize.world].name)+' · '+nwEscape(name)+'</p>'
   +'<button type="button" class="nw-capsule-primary" data-nw-done>AWESOME!</button></div></section></main>');
  evRoot.querySelector('[data-nw-done]').onclick=function(){nwCollectibleBuyPage('capsules');};
