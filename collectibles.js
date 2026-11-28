@@ -159,19 +159,18 @@ function nwShowCollectibleComingSoon(action){
 let nwCapsulePreviewWorld=null;
 function nwCapsuleDemoSvg(world){
  if(!nwTripleArtFiles[world])return '';
- // Both hemispheres share a 75-unit circle: closed, opaque and solid pink.
- // The moving light follows this SAME perimeter, rather than a disconnected ring.
- return '<svg class="nw-capsule-svg" viewBox="0 0 200 200" width="150" height="150" role="img" aria-label="Opaque matte pink mystery capsule with an animated light on its circular edge">'
- +'<defs><radialGradient id="nwCapsuleUpperLight" cx="32%" cy="17%" r="78%"><stop offset="0" stop-color="#fff2f5" stop-opacity=".33"/><stop offset=".68" stop-color="#fff0f5" stop-opacity=".06"/><stop offset="1" stop-color="#fff0f5" stop-opacity="0"/></radialGradient><clipPath id="nwCapsuleTopClip"><path d="M25 100 A75 75 0 0 1 175 100 Z"/></clipPath></defs>'
+ // Artwork is pure flat pink. Sparkles belong to a separate CSS-only overlay.
+ // Upper/lower halves share identical 75-unit circular geometry.
+ return '<div class="nw-capsule-visual">'
+ +'<svg class="nw-capsule-svg" viewBox="0 0 200 200" width="150" height="150" role="img" aria-label="Solid bright-pink matte mystery capsule">'
  +'<g class="nw-capsule-pod">'
  +'<path class="nw-capsule-base" d="M25 100 A75 75 0 0 0 175 100 Z" fill="#FF4F9B" stroke="#2b1929" stroke-width="5" stroke-linejoin="round"/>'
  +'<g class="nw-capsule-lid"><path d="M25 100 A75 75 0 0 1 175 100 Z" fill="#FF4F9B" stroke="#2b1929" stroke-width="5" stroke-linejoin="round"/>'
- +'<path d="M25 100 A75 75 0 0 1 175 100 Z" fill="url(#nwCapsuleUpperLight)" clip-path="url(#nwCapsuleTopClip)"/>'
  +'<path d="M25 100H175" fill="none" stroke="#2b1929" stroke-width="4"/></g>'
  +'<circle class="nw-capsule-outline" cx="100" cy="100" r="75" fill="none" stroke="#2b1929" stroke-width="5"/>'
- +'<g class="nw-capsule-orbit-glint"><circle cx="100" cy="100" r="75" fill="none" stroke="#ffe3ef" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="13 458" opacity=".95"/>'
- +'<path d="M100 19l2.4 5.6 5.6 2.4-5.6 2.4-2.4 5.6-2.4-5.6-5.6-2.4 5.6-2.4Z" fill="#fff5f7" stroke="#ffbed7" stroke-width=".6"/></g>'
- +'</g></svg>';
+ +'</g></svg>'
+ +'<span class="nw-capsule-spark-orbit" aria-hidden="true"><i></i></span>'
+ +'</div>';
 }
 function nwCollectibleBuyPage(tab){
  const ids=nwCollectibleWorldIds();
