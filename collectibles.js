@@ -158,16 +158,19 @@ function nwShowCollectibleComingSoon(action){
 // Collectibles BUY preview — no wallet changes or collectible grants until rarity is approved.
 let nwCapsulePreviewWorld=null;
 function nwCapsuleDemoSvg(world){
- const pair=nwTripleArtFiles[world];if(!pair)return '';
- const pos=[[64,62,-12],[104,55,9],[145,61,-7],[181,77,14],[67,99,8],[103,96,-10],[140,98,7],[178,105,-13],[123,76,0]];
- const pieces=pair[1].map(function(file,i){const p=pos[i];return '<image href="'+nwEscape(pair[0]+file)+'" x="'+(p[0]-23)+'" y="'+(p[1]-23)+'" width="46" height="46" preserveAspectRatio="xMidYMid meet" transform="rotate('+p[2]+' '+p[0]+' '+p[1]+')"/>';}).join('');
- return '<svg class="nw-capsule-svg" viewBox="0 0 240 250" aria-label="Mystery capsule with miniature World pieces inside">'
- +'<defs><clipPath id="nwCapsuleDomeClip"><path d="M26 120 A94 94 0 0 1 214 120 Z"/></clipPath></defs>'
- +'<ellipse cx="120" cy="224" rx="73" ry="8" fill="#0b0712" opacity=".35"/>'
+ if(!nwTripleArtFiles[world])return '';
+ // Both hemispheres share a 75-unit circle: closed, opaque and solid pink.
+ // The moving light follows this SAME perimeter, rather than a disconnected ring.
+ return '<svg class="nw-capsule-svg" viewBox="0 0 200 200" width="150" height="150" role="img" aria-label="Opaque matte pink mystery capsule with an animated light on its circular edge">'
+ +'<defs><radialGradient id="nwCapsuleUpperLight" cx="32%" cy="17%" r="78%"><stop offset="0" stop-color="#fff2f5" stop-opacity=".33"/><stop offset=".68" stop-color="#fff0f5" stop-opacity=".06"/><stop offset="1" stop-color="#fff0f5" stop-opacity="0"/></radialGradient><clipPath id="nwCapsuleTopClip"><path d="M25 100 A75 75 0 0 1 175 100 Z"/></clipPath></defs>'
  +'<g class="nw-capsule-pod">'
- +'<g class="nw-capsule-crowd" clip-path="url(#nwCapsuleDomeClip)">'+pieces+'</g>'
- +'<path class="nw-capsule-base" d="M26 120 A94 94 0 0 0 214 120 Z" fill="#FF4F9B" stroke="#2b1929" stroke-width="5" stroke-linejoin="round"/>'
- +'<g class="nw-capsule-lid"><path d="M26 120 A94 94 0 0 1 214 120 Z" fill="#f6e9f3" fill-opacity=".16" stroke="#2b1929" stroke-width="5" stroke-linejoin="round"/><path d="M26 120H214" stroke="#2b1929" stroke-width="4"/></g>'
+ +'<path class="nw-capsule-base" d="M25 100 A75 75 0 0 0 175 100 Z" fill="#FF4F9B" stroke="#2b1929" stroke-width="5" stroke-linejoin="round"/>'
+ +'<g class="nw-capsule-lid"><path d="M25 100 A75 75 0 0 1 175 100 Z" fill="#FF4F9B" stroke="#2b1929" stroke-width="5" stroke-linejoin="round"/>'
+ +'<path d="M25 100 A75 75 0 0 1 175 100 Z" fill="url(#nwCapsuleUpperLight)" clip-path="url(#nwCapsuleTopClip)"/>'
+ +'<path d="M25 100H175" fill="none" stroke="#2b1929" stroke-width="4"/></g>'
+ +'<circle class="nw-capsule-outline" cx="100" cy="100" r="75" fill="none" stroke="#2b1929" stroke-width="5"/>'
+ +'<g class="nw-capsule-orbit-glint"><circle cx="100" cy="100" r="75" fill="none" stroke="#ffe3ef" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="13 458" opacity=".95"/>'
+ +'<path d="M100 19l2.4 5.6 5.6 2.4-5.6 2.4-2.4 5.6-2.4-5.6-5.6-2.4 5.6-2.4Z" fill="#fff5f7" stroke="#ffbed7" stroke-width=".6"/></g>'
  +'</g></svg>';
 }
 function nwCollectibleBuyPage(tab){
