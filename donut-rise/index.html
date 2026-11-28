@@ -473,43 +473,59 @@ function initial(){
 // Single-donut blocks are scarce: exactly one in every 3–4 generated rows.
 // These counters only affect newly generated rows, not the opening tutorial board.
 let drGeneratedRows=0,drNextSingleRow=rnd(3,4);
+// Scattered difficulty: 60% three separated blocks, 30% two widely
+// separated blocks, 10% a more forgiving two-block layout.
+// A single-donut block still occurs exactly once every 3–4 generated rows.
+// Eight cells impose a real constraint: three separated 2+ blocks must be 2-2-2.
 function generateRow(){
  drGeneratedRows++;
  const allowSingle=drGeneratedRows===drNextSingleRow;
  if(allowSingle)drNextSingleRow+=rnd(3,4);
- // Build an eight-cell row with at least one gap and a normal 2–4 donut
- // block. A scheduled row contains exactly one single; all others have none.
- // Backtracking avoids accidentally creating a 1-donut block at the edge.
- function layout(remaining,hasGap,hasStandardBlock,hasSingle){
-  if(!remaining)return hasGap&&hasStandardBlock&&hasSingle===allowSingle?[]:null;
-  const options=[
-   {len:2,kind:'block'},{len:3,kind:'block'},{len:4,kind:'block'},
-   {len:1,kind:'gap'},{len:2,kind:'gap'},{len:3,kind:'gap'}
-  ];
-  if(allowSingle&&!hasSingle)options.push({len:1,kind:'single'});
-  for(let i=options.length-1;i>0;i--){
-   const j=rnd(0,i);[options[i],options[j]]=[options[j],options[i]];
+ const roll=Math.random();
+ const blockCount=roll<.60?3:2;
+ const forgiving=roll>=.90;
+ // Enumerate legal block sizes and gap widths rather than hoping a random
+ // combination fits. All blocks remain intact and every internal gap is >= 1.
+ const layouts=[];
+ function enumerate(lengths,slotsLeft,cellsLeft){
+  if(!slotsLeft){
+   const free=COLS-lengths.reduce((sum,n)=>sum+n,0);
+   if(free<blockCount-1)return;
+   function gaps(index,remaining,result){
+    if(index===blockCount+1){
+     if(remaining!==0)return;
+     // For two-block rows, prefer awkward internal gaps. The forgiving
+     // tenth permits a small one-cell gap instead.
+     const inner=result.slice(1,-1);
+     if(!forgiving&&blockCount===2&&inner[0]<2)return;
+     layouts.push({lengths:[...lengths],gaps:[...result]});
+     return;
+    }
+    const min=(index>0&&index<blockCount)?1:0;
+    for(let n=min;n<=remaining;n++)gaps(index+1,remaining-n,[...result,n]);
+   }
+   gaps(0,free,[]);
+   return;
   }
-  for(const option of options){
-   if(option.len>remaining)continue;
-   const tail=layout(remaining-option.len,
-    hasGap||option.kind==='gap',
-    hasStandardBlock||option.kind==='block',
-    hasSingle||option.kind==='single');
-   if(tail!==null)return [option,...tail];
+  const sizes=allowSingle&&!lengths.includes(1)?[1,2,3,4]:[2,3,4];
+  for(const len of sizes){
+   if(len>cellsLeft)continue;
+   enumerate([...lengths,len],slotsLeft-1,cellsLeft-len);
   }
-  return null;
  }
- const segments=layout(COLS,false,false,false);
+ enumerate([],blockCount,COLS);
+ // Scheduled single rows are built using exactly one length-1 block.
+ const choices=layouts.filter(option=>option.lengths.filter(n=>n===1).length===(allowSingle?1:0));
+ if(!choices.length)throw Error('No valid scattered donut row');
+ const selected=choices[rnd(0,choices.length-1)];
  const row=Array(COLS).fill(null);
- let column=0;
- for(const segment of segments){
-  if(segment.kind==='gap'){column+=segment.len;continue}
-  const len=segment.len,id=nextId++,kind=donutForLength(len);
+ let col=selected.gaps[0];
+ for(let i=0;i<selected.lengths.length;i++){
+  const len=selected.lengths[i],id=nextId++,kind=donutForLength(len);
   const donuts=Array.from({length:len},()=>({type:kind,special:Math.random()<.085}));
   groups.set(id,{len,donuts});
-  for(let k=0;k<len;k++)row[column+k]=id;
-  column+=len;
+  for(let k=0;k<len;k++)row[col+k]=id;
+  col+=len+selected.gaps[i+1];
  }
  return row;
 }
