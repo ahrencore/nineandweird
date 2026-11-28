@@ -11357,3 +11357,25 @@ body:has(#game.nw-aisle-shell:not([hidden]))::-webkit-scrollbar,
 #game.nw-capsule-shop-theme .nw-capsule-opening .nw-capsule-outline,#game.nw-capsule-shop-theme .nw-capsule-opening .nw-capsule-spark-orbit{animation:nwCapsulePerimeterFade 3.5s forwards}
 @keyframes nwCapsulePerimeterFade{0%,34%{opacity:1}46%,100%{opacity:0}}
 @media(prefers-reduced-motion:reduce){#game.nw-capsule-shop-theme .nw-capsule-spark-orbit,#game.nw-capsule-shop-theme .nw-capsule-spark-orbit i{animation:none!important}}
+
+/* Six selectable star-tier capsules, compact mobile two-column shop. */
+#game.nw-capsule-shop-theme .nw-capsule-tier-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:17px auto 10px}
+#game.nw-capsule-shop-theme .nw-capsule-tier-card{min-width:0;border:1px solid #704e68;border-radius:16px;background:#2d2030;padding:12px 5px 14px;text-align:center}
+#game.nw-capsule-shop-theme .nw-capsule-tier-art{height:166px;display:grid;place-items:center}
+#game.nw-capsule-shop-theme .nw-capsule-tier-art .nw-capsule-visual{margin:0 auto}
+#game.nw-capsule-shop-theme .nw-capsule-tier-card h3{color:#ffcee1;font:400 clamp(12px,3.4vw,16px)/1.35 'Finger Paint',cursive;margin:3px 0 3px}
+#game.nw-capsule-shop-theme .nw-capsule-tier-stars{color:#fce0ed;font:400 17px/1.4 'Finger Paint',cursive;white-space:nowrap}
+#game.nw-capsule-shop-theme .nw-capsule-tier-price{margin:7px auto;color:#ffe1e8}
+#game.nw-capsule-shop-theme .nw-capsule-tier-price .nw-diamond-icon{width:20px;height:20px}
+#game.nw-capsule-shop-theme .nw-capsule-tier-price .nw-diamond-amount{display:inline-flex;align-items:center;justify-content:center;gap:3px;font-size:16px}
+#game.nw-capsule-shop-theme .nw-capsule-tier-card button{background:#f9aac9;color:#3e253b;border:1px solid #ffdeeb;border-radius:11px;padding:8px 15px;min-height:38px;font:400 13px 'Finger Paint',cursive;cursor:pointer}
+#game.nw-capsule-shop-theme .nw-capsule-odds{font:400 12px/1.7 'Finger Paint',cursive;color:#b9ecff;margin:17px auto 3px}
+#game.nw-capsule-shop-theme .nw-capsule-icy .nw-capsule-spark-orbit i{background:#fff;box-shadow:0 0 5px 3px #e2fbff,0 0 14px 6px #a0eeff}
+#game.nw-capsule-shop-theme .nw-capsule-frost{position:absolute;pointer-events:none;inset:0;border-radius:50%;box-shadow:inset 0 0 0 1px #d1f7ff99,0 0 8px 2px #abefff55;animation:nwCapsuleFrostPulse 2.4s ease-in-out infinite}
+@keyframes nwCapsuleFrostPulse{0%,100%{opacity:.35}50%{opacity:1}}
+#game.nw-capsule-shop-theme .nw-capsule-error{font:400 12px/1.5 'Finger Paint',cursive;color:#ffaebd;min-height:14px}
+#game.nw-capsule-shop-theme .nw-capsule-confirm .nw-capsule-visual{margin:18px auto}
+#game.nw-capsule-shop-theme .nw-capsule-confirm .nw-diamond-amount{display:inline-flex;align-items:center;gap:5px}
+#game.nw-capsule-shop-theme .nw-capsule-confirm .nw-diamond-icon{width:22px;height:22px}
+@media(max-width:350px){#game.nw-capsule-shop-theme .nw-capsule-tier-grid{gap:7px}#game.nw-capsule-shop-theme .nw-capsule-tier-card{padding:10px 2px 12px}}
+@media(prefers-reduced-motion:reduce){#game.nw-capsule-shop-theme .nw-capsule-frost{animation:none!important}}
