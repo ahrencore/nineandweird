@@ -29,7 +29,7 @@ async function nwCollectibleLoad(redraw){
   nwCollectibleState=res.data||{pieces:[],inbox:[],friends:[],unseen:[],sent_today:0};
   nwCollectibleUnseen=nwCollectibleState.unseen||[];
   nwCollectibleUpdateNotice();
-  if(redraw&&evRoot.classList.contains('nw-collectibles-theme')&&!evRoot.classList.contains('nw-collectible-detail-theme')&&!evRoot.querySelector('.nw-collectibles-coming')&&!evRoot.querySelector('[data-nw-trade-inbox]')){
+  if(redraw&&evRoot.classList.contains('nw-collectibles-theme')&&!evRoot.classList.contains('nw-collectible-detail-theme')&&!evRoot.querySelector('.nw-collectibles-coming')&&!evRoot.classList.contains('nw-capsule-shop-theme')&&!evRoot.querySelector('[data-nw-trade-inbox]')){
    const t=nwCollectibleScrollElement(),y=t.scrollTop;nwCollectibleGalleryScroll=y;nwShowCollectibles();nwCollectibleRestore(y);
   }
  })().finally(function(){nwCollectibleLoading=null;});
