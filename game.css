@@ -11379,3 +11379,33 @@ body:has(#game.nw-aisle-shell:not([hidden]))::-webkit-scrollbar,
 #game.nw-capsule-shop-theme .nw-capsule-confirm .nw-diamond-icon{width:22px;height:22px}
 @media(max-width:350px){#game.nw-capsule-shop-theme .nw-capsule-tier-grid{gap:7px}#game.nw-capsule-shop-theme .nw-capsule-tier-card{padding:10px 2px 12px}}
 @media(prefers-reduced-motion:reduce){#game.nw-capsule-shop-theme .nw-capsule-frost{animation:none!important}}
+
+/* Planet notification wraps the circular disc rather than the square button. */
+#game.nw-collectibles-theme .nw-collectible-planet .nw-planet-disc.nw-notification-orbit{--nw-notify:var(--planet-accent);isolation:isolate;position:absolute;border-radius:50%!important;animation:none!important;box-shadow:0 0 13px color-mix(in srgb,var(--planet-accent) 27%,transparent),inset 0 0 8px color-mix(in srgb,var(--planet-accent) 12%,transparent)!important}
+#game.nw-collectibles-theme .nw-collectible-planet .nw-planet-disc.nw-notification-orbit::after{inset:-4px!important;border-radius:50%!important;padding:3px!important;z-index:3;animation:nwNotifyOrbit 3s linear infinite!important}
+@media(prefers-reduced-motion:reduce){#game.nw-collectibles-theme .nw-collectible-planet .nw-planet-disc.nw-notification-orbit::after{animation:none!important}}
+
+/* Three compact tier capsules per row on portrait screens. */
+#game.nw-capsule-shop-theme .nw-capsule-tier-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;margin:12px auto 10px!important}
+#game.nw-capsule-shop-theme .nw-capsule-tier-card{padding:9px 2px 10px!important;border-radius:12px!important;min-width:0!important}
+#game.nw-capsule-shop-theme .nw-capsule-tier-art{height:105px!important;min-width:0}
+#game.nw-capsule-shop-theme .nw-capsule-tier-art .nw-capsule-visual{width:96px!important;height:96px!important;max-width:100%;margin:0 auto!important}
+#game.nw-capsule-shop-theme .nw-capsule-tier-art .nw-capsule-svg{width:100%!important;height:100%!important}
+#game.nw-capsule-shop-theme .nw-capsule-tier-art .nw-capsule-spark-orbit i{top:12.5%!important;width:5px!important;height:5px!important}
+#game.nw-capsule-shop-theme .nw-capsule-tier-card h3{font-size:clamp(9px,2.7vw,12px)!important;margin:2px 0!important;overflow-wrap:anywhere}
+#game.nw-capsule-shop-theme .nw-capsule-tier-card .nw-capsule-tier-stars{font-size:clamp(9px,2.7vw,12px)!important;letter-spacing:-.35px;white-space:nowrap}
+#game.nw-capsule-shop-theme .nw-capsule-tier-price{margin:5px auto!important}
+#game.nw-capsule-shop-theme .nw-capsule-tier-price .nw-diamond-amount{font-size:clamp(11px,2.9vw,13px)!important;gap:1px!important}
+#game.nw-capsule-shop-theme .nw-capsule-tier-price .nw-diamond-icon{width:16px!important;height:16px!important}
+#game.nw-capsule-shop-theme .nw-capsule-tier-card button{min-height:32px!important;padding:5px 13px!important;border-radius:9px!important;font-size:11px!important}
+@media(max-width:350px){#game.nw-capsule-shop-theme .nw-capsule-tier-grid{gap:5px!important}#game.nw-capsule-shop-theme .nw-capsule-tier-art{height:92px!important}#game.nw-capsule-shop-theme .nw-capsule-tier-art .nw-capsule-visual{width:84px!important;height:84px!important}}
+
+/* Mystery: glitter INSIDE the icy surface, never an outer ring. */
+#game.nw-capsule-shop-theme .nw-capsule-icy .nw-capsule-ice-shimmer{pointer-events:none}
+#game.nw-capsule-shop-theme .nw-capsule-icy .nw-ice-glint,#game.nw-capsule-shop-theme .nw-capsule-icy .nw-ice-speck{transform-box:fill-box;transform-origin:center;animation:nwIcySurfaceTwinkle 3.2s ease-in-out infinite}
+#game.nw-capsule-shop-theme .nw-capsule-icy .nw-ice-glint-b{animation-delay:-1.2s}
+#game.nw-capsule-shop-theme .nw-capsule-icy .nw-ice-glint-c{animation-delay:-2s}
+#game.nw-capsule-shop-theme .nw-capsule-icy .nw-ice-glint-d{animation-delay:-.65s}
+#game.nw-capsule-shop-theme .nw-capsule-icy .nw-ice-glint-e{animation-delay:-2.6s}
+@keyframes nwIcySurfaceTwinkle{0%,100%{opacity:.12;transform:scale(.55)}48%{opacity:.95;transform:scale(1.05)}75%{opacity:.25;transform:scale(.75)}}
+@media(prefers-reduced-motion:reduce){#game.nw-capsule-shop-theme .nw-capsule-icy .nw-ice-glint,#game.nw-capsule-shop-theme .nw-capsule-icy .nw-ice-speck{animation:none!important;opacity:.8!important;transform:none!important}}
