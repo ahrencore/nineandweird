@@ -184,7 +184,7 @@ function nwCollectibleBuyPage(tab){
  const market=tab==='market';
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-galaxy-theme','nw-collectibles-theme','nw-capsule-shop-theme');
  const tabs='<div class="nw-capsule-tabs" role="group" aria-label="Buy sections"><button type="button" data-nw-buytab="capsules" class="'+(!market?'selected':'')+'">CAPSULE STORE</button><button type="button" data-nw-buytab="market" class="'+(market?'selected':'')+'">PLAYER MARKETPLACE</button></div>';
- const cards=nwCapsuleTiers.map(function(t){return '<article class="nw-capsule-tier-card"><div class="nw-capsule-tier-art">'+nwCapsuleDemoSvg(t.id)+'</div><h3>'+t.name+'</h3>'+(t.stars?'<div class="nw-capsule-tier-stars">'+('☆'.repeat(t.stars))+'</div>':'')+'<div class="nw-capsule-tier-price">'+nwDiamondAmount(t.price.toLocaleString())+'</div><button type="button" data-nw-tier="'+t.id+'">BUY</button></article>';}).join('');
+ const cards=nwCapsuleTiers.map(function(t){return '<article class="nw-capsule-tier-card"><div class="nw-capsule-tier-art">'+nwCapsuleDemoSvg(t.id)+'</div><h3>'+t.name+'</h3>'+(t.stars?'<div class="nw-capsule-tier-stars">'+('☆'.repeat(t.stars))+'</div>':'<div class="nw-capsule-tier-stars nw-capsule-tier-stars-spacer" aria-hidden="true">&nbsp;</div>')+'<div class="nw-capsule-tier-price">'+nwDiamondAmount(t.price.toLocaleString())+'</div><button type="button" data-nw-tier="'+t.id+'">BUY</button></article>';}).join('');
  const content=market
  ?'<section class="nw-capsule-market"><h2>PLAYER MARKETPLACE</h2><p>Buy and sell extra collectible pieces for Diamonds. Sellers will choose their own prices, up to 5,000 Diamonds.</p><span class="nw-capsule-pill">COMING SOON</span></section>'
  :'<section class="nw-capsule-store"><h2>CAPSULE STORE</h2><div class="nw-capsule-tier-grid">'+cards+'</div></section>';
@@ -206,7 +206,7 @@ function nwCapsuleConfirmPreview(){
  evDisplay(evHeader('CONFIRM CAPSULE',function(){nwCollectibleBuyPage('capsules');},true)
   +'<main class="nw-capsule-shop"><section class="nw-capsule-confirm"><h2>'+tier.name+' CAPSULE</h2>'+nwCapsuleDemoSvg(tier.id)
   +(mystery?'':'<p class="nw-capsule-tier-stars">'+('☆'.repeat(tier.stars))+'</p>')
-  +'<p>Price: '+nwDiamondAmount(tier.price.toLocaleString())+'</p>'
+  +'<div class="nw-capsule-confirm-price"><span>Price:</span> '+nwDiamondAmount(tier.price.toLocaleString())+'</div>'
   +'<div class="nw-capsule-confirm-description"><p>'+description+'</p><details class="nw-capsule-info"><summary aria-label="Capsule reward information" title="Capsule reward information">!</summary><div class="nw-capsule-info-popover">'+details+'</div></details></div>'
   +'<p class="nw-capsule-error" role="alert"></p>'
   +'<div class="nw-capsule-confirm-actions"><button type="button" data-nw-cancel>BACK</button><button type="button" class="nw-capsule-primary" data-nw-buy>CONFIRM PURCHASE</button></div></section></main>');
