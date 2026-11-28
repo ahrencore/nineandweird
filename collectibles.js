@@ -182,10 +182,10 @@ function nwCollectibleBuyPage(tab){
  const market=tab==='market';
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-galaxy-theme','nw-collectibles-theme','nw-capsule-shop-theme');
  const tabs='<div class="nw-capsule-tabs" role="group" aria-label="Buy sections"><button type="button" data-nw-buytab="capsules" class="'+(!market?'selected':'')+'">CAPSULE STORE</button><button type="button" data-nw-buytab="market" class="'+(market?'selected':'')+'">PLAYER MARKETPLACE</button></div>';
- const cards=nwCapsuleTiers.map(function(t){return '<article class="nw-capsule-tier-card"><div class="nw-capsule-tier-art">'+nwCapsuleDemoSvg(t.id)+'</div><h3>'+t.name+'</h3><div class="nw-capsule-tier-stars">'+(t.stars?'☆'.repeat(t.stars):'☆–☆☆☆☆☆')+'</div><div class="nw-capsule-tier-price">'+nwDiamondAmount(t.price.toLocaleString())+'</div><button type="button" data-nw-tier="'+t.id+'">BUY</button></article>';}).join('');
+ const cards=nwCapsuleTiers.map(function(t){return '<article class="nw-capsule-tier-card"><div class="nw-capsule-tier-art">'+nwCapsuleDemoSvg(t.id)+'</div><h3>'+t.name+'</h3><div class="nw-capsule-tier-stars">'+(t.stars?'☆'.repeat(t.stars):'☆☆–☆☆☆☆☆')+'</div><div class="nw-capsule-tier-price">'+nwDiamondAmount(t.price.toLocaleString())+'</div><button type="button" data-nw-tier="'+t.id+'">BUY</button></article>';}).join('');
  const content=market
  ?'<section class="nw-capsule-market"><h2>PLAYER MARKETPLACE</h2><p>Buy and sell extra collectible pieces for Diamonds. Sellers will choose their own prices, up to 5,000 Diamonds.</p><span class="nw-capsule-pill">COMING SOON</span></section>'
- :'<section class="nw-capsule-store"><h2>CAPSULE STORE</h2><p class="nw-capsule-muted">Every capsule contains one random piece from a random World. You cannot choose the World. Duplicates are possible.</p><div class="nw-capsule-tier-grid">'+cards+'</div><p class="nw-capsule-odds">ICY BLUE MYSTERY: 20% chance for each rarity from ☆ to ☆☆☆☆☆.</p></section>';
+ :'<section class="nw-capsule-store"><h2>CAPSULE STORE</h2><p class="nw-capsule-muted">Every capsule contains one random piece from a random World. You cannot choose the World. Duplicates are possible.</p><div class="nw-capsule-tier-grid">'+cards+'</div><p class="nw-capsule-odds">ICY BLUE MYSTERY: 25% each for ☆☆, ☆☆☆, ☆☆☆☆ and ☆☆☆☆☆. No ☆ rewards.</p></section>';
  evDisplay(evHeader('BUY',nwShowCollectibles,true)+'<main class="nw-capsule-shop">'+tabs+content+'</main>');
  evRoot.querySelectorAll('[data-nw-buytab]').forEach(function(b){b.onclick=function(){nwCollectibleBuyPage(b.dataset.nwBuytab==='market'?'market':'capsules');};});
  evRoot.querySelectorAll('[data-nw-tier]').forEach(function(b){b.onclick=function(){nwCapsuleSelectedTier=b.dataset.nwTier;nwCapsuleConfirmPreview();};});
@@ -197,9 +197,9 @@ function nwCapsuleConfirmPreview(){
  const mystery=tier.id==='mystery';
  evDisplay(evHeader('CONFIRM CAPSULE',function(){nwCollectibleBuyPage('capsules');},true)
   +'<main class="nw-capsule-shop"><section class="nw-capsule-confirm"><h2>'+tier.name+' CAPSULE</h2>'+nwCapsuleDemoSvg(tier.id)
-  +'<p class="nw-capsule-tier-stars">'+(mystery?'☆ to ☆☆☆☆☆':'☆'.repeat(tier.stars))+'</p>'
+  +'<p class="nw-capsule-tier-stars">'+(mystery?'☆☆ to ☆☆☆☆☆':'☆'.repeat(tier.stars))+'</p>'
   +'<p>Price: '+nwDiamondAmount(tier.price.toLocaleString())+'</p>'
-  +'<p class="nw-capsule-muted">One random World, one random piece. Duplicates possible.'+(mystery?' Each rarity has exactly a 20% chance.':'')+'</p>'
+  +'<p class="nw-capsule-muted">One random World, one random piece. Duplicates possible.'+(mystery?' Each rarity from ☆☆ to ☆☆☆☆☆ has exactly a 25% chance.':'')+'</p>'
   +'<p class="nw-capsule-error" role="alert"></p>'
   +'<div class="nw-capsule-confirm-actions"><button type="button" data-nw-cancel>BACK</button><button type="button" class="nw-capsule-primary" data-nw-buy>CONFIRM PURCHASE</button></div></section></main>');
  evRoot.querySelector('[data-nw-cancel]').onclick=function(){nwCollectibleBuyPage('capsules');};
