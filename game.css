@@ -11317,8 +11317,12 @@ body:has(#game.nw-aisle-shell:not([hidden]))::-webkit-scrollbar,
 #game.nw-capsule-shop-theme .nw-capsule-world-select select{font:400 14px/1.3 'Finger Paint',cursive;background:#38273b;color:#fff0f3;border:1px solid #b689ad;border-radius:11px;padding:12px 14px;width:100%;min-width:0}
 #game.nw-capsule-shop-theme .nw-capsule-preview{width:150px;max-width:100%;margin:17px auto 16px}
 #game.nw-capsule-shop-theme .nw-capsule-svg{width:150px;height:150px;max-width:100%;display:block;margin:10px auto;overflow:visible;filter:drop-shadow(0 7px 9px #0b071944)}
-#game.nw-capsule-shop-theme .nw-capsule-orbit-glint{transform-origin:100px 100px;animation:nwCapsuleEdgeLight 4s linear infinite}
+#game.nw-capsule-shop-theme .nw-capsule-visual{position:relative;width:150px;height:150px;margin:10px auto;isolation:isolate}
+#game.nw-capsule-shop-theme .nw-capsule-visual .nw-capsule-svg{margin:0;filter:drop-shadow(0 7px 9px #0b071944)}
+#game.nw-capsule-shop-theme .nw-capsule-spark-orbit{position:absolute;z-index:2;inset:0;pointer-events:none;animation:nwCapsuleEdgeLight 4s linear infinite}
+#game.nw-capsule-shop-theme .nw-capsule-spark-orbit i{position:absolute;left:50%;top:calc(50% - 56.25px);width:7px;height:7px;transform:translate(-50%,-50%);background:#fff5fa;border-radius:50%;box-shadow:0 0 0 1px #ffc4df99,0 0 5px 2px #fff0f7,0 0 12px 4px #ffb4dd;animation:nwCapsuleSparkPulse 1.3s ease-in-out infinite}
 @keyframes nwCapsuleEdgeLight{to{transform:rotate(360deg)}}
+@keyframes nwCapsuleSparkPulse{0%,100%{opacity:.45;scale:.65}48%{opacity:1;scale:1.25}}
 #game.nw-capsule-shop-theme .nw-capsule-price{display:flex;gap:7px;align-items:center;justify-content:center;color:#ffcedb;margin:0 auto 9px}
 #game.nw-capsule-shop-theme .nw-capsule-price img{width:27px;height:27px;object-fit:contain}
 #game.nw-capsule-shop-theme .nw-capsule-price strong{font:400 28px/1 'Finger Paint',cursive}
@@ -11332,7 +11336,7 @@ body:has(#game.nw-aisle-shell:not([hidden]))::-webkit-scrollbar,
 #game.nw-capsule-shop-theme .nw-capsule-pill{font-size:11px;border:1px solid #a781a9;border-radius:30px;padding:7px 13px;margin-top:17px;color:#efc0d2}
 #game.nw-capsule-shop-theme .nw-capsule-confirm-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;margin-top:18px}
 #game.nw-capsule-shop-theme .nw-capsule-confirm-actions>button:not(.nw-capsule-primary){min-height:46px;border:1px solid #ac809d;border-radius:13px;background:#39283e;color:#f6dfed;font:400 12px 'Finger Paint',cursive;padding:9px 19px;cursor:pointer}
-#game.nw-capsule-shop-theme .nw-capsule-opening .nw-capsule-demo-animation{width:150px;height:150px;margin:15px auto 10px;animation:nwCapsuleDemoExit 3.5s forwards}
+#game.nw-capsule-shop-theme .nw-capsule-opening .nw-capsule-demo-animation{width:150px;height:150px;margin:15px auto 10px;animation:nwCapsuleDemoExit 3.5s forwards}\n#game.nw-capsule-shop-theme .nw-capsule-opening .nw-capsule-demo-animation .nw-capsule-visual{margin:0 auto}
 #game.nw-capsule-shop-theme .nw-capsule-opening .nw-capsule-pod{transform-origin:100px 100px;animation:nwCapsuleDemoShake 3.5s both}
 #game.nw-capsule-shop-theme .nw-capsule-opening .nw-capsule-lid{transform-origin:100px 100px;animation:nwCapsuleDemoLift 3.5s both}
 #game.nw-capsule-shop-theme .nw-capsule-sample-reveal{animation:nwCapsuleDemoShow 3.5s both;display:flex;flex-direction:column;align-items:center}
@@ -11350,6 +11354,6 @@ body:has(#game.nw-aisle-shell:not([hidden]))::-webkit-scrollbar,
 @media(prefers-reduced-motion:reduce){#game.nw-capsule-shop-theme .nw-capsule-opening .nw-capsule-demo-animation,#game.nw-capsule-shop-theme .nw-capsule-opening .nw-capsule-pod,#game.nw-capsule-shop-theme .nw-capsule-opening .nw-capsule-lid,#game.nw-capsule-shop-theme .nw-capsule-sample-reveal{animation-duration:.15s!important}}
 
 /* In the demo the perimeter glow stays fixed to the closed shell; vanish with the opening. */
-#game.nw-capsule-shop-theme .nw-capsule-opening .nw-capsule-outline,#game.nw-capsule-shop-theme .nw-capsule-opening .nw-capsule-orbit-glint{animation:nwCapsulePerimeterFade 3.5s forwards}
+#game.nw-capsule-shop-theme .nw-capsule-opening .nw-capsule-outline,#game.nw-capsule-shop-theme .nw-capsule-opening .nw-capsule-spark-orbit{animation:nwCapsulePerimeterFade 3.5s forwards}
 @keyframes nwCapsulePerimeterFade{0%,34%{opacity:1}46%,100%{opacity:0}}
-@media(prefers-reduced-motion:reduce){#game.nw-capsule-shop-theme .nw-capsule-orbit-glint{animation:none!important}}
+@media(prefers-reduced-motion:reduce){#game.nw-capsule-shop-theme .nw-capsule-spark-orbit,#game.nw-capsule-shop-theme .nw-capsule-spark-orbit i{animation:none!important}}
