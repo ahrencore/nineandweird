@@ -473,8 +473,8 @@ function initial(){
 // Single-donut blocks are scarce: exactly one in every 3–4 generated rows.
 // These counters only affect newly generated rows, not the opening tutorial board.
 let drGeneratedRows=0,drNextSingleRow=rnd(3,4);
-// Scattered difficulty: 60% three separated blocks, 30% two widely
-// separated blocks, 10% a more forgiving two-block layout.
+// Scattered difficulty: 50% three separated blocks, 35% two widely
+// separated blocks, 15% a more forgiving two-block layout.
 // A single-donut block still occurs exactly once every 3–4 generated rows.
 // Eight cells impose a real constraint: three separated 2+ blocks must be 2-2-2.
 function generateRow(){
@@ -482,8 +482,8 @@ function generateRow(){
  const allowSingle=drGeneratedRows===drNextSingleRow;
  if(allowSingle)drNextSingleRow+=rnd(3,4);
  const roll=Math.random();
- const blockCount=roll<.60?3:2;
- const forgiving=roll>=.90;
+ const blockCount=roll<.50?3:2;
+ const forgiving=roll>=.85;
  // Enumerate legal block sizes and gap widths rather than hoping a random
  // combination fits. All blocks remain intact and every internal gap is >= 1.
  const layouts=[];
@@ -495,7 +495,7 @@ function generateRow(){
     if(index===blockCount+1){
      if(remaining!==0)return;
      // For two-block rows, prefer awkward internal gaps. The forgiving
-     // tenth permits a small one-cell gap instead.
+     // forgiving 15% permits a small one-cell gap instead.
      const inner=result.slice(1,-1);
      if(!forgiving&&blockCount===2&&inner[0]<2)return;
      layouts.push({lengths:[...lengths],gaps:[...result]});
