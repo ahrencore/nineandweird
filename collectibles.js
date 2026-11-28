@@ -157,63 +157,94 @@ function nwShowCollectibleComingSoon(action){
 }
 
 
-// Collectibles BUY preview — no wallet changes or collectible grants until rarity is approved.
-let nwCapsulePreviewWorld=null;
-function nwCapsuleDemoSvg(world){
- if(!nwTripleArtFiles[world])return '';
- // Artwork is pure flat pink. Sparkles belong to a separate CSS-only overlay.
- // Upper/lower halves share identical 75-unit circular geometry.
- return '<div class="nw-capsule-visual">'
- +'<svg class="nw-capsule-svg" viewBox="0 0 200 200" width="150" height="150" role="img" aria-label="Solid bright-pink matte mystery capsule">'
+// Server-confirmed capsule shop; random outcomes and Diamond balances are server-owned.
+const nwCapsuleTiers=[
+ {id:'common',name:'COMMON',stars:1,price:300,color:'#FF4F9B'},
+ {id:'uncommon',name:'UNCOMMON',stars:2,price:500,color:'#77C98D'},
+ {id:'rare',name:'RARE',stars:3,price:700,color:'#58C8FF'},
+ {id:'epic',name:'EPIC',stars:4,price:1000,color:'#7D4DFF'},
+ {id:'legendary',name:'LEGENDARY',stars:5,price:1500,color:'#F2C14E'},
+ {id:'mystery',name:'MYSTERY',stars:0,price:750,color:'#A6EAFC'}
+];
+let nwCapsuleSelectedTier='common',nwCapsulePurchasing=false;
+function nwCapsuleDemoSvg(tier){
+ const cfg=nwCapsuleTiers.find(function(t){return t.id===tier;})||nwCapsuleTiers[0];
+ return '<div class="nw-capsule-visual '+(cfg.id==='mystery'?'nw-capsule-icy':'')+'" style="--capsule-color:'+cfg.color+'">'
+ +'<svg class="nw-capsule-svg" viewBox="0 0 200 200" width="150" height="150" role="img" aria-label="'+nwEscape(cfg.name)+' matte capsule">'
  +'<g class="nw-capsule-pod">'
- +'<path class="nw-capsule-base" d="M25 100 A75 75 0 0 0 175 100 Z" fill="#FF4F9B" stroke="#2b1929" stroke-width="5" stroke-linejoin="round"/>'
- +'<g class="nw-capsule-lid"><path d="M25 100 A75 75 0 0 1 175 100 Z" fill="#FF4F9B" stroke="#2b1929" stroke-width="5" stroke-linejoin="round"/>'
- +'<path d="M25 100H175" fill="none" stroke="#2b1929" stroke-width="4"/></g>'
+ +'<path class="nw-capsule-base" d="M25 100 A75 75 0 0 0 175 100 Z" fill="var(--capsule-color)" stroke="#2b1929" stroke-width="5"/>'
+ +'<g class="nw-capsule-lid"><path d="M25 100 A75 75 0 0 1 175 100 Z" fill="var(--capsule-color)" stroke="#2b1929" stroke-width="5"/><path d="M25 100H175" stroke="#2b1929" stroke-width="4"/></g>'
  +'<circle class="nw-capsule-outline" cx="100" cy="100" r="75" fill="none" stroke="#2b1929" stroke-width="5"/>'
- +'</g></svg>'
- +'<span class="nw-capsule-spark-orbit" aria-hidden="true"><i></i></span>'
- +'</div>';
+ +'</g></svg><span class="nw-capsule-spark-orbit" aria-hidden="true"><i></i></span>'
+ +(cfg.id==='mystery'?'<span class="nw-capsule-frost" aria-hidden="true"></span>':'')+'</div>';
 }
 function nwCollectibleBuyPage(tab){
- const ids=nwCollectibleWorldIds();
- if(!ids.length){nwShowCollectibles();return;}
- if(!ids.includes(nwCapsulePreviewWorld))nwCapsulePreviewWorld=ids[0];
  const market=tab==='market';
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-galaxy-theme','nw-collectibles-theme','nw-capsule-shop-theme');
  const tabs='<div class="nw-capsule-tabs" role="group" aria-label="Buy sections"><button type="button" data-nw-buytab="capsules" class="'+(!market?'selected':'')+'">CAPSULE STORE</button><button type="button" data-nw-buytab="market" class="'+(market?'selected':'')+'">PLAYER MARKETPLACE</button></div>';
+ const cards=nwCapsuleTiers.map(function(t){return '<article class="nw-capsule-tier-card"><div class="nw-capsule-tier-art">'+nwCapsuleDemoSvg(t.id)+'</div><h3>'+t.name+'</h3><div class="nw-capsule-tier-stars">'+(t.stars?'☆'.repeat(t.stars):'☆–☆☆☆☆☆')+'</div><div class="nw-capsule-tier-price">'+nwDiamondAmount(t.price.toLocaleString())+'</div><button type="button" data-nw-tier="'+t.id+'">BUY</button></article>';}).join('');
  const content=market
- ?'<section class="nw-capsule-market"><div class="nw-capsule-market-icon" aria-hidden="true">◉</div><h2>PLAYER MARKETPLACE</h2><p>Players will be able to list their extra collectible pieces for Diamonds.</p><p>Sellers choose their prices, up to <strong>5,000 Diamonds</strong>.</p><span class="nw-capsule-pill">COMING SOON</span></section>'
- :'<section class="nw-capsule-store"><h2>MYSTERY CAPSULE</h2><p class="nw-capsule-muted">Pick a World. One surprise piece inside.</p><div class="nw-capsule-world-select"><label for="nwCapsuleWorld">CHOOSE A WORLD</label><select id="nwCapsuleWorld">'+ids.map(function(id){return '<option value="'+nwEscape(id)+'" '+(id===nwCapsulePreviewWorld?'selected':'')+'>'+nwEscape(worlds[id].name)+'</option>';}).join('')+'</select></div><div class="nw-capsule-preview" id="nwCapsulePreview">'+nwCapsuleDemoSvg(nwCapsulePreviewWorld)+'</div><div class="nw-capsule-price"><img src="assets/currency/diamond.png" alt="" loading="lazy"> <strong>500</strong> <span>DIAMONDS</span></div><p class="nw-capsule-muted">1 random piece from this World · Duplicates possible</p><button class="nw-capsule-primary" type="button" id="nwCapsuleBuy">BUY CAPSULE</button><p class="nw-capsule-demo-note">Purchase preview only · Diamonds and collectibles are not changed.</p></section>';
+ ?'<section class="nw-capsule-market"><h2>PLAYER MARKETPLACE</h2><p>Buy and sell extra collectible pieces for Diamonds. Sellers will choose their own prices, up to 5,000 Diamonds.</p><span class="nw-capsule-pill">COMING SOON</span></section>'
+ :'<section class="nw-capsule-store"><h2>CAPSULE STORE</h2><p class="nw-capsule-muted">Every capsule contains one random piece from a random World. You cannot choose the World. Duplicates are possible.</p><div class="nw-capsule-tier-grid">'+cards+'</div><p class="nw-capsule-odds">ICY BLUE MYSTERY: 20% chance for each rarity from ☆ to ☆☆☆☆☆.</p></section>';
  evDisplay(evHeader('BUY',nwShowCollectibles,true)+'<main class="nw-capsule-shop">'+tabs+content+'</main>');
  evRoot.querySelectorAll('[data-nw-buytab]').forEach(function(b){b.onclick=function(){nwCollectibleBuyPage(b.dataset.nwBuytab==='market'?'market':'capsules');};});
- const sel=evRoot.querySelector('#nwCapsuleWorld');
- if(sel)sel.onchange=function(){nwCapsulePreviewWorld=sel.value;const v=evRoot.querySelector('#nwCapsulePreview');if(v)v.innerHTML=nwCapsuleDemoSvg(sel.value);};
- const buy=evRoot.querySelector('#nwCapsuleBuy');if(buy)buy.onclick=nwCapsuleConfirmPreview;
+ evRoot.querySelectorAll('[data-nw-tier]').forEach(function(b){b.onclick=function(){nwCapsuleSelectedTier=b.dataset.nwTier;nwCapsuleConfirmPreview();};});
  nwResetViewToTop();
 }
 function nwCapsuleConfirmPreview(){
- const world=nwCapsulePreviewWorld;if(!nwCollectibleWorldIds().includes(world))return;
- const name=nwEscape(worlds[world].name);
+ const tier=nwCapsuleTiers.find(function(t){return t.id===nwCapsuleSelectedTier;});if(!tier)return;
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-galaxy-theme','nw-collectibles-theme','nw-capsule-shop-theme');
+ const mystery=tier.id==='mystery';
  evDisplay(evHeader('CONFIRM CAPSULE',function(){nwCollectibleBuyPage('capsules');},true)
-  +'<main class="nw-capsule-shop"><section class="nw-capsule-confirm"><h2>'+name+' CAPSULE</h2>'
-  +nwCapsuleDemoSvg(world)
-  +'<p>Price: <strong>500 Diamonds</strong></p>'
-  +'<p class="nw-capsule-muted">One random collectible from '+name+'. Duplicate pieces are possible.</p>'
-  +'<p class="nw-capsule-demo-note">DEMO MODE — the next step shows a sample opening. No Diamonds will be deducted and no piece will be granted.</p>'
-  +'<div class="nw-capsule-confirm-actions"><button type="button" data-nw-cancel>BACK</button><button class="nw-capsule-primary" type="button" data-nw-demo>PREVIEW OPENING</button></div></section></main>');
+  +'<main class="nw-capsule-shop"><section class="nw-capsule-confirm"><h2>'+tier.name+' CAPSULE</h2>'+nwCapsuleDemoSvg(tier.id)
+  +'<p class="nw-capsule-tier-stars">'+(mystery?'☆ to ☆☆☆☆☆':'☆'.repeat(tier.stars))+'</p>'
+  +'<p>Price: '+nwDiamondAmount(tier.price.toLocaleString())+'</p>'
+  +'<p class="nw-capsule-muted">One random World, one random piece. Duplicates possible.'+(mystery?' Each rarity has exactly a 20% chance.':'')+'</p>'
+  +'<p class="nw-capsule-error" role="alert"></p>'
+  +'<div class="nw-capsule-confirm-actions"><button type="button" data-nw-cancel>BACK</button><button type="button" class="nw-capsule-primary" data-nw-buy>CONFIRM PURCHASE</button></div></section></main>');
  evRoot.querySelector('[data-nw-cancel]').onclick=function(){nwCollectibleBuyPage('capsules');};
- evRoot.querySelector('[data-nw-demo]').onclick=function(){nwCapsuleOpenDemo(world);};
+ evRoot.querySelector('[data-nw-buy]').onclick=function(){void nwCapsuleCompletePurchase(tier);};
  nwResetViewToTop();
 }
-function nwCapsuleOpenDemo(world){
- if(!nwCollectibleWorldIds().includes(world))return;
- const name=nwCollectiblePieceLabel(world,1),pic=nwCollectibleAsset(world,1);
+async function nwCapsuleCompletePurchase(tier){
+ if(nwCapsulePurchasing)return;
+ const errorEl=evRoot.querySelector('.nw-capsule-error'),buy=evRoot.querySelector('[data-nw-buy]');
+ if(!errorEl||!buy)return;
+ const uid=nwCloud?.user()?.id;
+ if(!uid||nwCloud.user().is_anonymous){errorEl.textContent='Please sign in with a registered account to buy capsules.';return;}
+ nwCapsulePurchasing=true;buy.disabled=true;buy.textContent='PURCHASING...';errorEl.textContent='';
+ const key='nineweird-capsule-pending:'+uid;
+ try{
+  const c=await nwCloud.get();
+  let pending=null;
+  try{pending=JSON.parse(localStorage.getItem(key)||'null')}catch(e){}
+  if(pending&&pending.tier!==tier.id)throw Error('Please finish your previous capsule purchase first.');
+  const request=pending?.request||crypto.randomUUID();
+  try{localStorage.setItem(key,JSON.stringify({tier:tier.id,request:request}))}catch(e){}
+  const res=await c.rpc('nw_capsule_purchase',{p_tier:tier.id,p_request:request});
+  if(res.error)throw Error(res.error.message);
+  if(nwCloud.user()?.id!==uid)throw Error('Account changed during purchase');
+  try{localStorage.removeItem(key)}catch(e){}
+  try{await nwWalletSync()}catch(e){console.warn('Capsule wallet refresh:',e.message)}
+  try{await nwCollectibleLoad(false)}catch(e){console.warn('Capsule album refresh:',e.message)}
+  nwCapsuleOpenReward(res.data);
+ }catch(e){
+  const msg=e?.message||'Could not complete purchase';
+  if(evRoot.querySelector('.nw-capsule-error'))evRoot.querySelector('.nw-capsule-error').textContent=msg;
+  if(evRoot.querySelector('[data-nw-buy]')){evRoot.querySelector('[data-nw-buy]').disabled=false;evRoot.querySelector('[data-nw-buy]').textContent='RETRY PURCHASE';}
+ }finally{nwCapsulePurchasing=false;}
+}
+function nwCapsuleOpenReward(prize){
+ if(!prize||!nwCollectibleWorldIds().includes(prize.world)||!(prize.piece>=1&&prize.piece<=9)){nwCollectibleBuyPage('capsules');return;}
+ const name=nwCollectiblePieceLabel(prize.world,prize.piece),pic=nwCollectibleAsset(prize.world,prize.piece),tier=nwCapsuleTiers.find(function(t){return t.id===prize.tier;})||nwCapsuleTiers[0];
+ const orbitName=nwEscape(name)+' '+nwCollectibleRarityStars(prize.piece);
  evSudokuLeave();applyTheme('hub');evRoot.classList.add('nw-galaxy-theme','nw-collectibles-theme','nw-capsule-shop-theme');
- evDisplay(evHeader('CAPSULE PREVIEW',function(){nwCollectibleBuyPage('capsules');},true)
-  +'<main class="nw-capsule-shop"><section class="nw-capsule-opening"><h2>OPENING CAPSULE</h2>'
-  +'<div class="nw-capsule-demo-animation">'+nwCapsuleDemoSvg(world)+'</div>'
-  +'<div class="nw-capsule-sample-reveal"><div class="nw-capsule-sample-piece"><img src="'+nwEscape(pic)+'" alt="'+nwEscape(name)+'"><svg viewBox="0 0 160 160" aria-hidden="true"><defs><path id="nwCapsuleSampleArc" d="M80 80m-68 0a68 68 0 1 1 136 0a68 68 0 1 1 -136 0"/></defs><text fill="currentColor" font-size="'+(name.length>20?'8':'10')+'"><textPath href="#nwCapsuleSampleArc">'+nwEscape(name)+' '+nwCollectibleRarityStars(1)+' · '+nwEscape(name)+' '+nwCollectibleRarityStars(1)+' ·</textPath></text></svg></div><strong>SAMPLE REVEAL</strong><p>'+nwEscape(name)+'</p><p class="nw-capsule-demo-note">This is only an animation preview. No collectible has been awarded.</p><button type="button" class="nw-capsule-primary" data-nw-done>BACK TO STORE</button></div></section></main>');
- const done=evRoot.querySelector('[data-nw-done]');done.onclick=function(){nwCollectibleBuyPage('capsules');};
+ evDisplay(evHeader('CAPSULE OPENING',function(){nwCollectibleBuyPage('capsules');},true)
+  +'<main class="nw-capsule-shop"><section class="nw-capsule-opening"><h2>'+tier.name+' CAPSULE</h2>'
+  +'<div class="nw-capsule-demo-animation">'+nwCapsuleDemoSvg(tier.id)+'</div>'
+  +'<div class="nw-capsule-sample-reveal"><div class="nw-capsule-sample-piece"><img src="'+nwEscape(pic)+'" alt="'+nwEscape(name)+'" draggable="false"><svg viewBox="0 0 160 160" aria-hidden="true"><defs><path id="nwCapsuleSampleArc" d="M80 80m-68 0a68 68 0 1 1 136 0a68 68 0 1 1 -136 0"/></defs><text fill="currentColor" font-size="'+(name.length>20?'8':'10')+'"><textPath href="#nwCapsuleSampleArc">'+orbitName+' · '+orbitName+' ·</textPath></text></svg></div>'
+  +'<strong>'+(prize.is_new?'NEW COLLECTIBLE!':'EXTRA PIECE!')+'</strong><p>'+nwEscape(worlds[prize.world].name)+' · '+nwEscape(name)+'</p>'
+  +'<button type="button" class="nw-capsule-primary" data-nw-done>AWESOME!</button></div></section></main>');
+ evRoot.querySelector('[data-nw-done]').onclick=function(){nwCollectibleBuyPage('capsules');};
  nwResetViewToTop();
 }
